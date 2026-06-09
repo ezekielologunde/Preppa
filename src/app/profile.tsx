@@ -29,6 +29,7 @@ import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Font } from '@/constants/fonts';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = '#f15f22';
 const INK = '#111827';
@@ -62,6 +63,10 @@ function Badge({ Icon, label, color }: { Icon: LucideIcon; label: string; color:
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { user, signOut } = useAuth();
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
+
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
@@ -81,7 +86,7 @@ export default function ProfileScreen() {
               </View>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
-              <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>alex morgan</Text>
+              <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>{displayName}</Text>
               <Pencil size={16} color={ORANGE} />
             </View>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#6b7280', marginTop: 2 }}>good food. good mood. always.</Text>
@@ -155,6 +160,14 @@ export default function ProfileScreen() {
               </View>
             </View>
           </View>
+
+          <Pressable
+            onPress={() => (user ? signOut() : router.push('/auth?mode=signin'))}
+            style={{ marginHorizontal: 20, marginTop: 16, alignItems: 'center', paddingVertical: 15, borderRadius: 16, backgroundColor: user ? '#fff' : ORANGE }}>
+            <Text style={{ fontFamily: Font.heading, fontSize: 15, color: user ? '#ef4444' : '#fff' }}>
+              {user ? 'sign out' : 'sign in / create account'}
+            </Text>
+          </Pressable>
         </ScrollView>
       </SafeAreaView>
     </View>

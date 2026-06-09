@@ -22,8 +22,9 @@ type TabBarProps = {
 
 function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
-  // The prepper dashboard is its own mode with a dark nav — hide the customer bar.
-  if (state.routes[state.index]?.name === 'dashboard') return null;
+  // Full-screen modes (prepper dashboard, auth) hide the customer tab bar.
+  const active = state.routes[state.index]?.name;
+  if (active === 'dashboard' || active === 'auth') return null;
   return (
     <View
       style={{
@@ -73,6 +74,7 @@ export default function AppTabs() {
       <Tabs.Screen name="experiences" />
       <Tabs.Screen name="profile" />
       <Tabs.Screen name="dashboard" options={{ href: null }} />
+      <Tabs.Screen name="auth" options={{ href: null }} />
     </Tabs>
   );
 }

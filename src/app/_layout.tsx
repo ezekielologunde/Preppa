@@ -2,7 +2,7 @@ import '@/global.css';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, ThemeProvider, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 
@@ -16,6 +16,7 @@ const ONBOARDED_KEY = 'preppa.onboarded.v1';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const router = useRouter();
   const [booting, setBooting] = useState(true);
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
 
@@ -34,7 +35,7 @@ export default function RootLayout() {
   // Font loading must never block the app — proceed on load OR error.
   const ready = !booting && onboarded !== null && (fontsLoaded || !!fontError);
 
-  async function completeOnboarding() {
+  async function dismissOnboarding() {
     setOnboarded(true);
     try {
       await AsyncStorage.setItem(ONBOARDED_KEY, '1');
@@ -43,12 +44,19 @@ export default function RootLayout() {
     }
   }
 
+  async function goToAuth(mode: 'signin' | 'signup') {
+    await dismissOnboarding();
+    router.push(`/auth?mode=${mode}`);
+  }
+
   return (
     <AppProviders>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         {/* Navigator always mounted so routing stays valid; overlays sit on top. */}
         <AppTabs />
-        {ready && !onboarded && <Onboarding onGetStarted={completeOnboarding} />}
+        {ready && !onboarded && (
+          <Onboarding onGetStarted={() => goToAuth('signup')} onSignIn={() => goToAuth('signin')} />
+        )}
         {!ready && <LoadingSplash />}
       </ThemeProvider>
     </AppProviders>
