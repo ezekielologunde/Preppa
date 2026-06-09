@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
   BadgeCheck,
@@ -7,6 +6,7 @@ import {
   ChefHat,
   ChevronLeft,
   DollarSign,
+  Flame,
   Menu,
   MessageSquare,
   Plus,
@@ -14,6 +14,7 @@ import {
   Scan,
   ShoppingBag,
   Star,
+  Trophy,
   UtensilsCrossed,
   Users,
   Wallet,
@@ -24,10 +25,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { Palette, Shadow } from '@/constants/theme';
 
-const ORANGE = '#f15f22';
-const CARD = '#13161d';
-const BG = '#0c0e13';
+const ORANGE = Palette.brand;
+const CARD = Palette.prepperCard;
+const BG = Palette.prepperBg;
 
 function Stat({ Icon, value, label, sub, color }: { Icon: LucideIcon; value: string; label: string; sub: string; color: string }) {
   return (
@@ -73,7 +75,7 @@ export default function DashboardScreen() {
             </PressableScale>
             <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#9ca3af' }}>good morning, 👋</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#9ca3af' }}>good morning,</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>chef lex</Text>
                 <BadgeCheck size={18} color={ORANGE} fill={ORANGE} stroke={BG} />
@@ -108,7 +110,7 @@ export default function DashboardScreen() {
                     </View>
                   ) : null}
                   {a.live ? (
-                    <View style={{ position: 'absolute', top: -6, right: -10, backgroundColor: '#f43f5e', borderRadius: 6, paddingHorizontal: 5, paddingVertical: 1 }}>
+                    <View style={{ position: 'absolute', top: -6, right: -10, backgroundColor: ORANGE, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 1 }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 8, color: '#fff' }}>LIVE</Text>
                     </View>
                   ) : null}
@@ -118,17 +120,23 @@ export default function DashboardScreen() {
             ))}
           </ScrollView>
 
-          {/* Gamification */}
-          <LinearGradient colors={['#FFE2C8', '#FFCFA8']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ marginHorizontal: 20, borderRadius: 22, padding: 18, marginBottom: 24 }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>🔥 you&apos;re on fire!</Text>
-            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#111827', letterSpacing: -0.5, marginTop: 4, maxWidth: 220 }}>20 orders away from top kitchen 🏆</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 }}>
-              <View style={{ flex: 1, height: 9, borderRadius: 5, backgroundColor: 'rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-                <View style={{ width: '60%', height: 9, borderRadius: 5, backgroundColor: ORANGE }} />
-              </View>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>30 / 50</Text>
+          {/* Gamification — solid brand accent (the one accent surface on the dark kitchen) */}
+          <View style={{ marginHorizontal: 20, borderRadius: 22, padding: 18, marginBottom: 24, backgroundColor: ORANGE }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Flame size={15} color="#fff" fill="#fff" />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>you&apos;re on fire!</Text>
             </View>
-          </LinearGradient>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6, maxWidth: 240 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>20 orders away from top kitchen</Text>
+              <Trophy size={18} color="#fff" />
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 }}>
+              <View style={{ flex: 1, height: 9, borderRadius: 5, backgroundColor: 'rgba(255,255,255,0.28)', overflow: 'hidden' }}>
+                <View style={{ width: '60%', height: 9, borderRadius: 5, backgroundColor: '#fff' }} />
+              </View>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>30 / 50</Text>
+            </View>
+          </View>
 
           {/* Up next */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 12 }}>
@@ -165,9 +173,9 @@ export default function DashboardScreen() {
             </PressableScale>
           ))}
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal">
-            <LinearGradient colors={[ORANGE, '#f43f5e']} style={{ width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', marginTop: -20 }}>
+            <View style={{ width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', marginTop: -20, backgroundColor: ORANGE, ...Shadow.floating, shadowColor: ORANGE, shadowOpacity: 0.4 }}>
               <Plus size={26} color="#fff" />
-            </LinearGradient>
+            </View>
           </PressableScale>
           {[{ Icon: MessageSquare, label: 'messages', badge: '3' }, { Icon: Menu, label: 'menu' }].map((t) => (
             <PressableScale key={t.label} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>

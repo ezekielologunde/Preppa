@@ -1,0 +1,52 @@
+import { ToggleLeft } from 'lucide-react-native';
+import { Text, View } from 'react-native';
+
+import { PressableScale } from '@/components/ui/pressable-scale';
+import { Font } from '@/constants/fonts';
+import { Radius } from '@/constants/theme';
+import { useAdminFlags, useSetFeatureFlag } from '@/lib/queries/admin';
+import { Admin, Card, SectionState } from './ui';
+
+function Switch({ on }: { on: boolean }) {
+  return (
+    <View style={{ width: 48, height: 28, borderRadius: 14, backgroundColor: on ? Admin.success : 'rgba(255,255,255,0.12)', justifyContent: 'center', paddingHorizontal: 3, alignItems: on ? 'flex-end' : 'flex-start' }}>
+      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff' }} />
+    </View>
+  );
+}
+
+export function AdminFeatures() {
+  const { data, isLoading, isError } = useAdminFlags();
+  const setFlag = useSetFeatureFlag();
+
+  return (
+    <View style={{ gap: 12 }}>
+      <Text style={{ fontFamily: Font.body, fontSize: 13, color: Admin.textDim, lineHeight: 19 }}>
+        Turn platform capabilities on or off for everyone. Changes apply immediately across the app.
+      </Text>
+
+      <SectionState loading={isLoading} error={isError} empty={!data?.length} emptyText="No feature flags. Run migration 0004." Icon={ToggleLeft} />
+
+      {(data ?? []).map((f) => (
+        <Card key={f.key}>
+          <PressableScale
+            onPress={() => setFlag.mutate({ key: f.key, enabled: !f.enabled })}
+            disabled={setFlag.isPending}
+            accessibilityRole="switch"
+            accessibilityState={{ checked: f.enabled }}
+            accessibilityLabel={f.label}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Admin.text }}>{f.label}</Text>
+              {f.description ? (
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Admin.textDim, marginTop: 2, lineHeight: 17 }}>{f.description}</Text>
+              ) : null}
+              <Text style={{ fontFamily: Font.medium, fontSize: 10, color: Admin.textMuted, marginTop: 4, textTransform: 'uppercase', letterSpacing: 0.5 }}>{f.category}</Text>
+            </View>
+            <Switch on={f.enabled} />
+          </PressableScale>
+        </Card>
+      ))}
+    </View>
+  );
+}

@@ -37,7 +37,7 @@ export default function AuthScreen() {
     if (isSignup) {
       const { error, needsConfirmation } = await signUp(email.trim().toLowerCase(), password, name.trim());
       if (error) setMsg({ text: error, ok: false }), setBusy(false);
-      else if (needsConfirmation) setMsg({ text: 'Check your email to confirm, then sign in. 📩', ok: true }), setBusy(false);
+      else if (needsConfirmation) setMsg({ text: 'Check your email to confirm, then sign in.', ok: true }), setBusy(false);
       else router.replace('/');
     } else {
       const { error } = await signIn(email.trim().toLowerCase(), password);

@@ -19,6 +19,7 @@ import {
   Moon,
   Pencil,
   Settings,
+  ShieldCheck,
   Sparkles,
   Ticket,
   UserPlus,
@@ -64,7 +65,7 @@ function Badge({ Icon, label, color }: { Icon: LucideIcon; label: string; color:
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
 
@@ -119,6 +120,24 @@ export default function ProfileScreen() {
             </View>
             <Gift size={56} color="#d97706" />
           </LinearGradient>
+
+          {/* Admin console — only granted admins see this */}
+          {isAdmin ? (
+            <PressableScale
+              onPress={() => router.push('/admin')}
+              accessibilityRole="button"
+              accessibilityLabel="Open admin console"
+              style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: '#0C0E13', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+              <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: 'rgba(241,95,34,0.18)', alignItems: 'center', justifyContent: 'center' }}>
+                <ShieldCheck size={20} color={ORANGE} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>admin console</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9AA1AD', marginTop: 1 }}>approvals, orders, earnings & features</Text>
+              </View>
+              <ChevronRight size={18} color="#6B7280" />
+            </PressableScale>
+          ) : null}
 
           {/* Quick links */}
           <View style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 20, padding: 16, flexDirection: 'row', justifyContent: 'space-between' }}>

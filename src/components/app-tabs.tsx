@@ -4,13 +4,14 @@ import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Font } from '@/constants/fonts';
+import { useFeatureFlags } from '@/lib/queries/feature-flags';
 import { Palette, Shadow, TouchTarget } from '@/constants/theme';
 
 const TABS = [
   { name: 'index', label: 'home', Icon: House },
   { name: 'explore', label: 'explore', Icon: Compass },
-  { name: 'feeds', label: 'feeds', Icon: Clapperboard },
-  { name: 'experiences', label: 'experiences', Icon: Ticket },
+  { name: 'feeds', label: 'feeds', Icon: Clapperboard, flag: 'live_feeds' },
+  { name: 'experiences', label: 'experiences', Icon: Ticket, flag: 'experiences' },
   { name: 'profile', label: 'profile', Icon: User },
 ] as const;
 
@@ -21,9 +22,12 @@ type TabBarProps = {
 
 function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
+  const { data: flags } = useFeatureFlags();
   // Full-screen modes (prepper dashboard, auth) hide the customer tab bar.
   const active = state.routes[state.index]?.name;
-  if (active === 'dashboard' || active === 'auth' || active === 'meal' || active === 'search' || active === 'category') return null;
+  if (active === 'dashboard' || active === 'auth' || active === 'meal' || active === 'search' || active === 'category' || active === 'admin') return null;
+  // Admin-toggleable tabs disappear when their flag is explicitly off.
+  const visibleTabs = TABS.filter((t) => !('flag' in t) || flags?.[t.flag] !== false);
   return (
     <View
       style={{
@@ -39,7 +43,7 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
         borderTopRightRadius: 26,
         ...Shadow.navBar,
       }}>
-      {TABS.map((tab) => {
+      {visibleTabs.map((tab) => {
         const index = state.routes.findIndex((r) => r.name === tab.name);
         const focused = index >= 0 && state.index === index;
         // Inactive uses textSecondary (AA), not the decorative muted grey.
@@ -76,6 +80,7 @@ export default function AppTabs() {
       <Tabs.Screen name="meal" options={{ href: null }} />
       <Tabs.Screen name="search" options={{ href: null }} />
       <Tabs.Screen name="category" options={{ href: null }} />
+      <Tabs.Screen name="admin" options={{ href: null }} />
     </Tabs>
   );
 }

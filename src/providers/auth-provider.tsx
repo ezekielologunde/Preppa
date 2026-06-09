@@ -14,6 +14,9 @@ type AuthState = {
   loading: boolean;
   activeRole: ActiveRole;
   setActiveRole: (role: ActiveRole) => void;
+  /** Granted roles from user_roles (customer/prepper/admin/…). */
+  roles: string[];
+  isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (
     email: string,
@@ -29,6 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeRole, setActiveRoleState] = useState<ActiveRole>('customer');
+  const [roles, setRoles] = useState<string[]>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -42,6 +46,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
+  // Load granted roles whenever the signed-in user changes (drives admin access).
+  const userId = session?.user?.id ?? null;
+  useEffect(() => {
+    if (!userId) {
+      setRoles([]);
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from('user_roles')
+      .select('roles(key)')
+      .eq('user_id', userId)
+      .then(({ data }) => {
+        if (cancelled) return;
+        const rows = (data ?? []) as unknown as { roles: { key: string } | { key: string }[] | null }[];
+        const keys = rows
+          .flatMap((r) => (Array.isArray(r.roles) ? r.roles : r.roles ? [r.roles] : []))
+          .map((role) => role.key)
+          .filter((k): k is string => !!k);
+        setRoles(keys);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
   function setActiveRole(role: ActiveRole) {
     setActiveRoleState(role);
     AsyncStorage.setItem(ROLE_KEY, role).catch(() => {});
@@ -54,6 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       activeRole,
       setActiveRole,
+      roles,
+      isAdmin: roles.includes('admin'),
       async signIn(email, password) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         return { error: error?.message ?? null };
@@ -72,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await supabase.auth.signOut();
       },
     }),
-    [session, loading, activeRole],
+    [session, loading, activeRole, roles],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

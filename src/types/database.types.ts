@@ -9,6 +9,36 @@ export type OrderStatus =
   | 'pending' | 'confirmed' | 'preparing' | 'ready' | 'out_for_delivery' | 'completed' | 'cancelled';
 export type MealStatus = 'draft' | 'published' | 'paused' | 'archived';
 export type FulfillmentType = 'delivery' | 'pickup';
+export type PrepperStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
+export type UserStatus = 'active' | 'suspended' | 'deleted';
+
+/** Row shape returned by the admin_prepper_earnings() RPC. */
+export type PrepperEarningsRow = {
+  prepper_id: string;
+  display_name: string;
+  status: PrepperStatus;
+  verified: boolean;
+  total_orders: number;
+  completed_orders: number;
+  gross_sales: number;
+  completed_sales: number;
+  avg_order: number;
+  rating: number;
+  last_order_at: string | null;
+};
+
+/** Shape returned by the admin_platform_stats() RPC. */
+export type PlatformStats = {
+  total_users: number;
+  total_preppers: number;
+  pending_preppers: number;
+  approved_preppers: number;
+  total_orders: number;
+  orders_today: number;
+  gmv: number;
+  gmv_today: number;
+  open_orders: number;
+};
 
 type Timestamps = { created_at: string };
 
@@ -16,13 +46,31 @@ export interface Database {
   public: {
     Tables: {
       profiles: {
-        Row: { id: string; email: string | null; phone: string | null; full_name: string | null; avatar_url: string | null; status: string } & Timestamps;
+        Row: { id: string; email: string | null; phone: string | null; full_name: string | null; avatar_url: string | null; status: UserStatus } & Timestamps;
         Insert: { id: string; email?: string | null; full_name?: string | null; avatar_url?: string | null };
         Update: Partial<{ full_name: string | null; avatar_url: string | null; phone: string | null }>;
         Relationships: [];
       };
+      roles: {
+        Row: { id: number; key: string };
+        Insert: { key: string };
+        Update: Partial<{ key: string }>;
+        Relationships: [];
+      };
+      user_roles: {
+        Row: { user_id: string; role_id: number } & Timestamps;
+        Insert: { user_id: string; role_id: number };
+        Update: never;
+        Relationships: [];
+      };
+      feature_flags: {
+        Row: { key: string; label: string; description: string | null; category: string; enabled: boolean; updated_at: string; updated_by: string | null };
+        Insert: never; // seeded by migration; toggled via admin_set_feature_flag()
+        Update: never; // mutated via admin_set_feature_flag() RPC
+        Relationships: [];
+      };
       prepper_profiles: {
-        Row: { id: string; user_id: string; display_name: string; bio: string | null; verified: boolean; delivery_radius_km: number | null; specialties: string[] | null } & Timestamps;
+        Row: { id: string; user_id: string; display_name: string; bio: string | null; verified: boolean; status: PrepperStatus; reviewed_by: string | null; reviewed_at: string | null; rejection_note: string | null; delivery_radius_km: number | null; specialties: string[] | null } & Timestamps;
         Insert: { user_id: string; display_name: string; bio?: string | null; specialties?: string[] | null };
         Update: Partial<{ display_name: string; bio: string | null; specialties: string[] | null }>;
         Relationships: [];
@@ -111,11 +159,20 @@ export interface Database {
       create_order: { Args: { p_address_id?: string | null; p_tip?: number }; Returns: string };
       advance_order: { Args: { p_order_id: string; p_next: OrderStatus }; Returns: undefined };
       cancel_order: { Args: { p_order_id: string }; Returns: undefined };
+      admin_set_prepper_status: { Args: { p_prepper: string; p_status: PrepperStatus; p_note?: string | null }; Returns: undefined };
+      admin_grant_role: { Args: { p_user: string; p_role: string }; Returns: undefined };
+      admin_revoke_role: { Args: { p_user: string; p_role: string }; Returns: undefined };
+      admin_set_feature_flag: { Args: { p_key: string; p_enabled: boolean }; Returns: undefined };
+      admin_set_user_status: { Args: { p_user: string; p_status: UserStatus }; Returns: undefined };
+      admin_prepper_earnings: { Args: Record<string, never>; Returns: PrepperEarningsRow[] };
+      admin_platform_stats: { Args: Record<string, never>; Returns: PlatformStats };
     };
     Enums: {
       order_status: OrderStatus;
       meal_status: MealStatus;
       fulfillment_type: FulfillmentType;
+      prepper_status: PrepperStatus;
+      user_status: UserStatus;
     };
     CompositeTypes: Record<string, never>;
   };

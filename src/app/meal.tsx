@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, ChevronLeft, Clock, Heart, Star } from 'lucide-react-native';
+import { BadgeCheck, Check, ChevronLeft, Clock, Heart, Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,11 +8,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
+import { Palette } from '@/constants/theme';
 import { useMeal } from '@/lib/queries/meals';
 import { useAuth } from '@/providers/auth-provider';
 
-const ORANGE = '#f15f22';
-const INK = '#111827';
+const ORANGE = Palette.brand;
+const INK = Palette.ink;
 
 function Macro({ label, value }: { label: string; value: number | null }) {
   if (value == null) return null;
@@ -130,9 +131,10 @@ export default function MealScreen() {
               onPress={addToCart}
               accessibilityRole="button"
               accessibilityLabel={user ? 'Add to cart' : 'Sign in to order'}
-              style={{ flex: 1, height: 54, borderRadius: 16, backgroundColor: added ? '#16a34a' : ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+              style={{ flex: 1, height: 54, borderRadius: 16, backgroundColor: added ? Palette.success : ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+              {added ? <Check size={18} color="#fff" strokeWidth={3} /> : null}
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
-                {added ? 'Added ✓' : user ? 'Add to cart' : 'Sign in to order'}
+                {added ? 'Added' : user ? 'Add to cart' : 'Sign in to order'}
               </Text>
             </PressableScale>
           </View>
