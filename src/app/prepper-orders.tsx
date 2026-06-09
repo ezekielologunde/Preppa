@@ -1,0 +1,142 @@
+import { useRouter } from 'expo-router';
+import { ChevronLeft, ShoppingBag } from 'lucide-react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { PressableScale } from '@/components/ui/pressable-scale';
+import { Font } from '@/constants/fonts';
+import { Palette } from '@/constants/theme';
+import { useAdvanceOrder, useCancelOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
+import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { useAuth } from '@/providers/auth-provider';
+import type { OrderStatus } from '@/types/database.types';
+
+const ORANGE = Palette.brand;
+const CARD = Palette.prepperCard;
+const BG = Palette.prepperBg;
+const money = (n: number) => `$${n.toFixed(2)}`;
+
+// The next legal step a prepper takes, with the CTA label. null = terminal/no action.
+const NEXT: Partial<Record<OrderStatus, { next: OrderStatus; cta: string }>> = {
+  pending: { next: 'confirmed', cta: 'Confirm order' },
+  confirmed: { next: 'preparing', cta: 'Start preparing' },
+  preparing: { next: 'ready', cta: 'Mark ready' },
+  ready: { next: 'completed', cta: 'Mark delivered' },
+  out_for_delivery: { next: 'completed', cta: 'Mark delivered' },
+};
+
+const STATUS_LABEL: Record<OrderStatus, string> = {
+  pending: 'New',
+  confirmed: 'Confirmed',
+  preparing: 'Preparing',
+  ready: 'Ready',
+  out_for_delivery: 'On the way',
+  completed: 'Delivered',
+  cancelled: 'Cancelled',
+};
+
+function OrderCard({
+  order,
+  onAdvance,
+  onCancel,
+  busy,
+}: {
+  order: OrderSummary;
+  onAdvance: (next: OrderStatus) => void;
+  onCancel: () => void;
+  busy: boolean;
+}) {
+  const step = NEXT[order.status];
+  const canCancel = order.status === 'pending' || order.status === 'confirmed';
+  const done = order.status === 'completed' || order.status === 'cancelled';
+  return (
+    <View style={{ backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }} numberOfLines={1}>{order.customer}</Text>
+          <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af', marginTop: 1 }}>
+            {order.items.reduce((s, i) => s + i.quantity, 0)} item{order.items.length === 1 ? '' : 's'} · {money(order.total)}
+          </Text>
+        </View>
+        <View style={{ paddingHorizontal: 11, height: 26, borderRadius: 999, backgroundColor: done ? '#252a34' : ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: done ? '#9ca3af' : ORANGE }}>{STATUS_LABEL[order.status]}</Text>
+        </View>
+      </View>
+
+      <View style={{ gap: 6 }}>
+        {order.items.map((it) => (
+          <View key={it.id} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13.5, color: '#d1d5db' }} numberOfLines={1}>{it.quantity}× {it.title}</Text>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#9ca3af', fontVariant: ['tabular-nums'] }}>{money(it.total)}</Text>
+          </View>
+        ))}
+      </View>
+
+      {step ? (
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          {canCancel ? (
+            <PressableScale onPress={onCancel} disabled={busy} accessibilityRole="button" accessibilityLabel="Decline order" style={{ height: 46, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.5 : 1 }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#9ca3af' }}>Decline</Text>
+            </PressableScale>
+          ) : null}
+          <PressableScale onPress={() => onAdvance(step.next)} disabled={busy} accessibilityRole="button" accessibilityLabel={step.cta} style={{ flex: 1, height: 46, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.6 : 1 }}>
+            {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>{step.cta}</Text>}
+          </PressableScale>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+export default function PrepperOrdersScreen() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { data: prepper } = useMyPrepperApplication(user?.id);
+  const prepperId = prepper?.id;
+  const { data: orders, isLoading } = usePrepperOrders(prepperId);
+  const advance = useAdvanceOrder();
+  const cancel = useCancelOrder();
+  const busyId = advance.isPending ? advance.variables?.orderId : cancel.isPending ? cancel.variables : undefined;
+
+  return (
+    <View style={{ flex: 1, backgroundColor: BG }}>
+      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8 }}>
+          <PressableScale onPress={() => (router.canGoBack() ? router.back() : router.replace('/dashboard'))} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={22} color="#fff" />
+          </PressableScale>
+          <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>incoming orders</Text>
+        </View>
+
+        {!prepperId ? (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
+            <ShoppingBag size={28} color="#5b6170" />
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>This is your kitchen&apos;s order queue. Approved preppers see incoming orders here.</Text>
+          </View>
+        ) : isLoading ? (
+          <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+        ) : !orders?.length ? (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+              <ShoppingBag size={28} color="#5b6170" />
+            </View>
+            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No orders yet</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>New orders from customers will appear here in real time.</Text>
+          </View>
+        ) : (
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
+            {orders.map((o) => (
+              <OrderCard
+                key={o.id}
+                order={o}
+                busy={busyId === o.id}
+                onAdvance={(next) => advance.mutate({ orderId: o.id, next })}
+                onCancel={() => cancel.mutate(o.id)}
+              />
+            ))}
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    </View>
+  );
+}

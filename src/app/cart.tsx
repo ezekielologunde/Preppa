@@ -53,8 +53,11 @@ export default function CartScreen() {
           <Text style={{ fontFamily: Font.body, fontSize: 15, color: Palette.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
             Your order is in. The prepper will confirm shortly — track it in your orders.
           </Text>
-          <PressableScale onPress={() => router.replace('/')} accessibilityRole="button" accessibilityLabel="Back to home" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Back to home</Text>
+          <PressableScale onPress={() => router.replace('/orders')} accessibilityRole="button" accessibilityLabel="Track your order" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Track your order</Text>
+          </PressableScale>
+          <PressableScale onPress={() => router.replace('/')} accessibilityRole="button" accessibilityLabel="Back to home" style={{ paddingHorizontal: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Back to home</Text>
           </PressableScale>
         </SafeAreaView>
       </View>

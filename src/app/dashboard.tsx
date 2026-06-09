@@ -44,7 +44,7 @@ function Stat({ Icon, value, label, sub, color }: { Icon: LucideIcon; value: str
 }
 
 const actions: { label: string; Icon: LucideIcon; color: string; bg: string; badge?: string; live?: boolean; route?: string }[] = [
-  { label: 'new orders', Icon: ShoppingBag, color: ORANGE, bg: '#2a1810', badge: '2' },
+  { label: 'new orders', Icon: ShoppingBag, color: ORANGE, bg: '#2a1810', badge: '2', route: '/prepper-orders' },
   { label: 'manage meals', Icon: UtensilsCrossed, color: '#34d399', bg: '#0e2018' },
   { label: 'opportunities', Icon: Briefcase, color: '#60a5fa', bg: '#0e1b2e', route: '/opportunities' },
   { label: 'my schedule', Icon: CalendarDays, color: '#a78bfa', bg: '#1a1626' },
@@ -168,8 +168,8 @@ export default function DashboardScreen() {
 
         {/* Prepper bottom nav (dark) */}
         <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: '#15181f', paddingTop: 12, paddingBottom: 24, borderTopLeftRadius: 24, borderTopRightRadius: 24 }}>
-          {[{ Icon: ChefHat, label: 'kitchen', active: true }, { Icon: ShoppingBag, label: 'orders', badge: '2' }].map((t) => (
-            <PressableScale key={t.label} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
+          {[{ Icon: ChefHat, label: 'kitchen', active: true }, { Icon: ShoppingBag, label: 'orders', badge: '2', route: '/prepper-orders' }].map((t) => (
+            <PressableScale key={t.label} onPress={() => 'route' in t && t.route && router.push(t.route as never)} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
               <t.Icon size={22} color={t.active ? ORANGE : '#6b7280'} />
               <Text style={{ fontFamily: Font.medium, fontSize: 10, color: t.active ? ORANGE : '#6b7280' }}>{t.label}</Text>
             </PressableScale>
@@ -179,8 +179,8 @@ export default function DashboardScreen() {
               <Plus size={26} color="#fff" />
             </View>
           </PressableScale>
-          {[{ Icon: MessageSquare, label: 'messages', badge: '3' }, { Icon: Menu, label: 'menu' }].map((t) => (
-            <PressableScale key={t.label} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
+          {[{ Icon: MessageSquare, label: 'messages', badge: '3', route: '/messages' }, { Icon: Menu, label: 'menu' }].map((t) => (
+            <PressableScale key={t.label} onPress={() => 'route' in t && t.route && router.push(t.route as never)} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
               <t.Icon size={22} color="#6b7280" />
               <Text style={{ fontFamily: Font.medium, fontSize: 10, color: '#6b7280' }}>{t.label}</Text>
             </PressableScale>
