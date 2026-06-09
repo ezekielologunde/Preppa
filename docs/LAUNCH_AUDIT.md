@@ -19,7 +19,7 @@ _Senior eng/design/QA org review. Live: app.preppa.live (SPA) + preppa.live (lan
 | H1 | No loading/empty/error states — carousels render blank while fetching | 9 | ✅ done (skeletons) |
 | H2 | No press feedback on cards/buttons | 8 | ✅ done (PressableScale) |
 | H3 | Search bars are fake (static Text, not inputs); no search | 3 | ✅ done (/search live) |
-| H4 | Category/cuisine taps + "see all" are dead (no nav/filter) | 3 | 🔴 next |
+| H4 | Category/cuisine taps + "see all" are dead (no nav/filter) | 3 | ✅ done (/category live filter) |
 | H5 | Meal detail screen missing — can't view/add a meal | 3 | ✅ done (/meal) |
 | H6 | Profile data 100% static demo (rewards/orders/plans not from DB) | 3 | 🔴 |
 | H7 | Dashboard 100% static demo (no real prepper orders/revenue) | 4 | 🔴 |
@@ -33,7 +33,8 @@ _Senior eng/design/QA org review. Live: app.preppa.live (SPA) + preppa.live (lan
 | --- | --- | --- |
 | M1 | Emoji used as icons/accents (ui-ux-pro-max: use SVG) | 🟡 |
 | M2 | Prices not tabular figures (layout shift risk) | 🟡 |
-| M3 | a11y: icon-only buttons lack accessibilityLabel | 🟡 fixing |
+| M3 | a11y: icon-only buttons lack accessibilityLabel | ✅ done (Home/Explore/Profile/Dashboard) |
+| M6 | Dashboard was a nav dead-end (no way back to customer app) | ✅ done (back button) |
 | M4 | Material Symbols font 404 on web (cosmetic) | ⚪ |
 | M5 | No dark mode on customer screens | ⚪ |
 

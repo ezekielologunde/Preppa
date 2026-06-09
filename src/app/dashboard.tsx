@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import {
   BadgeCheck,
   CalendarDays,
   ChefHat,
-  ChevronRight,
+  ChevronLeft,
   DollarSign,
   Menu,
   MessageSquare,
@@ -13,15 +14,15 @@ import {
   Scan,
   ShoppingBag,
   Star,
-  Trophy,
   UtensilsCrossed,
   Users,
   Wallet,
   type LucideIcon,
 } from 'lucide-react-native';
-import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 
 const ORANGE = '#f15f22';
@@ -60,12 +61,16 @@ function PipelineDot({ label, active, done }: { label: string; active?: boolean;
 }
 
 export default function DashboardScreen() {
+  const router = useRouter();
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
+            <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+              <ChevronLeft size={22} color="#fff" />
+            </PressableScale>
             <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#9ca3af' }}>good morning, 👋</Text>
@@ -74,7 +79,7 @@ export default function DashboardScreen() {
                 <BadgeCheck size={18} color={ORANGE} fill={ORANGE} stroke={BG} />
               </View>
             </View>
-            <Pressable style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}><Scan size={19} color="#fff" /></Pressable>
+            <PressableScale accessibilityRole="button" accessibilityLabel="Scan QR code" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}><Scan size={19} color="#fff" /></PressableScale>
           </View>
 
           {/* Today at a glance */}
@@ -94,7 +99,7 @@ export default function DashboardScreen() {
           {/* Quick actions */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingVertical: 20 }}>
             {actions.map((a) => (
-              <Pressable key={a.label} style={{ alignItems: 'center', gap: 8, width: 66 }}>
+              <PressableScale key={a.label} accessibilityRole="button" accessibilityLabel={a.label} style={{ alignItems: 'center', gap: 8, width: 66 }}>
                 <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: a.bg, alignItems: 'center', justifyContent: 'center' }}>
                   <a.Icon size={24} color={a.color} />
                   {a.badge ? (
@@ -109,7 +114,7 @@ export default function DashboardScreen() {
                   ) : null}
                 </View>
                 <Text style={{ fontFamily: Font.medium, fontSize: 11, color: '#d1d5db', textAlign: 'center' }}>{a.label}</Text>
-              </Pressable>
+              </PressableScale>
             ))}
           </ScrollView>
 
@@ -154,19 +159,21 @@ export default function DashboardScreen() {
         {/* Prepper bottom nav (dark) */}
         <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: '#15181f', paddingTop: 12, paddingBottom: 24, borderTopLeftRadius: 24, borderTopRightRadius: 24 }}>
           {[{ Icon: ChefHat, label: 'kitchen', active: true }, { Icon: ShoppingBag, label: 'orders', badge: '2' }].map((t) => (
-            <Pressable key={t.label} style={{ alignItems: 'center', gap: 3 }}>
+            <PressableScale key={t.label} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
               <t.Icon size={22} color={t.active ? ORANGE : '#6b7280'} />
               <Text style={{ fontFamily: Font.medium, fontSize: 10, color: t.active ? ORANGE : '#6b7280' }}>{t.label}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
-          <LinearGradient colors={[ORANGE, '#f43f5e']} style={{ width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', marginTop: -20 }}>
-            <Plus size={26} color="#fff" />
-          </LinearGradient>
+          <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal">
+            <LinearGradient colors={[ORANGE, '#f43f5e']} style={{ width: 54, height: 54, borderRadius: 27, alignItems: 'center', justifyContent: 'center', marginTop: -20 }}>
+              <Plus size={26} color="#fff" />
+            </LinearGradient>
+          </PressableScale>
           {[{ Icon: MessageSquare, label: 'messages', badge: '3' }, { Icon: Menu, label: 'menu' }].map((t) => (
-            <Pressable key={t.label} style={{ alignItems: 'center', gap: 3 }}>
+            <PressableScale key={t.label} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
               <t.Icon size={22} color="#6b7280" />
               <Text style={{ fontFamily: Font.medium, fontSize: 10, color: '#6b7280' }}>{t.label}</Text>
-            </Pressable>
+            </PressableScale>
           ))}
         </View>
       </SafeAreaView>

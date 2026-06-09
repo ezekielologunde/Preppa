@@ -25,9 +25,10 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react-native';
-import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -73,8 +74,8 @@ export default function ProfileScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Top actions */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, gap: 10 }}>
-            <Pressable style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Settings size={19} color={INK} /></Pressable>
-            <Pressable style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Bell size={19} color={INK} /></Pressable>
+            <PressableScale accessibilityRole="button" accessibilityLabel="Settings" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Settings size={19} color={INK} /></PressableScale>
+            <PressableScale accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Bell size={19} color={INK} /></PressableScale>
           </View>
 
           {/* Identity */}
@@ -122,13 +123,13 @@ export default function ProfileScreen() {
           {/* Quick links */}
           <View style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 20, padding: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
             {quickLinks.map((q) => (
-              <Pressable key={q.label} style={{ alignItems: 'center', gap: 7, flex: 1 }}>
+              <PressableScale key={q.label} accessibilityRole="button" accessibilityLabel={`${q.label}, ${q.sub}`} style={{ alignItems: 'center', gap: 7, flex: 1 }}>
                 <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: q.bg, alignItems: 'center', justifyContent: 'center' }}>
                   <q.Icon size={19} color={q.color} />
                 </View>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#374151' }}>{q.label}</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 10, color: '#9ca3af' }}>{q.sub}</Text>
-              </Pressable>
+              </PressableScale>
             ))}
           </View>
 
@@ -136,9 +137,11 @@ export default function ProfileScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>your hub</Text>
           <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: 20, overflow: 'hidden' }}>
             {hub.map((h, i) => (
-              <Pressable
+              <PressableScale
                 key={h.label}
                 onPress={() => h.accent && router.push('/dashboard')}
+                accessibilityRole="button"
+                accessibilityLabel={`${h.label}, ${h.sub}`}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
                 <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: h.accent ? '#FDEDE4' : '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
                   <h.Icon size={18} color={h.accent ? ORANGE : '#6b7280'} />
@@ -148,7 +151,7 @@ export default function ProfileScreen() {
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af', marginTop: 1 }}>{h.sub}</Text>
                 </View>
                 <ChevronRight size={18} color="#d1d5db" />
-              </Pressable>
+              </PressableScale>
             ))}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: 1, borderTopColor: '#f3f4f6' }}>
               <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
@@ -161,13 +164,15 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <Pressable
+          <PressableScale
             onPress={() => (user ? signOut() : router.push('/auth?mode=signin'))}
+            accessibilityRole="button"
+            accessibilityLabel={user ? 'Sign out' : 'Sign in or create account'}
             style={{ marginHorizontal: 20, marginTop: 16, alignItems: 'center', paddingVertical: 15, borderRadius: 16, backgroundColor: user ? '#fff' : ORANGE }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 15, color: user ? '#ef4444' : '#fff' }}>
               {user ? 'sign out' : 'sign in / create account'}
             </Text>
-          </Pressable>
+          </PressableScale>
         </ScrollView>
       </SafeAreaView>
     </View>
