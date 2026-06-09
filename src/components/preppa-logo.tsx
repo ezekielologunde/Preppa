@@ -58,7 +58,13 @@ export function PreppaLogo({
         },
         style,
       ]}>
-      <Flame size={size * 0.56} color={flameColor} strokeWidth={2.4} fill="transparent" />
+      <Flame
+        size={size * 0.58}
+        color={flameColor}
+        fill={flameColor}
+        strokeWidth={1.4}
+        strokeLinejoin="round"
+      />
     </View>
   );
 }

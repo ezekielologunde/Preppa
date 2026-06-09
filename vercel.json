@@ -4,5 +4,6 @@
   "outputDirectory": "dist",
   "framework": null,
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "rewrites": [{ "source": "/((?!_expo/|assets/|favicon).*)", "destination": "/index.html" }]
 }

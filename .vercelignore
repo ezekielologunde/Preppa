@@ -1,8 +1,8 @@
-node_modules
-.expo
-.git
+/node_modules
+/.expo
+/.git
 .env
 .env*.local
-android
-ios
-.playwright-mcp
+/android
+/ios
+/.playwright-mcp

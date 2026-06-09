@@ -1,3 +1,4 @@
+import { MotiView } from 'moti';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
@@ -33,7 +34,12 @@ export function LoadingSplash() {
 
   return (
     <Animated.View exiting={FadeOut.duration(380)} style={styles.container}>
-      <PreppaLogo size={92} glow />
+      <MotiView
+        from={{ scale: 0.94 }}
+        animate={{ scale: 1.04 }}
+        transition={{ type: 'timing', duration: 900, loop: true, repeatReverse: true }}>
+        <PreppaLogo size={92} glow />
+      </MotiView>
       <View style={styles.track}>
         <Animated.View style={[styles.bar, barStyle]} />
       </View>

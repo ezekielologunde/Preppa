@@ -1,6 +1,7 @@
 import '@/global.css';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
@@ -8,6 +9,7 @@ import { useColorScheme } from 'react-native';
 import AppTabs from '@/components/app-tabs';
 import { LoadingSplash } from '@/components/loading-splash';
 import { Onboarding } from '@/components/onboarding';
+import { fontAssets } from '@/constants/fonts';
 import { AppProviders } from '@/providers/app-providers';
 
 const ONBOARDED_KEY = 'preppa.onboarded.v1';
@@ -16,6 +18,8 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [booting, setBooting] = useState(true);
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
+
+  const [fontsLoaded, fontError] = useFonts(fontAssets);
 
   useEffect(() => {
     AsyncStorage.getItem(ONBOARDED_KEY)
@@ -27,7 +31,8 @@ export default function RootLayout() {
     return () => clearTimeout(timer);
   }, []);
 
-  const ready = !booting && onboarded !== null;
+  // Font loading must never block the app — proceed on load OR error.
+  const ready = !booting && onboarded !== null && (fontsLoaded || !!fontError);
 
   async function completeOnboarding() {
     setOnboarded(true);
