@@ -1,196 +1,314 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import {
-  BadgeCheck,
-  Briefcase,
-  CalendarDays,
+  Bell,
+  Boxes,
   ChefHat,
-  ChevronLeft,
   DollarSign,
   Flame,
-  Menu,
+  Home,
   MessageSquare,
   Plus,
-  Radio,
-  Scan,
+  Search,
   ShoppingBag,
   Star,
-  Trophy,
-  UtensilsCrossed,
+  TrendingUp,
   Users,
-  Wallet,
+  UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react-native';
 import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Circle, Polyline } from 'react-native-svg';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
-import { usePrepperOrders } from '@/lib/queries/orders';
+import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
+import type { OrderStatus } from '@/types/database.types';
 
 const ORANGE = Palette.brand;
+const GREEN = '#34d399';
+const PURPLE = '#a78bfa';
+const YELLOW = '#fbbf24';
+const PINK = '#f472b6';
+const BLUE = '#60a5fa';
 const CARD = Palette.prepperCard;
 const BG = Palette.prepperBg;
+const MUTED = '#9ca3af';
 
-function Stat({ Icon, value, label, sub, color }: { Icon: LucideIcon; value: string; label: string; sub: string; color: string }) {
+const money = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${Math.round(n)}`);
+
+const NEXT: Partial<Record<OrderStatus, { next: OrderStatus; cta: string }>> = {
+  pending: { next: 'confirmed', cta: 'confirm order' },
+  confirmed: { next: 'preparing', cta: 'start preparing' },
+  preparing: { next: 'ready', cta: 'mark ready' },
+  ready: { next: 'completed', cta: 'mark delivered' },
+  out_for_delivery: { next: 'completed', cta: 'mark delivered' },
+};
+
+function Sparkline({ color, data, w = 116, h = 30 }: { color: string; data: number[]; w?: number; h?: number }) {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  const pts = data
+    .map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / range) * (h - 4) - 2}`)
+    .join(' ');
   return (
-    <View style={{ flex: 1, gap: 6 }}>
-      <Icon size={20} color={color} />
-      <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.5 }}>{value}</Text>
-      <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#9ca3af' }}>{label}</Text>
-      <Text style={{ fontFamily: Font.body, fontSize: 11, color }}>{sub}</Text>
-    </View>
+    <Svg width={w} height={h}>
+      <Polyline points={pts} fill="none" stroke={color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+    </Svg>
   );
 }
 
-const actions: { label: string; Icon: LucideIcon; color: string; bg: string; badge?: string; live?: boolean; route?: string }[] = [
-  { label: 'new orders', Icon: ShoppingBag, color: ORANGE, bg: '#2a1810', badge: '2', route: '/prepper-orders' },
-  { label: 'manage meals', Icon: UtensilsCrossed, color: '#34d399', bg: '#0e2018' },
-  { label: 'opportunities', Icon: Briefcase, color: '#60a5fa', bg: '#0e1b2e', route: '/opportunities' },
-  { label: 'my schedule', Icon: CalendarDays, color: '#a78bfa', bg: '#1a1626' },
-  { label: 'payouts', Icon: Wallet, color: '#fbbf24', bg: '#241e0e' },
-  { label: 'go live', Icon: Radio, color: '#f472b6', bg: '#2a1020', live: true },
-];
-
-function PipelineDot({ label, active, done }: { label: string; active?: boolean; done?: boolean }) {
-  const color = done ? ORANGE : active ? ORANGE : '#3f4451';
+function Ring({ pct, color, size = 96, stroke = 9 }: { pct: number; color: string; size?: number; stroke?: number }) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const off = c * (1 - Math.min(Math.max(pct, 0), 100) / 100);
+  const center = size / 2;
   return (
-    <View style={{ alignItems: 'center', gap: 4, flex: 1 }}>
-      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: done || active ? ORANGE : '#252a34', alignItems: 'center', justifyContent: 'center' }}>
-        {done ? <BadgeCheck size={13} color="#fff" /> : <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: active ? '#fff' : '#5b6170' }} />}
+    <Svg width={size} height={size}>
+      <Circle cx={center} cy={center} r={r} stroke="#252a34" strokeWidth={stroke} fill="none" />
+      <Circle
+        cx={center}
+        cy={center}
+        r={r}
+        stroke={color}
+        strokeWidth={stroke}
+        fill="none"
+        strokeDasharray={c}
+        strokeDashoffset={off}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${center} ${center})`}
+      />
+    </Svg>
+  );
+}
+
+function StatCard({ Icon, value, label, trend, color, spark }: { Icon: LucideIcon; value: string; label: string; trend: string; color: string; spark: number[] }) {
+  return (
+    <View style={{ width: 150, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: color + '24', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon size={19} color={color} />
+        </View>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 12, color }}>{trend}</Text>
       </View>
-      <Text style={{ fontFamily: Font.medium, fontSize: 10, color }}>{label}</Text>
+      <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: MUTED }}>{label}</Text>
+      <Text style={{ fontFamily: Font.display, fontSize: 26, color: '#fff', letterSpacing: -0.6 }}>{value}</Text>
+      <Sparkline color={color} data={spark} />
     </View>
   );
 }
 
-const compact = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${Math.round(n)}`);
+function QuickAction({ Icon, label, color, badge, onPress }: { Icon: LucideIcon; label: string; color: string; badge?: number; onPress?: () => void }) {
+  return (
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 8, width: 72 }}>
+      <View style={{ width: 58, height: 58, borderRadius: 29, borderWidth: 1.5, borderColor: color + '4D', backgroundColor: color + '14', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={23} color={color} />
+        {badge ? (
+          <View style={{ position: 'absolute', top: -3, right: -3, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{badge}</Text>
+          </View>
+        ) : null}
+      </View>
+      <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: '#d1d5db' }}>{label}</Text>
+    </PressableScale>
+  );
+}
+
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return 'good morning';
+  if (h < 18) return 'good afternoon';
+  return 'good evening';
+}
 
 export default function DashboardScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data: prepper } = useMyPrepperApplication(user?.id);
   const { data: orders } = usePrepperOrders(prepper?.id);
+  const { data: reviews } = usePrepperReviews(prepper?.id);
+  const advance = useAdvanceOrder();
 
-  // Real "today at a glance" — derived from the prepper's live order list.
-  const list = orders ?? [];
+  const list: OrderSummary[] = orders ?? [];
   const newCount = list.filter((o) => o.status === 'pending').length;
   const revenue = list.filter((o) => o.status === 'completed').reduce((s, o) => s + o.total, 0);
-  const customers = new Set(list.map((o) => o.customer)).size;
+  const subscribers = new Set(list.map((o) => o.customer)).size;
+  const reviewCount = reviews?.length ?? 0;
+  const avgRating = reviewCount ? reviews!.reduce((s, r) => s + r.rating, 0) / reviewCount : 0;
   const firstName = prepper?.display_name?.split(' ')[0]?.toLowerCase() ?? 'chef';
+
+  // Oldest still-active order = the one to act on next.
+  const active = list.filter((o) => o.status === 'pending' || o.status === 'confirmed' || o.status === 'preparing' || o.status === 'ready');
+  const next = active.length ? active[active.length - 1] : null;
+  const step = next ? NEXT[next.status] : undefined;
+
+  // Today's-goal ring: completed revenue toward a $2,000 day (display-only target).
+  const goalPct = Math.min(Math.round((revenue / 2000) * 100), 100);
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 150 }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
-            <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
-              <ChevronLeft size={22} color="#fff" />
+            <PressableScale onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile'))} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+              <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
             </PressableScale>
-            <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#9ca3af' }}>good morning,</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>{firstName}</Text>
-                <BadgeCheck size={18} color={ORANGE} fill={ORANGE} stroke={BG} />
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text style={{ fontFamily: Font.display, fontSize: 27, color: '#fff', letterSpacing: -0.8 }}>my kitchen</Text>
+                <Flame size={20} color={ORANGE} fill={ORANGE} />
+              </View>
+              <View style={{ flexDirection: 'row', gap: 5, marginTop: 1 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>cook.</Text>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: GREEN }}>earn.</Text>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: PURPLE }}>inspire.</Text>
               </View>
             </View>
-            <PressableScale accessibilityRole="button" accessibilityLabel="Scan QR code" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}><Scan size={19} color="#fff" /></PressableScale>
-          </View>
-
-          {/* Today at a glance */}
-          <View style={{ marginHorizontal: 20, marginTop: 18, backgroundColor: CARD, borderRadius: 22, padding: 18 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <ChefHat size={16} color={ORANGE} />
-              <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>today at a glance</Text>
-            </View>
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-              <Stat Icon={ShoppingBag} value={String(list.length)} label="orders" sub={`${newCount} new`} color={ORANGE} />
-              <Stat Icon={DollarSign} value={compact(revenue)} label="revenue" sub="all-time" color="#34d399" />
-              <Stat Icon={Users} value={String(customers)} label="customers" sub="unique" color="#a78bfa" />
-              <Stat Icon={Star} value={prepper?.verified ? 'verified' : 'new'} label="kitchen" sub={prepper?.status ?? '—'} color="#fbbf24" />
-            </View>
-          </View>
-
-          {/* Quick actions */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingVertical: 20 }}>
-            {actions.map((a) => {
-              const badge = a.label === 'new orders' ? (newCount > 0 ? String(newCount) : undefined) : a.badge;
-              return (
-              <PressableScale key={a.label} onPress={() => a.route && router.push(a.route as never)} accessibilityRole="button" accessibilityLabel={a.label} style={{ alignItems: 'center', gap: 8, width: 66 }}>
-                <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: a.bg, alignItems: 'center', justifyContent: 'center' }}>
-                  <a.Icon size={24} color={a.color} />
-                  {badge ? (
-                    <View style={{ position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{badge}</Text>
-                    </View>
-                  ) : null}
-                  {a.live ? (
-                    <View style={{ position: 'absolute', top: -6, right: -10, backgroundColor: ORANGE, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 1 }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 8, color: '#fff' }}>LIVE</Text>
-                    </View>
-                  ) : null}
+            <PressableScale onPress={() => router.push('/search')} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+              <Search size={19} color="#fff" />
+            </PressableScale>
+            <PressableScale accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+              <Bell size={19} color="#fff" />
+              {newCount > 0 ? (
+                <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{newCount}</Text>
                 </View>
-                <Text style={{ fontFamily: Font.medium, fontSize: 11, color: '#d1d5db', textAlign: 'center' }}>{a.label}</Text>
-              </PressableScale>
-              );
-            })}
+              ) : null}
+            </PressableScale>
+          </View>
+
+          {/* Stat cards */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingVertical: 20 }}>
+            <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} />
+            <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} />
+            <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} />
+            <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} />
           </ScrollView>
 
-          {/* Gamification — solid brand accent (the one accent surface on the dark kitchen) */}
-          <View style={{ marginHorizontal: 20, borderRadius: 22, padding: 18, marginBottom: 24, backgroundColor: ORANGE }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Flame size={15} color="#fff" fill="#fff" />
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>you&apos;re on fire!</Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6, maxWidth: 240 }}>
-              <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>20 orders away from top kitchen</Text>
-              <Trophy size={18} color="#fff" />
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 }}>
-              <View style={{ flex: 1, height: 9, borderRadius: 5, backgroundColor: 'rgba(255,255,255,0.28)', overflow: 'hidden' }}>
-                <View style={{ width: '60%', height: 9, borderRadius: 5, backgroundColor: '#fff' }} />
+          {/* Next order */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, marginBottom: 12 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>next order</Text>
+            {next ? (
+              <View style={{ backgroundColor: ORANGE + '26', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: ORANGE }}>{next.status === 'pending' ? 'new' : next.status}</Text>
               </View>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>30 / 50</Text>
-            </View>
+            ) : null}
           </View>
 
-          {/* Up next */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 12 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff', letterSpacing: -0.5 }}>up next</Text>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#9ca3af' }}>view all ›</Text>
-          </View>
-          <View style={{ marginHorizontal: 20, backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 14 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Image source="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=120&q=60" style={{ width: 44, height: 44, borderRadius: 22 }} contentFit="cover" />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>pickup in 45 min</Text>
-                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff', marginTop: 2 }}>Jerk Chicken Bowl</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }}>2x · $34.00</Text>
+          {next ? (
+            <View style={{ marginHorizontal: 20, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 14 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                {next.items[0]?.image ? (
+                  <Image source={next.items[0].image} style={{ width: 76, height: 76, borderRadius: 18 }} contentFit="cover" />
+                ) : (
+                  <View style={{ width: 76, height: 76, borderRadius: 18, backgroundColor: '#252a34', alignItems: 'center', justifyContent: 'center' }}>
+                    <UtensilsCrossed size={26} color={MUTED} />
+                  </View>
+                )}
+                <View style={{ flex: 1, gap: 3 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }} numberOfLines={1}>{next.customer}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }} numberOfLines={1}>
+                    {next.items[0]?.title ?? 'order'}{next.items.length > 1 ? ` +${next.items.length - 1}` : ''}
+                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: next.paymentStatus === 'paid' ? GREEN + '24' : '#252a34', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3 }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: next.paymentStatus === 'paid' ? GREEN : MUTED }}>{next.paymentStatus === 'paid' ? '✓ paid' : 'unpaid'}</Text>
+                    </View>
+                    <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#fff', fontVariant: ['tabular-nums'] }}>${next.total.toFixed(2)}</Text>
+                  </View>
+                </View>
               </View>
-              <View style={{ backgroundColor: '#2a1810', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>prep</Text>
-              </View>
+              {step ? (
+                <PressableScale
+                  onPress={() => advance.mutate({ orderId: next.id, next: step.next })}
+                  disabled={advance.isPending}
+                  accessibilityRole="button"
+                  accessibilityLabel={step.cta}
+                  style={{ height: 50, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6, opacity: advance.isPending ? 0.7 : 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{step.cta}</Text>
+                </PressableScale>
+              ) : null}
             </View>
-            <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: '#232833', paddingTop: 12 }}>
-              <PipelineDot label="confirmed" done />
-              <PipelineDot label="preparing" active />
-              <PipelineDot label="ready" />
-              <PipelineDot label="picked up" />
+          ) : (
+            <View style={{ marginHorizontal: 20, backgroundColor: CARD, borderRadius: 22, padding: 24, alignItems: 'center', gap: 8 }}>
+              <ShoppingBag size={26} color="#5b6170" />
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: MUTED, textAlign: 'center' }}>No active orders right now. New orders land here instantly.</Text>
+            </View>
+          )}
+
+          {/* Today at a glance */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 26, marginBottom: 14 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>at a glance</Text>
+            <PressableScale onPress={() => router.push('/prepper-orders')} accessibilityRole="button" accessibilityLabel="View all orders">
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>view all</Text>
+            </PressableScale>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}>
+            <QuickAction Icon={ShoppingBag} label="orders" color={ORANGE} badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
+            <QuickAction Icon={UtensilsCrossed} label="menu" color={GREEN} />
+            <QuickAction Icon={Boxes} label="inventory" color={BLUE} />
+            <QuickAction Icon={DollarSign} label="earnings" color={GREEN} />
+            <QuickAction Icon={Users} label="customers" color={PURPLE} />
+            <QuickAction Icon={TrendingUp} label="insights" color={BLUE} />
+          </ScrollView>
+
+          {/* Goal + streak */}
+          <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: 22 }}>
+            <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 12 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: '#fff' }}>today&apos;s goal</Text>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Ring pct={goalPct} color={ORANGE} />
+                <View style={{ position: 'absolute', alignItems: 'center' }}>
+                  <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff' }}>{goalPct}%</Text>
+                </View>
+              </View>
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, textAlign: 'center' }}>{money(revenue)} of $2k goal</Text>
+            </View>
+
+            <View style={{ flex: 1, backgroundColor: ORANGE, borderRadius: 22, padding: 16, justifyContent: 'space-between' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Flame size={15} color="#fff" fill="#fff" />
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#fff' }}>you&apos;re on fire!</Text>
+              </View>
+              <View>
+                <Text style={{ fontFamily: Font.display, fontSize: 30, color: '#fff', letterSpacing: -0.5 }}>{Math.min(list.length, 30)}</Text>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: 'rgba(255,255,255,0.9)' }}>orders this week</Text>
+              </View>
+              <View style={{ flexDirection: 'row', gap: 5, marginTop: 6 }}>
+                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                  <View key={i} style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: i < 5 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.28)', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: i < 5 ? ORANGE : '#fff' }}>{d}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
         </ScrollView>
 
         {/* Prepper bottom nav (dark) */}
         <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: '#15181f', paddingTop: 12, paddingBottom: 24, borderTopLeftRadius: 24, borderTopRightRadius: 24 }}>
-          {[{ Icon: ChefHat, label: 'kitchen', active: true }, { Icon: ShoppingBag, label: 'orders', badge: '2', route: '/prepper-orders' }].map((t) => (
-            <PressableScale key={t.label} onPress={() => 'route' in t && t.route && router.push(t.route as never)} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
-              <t.Icon size={22} color={t.active ? ORANGE : '#6b7280'} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 10, color: t.active ? ORANGE : '#6b7280' }}>{t.label}</Text>
+          {([
+            { Icon: Home, label: 'home', route: '/' },
+            { Icon: ShoppingBag, label: 'orders', badge: newCount || undefined, route: '/prepper-orders' },
+          ] as const).map((t) => (
+            <PressableScale key={t.label} onPress={() => router.push(t.route as never)} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
+              <View>
+                <t.Icon size={22} color="#6b7280" />
+                {'badge' in t && t.badge ? (
+                  <View style={{ position: 'absolute', top: -5, right: -8, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>{t.badge}</Text>
+                  </View>
+                ) : null}
+              </View>
+              <Text style={{ fontFamily: Font.medium, fontSize: 10, color: '#6b7280' }}>{t.label}</Text>
             </PressableScale>
           ))}
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal">
@@ -198,12 +316,14 @@ export default function DashboardScreen() {
               <Plus size={26} color="#fff" />
             </View>
           </PressableScale>
-          {[{ Icon: MessageSquare, label: 'messages', badge: '3', route: '/messages' }, { Icon: Menu, label: 'menu' }].map((t) => (
-            <PressableScale key={t.label} onPress={() => 'route' in t && t.route && router.push(t.route as never)} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 3 }}>
-              <t.Icon size={22} color="#6b7280" />
-              <Text style={{ fontFamily: Font.medium, fontSize: 10, color: '#6b7280' }}>{t.label}</Text>
-            </PressableScale>
-          ))}
+          <PressableScale accessibilityRole="button" accessibilityLabel="kitchen" style={{ alignItems: 'center', gap: 3 }}>
+            <ChefHat size={22} color={ORANGE} />
+            <Text style={{ fontFamily: Font.medium, fontSize: 10, color: ORANGE }}>kitchen</Text>
+          </PressableScale>
+          <PressableScale onPress={() => router.push('/messages')} accessibilityRole="button" accessibilityLabel="messages" style={{ alignItems: 'center', gap: 3 }}>
+            <MessageSquare size={22} color="#6b7280" />
+            <Text style={{ fontFamily: Font.medium, fontSize: 10, color: '#6b7280' }}>messages</Text>
+          </PressableScale>
         </View>
       </SafeAreaView>
     </View>
