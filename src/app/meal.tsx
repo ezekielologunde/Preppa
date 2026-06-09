@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, Check, ChevronLeft, Clock, Heart, MessageCircle, Star } from 'lucide-react-native';
+import { BadgeCheck, Check, ChevronLeft, Clock, Heart, MessageCircle, ShoppingBag, Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +9,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
+import { useAddToCart, useCart } from '@/lib/queries/cart';
 import { useMeal } from '@/lib/queries/meals';
 import { useStartConversation } from '@/lib/queries/messages';
 import { useAuth } from '@/providers/auth-provider';
@@ -33,6 +34,8 @@ export default function MealScreen() {
   const { data: meal, isLoading, isError } = useMeal(id);
   const [added, setAdded] = useState(false);
   const startConv = useStartConversation();
+  const addToCart = useAddToCart();
+  const { data: cart } = useCart(user?.id);
 
   function messagePrepper() {
     if (!user) return router.push('/auth?mode=signin');
@@ -42,14 +45,21 @@ export default function MealScreen() {
     });
   }
 
-  function addToCart() {
+  function handleAddToCart() {
     if (!user) {
       router.push('/auth?mode=signup');
       return;
     }
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
-    // (cart write wired to create_order RPC flow next)
+    if (!meal) return;
+    addToCart.mutate(
+      { userId: user.id, mealId: meal.id, price: meal.price },
+      {
+        onSuccess: () => {
+          setAdded(true);
+          setTimeout(() => setAdded(false), 1800);
+        },
+      },
+    );
   }
 
   return (
@@ -66,9 +76,19 @@ export default function MealScreen() {
             <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft size={22} color={INK} />
             </PressableScale>
-            <PressableScale accessibilityRole="button" accessibilityLabel="Save" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
-              <Heart size={20} color="#6b7280" />
-            </PressableScale>
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              {cart && cart.count > 0 ? (
+                <PressableScale onPress={() => router.push('/cart')} accessibilityRole="button" accessibilityLabel={`Cart, ${cart.count} items`} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
+                  <ShoppingBag size={19} color={INK} />
+                  <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{cart.count}</Text>
+                  </View>
+                </PressableScale>
+              ) : null}
+              <PressableScale accessibilityRole="button" accessibilityLabel="Save" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
+                <Heart size={20} color="#6b7280" />
+              </PressableScale>
+            </View>
           </SafeAreaView>
         </View>
 
@@ -151,13 +171,14 @@ export default function MealScreen() {
               <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, fontVariant: ['tabular-nums'] }}>${meal.price.toFixed(2)}</Text>
             </View>
             <PressableScale
-              onPress={addToCart}
+              onPress={handleAddToCart}
+              disabled={addToCart.isPending}
               accessibilityRole="button"
               accessibilityLabel={user ? 'Add to cart' : 'Sign in to order'}
-              style={{ flex: 1, height: 54, borderRadius: 16, backgroundColor: added ? Palette.success : ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+              style={{ flex: 1, height: 54, borderRadius: 16, backgroundColor: added ? Palette.success : ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, opacity: addToCart.isPending ? 0.7 : 1 }}>
               {added ? <Check size={18} color="#fff" strokeWidth={3} /> : null}
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
-                {added ? 'Added' : user ? 'Add to cart' : 'Sign in to order'}
+                {added ? 'Added to cart' : user ? 'Add to cart' : 'Sign in to order'}
               </Text>
             </PressableScale>
           </View>
