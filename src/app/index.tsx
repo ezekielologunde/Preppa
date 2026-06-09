@@ -46,9 +46,11 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 14 }}>
       <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5 }}>{title}</Text>
-      <Pressable onPress={onSeeAll}>
-        <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>see all</Text>
-      </Pressable>
+      {onSeeAll ? (
+        <PressableScale onPress={onSeeAll} accessibilityRole="button" accessibilityLabel={`See all ${title}`}>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>see all</Text>
+        </PressableScale>
+      ) : null}
     </View>
   );
 }
@@ -111,13 +113,17 @@ export default function HomeScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>
             {categories.map((c) => {
               const Icon = ICONS[c.icon] ?? MoreHorizontal;
+              const onPress = () =>
+                c.key === 'more'
+                  ? router.push('/explore')
+                  : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
               return (
-                <Pressable key={c.key} style={{ alignItems: 'center', gap: 8, width: 58 }}>
+                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 58 }}>
                   <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={24} color={c.color} />
                   </View>
                   <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#374151' }}>{c.label}</Text>
-                </Pressable>
+                </PressableScale>
               );
             })}
           </ScrollView>
@@ -138,7 +144,7 @@ export default function HomeScreen() {
           </Pressable>
 
           {/* Recommended */}
-          <SectionHeader title="recommended for you" />
+          <SectionHeader title="recommended for you" onSeeAll={() => router.push('/category?key=all&label=recommended')} />
           {mealsLoading ? (
             <View style={{ paddingBottom: 26 }}>
               <CardRowSkeleton count={3} />

@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Search, X } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -16,8 +16,10 @@ const CARD_W = (Dimensions.get('window').width - 52) / 2;
 
 export default function SearchScreen() {
   const router = useRouter();
-  const [text, setText] = useState('');
-  const [debounced, setDebounced] = useState('');
+  const { q } = useLocalSearchParams<{ q?: string }>();
+  const initial = (q || '').toString();
+  const [text, setText] = useState(initial);
+  const [debounced, setDebounced] = useState(initial);
   const { data: results, isLoading, isFetching } = useMealSearch(debounced);
 
   useEffect(() => {

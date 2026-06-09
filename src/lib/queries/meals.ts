@@ -60,6 +60,25 @@ export function useFeaturedMeals(limit = 10) {
   });
 }
 
+/** Live published meals filtered by category key (e.g. "dinner"); "all"/undefined = no filter. */
+export function useMealsByCategory(categoryKey?: string, limit = 40) {
+  const key = categoryKey && categoryKey !== 'all' ? categoryKey : undefined;
+  return useQuery({
+    queryKey: ['meals', 'category', key ?? 'all', limit],
+    queryFn: async (): Promise<Meal[]> => {
+      // Inner-join meal_categories so we can filter on its key; falls back to all when no key.
+      const select = key
+        ? SELECT + ',category:meal_categories!inner(key)'
+        : SELECT;
+      let q = supabase.from('meals').select(select).eq('status', 'published');
+      if (key) q = q.eq('category.key', key);
+      const { data, error } = await q.limit(limit);
+      if (error) throw error;
+      return ((data ?? []) as unknown as MealRow[]).map(mapMeal);
+    },
+  });
+}
+
 /** Search published meals by title (RLS: public read). */
 export function useMealSearch(query: string) {
   const q = query.trim();

@@ -39,11 +39,15 @@ const ICONS: Record<string, LucideIcon> = {
   LayoutGrid, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Leaf, Sprout, MoreHorizontal,
 };
 
-function SectionHeader({ title }: { title: string }) {
+function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 14 }}>
       <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5 }}>{title}</Text>
-      <Pressable><Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>see all</Text></Pressable>
+      {onSeeAll ? (
+        <PressableScale onPress={onSeeAll} accessibilityRole="button" accessibilityLabel={`See all ${title}`}>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>see all</Text>
+        </PressableScale>
+      ) : null}
     </View>
   );
 }
@@ -88,13 +92,17 @@ export default function ExploreScreen() {
             {exploreCategories.map((c, i) => {
               const Icon = ICONS[c.icon] ?? MoreHorizontal;
               const active = i === 0;
+              const onPress = () =>
+                c.key === 'more'
+                  ? router.push('/category?key=all&label=all meals')
+                  : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
               return (
-                <Pressable key={c.key} style={{ alignItems: 'center', gap: 8, width: 60 }}>
+                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 60 }}>
                   <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: active ? '#FDEDE4' : '#fff', alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
                     <Icon size={24} color={c.color} />
                   </View>
                   <Text style={{ fontFamily: active ? Font.semibold : Font.medium, fontSize: 12, color: active ? ORANGE : '#374151' }}>{c.label}</Text>
-                </Pressable>
+                </PressableScale>
               );
             })}
           </ScrollView>
@@ -102,7 +110,9 @@ export default function ExploreScreen() {
           {/* Cuisines */}
           <SectionHeader title="cuisines" />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 26 }}>
-            {cuisines.map((c) => <CuisineCard key={c.id} cuisine={c} />)}
+            {cuisines.map((c) => (
+              <CuisineCard key={c.id} cuisine={c} onPress={() => router.push(`/search?q=${encodeURIComponent(c.name)}`)} />
+            ))}
           </ScrollView>
 
           {/* Top preppers (live) */}
@@ -116,7 +126,7 @@ export default function ExploreScreen() {
           )}
 
           {/* Popular (live) */}
-          <SectionHeader title="popular right now 🔥" />
+          <SectionHeader title="popular right now 🔥" onSeeAll={() => router.push('/category?key=all&label=popular')} />
           {mealsLoading ? (
             <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} /></View>
           ) : (
