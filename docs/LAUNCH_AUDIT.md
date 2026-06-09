@@ -16,11 +16,11 @@ _Senior eng/design/QA org review. Live: app.preppa.live (SPA) + preppa.live (lan
 
 | # | Issue | Phase | Status |
 | --- | --- | --- | --- |
-| H1 | No loading/empty/error states — carousels render blank while fetching | 9 | 🟡 fixing |
-| H2 | No press feedback on cards/buttons; no entrance motion | 8 | 🟡 fixing |
-| H3 | Search bars are fake (static Text, not inputs); no search | 3 | 🔴 |
-| H4 | Category/cuisine taps + "see all" are dead (no nav/filter) | 3 | 🔴 |
-| H5 | Meal detail screen missing — can't view/add a meal | 3 | 🔴 |
+| H1 | No loading/empty/error states — carousels render blank while fetching | 9 | ✅ done (skeletons) |
+| H2 | No press feedback on cards/buttons | 8 | ✅ done (PressableScale) |
+| H3 | Search bars are fake (static Text, not inputs); no search | 3 | ✅ done (/search live) |
+| H4 | Category/cuisine taps + "see all" are dead (no nav/filter) | 3 | 🔴 next |
+| H5 | Meal detail screen missing — can't view/add a meal | 3 | ✅ done (/meal) |
 | H6 | Profile data 100% static demo (rewards/orders/plans not from DB) | 3 | 🔴 |
 | H7 | Dashboard 100% static demo (no real prepper orders/revenue) | 4 | 🔴 |
 | H8 | Meal Plans system not built (schema partial) | 5 | 🔴 |
