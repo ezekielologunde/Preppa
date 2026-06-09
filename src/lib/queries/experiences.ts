@@ -63,6 +63,57 @@ export function useCreateExperienceRequest() {
   });
 }
 
+export type OpenRequest = {
+  id: string;
+  kind: ExperienceKind;
+  title: string;
+  details: string | null;
+  guests: number | null;
+  budget: number | null;
+  location: string | null;
+  created_at: string;
+  myBid: { id: string; amount: number; status: string } | null;
+  bidCount: number;
+};
+
+/** Open experience requests an approved prepper can bid on (RLS-scoped). */
+export function useOpenRequests(prepperId?: string | null) {
+  return useQuery({
+    queryKey: ['experiences', 'open', prepperId ?? 'none'],
+    enabled: !!prepperId,
+    queryFn: async (): Promise<OpenRequest[]> => {
+      const { data, error } = await supabase
+        .from('experience_requests')
+        .select('id,kind,title,details,guests,budget,location,created_at,bids:experience_bids(id,amount,status,prepper_id)')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      type Row = Omit<OpenRequest, 'myBid' | 'bidCount'> & { bids: { id: string; amount: number; status: string; prepper_id: string }[] };
+      return ((data ?? []) as unknown as Row[]).map((r) => {
+        const mine = r.bids.find((b) => b.prepper_id === prepperId);
+        return { ...r, myBid: mine ? { id: mine.id, amount: mine.amount, status: mine.status } : null, bidCount: r.bids.length };
+      });
+    },
+  });
+}
+
+/** Submit a bid on an open request. */
+export function useSubmitBid() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: { requestId: string; prepperId: string; amount: number; message: string }) => {
+      const { error } = await supabase.from('experience_bids').insert({
+        request_id: v.requestId,
+        prepper_id: v.prepperId,
+        amount: v.amount,
+        message: v.message || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['experiences', 'open'] }),
+  });
+}
+
 /** Accept a bid (books the request). */
 export function useAcceptBid() {
   const qc = useQueryClient();

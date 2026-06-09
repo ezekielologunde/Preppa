@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import {
   BadgeCheck,
+  Briefcase,
   CalendarDays,
   ChefHat,
   ChevronLeft,
@@ -42,9 +43,10 @@ function Stat({ Icon, value, label, sub, color }: { Icon: LucideIcon; value: str
   );
 }
 
-const actions: { label: string; Icon: LucideIcon; color: string; bg: string; badge?: string; live?: boolean }[] = [
+const actions: { label: string; Icon: LucideIcon; color: string; bg: string; badge?: string; live?: boolean; route?: string }[] = [
   { label: 'new orders', Icon: ShoppingBag, color: ORANGE, bg: '#2a1810', badge: '2' },
   { label: 'manage meals', Icon: UtensilsCrossed, color: '#34d399', bg: '#0e2018' },
+  { label: 'opportunities', Icon: Briefcase, color: '#60a5fa', bg: '#0e1b2e', route: '/opportunities' },
   { label: 'my schedule', Icon: CalendarDays, color: '#a78bfa', bg: '#1a1626' },
   { label: 'payouts', Icon: Wallet, color: '#fbbf24', bg: '#241e0e' },
   { label: 'go live', Icon: Radio, color: '#f472b6', bg: '#2a1020', live: true },
@@ -101,7 +103,7 @@ export default function DashboardScreen() {
           {/* Quick actions */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingVertical: 20 }}>
             {actions.map((a) => (
-              <PressableScale key={a.label} accessibilityRole="button" accessibilityLabel={a.label} style={{ alignItems: 'center', gap: 8, width: 66 }}>
+              <PressableScale key={a.label} onPress={() => a.route && router.push(a.route as never)} accessibilityRole="button" accessibilityLabel={a.label} style={{ alignItems: 'center', gap: 8, width: 66 }}>
                 <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: a.bg, alignItems: 'center', justifyContent: 'center' }}>
                   <a.Icon size={24} color={a.color} />
                   {a.badge ? (
