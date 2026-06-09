@@ -24,6 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MealCard } from '@/components/meal-card';
 import { Font } from '@/constants/fonts';
 import { categories, orderAgain, recommendedMeals } from '@/constants/mock';
+import { useFeaturedMeals } from '@/lib/queries/meals';
 
 const ORANGE = '#f15f22';
 const INK = '#111827';
@@ -50,6 +51,10 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
 }
 
 export default function HomeScreen() {
+  // Live meals from Supabase (RLS-scoped); fall back to mock while loading/empty.
+  const { data: liveMeals } = useFeaturedMeals();
+  const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
+
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
@@ -127,7 +132,7 @@ export default function HomeScreen() {
           {/* Recommended */}
           <SectionHeader title="recommended for you" />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-            {recommendedMeals.map((m) => (
+            {meals.map((m) => (
               <MealCard key={m.id} meal={m} />
             ))}
           </ScrollView>
