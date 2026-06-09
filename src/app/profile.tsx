@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import {
   Bell,
   Bookmark,
@@ -60,6 +61,7 @@ function Badge({ Icon, label, color }: { Icon: LucideIcon; label: string; color:
 }
 
 export default function ProfileScreen() {
+  const router = useRouter();
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
@@ -129,7 +131,10 @@ export default function ProfileScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>your hub</Text>
           <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: 20, overflow: 'hidden' }}>
             {hub.map((h, i) => (
-              <Pressable key={h.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
+              <Pressable
+                key={h.label}
+                onPress={() => h.accent && router.push('/dashboard')}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
                 <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: h.accent ? '#FDEDE4' : '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
                   <h.Icon size={18} color={h.accent ? ORANGE : '#6b7280'} />
                 </View>
