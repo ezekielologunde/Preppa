@@ -4,8 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Font } from '@/constants/fonts';
-
-const ORANGE = '#f15f22';
+import { Palette, Shadow, TouchTarget } from '@/constants/theme';
 
 const TABS = [
   { name: 'index', label: 'home', Icon: House },
@@ -33,27 +32,26 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
         right: 0,
         bottom: 0,
         flexDirection: 'row',
-        backgroundColor: '#fff',
+        backgroundColor: Palette.surface,
         paddingTop: 10,
         paddingBottom: Math.max(insets.bottom, 12),
         borderTopLeftRadius: 26,
         borderTopRightRadius: 26,
-        shadowColor: '#000',
-        shadowOpacity: 0.08,
-        shadowRadius: 16,
-        shadowOffset: { width: 0, height: -4 },
-        elevation: 12,
+        ...Shadow.navBar,
       }}>
       {TABS.map((tab) => {
         const index = state.routes.findIndex((r) => r.name === tab.name);
         const focused = index >= 0 && state.index === index;
-        const color = focused ? ORANGE : '#9ca3af';
+        // Inactive uses textSecondary (AA), not the decorative muted grey.
+        const color = focused ? Palette.brand : Palette.textSecondary;
         return (
           <Pressable
             key={tab.name}
             onPress={() => navigation.navigate(tab.name)}
             accessibilityRole="button"
-            style={{ flex: 1, alignItems: 'center', gap: 4 }}>
+            accessibilityState={{ selected: focused }}
+            accessibilityLabel={tab.label}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 4, minHeight: TouchTarget }}>
             <tab.Icon size={23} color={color} strokeWidth={focused ? 2.4 : 2} />
             <Text style={{ fontFamily: Font.medium, fontSize: 11, color }}>{tab.label}</Text>
           </Pressable>

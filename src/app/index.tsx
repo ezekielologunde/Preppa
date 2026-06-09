@@ -1,5 +1,4 @@
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
   Bell,
@@ -27,11 +26,12 @@ import { Font } from '@/constants/fonts';
 import { categories, orderAgain, recommendedMeals } from '@/constants/mock';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
+import { Palette, Radius } from '@/constants/theme';
 import { useFeaturedMeals } from '@/lib/queries/meals';
 
-const ORANGE = '#f15f22';
-const INK = '#111827';
-const MUTED = '#9ca3af';
+const ORANGE = Palette.brand;
+const INK = Palette.ink;
+const MUTED = Palette.textMuted;
 
 const ICONS: Record<string, LucideIcon> = {
   Coffee,
@@ -77,7 +77,7 @@ export default function HomeScreen() {
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.medium, fontSize: 14, color: '#6b7280' }}>good morning, alex 👋</Text>
+              <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>good morning, alex</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6, lineHeight: 28 }}>
                 what are you{'\n'}
                 <Text style={{ color: ORANGE }}>craving today?</Text>
@@ -128,19 +128,19 @@ export default function HomeScreen() {
             })}
           </ScrollView>
 
-          {/* Chef surprise me */}
+          {/* Chef surprise me — flat brand-tint accent (the one accent surface on Home) */}
           <Pressable style={{ marginHorizontal: 20, marginBottom: 26 }}>
-            <LinearGradient colors={['#FFE2C8', '#FFD0AE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 24, padding: 20, flexDirection: 'row', alignItems: 'center', overflow: 'hidden' }}>
+            <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.lg, padding: 20, flexDirection: 'row', alignItems: 'center', overflow: 'hidden' }}>
               <View style={{ flex: 1, gap: 6 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5 }}>chef surprise me</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#7c5a42', lineHeight: 18 }}>tell us your mood, we&apos;ll pick the perfect meal</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: INK, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 10, marginTop: 8, gap: 6 }}>
+                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 18 }}>tell us your mood, we&apos;ll pick the perfect meal</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: INK, borderRadius: Radius.pill, paddingHorizontal: 16, paddingVertical: 10, marginTop: 8, gap: 6 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>surprise me</Text>
-                  <Sparkles size={14} color="#FFD27D" fill="#FFD27D" />
+                  <Sparkles size={14} color={ORANGE} />
                 </View>
               </View>
               <Image source="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=60" style={{ width: 110, height: 110, borderRadius: 55 }} contentFit="cover" />
-            </LinearGradient>
+            </View>
           </Pressable>
 
           {/* Recommended */}

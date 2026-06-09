@@ -63,3 +63,75 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+/**
+ * PREPPA design tokens — the single source of truth for color, radius, type and shadow.
+ * Restrained by mandate: ONE brand orange + ONE semantic accent (success). Food imagery is the
+ * visual hero, so surfaces stay neutral. No per-screen `const ORANGE/INK/MUTED` literals — import
+ * from `Palette` instead so a rebrand is a one-file edit.
+ */
+export const Palette = {
+  // Brand — used sparingly: CTAs, active nav, key accents. Never a full-screen fill.
+  brand: '#F15F22',
+  brandTint: '#FDEDE4', // flat orange wash (replaces peach gradients); icon-chip backgrounds
+  brandPressed: '#D9430F', // pressed CTA + AA-safe orange for text/links on white
+
+  // Neutral ink ramp
+  ink: '#111827', // primary text, headings, dark buttons
+  textSecondary: '#6B7280', // real secondary copy — AA on white
+  textMuted: '#9CA3AF', // DECORATIVE/disabled only — never load-bearing text
+
+  // Customer (light) surfaces
+  surface: '#FFFFFF',
+  canvas: '#F7F7F8',
+  border: '#E5E7EB',
+
+  // The ONLY non-brand semantic accent
+  success: '#16A34A', // verified, healthy, positive deltas, confirmed status
+
+  // Prepper (dark) app — intentionally an operations tool
+  prepperBg: '#0C0E13',
+  prepperCard: '#13161D',
+} as const;
+
+export type PaletteToken = keyof typeof Palette;
+
+export const Radius = { sm: 14, md: 20, lg: 24, pill: 999 } as const;
+
+/** Font sizes for the type scale (families live in constants/fonts.ts). */
+export const Type = {
+  displayXl: 32,
+  displayLg: 24,
+  display: 22,
+  title: 18,
+  body: 15,
+  label: 13,
+  micro: 11,
+} as const;
+
+export const Shadow = {
+  card: {
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
+  },
+  floating: {
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
+  },
+  navBar: {
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: -4 },
+    elevation: 12,
+  },
+} as const;
+
+/** Standard min touch target (Apple HIG 44pt / Material 48dp). */
+export const TouchTarget = 44;

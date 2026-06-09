@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
   CakeSlice,
@@ -28,12 +27,13 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { cuisines, exploreCategories } from '@/constants/mock';
+import { Palette, Radius } from '@/constants/theme';
 import { useFeaturedMeals } from '@/lib/queries/meals';
 import { useTopPreppers } from '@/lib/queries/preppers';
 
-const ORANGE = '#f15f22';
-const INK = '#111827';
-const MUTED = '#9ca3af';
+const ORANGE = Palette.brand;
+const INK = Palette.ink;
+const MUTED = Palette.textMuted;
 
 const ICONS: Record<string, LucideIcon> = {
   LayoutGrid, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Leaf, Sprout, MoreHorizontal,
@@ -65,8 +65,8 @@ export default function ExploreScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 32, color: INK, letterSpacing: -1 }}>explore</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#6b7280', marginTop: 2 }}>
-                amazing meals from <Text style={{ fontFamily: Font.semibold, color: ORANGE }}>local preppers</Text> 👨‍🍳
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 2 }}>
+                amazing meals from <Text style={{ fontFamily: Font.semibold, color: ORANGE }}>local preppers</Text>
               </Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9 }}>
@@ -126,7 +126,7 @@ export default function ExploreScreen() {
           )}
 
           {/* Popular (live) */}
-          <SectionHeader title="popular right now 🔥" onSeeAll={() => router.push('/category?key=all&label=popular')} />
+          <SectionHeader title="popular right now" onSeeAll={() => router.push('/category?key=all&label=popular')} />
           {mealsLoading ? (
             <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} /></View>
           ) : (
@@ -135,21 +135,21 @@ export default function ExploreScreen() {
             </ScrollView>
           )}
 
-          {/* Can't decide */}
+          {/* Can't decide — flat brand-tint accent */}
           <Pressable style={{ marginHorizontal: 20 }}>
-            <LinearGradient colors={['#FFE2C8', '#FFD0AE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 24, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.lg, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                 <Compass size={24} color="#fff" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>can&apos;t decide?</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#7c5a42', marginTop: 2 }}>let our chef assistant find the perfect meal 🍜</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 2 }}>let our chef assistant find the perfect meal</Text>
               </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: INK, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9, gap: 5 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: INK, borderRadius: Radius.pill, paddingHorizontal: 14, paddingVertical: 9, gap: 5 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>surprise me</Text>
-                <Sparkles size={13} color="#FFD27D" fill="#FFD27D" />
+                <Sparkles size={13} color={ORANGE} />
               </View>
-            </LinearGradient>
+            </View>
           </Pressable>
         </ScrollView>
       </SafeAreaView>

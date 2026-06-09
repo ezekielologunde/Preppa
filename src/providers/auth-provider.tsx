@@ -1,12 +1,19 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Session, User } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { supabase } from '@/lib/supabase';
 
+/** Which app the user is currently in. Customer and Prepper are two distinct navigators. */
+export type ActiveRole = 'customer' | 'prepper';
+const ROLE_KEY = 'preppa.activeRole.v1';
+
 type AuthState = {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  activeRole: ActiveRole;
+  setActiveRole: (role: ActiveRole) => void;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (
     email: string,
@@ -21,6 +28,7 @@ const AuthContext = createContext<AuthState | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeRole, setActiveRoleState] = useState<ActiveRole>('customer');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -28,14 +36,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => setSession(next));
+    AsyncStorage.getItem(ROLE_KEY)
+      .then((v) => v === 'prepper' && setActiveRoleState('prepper'))
+      .catch(() => {});
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  function setActiveRole(role: ActiveRole) {
+    setActiveRoleState(role);
+    AsyncStorage.setItem(ROLE_KEY, role).catch(() => {});
+  }
 
   const value = useMemo<AuthState>(
     () => ({
       session,
       user: session?.user ?? null,
       loading,
+      activeRole,
+      setActiveRole,
       async signIn(email, password) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         return { error: error?.message ?? null };
@@ -54,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await supabase.auth.signOut();
       },
     }),
-    [session, loading],
+    [session, loading, activeRole],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
