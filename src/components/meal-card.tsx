@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { Heart, Star } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
@@ -19,8 +20,13 @@ export type Meal = {
 
 /** Recommended-style meal card (image, badge, title, prepper, rating, time/price). */
 export function MealCard({ meal, width = 200 }: { meal: Meal; width?: number }) {
+  const router = useRouter();
   return (
-    <PressableScale style={{ width }} accessibilityRole="button" accessibilityLabel={`${meal.title} by ${meal.prepper}, $${meal.price.toFixed(2)}`}>
+    <PressableScale
+      onPress={() => router.push(`/meal?id=${meal.id}`)}
+      style={{ width }}
+      accessibilityRole="button"
+      accessibilityLabel={`${meal.title} by ${meal.prepper}, $${meal.price.toFixed(2)}`}>
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
         <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
           <Image source={meal.image} style={{ flex: 1 }} contentFit="cover" transition={250} />

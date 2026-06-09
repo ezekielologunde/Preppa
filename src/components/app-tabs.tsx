@@ -24,7 +24,7 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   // Full-screen modes (prepper dashboard, auth) hide the customer tab bar.
   const active = state.routes[state.index]?.name;
-  if (active === 'dashboard' || active === 'auth') return null;
+  if (active === 'dashboard' || active === 'auth' || active === 'meal') return null;
   return (
     <View
       style={{
@@ -75,6 +75,7 @@ export default function AppTabs() {
       <Tabs.Screen name="profile" />
       <Tabs.Screen name="dashboard" options={{ href: null }} />
       <Tabs.Screen name="auth" options={{ href: null }} />
+      <Tabs.Screen name="meal" options={{ href: null }} />
     </Tabs>
   );
 }

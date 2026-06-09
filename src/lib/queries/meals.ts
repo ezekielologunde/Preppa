@@ -59,3 +59,62 @@ export function useFeaturedMeals(limit = 10) {
     },
   });
 }
+
+export type MealDetail = {
+  id: string;
+  title: string;
+  description: string | null;
+  price: number;
+  time: string;
+  prepperId: string;
+  prepper: string;
+  prepperVerified: boolean;
+  prepperBio: string | null;
+  rating: number;
+  reviews: number;
+  images: string[];
+  nutrition: { calories: number | null; protein: number | null; carbs: number | null; fat: number | null } | null;
+};
+
+const DETAIL_SELECT =
+  'id,title,description,base_price,prep_time_min,' +
+  'prepper:prepper_profiles(id,display_name,verified,bio,rating:prepper_rating_summary(average_rating,total_reviews)),' +
+  'images:meal_images(url,order_index),' +
+  'nutrition:nutrition_profiles(calories,protein,carbs,fat)';
+
+/** Full detail for one meal (RLS: published meals are public). */
+export function useMeal(id?: string) {
+  return useQuery({
+    queryKey: ['meal', id],
+    enabled: !!id,
+    queryFn: async (): Promise<MealDetail> => {
+      const { data, error } = await supabase.from('meals').select(DETAIL_SELECT).eq('id', id!).single();
+      if (error) throw error;
+      const row = data as unknown as Record<string, unknown>;
+      const prepper = one(row.prepper as never) as
+        | { id: string; display_name: string; verified: boolean; bio: string | null; rating: unknown }
+        | undefined;
+      const rating = one(prepper?.rating as never) as { average_rating: number; total_reviews: number } | undefined;
+      const prep = row.prep_time_min as number | null;
+      const images = ((row.images as { url: string; order_index: number }[]) ?? [])
+        .sort((a, b) => a.order_index - b.order_index)
+        .map((i) => i.url);
+      const nutrition = one(row.nutrition as never) as MealDetail['nutrition'] | undefined;
+      return {
+        id: row.id as string,
+        title: row.title as string,
+        description: (row.description as string | null) ?? null,
+        price: row.base_price as number,
+        time: prep ? `${Math.max(prep - 5, 5)}–${prep + 5} min` : '20–30 min',
+        prepperId: prepper?.id ?? '',
+        prepper: prepper?.display_name ?? 'preppa',
+        prepperVerified: prepper?.verified ?? false,
+        prepperBio: prepper?.bio ?? null,
+        rating: rating?.average_rating ?? 0,
+        reviews: rating?.total_reviews ?? 0,
+        images,
+        nutrition: nutrition ?? null,
+      };
+    },
+  });
+}
