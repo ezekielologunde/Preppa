@@ -14,6 +14,16 @@ insert into storage.buckets (id, name, public) values
   ('chat-attachments', 'chat-attachments', false)
 on conflict (id) do nothing;
 
+-- Idempotent: drop existing policies first so re-runs don't collide.
+drop policy if exists "public read images/videos" on storage.objects;
+drop policy if exists "owner upload images/videos" on storage.objects;
+drop policy if exists "owner update images/videos" on storage.objects;
+drop policy if exists "owner delete images/videos" on storage.objects;
+drop policy if exists "cert read own/admin" on storage.objects;
+drop policy if exists "cert write own" on storage.objects;
+drop policy if exists "chat read own" on storage.objects;
+drop policy if exists "chat write own" on storage.objects;
+
 -- Public read for image/video buckets
 create policy "public read images/videos" on storage.objects for select
   using (bucket_id in ('profile-images','meal-images','meal-videos'));

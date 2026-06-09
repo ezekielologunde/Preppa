@@ -10,6 +10,21 @@
 
 create extension if not exists pgcrypto;
 
+-- Allow functions to reference tables defined later in this file.
+set check_function_bodies = off;
+
+-- Re-runnable: drop our objects first so a partial/previous run can't collide.
+-- (The landing `waitlist` table is intentionally NOT listed — it stays untouched.)
+drop table if exists
+  notifications, messages, conversation_participants, conversations,
+  prepper_rating_summary, reviews, delivery_tracking, subscriptions, refunds,
+  payments, order_items, orders, coupons, cart_items, carts, meal_videos,
+  meal_images, meal_allergens, meal_ingredients, nutrition_profiles, meal_variants,
+  meals, ingredients, allergens, meal_categories, follows, pickup_locations,
+  delivery_zones, availability_schedules, certifications, kitchens, prepper_profiles,
+  notification_preferences, addresses, user_roles, roles, profiles
+  cascade;
+
 -- ----------------------------------------------------------------------------
 -- Enums
 -- ----------------------------------------------------------------------------
