@@ -23,6 +23,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CuisineCard } from '@/components/cuisine-card';
 import { MealCard } from '@/components/meal-card';
 import { PrepperCard } from '@/components/prepper-card';
+import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { cuisines, exploreCategories } from '@/constants/mock';
 import { useFeaturedMeals } from '@/lib/queries/meals';
@@ -46,8 +47,8 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 export default function ExploreScreen() {
-  const { data: preppers } = useTopPreppers();
-  const { data: meals } = useFeaturedMeals();
+  const { data: preppers, isLoading: preppersLoading } = useTopPreppers();
+  const { data: meals, isLoading: mealsLoading } = useFeaturedMeals();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
@@ -99,15 +100,23 @@ export default function ExploreScreen() {
 
           {/* Top preppers (live) */}
           <SectionHeader title="top preppers near you" />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-            {(preppers ?? []).map((p) => <PrepperCard key={p.id} prepper={p} />)}
-          </ScrollView>
+          {preppersLoading ? (
+            <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} width={210} /></View>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              {(preppers ?? []).map((p) => <PrepperCard key={p.id} prepper={p} />)}
+            </ScrollView>
+          )}
 
           {/* Popular (live) */}
           <SectionHeader title="popular right now 🔥" />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-            {(meals ?? []).map((m) => <MealCard key={m.id} meal={m} />)}
-          </ScrollView>
+          {mealsLoading ? (
+            <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} /></View>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              {(meals ?? []).map((m) => <MealCard key={m.id} meal={m} />)}
+            </ScrollView>
+          )}
 
           {/* Can't decide */}
           <Pressable style={{ marginHorizontal: 20 }}>

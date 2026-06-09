@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
 import { Heart, Star } from 'lucide-react-native';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 
 export type Meal = {
@@ -19,7 +20,7 @@ export type Meal = {
 /** Recommended-style meal card (image, badge, title, prepper, rating, time/price). */
 export function MealCard({ meal, width = 200 }: { meal: Meal; width?: number }) {
   return (
-    <Pressable style={{ width }}>
+    <PressableScale style={{ width }} accessibilityRole="button" accessibilityLabel={`${meal.title} by ${meal.prepper}, $${meal.price.toFixed(2)}`}>
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
         <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
           <Image source={meal.image} style={{ flex: 1 }} contentFit="cover" transition={250} />
@@ -39,10 +40,10 @@ export function MealCard({ meal, width = 200 }: { meal: Meal; width?: number }) 
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 6 }}>
             <Star size={13} color="#f59e0b" fill="#f59e0b" />
             <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#374151' }}>{meal.rating.toFixed(1)}</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }}>· {meal.time} · ${meal.price.toFixed(2)}</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af', fontVariant: ['tabular-nums'] }}>· {meal.time} · ${meal.price.toFixed(2)}</Text>
           </View>
         </View>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }

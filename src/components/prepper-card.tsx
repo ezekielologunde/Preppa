@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
 import { BadgeCheck, Heart, Star } from 'lucide-react-native';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import type { TopPrepper } from '@/lib/queries/preppers';
 
@@ -10,7 +11,7 @@ const ORANGE = '#f15f22';
 /** "Top preppers near you" card — chef hero, rating, tags, starting price. */
 export function PrepperCard({ prepper }: { prepper: TopPrepper }) {
   return (
-    <Pressable style={{ width: 210 }}>
+    <PressableScale style={{ width: 210 }} accessibilityRole="button" accessibilityLabel={`${prepper.name}, ${prepper.rating.toFixed(1)} stars`}>
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
         <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
           {prepper.image ? <Image source={prepper.image} style={{ flex: 1 }} contentFit="cover" transition={250} /> : null}
@@ -33,11 +34,11 @@ export function PrepperCard({ prepper }: { prepper: TopPrepper }) {
           ) : null}
           {prepper.from != null ? (
             <View style={{ alignSelf: 'flex-start', backgroundColor: '#FDEDE4', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 2 }}>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>from ${prepper.from.toFixed(0)}</Text>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE, fontVariant: ['tabular-nums'] }}>from ${prepper.from.toFixed(0)}</Text>
             </View>
           ) : null}
         </View>
       </View>
-    </Pressable>
+    </PressableScale>
   );
 }

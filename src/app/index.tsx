@@ -24,6 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MealCard } from '@/components/meal-card';
 import { Font } from '@/constants/fonts';
 import { categories, orderAgain, recommendedMeals } from '@/constants/mock';
+import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { useFeaturedMeals } from '@/lib/queries/meals';
 
 const ORANGE = '#f15f22';
@@ -51,8 +52,8 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
 }
 
 export default function HomeScreen() {
-  // Live meals from Supabase (RLS-scoped); fall back to mock while loading/empty.
-  const { data: liveMeals } = useFeaturedMeals();
+  // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
+  const { data: liveMeals, isLoading: mealsLoading } = useFeaturedMeals();
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
 
   return (
@@ -77,7 +78,7 @@ export default function HomeScreen() {
                 <Text style={{ color: ORANGE }}>craving today?</Text>
               </Text>
             </View>
-            <Pressable style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Notifications, 3 unread" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={20} color={INK} />
               <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>3</Text>
@@ -131,11 +132,17 @@ export default function HomeScreen() {
 
           {/* Recommended */}
           <SectionHeader title="recommended for you" />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-            {meals.map((m) => (
-              <MealCard key={m.id} meal={m} />
-            ))}
-          </ScrollView>
+          {mealsLoading ? (
+            <View style={{ paddingBottom: 26 }}>
+              <CardRowSkeleton count={3} />
+            </View>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              {meals.map((m) => (
+                <MealCard key={m.id} meal={m} />
+              ))}
+            </ScrollView>
+          )}
 
           {/* Points banner */}
           <View style={{ marginHorizontal: 20, marginBottom: 28, backgroundColor: '#E7F6EC', borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
