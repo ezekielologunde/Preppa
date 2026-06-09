@@ -1,8 +1,8 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Check, ChevronLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react-native';
-import { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { Bike, Check, ChevronLeft, MapPin, Minus, Plus, ShoppingBag, Store, Trash2 } from 'lucide-react-native';
+import { useState, type ComponentType } from 'react';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -10,10 +10,20 @@ import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { useCart, usePlaceOrder, useUpdateCartItem } from '@/lib/queries/cart';
 import { useAuth } from '@/providers/auth-provider';
+import type { FulfillmentType } from '@/types/database.types';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
+const DELIVERY_FEE = 3.99;
 const money = (n: number) => `$${n.toFixed(2)}`;
+
+type IconType = ComponentType<{ size?: number; color?: string }>;
+const METHODS: { key: FulfillmentType; label: string; Icon: IconType; fee: string }[] = [
+  { key: 'delivery', label: 'Delivery', Icon: Bike, fee: money(DELIVERY_FEE) },
+  { key: 'pickup', label: 'Pickup', Icon: Store, fee: 'Free' },
+  { key: 'meetup', label: 'Meet up', Icon: MapPin, fee: 'Free' },
+];
+const TIPS = [0, 1, 2, 5];
 
 export default function CartScreen() {
   const router = useRouter();
@@ -23,6 +33,11 @@ export default function CartScreen() {
   const placeOrder = usePlaceOrder();
   const [placed, setPlaced] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [method, setMethod] = useState<FulfillmentType>('delivery');
+  const [note, setNote] = useState('');
+  const [tip, setTip] = useState(0);
+
+  const prepper = cart?.items[0]?.prepper ?? 'the prepper';
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -31,15 +46,24 @@ export default function CartScreen() {
 
   function checkout() {
     if (!user) return router.push('/auth?mode=signin');
+    if (method === 'delivery' && note.trim().length < 5) return setErr('Add a delivery address.');
+    if (method === 'meetup' && note.trim().length < 3) return setErr('Where should you meet?');
     setErr(null);
     placeOrder.mutate(
-      { userId: user.id },
+      { userId: user.id, fulfillment: method, note: note.trim() || null, tip },
       { onSuccess: () => setPlaced(true), onError: (e) => setErr(e instanceof Error ? e.message : 'Could not place order.') },
     );
   }
 
   const subtotal = cart?.subtotal ?? 0;
-  const total = subtotal; // create_order charges subtotal (+ tip); fees/tax layer on at confirmation
+  const deliveryFee = method === 'delivery' ? DELIVERY_FEE : 0;
+  const total = subtotal + deliveryFee + tip;
+
+  const noteConfig: Record<FulfillmentType, { label: string; placeholder: string } | null> = {
+    delivery: { label: 'Delivery address', placeholder: 'Street, apt, city' },
+    meetup: { label: 'Where & when to meet', placeholder: 'e.g. Park gate, today 6pm' },
+    pickup: { label: 'Pickup note (optional)', placeholder: 'Any pickup details?' },
+  };
 
   // Order-placed confirmation
   if (placed) {
@@ -119,16 +143,87 @@ export default function CartScreen() {
                   </View>
                 </View>
               ))}
+
+              {/* Fulfillment method */}
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginTop: 8 }}>How do you want it?</Text>
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                {METHODS.map((m) => {
+                  const on = method === m.key;
+                  return (
+                    <PressableScale
+                      key={m.key}
+                      onPress={() => { setMethod(m.key); setErr(null); }}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: on }}
+                      accessibilityLabel={`${m.label}, ${m.fee}`}
+                      style={{ flex: 1, backgroundColor: on ? Palette.brandTint : '#fff', borderWidth: 1.5, borderColor: on ? ORANGE : Palette.border, borderRadius: Radius.md, paddingVertical: 14, alignItems: 'center', gap: 6 }}>
+                      <m.Icon size={22} color={on ? Palette.brandPressed : Palette.textSecondary} />
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? Palette.brandPressed : INK }}>{m.label}</Text>
+                      <Text style={{ fontFamily: Font.body, fontSize: 11, color: on ? Palette.brandPressed : Palette.textMuted }}>{m.fee}</Text>
+                    </PressableScale>
+                  );
+                })}
+              </View>
+
+              {/* Contextual detail */}
+              {method === 'pickup' ? (
+                <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Store size={16} color={ORANGE} />
+                  <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Pick up from {prepper}. They’ll share the spot when they confirm.</Text>
+                </View>
+              ) : null}
+              {noteConfig[method] ? (
+                <View style={{ gap: 6 }}>
+                  <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{noteConfig[method]!.label}</Text>
+                  <TextInput
+                    value={note}
+                    onChangeText={(t) => { setNote(t); setErr(null); }}
+                    placeholder={noteConfig[method]!.placeholder}
+                    placeholderTextColor={Palette.textMuted}
+                    style={{ minHeight: 48, backgroundColor: '#fff', borderRadius: Radius.md, borderWidth: 1, borderColor: Palette.border, paddingHorizontal: 14, paddingVertical: 12, fontFamily: Font.body, fontSize: 15, color: INK }}
+                  />
+                </View>
+              ) : null}
+
+              {/* Tip */}
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginTop: 4 }}>Add a tip</Text>
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                {TIPS.map((t) => {
+                  const on = tip === t;
+                  return (
+                    <PressableScale
+                      key={t}
+                      onPress={() => setTip(t)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: on }}
+                      accessibilityLabel={t === 0 ? 'No tip' : `Tip ${money(t)}`}
+                      style={{ flex: 1, height: 44, borderRadius: Radius.pill, borderWidth: 1.5, borderColor: on ? ORANGE : Palette.border, backgroundColor: on ? Palette.brandTint : '#fff', alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: on ? Palette.brandPressed : INK }}>{t === 0 ? 'None' : money(t)}</Text>
+                    </PressableScale>
+                  );
+                })}
+              </View>
+
               {err ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#ef4444', textAlign: 'center' }}>{err}</Text> : null}
             </ScrollView>
 
             {/* Summary + checkout */}
             <SafeAreaView edges={['bottom']} style={{ backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f3f4f6', paddingHorizontal: 20, paddingTop: 14 }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
                 <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Subtotal</Text>
                 <Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, fontVariant: ['tabular-nums'] }}>{money(subtotal)}</Text>
               </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>{method === 'delivery' ? 'Delivery fee' : 'Pickup / meet up'}</Text>
+                <Text style={{ fontFamily: Font.medium, fontSize: 13, color: deliveryFee ? INK : Palette.success, fontVariant: ['tabular-nums'] }}>{deliveryFee ? money(deliveryFee) : 'Free'}</Text>
+              </View>
+              {tip > 0 ? (
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Tip</Text>
+                  <Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, fontVariant: ['tabular-nums'] }}>{money(tip)}</Text>
+                </View>
+              ) : null}
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Total</Text>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, fontVariant: ['tabular-nums'] }}>{money(total)}</Text>
               </View>

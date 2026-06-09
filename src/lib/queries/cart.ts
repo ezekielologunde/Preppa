@@ -118,8 +118,17 @@ export function useUpdateCartItem(userId?: string | null) {
 export function usePlaceOrder() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (v: { userId: string; tip?: number }): Promise<string> => {
-      const { data, error } = await supabase.rpc('create_order', { p_tip: v.tip ?? 0 });
+    mutationFn: async (v: {
+      userId: string;
+      fulfillment: import('@/types/database.types').FulfillmentType;
+      note?: string | null;
+      tip?: number;
+    }): Promise<string> => {
+      const { data, error } = await supabase.rpc('create_order', {
+        p_fulfillment: v.fulfillment,
+        p_note: v.note ?? null,
+        p_tip: v.tip ?? 0,
+      });
       if (error) throw error;
       return data as string;
     },

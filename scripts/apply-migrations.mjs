@@ -16,8 +16,9 @@ if (!DB_URL) {
   process.exit(1);
 }
 
-// Only the migrations that 0001–0003 don't already cover.
-const TARGET = /^000[4-8]_/;
+// Only the migrations that 0001–0003 don't already cover (override with ONLY=0009,0010).
+const ONLY = (process.env.ONLY || '').split(',').map((s) => s.trim()).filter(Boolean);
+const TARGET = /^000[4-9]_/;
 
 // Parse into fields so a password with URL-special chars (e.g. '%') is handled literally.
 function parseDbUrl(url) {
@@ -32,7 +33,7 @@ const ca = readFileSync(caPath, 'utf8');
 const client = new pg.Client({ ...parseDbUrl(DB_URL), ssl: { ca, rejectUnauthorized: true } });
 
 const files = readdirSync(migrationsDir)
-  .filter((f) => f.endsWith('.sql') && TARGET.test(f))
+  .filter((f) => f.endsWith('.sql') && (ONLY.length ? ONLY.some((p) => f.startsWith(p)) : TARGET.test(f)))
   .sort();
 
 const run = async () => {

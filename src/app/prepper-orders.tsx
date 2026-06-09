@@ -72,6 +72,12 @@ function OrderCard({
         ))}
       </View>
 
+      {/* Fulfillment */}
+      <View style={{ backgroundColor: '#1d2129', borderRadius: 12, padding: 10, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: ORANGE, textTransform: 'capitalize' }}>{order.fulfillment === 'meetup' ? 'Meet up' : order.fulfillment}</Text>
+        {order.fulfillmentNote ? <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: '#d1d5db' }} numberOfLines={2}>· {order.fulfillmentNote}</Text> : null}
+      </View>
+
       {step ? (
         <View style={{ flexDirection: 'row', gap: 10 }}>
           {canCancel ? (

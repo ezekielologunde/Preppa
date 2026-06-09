@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { supabase } from '@/lib/supabase';
-import type { OrderStatus } from '@/types/database.types';
+import type { FulfillmentType, OrderStatus } from '@/types/database.types';
 
 export type OrderLine = {
   id: string;
@@ -24,6 +24,9 @@ export type OrderSummary = {
   paymentStatus: string | null;
   firstMealId: string | null;
   reviewed: boolean;
+  fulfillment: FulfillmentType;
+  fulfillmentNote: string | null;
+  deliveryFee: number;
   items: OrderLine[];
 };
 
@@ -36,6 +39,9 @@ type Row = {
   subtotal: number;
   tip: number;
   total: number;
+  delivery_fee: number;
+  fulfillment_type: FulfillmentType;
+  fulfillment_note: string | null;
   created_at: string;
   prepper: { display_name: string } | { display_name: string }[] | null;
   customer: { display_name: string } | { display_name: string }[] | null;
@@ -53,7 +59,7 @@ type Row = {
 };
 
 const SELECT =
-  'id,prepper_id,status,subtotal,tip,total,created_at,' +
+  'id,prepper_id,status,subtotal,tip,total,delivery_fee,fulfillment_type,fulfillment_note,created_at,' +
   'prepper:prepper_profiles(display_name),' +
   'customer:profiles(display_name),' +
   'payment:payments(status),' +
@@ -77,6 +83,9 @@ function toSummary(r: Row): OrderSummary {
     paymentStatus: payment?.status ?? null,
     firstMealId: r.items?.[0]?.meal_id ?? null,
     reviewed: !!(r.review && r.review.length),
+    fulfillment: r.fulfillment_type,
+    fulfillmentNote: r.fulfillment_note,
+    deliveryFee: r.delivery_fee,
     items: (r.items ?? []).map((it) => {
       const meal = one(it.meal);
       return { id: it.id, title: meal?.title ?? 'meal', image: meal?.images?.[0]?.url ?? null, quantity: it.quantity, total: it.total };

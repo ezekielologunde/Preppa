@@ -8,7 +8,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type OrderStatus =
   | 'pending' | 'confirmed' | 'preparing' | 'ready' | 'out_for_delivery' | 'completed' | 'cancelled';
 export type MealStatus = 'draft' | 'published' | 'paused' | 'archived';
-export type FulfillmentType = 'delivery' | 'pickup';
+export type FulfillmentType = 'delivery' | 'pickup' | 'meetup';
 export type PrepperStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 export type UserStatus = 'active' | 'suspended' | 'deleted';
 export type PlanFrequency = 'weekly' | 'biweekly' | 'monthly';
@@ -123,7 +123,7 @@ export interface Database {
         Relationships: [];
       };
       orders: {
-        Row: { id: string; customer_id: string; prepper_id: string; status: OrderStatus; fulfillment_type: FulfillmentType; address_id: string | null; subtotal: number; tax: number; delivery_fee: number; service_fee: number; tip: number; total: number } & Timestamps & { updated_at: string };
+        Row: { id: string; customer_id: string; prepper_id: string; status: OrderStatus; fulfillment_type: FulfillmentType; address_id: string | null; fulfillment_note: string | null; subtotal: number; tax: number; delivery_fee: number; service_fee: number; tip: number; total: number } & Timestamps & { updated_at: string };
         Insert: never; // created only via create_order() RPC
         Update: never; // mutated only via advance_order()/cancel_order() RPCs
         Relationships: [];
@@ -203,7 +203,7 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
-      create_order: { Args: { p_address_id?: string | null; p_tip?: number }; Returns: string };
+      create_order: { Args: { p_fulfillment?: FulfillmentType; p_address_id?: string | null; p_note?: string | null; p_tip?: number }; Returns: string };
       advance_order: { Args: { p_order_id: string; p_next: OrderStatus }; Returns: undefined };
       cancel_order: { Args: { p_order_id: string }; Returns: undefined };
       admin_set_prepper_status: { Args: { p_prepper: string; p_status: PrepperStatus; p_note?: string | null }; Returns: undefined };
