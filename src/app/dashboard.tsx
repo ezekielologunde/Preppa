@@ -27,6 +27,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
+import { usePrepperOrders } from '@/lib/queries/orders';
+import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const CARD = Palette.prepperCard;
@@ -64,8 +67,21 @@ function PipelineDot({ label, active, done }: { label: string; active?: boolean;
   );
 }
 
+const compact = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${Math.round(n)}`);
+
 export default function DashboardScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  const { data: prepper } = useMyPrepperApplication(user?.id);
+  const { data: orders } = usePrepperOrders(prepper?.id);
+
+  // Real "today at a glance" — derived from the prepper's live order list.
+  const list = orders ?? [];
+  const newCount = list.filter((o) => o.status === 'pending').length;
+  const revenue = list.filter((o) => o.status === 'completed').reduce((s, o) => s + o.total, 0);
+  const customers = new Set(list.map((o) => o.customer)).size;
+  const firstName = prepper?.display_name?.split(' ')[0]?.toLowerCase() ?? 'chef';
+
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
@@ -79,7 +95,7 @@ export default function DashboardScreen() {
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#9ca3af' }}>good morning,</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>chef lex</Text>
+                <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>{firstName}</Text>
                 <BadgeCheck size={18} color={ORANGE} fill={ORANGE} stroke={BG} />
               </View>
             </View>
@@ -93,22 +109,24 @@ export default function DashboardScreen() {
               <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>today at a glance</Text>
             </View>
             <View style={{ flexDirection: 'row', gap: 12 }}>
-              <Stat Icon={ShoppingBag} value="14" label="orders" sub="2 new" color={ORANGE} />
-              <Stat Icon={DollarSign} value="$642" label="revenue" sub="+18%" color="#34d399" />
-              <Stat Icon={Users} value="28" label="customers" sub="3 returning" color="#a78bfa" />
-              <Stat Icon={Star} value="4.9" label="rating" sub="127 reviews" color="#fbbf24" />
+              <Stat Icon={ShoppingBag} value={String(list.length)} label="orders" sub={`${newCount} new`} color={ORANGE} />
+              <Stat Icon={DollarSign} value={compact(revenue)} label="revenue" sub="all-time" color="#34d399" />
+              <Stat Icon={Users} value={String(customers)} label="customers" sub="unique" color="#a78bfa" />
+              <Stat Icon={Star} value={prepper?.verified ? 'verified' : 'new'} label="kitchen" sub={prepper?.status ?? '—'} color="#fbbf24" />
             </View>
           </View>
 
           {/* Quick actions */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingVertical: 20 }}>
-            {actions.map((a) => (
+            {actions.map((a) => {
+              const badge = a.label === 'new orders' ? (newCount > 0 ? String(newCount) : undefined) : a.badge;
+              return (
               <PressableScale key={a.label} onPress={() => a.route && router.push(a.route as never)} accessibilityRole="button" accessibilityLabel={a.label} style={{ alignItems: 'center', gap: 8, width: 66 }}>
                 <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: a.bg, alignItems: 'center', justifyContent: 'center' }}>
                   <a.Icon size={24} color={a.color} />
-                  {a.badge ? (
+                  {badge ? (
                     <View style={{ position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{a.badge}</Text>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{badge}</Text>
                     </View>
                   ) : null}
                   {a.live ? (
@@ -119,7 +137,8 @@ export default function DashboardScreen() {
                 </View>
                 <Text style={{ fontFamily: Font.medium, fontSize: 11, color: '#d1d5db', textAlign: 'center' }}>{a.label}</Text>
               </PressableScale>
-            ))}
+              );
+            })}
           </ScrollView>
 
           {/* Gamification — solid brand accent (the one accent surface on the dark kitchen) */}

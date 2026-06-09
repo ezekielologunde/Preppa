@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { useAddToCart, useCart } from '@/lib/queries/cart';
+import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useMeal } from '@/lib/queries/meals';
 import { useStartConversation } from '@/lib/queries/messages';
 import { useAuth } from '@/providers/auth-provider';
@@ -36,6 +37,7 @@ export default function MealScreen() {
   const startConv = useStartConversation();
   const addToCart = useAddToCart();
   const { data: cart } = useCart(user?.id);
+  const orderingOn = useFeatureEnabled('ordering');
 
   function messagePrepper() {
     if (!user) return router.push('/auth?mode=signin');
@@ -172,13 +174,13 @@ export default function MealScreen() {
             </View>
             <PressableScale
               onPress={handleAddToCart}
-              disabled={addToCart.isPending}
+              disabled={addToCart.isPending || !orderingOn}
               accessibilityRole="button"
-              accessibilityLabel={user ? 'Add to cart' : 'Sign in to order'}
-              style={{ flex: 1, height: 54, borderRadius: 16, backgroundColor: added ? Palette.success : ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, opacity: addToCart.isPending ? 0.7 : 1 }}>
-              {added ? <Check size={18} color="#fff" strokeWidth={3} /> : null}
+              accessibilityLabel={!orderingOn ? 'Ordering paused' : user ? 'Add to cart' : 'Sign in to order'}
+              style={{ flex: 1, height: 54, borderRadius: 16, backgroundColor: !orderingOn ? Palette.textMuted : added ? Palette.success : ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, opacity: addToCart.isPending ? 0.7 : 1 }}>
+              {added && orderingOn ? <Check size={18} color="#fff" strokeWidth={3} /> : null}
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
-                {added ? 'Added to cart' : user ? 'Add to cart' : 'Sign in to order'}
+                {!orderingOn ? 'Ordering paused' : added ? 'Added to cart' : user ? 'Add to cart' : 'Sign in to order'}
               </Text>
             </PressableScale>
           </View>
