@@ -60,6 +60,25 @@ export function useFeaturedMeals(limit = 10) {
   });
 }
 
+/** Search published meals by title (RLS: public read). */
+export function useMealSearch(query: string) {
+  const q = query.trim();
+  return useQuery({
+    queryKey: ['meals', 'search', q],
+    enabled: q.length >= 2,
+    queryFn: async (): Promise<Meal[]> => {
+      const { data, error } = await supabase
+        .from('meals')
+        .select(SELECT)
+        .eq('status', 'published')
+        .ilike('title', `%${q}%`)
+        .limit(20);
+      if (error) throw error;
+      return ((data ?? []) as unknown as MealRow[]).map(mapMeal);
+    },
+  });
+}
+
 export type MealDetail = {
   id: string;
   title: string;

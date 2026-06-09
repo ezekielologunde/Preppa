@@ -1,4 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import {
   CakeSlice,
   ChevronDown,
@@ -23,6 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CuisineCard } from '@/components/cuisine-card';
 import { MealCard } from '@/components/meal-card';
 import { PrepperCard } from '@/components/prepper-card';
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { cuisines, exploreCategories } from '@/constants/mock';
@@ -47,6 +49,7 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 export default function ExploreScreen() {
+  const router = useRouter();
   const { data: preppers, isLoading: preppersLoading } = useTopPreppers();
   const { data: meals, isLoading: mealsLoading } = useFeaturedMeals();
 
@@ -70,11 +73,15 @@ export default function ExploreScreen() {
           </View>
 
           {/* Search */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
+          <PressableScale
+            onPress={() => router.push('/search')}
+            accessibilityRole="search"
+            accessibilityLabel="Search meals, cuisines, or preppers"
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
             <Scan size={20} color={ORANGE} />
-          </View>
+          </PressableScale>
 
           {/* Categories */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 20 }}>

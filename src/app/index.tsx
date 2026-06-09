@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import {
   Bell,
   ChevronDown,
@@ -24,6 +25,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MealCard } from '@/components/meal-card';
 import { Font } from '@/constants/fonts';
 import { categories, orderAgain, recommendedMeals } from '@/constants/mock';
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { useFeaturedMeals } from '@/lib/queries/meals';
 
@@ -52,6 +54,7 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
 }
 
 export default function HomeScreen() {
+  const router = useRouter();
   // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
   const { data: liveMeals, isLoading: mealsLoading } = useFeaturedMeals();
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
@@ -94,11 +97,15 @@ export default function HomeScreen() {
           </View>
 
           {/* Search */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
+          <PressableScale
+            onPress={() => router.push('/search')}
+            accessibilityRole="search"
+            accessibilityLabel="Search meals, cuisines, or preppers"
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>Search meals, cuisines, or preppers…</Text>
             <SlidersHorizontal size={20} color={ORANGE} />
-          </View>
+          </PressableScale>
 
           {/* Categories */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>
