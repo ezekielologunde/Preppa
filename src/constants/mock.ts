@@ -63,6 +63,25 @@ export type Prepper = {
   image: string;
   badge: { label: string; color: string; icon: string };
 };
+// --- Meal Plans (primary product): subscription meal plans ---
+export type MealPlanCard = {
+  id: string;
+  name: string;
+  prepper: string;
+  frequency: string;
+  price: number;
+  mealsPerCycle: number;
+  serves: number;
+  image: string;
+  tags: string[];
+};
+export const featuredMealPlans: MealPlanCard[] = [
+  { id: 'mp1', name: 'Healthy Week', prepper: 'green plates', frequency: 'weekly', price: 79, mealsPerCycle: 5, serves: 1, image: img('photo-1512621776951-a57141f2eefd'), tags: ['high-protein', 'balanced'] },
+  { id: 'mp2', name: 'Family Dinners', prepper: 'spice haus', frequency: 'weekly', price: 149, mealsPerCycle: 5, serves: 4, image: img('photo-1547592180-85f173990554'), tags: ['family', 'comfort'] },
+  { id: 'mp3', name: 'Vegan Reset', prepper: 'kelsi\'s kitchen', frequency: 'weekly', price: 69, mealsPerCycle: 5, serves: 1, image: img('photo-1512852939750-1305098529bf'), tags: ['vegan', 'plant-based'] },
+  { id: 'mp4', name: 'Monthly Gourmet', prepper: 'island bites', frequency: 'monthly', price: 240, mealsPerCycle: 20, serves: 1, image: img('photo-1467003909585-2f8a72700288'), tags: ['premium', 'chef-curated'] },
+];
+
 // --- Experiences (primary product): curated bookable food experiences ---
 export type ExperienceType = { key: string; label: string; icon: string; blurb: string };
 export const experienceTypes: ExperienceType[] = [

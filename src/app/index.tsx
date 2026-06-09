@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import {
   Bell,
+  CalendarCheck,
   ChevronDown,
   ChevronRight,
   Coffee,
@@ -15,6 +16,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   Sprout,
+  Ticket,
   UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react-native';
@@ -28,6 +30,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Palette, Radius } from '@/constants/theme';
 import { useFeaturedMeals } from '@/lib/queries/meals';
+import { useFeatureFlags } from '@/lib/queries/feature-flags';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -60,6 +63,9 @@ export default function HomeScreen() {
   // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
   const { data: liveMeals, isLoading: mealsLoading } = useFeaturedMeals();
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
+  const { data: flags } = useFeatureFlags();
+  const showPlans = flags?.meal_plans !== false;
+  const showExperiences = flags?.experiences !== false;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
@@ -127,6 +133,32 @@ export default function HomeScreen() {
               );
             })}
           </ScrollView>
+
+          {/* Primary products — Meal Plans + Experiences, surfaced (not hidden) */}
+          {showPlans || showExperiences ? (
+            <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12, marginBottom: 26 }}>
+              {showPlans ? (
+                <PressableScale onPress={() => router.push('/meal-plans')} accessibilityRole="button" accessibilityLabel="Meal plans"
+                  style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+                  <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                    <CalendarCheck size={20} color={ORANGE} />
+                  </View>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>meal plans</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>weekly & family, on repeat</Text>
+                </PressableScale>
+              ) : null}
+              {showExperiences ? (
+                <PressableScale onPress={() => router.push('/experiences')} accessibilityRole="button" accessibilityLabel="Experiences"
+                  style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+                  <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                    <Ticket size={20} color={ORANGE} />
+                  </View>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>experiences</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>catering, chefs & classes</Text>
+                </PressableScale>
+              ) : null}
+            </View>
+          ) : null}
 
           {/* Chef surprise me — flat brand-tint accent (the one accent surface on Home) */}
           <Pressable style={{ marginHorizontal: 20, marginBottom: 26 }}>

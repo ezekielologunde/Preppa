@@ -11,6 +11,8 @@ export type MealStatus = 'draft' | 'published' | 'paused' | 'archived';
 export type FulfillmentType = 'delivery' | 'pickup';
 export type PrepperStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 export type UserStatus = 'active' | 'suspended' | 'deleted';
+export type PlanFrequency = 'weekly' | 'biweekly' | 'monthly';
+export type SubscriptionStatus = 'active' | 'paused' | 'cancelled';
 export type ExperienceKind = 'catering' | 'private_chef' | 'class' | 'tasting' | 'other';
 export type ExperienceStatus = 'open' | 'booked' | 'completed' | 'cancelled';
 export type BidStatus = 'pending' | 'accepted' | 'declined' | 'withdrawn';
@@ -168,6 +170,18 @@ export interface Database {
         Update: Partial<{ amount: number; message: string | null; status: BidStatus }>;
         Relationships: [];
       };
+      meal_plans: {
+        Row: { id: string; prepper_id: string; name: string; description: string | null; frequency: PlanFrequency; price: number; meals_per_cycle: number; serves: number; image_url: string | null; tags: string[] | null; active: boolean } & Timestamps & { updated_at: string };
+        Insert: { prepper_id: string; name: string; price: number; description?: string | null; frequency?: PlanFrequency; meals_per_cycle?: number; serves?: number; image_url?: string | null; tags?: string[] | null };
+        Update: Partial<{ name: string; description: string | null; frequency: PlanFrequency; price: number; meals_per_cycle: number; serves: number; image_url: string | null; tags: string[] | null; active: boolean }>;
+        Relationships: [];
+      };
+      subscriptions: {
+        Row: { id: string; customer_id: string; prepper_id: string; plan_id: string | null; plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus } & Timestamps;
+        Insert: { customer_id: string; prepper_id: string; plan_name: string; frequency: string; plan_id?: string | null; next_billing_at?: string | null };
+        Update: Partial<{ plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus }>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -192,6 +206,8 @@ export interface Database {
       experience_kind: ExperienceKind;
       experience_status: ExperienceStatus;
       bid_status: BidStatus;
+      plan_frequency: PlanFrequency;
+      subscription_status: SubscriptionStatus;
     };
     CompositeTypes: Record<string, never>;
   };

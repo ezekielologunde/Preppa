@@ -1,0 +1,157 @@
+import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
+import { CalendarCheck, Check, ChefHat, ChevronLeft, RefreshCw, Users } from 'lucide-react-native';
+import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { PressableScale } from '@/components/ui/pressable-scale';
+import { Font } from '@/constants/fonts';
+import { featuredMealPlans, type MealPlanCard } from '@/constants/mock';
+import { Palette, Radius, Shadow } from '@/constants/theme';
+import { useMealPlans, useMySubscriptions, useSubscribeToPlan, type MealPlan } from '@/lib/queries/meal-plans';
+import { useAuth } from '@/providers/auth-provider';
+
+const ORANGE = Palette.brand;
+const INK = Palette.ink;
+const money = (n: number) => `$${n.toLocaleString('en-US')}`;
+
+function Meta({ Icon, text }: { Icon: typeof Users; text: string }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+      <Icon size={13} color={Palette.textMuted} />
+      <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>{text}</Text>
+    </View>
+  );
+}
+
+function LivePlanCard({ plan, onSubscribe, busy, subscribed }: { plan: MealPlan; onSubscribe: () => void; busy: boolean; subscribed: boolean }) {
+  return (
+    <View style={{ backgroundColor: '#fff', borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+      {plan.image_url ? <Image source={plan.image_url} style={{ width: '100%', height: 140 }} contentFit="cover" transition={200} /> : null}
+      <View style={{ padding: 16 }}>
+        <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>{plan.name}</Text>
+        <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 2 }}>by {plan.prepper}</Text>
+        <View style={{ flexDirection: 'row', gap: 14, marginTop: 10 }}>
+          <Meta Icon={RefreshCw} text={plan.frequency} />
+          <Meta Icon={CalendarCheck} text={`${plan.meals_per_cycle} meals`} />
+          <Meta Icon={Users} text={`serves ${plan.serves}`} />
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 }}>
+          <Text style={{ fontFamily: Font.body, fontSize: 13, color: INK }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 22, color: ORANGE }}>{money(plan.price)}</Text> /{plan.frequency}
+          </Text>
+          <PressableScale onPress={onSubscribe} disabled={busy || subscribed} accessibilityRole="button" accessibilityLabel={`Subscribe to ${plan.name}`}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 18, height: 44, borderRadius: Radius.sm, backgroundColor: subscribed ? Palette.success : ORANGE, opacity: busy ? 0.7 : 1 }}>
+            {subscribed ? <Check size={16} color="#fff" strokeWidth={3} /> : null}
+            <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>{subscribed ? 'Subscribed' : 'Subscribe'}</Text>
+          </PressableScale>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function FeaturedCard({ plan }: { plan: MealPlanCard }) {
+  return (
+    <View style={{ width: 230, backgroundColor: '#fff', borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+      <Image source={plan.image} style={{ width: '100%', height: 120 }} contentFit="cover" transition={200} />
+      <View style={{ padding: 14 }}>
+        <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{plan.name}</Text>
+        <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>by {plan.prepper}</Text>
+        <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+          <Meta Icon={CalendarCheck} text={`${plan.mealsPerCycle} meals`} />
+          <Meta Icon={Users} text={`serves ${plan.serves}`} />
+        </View>
+        <Text style={{ fontFamily: Font.body, fontSize: 13, color: INK, marginTop: 8 }}>
+          <Text style={{ fontFamily: Font.display, fontSize: 17, color: ORANGE }}>{money(plan.price)}</Text> /{plan.frequency}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+export default function MealPlansScreen() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { data: livePlans, isLoading } = useMealPlans();
+  const { data: subs } = useMySubscriptions(user?.id);
+  const subscribe = useSubscribeToPlan();
+
+  function goBack() {
+    if (router.canGoBack()) router.back();
+    else router.replace('/');
+  }
+
+  function onSubscribe(plan: MealPlan) {
+    if (!user) return router.push('/auth?mode=signup');
+    subscribe.mutate({ userId: user.id, planId: plan.id, prepperId: plan.prepper_id, planName: plan.name, frequency: plan.frequency });
+  }
+
+  const subscribedPlanNames = new Set((subs ?? []).map((s) => s.plan_name));
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 }}>
+          <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+            <ChevronLeft size={22} color={INK} />
+          </PressableScale>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>meal plans</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>weekly, monthly & family — delivered on repeat</Text>
+          </View>
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 12 : 6, paddingBottom: 130 }}>
+          {/* My subscriptions */}
+          {subs && subs.length > 0 ? (
+            <View style={{ marginBottom: 8 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginBottom: 12 }}>your plans</Text>
+              <View style={{ paddingHorizontal: 20, gap: 10 }}>
+                {subs.map((s) => (
+                  <View key={s.id} style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                      <RefreshCw size={18} color={ORANGE} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{s.plan_name}</Text>
+                      <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>{s.prepper?.display_name ?? ''} · {s.frequency}</Text>
+                    </View>
+                    <View style={{ backgroundColor: s.status === 'active' ? '#DCFCE7' : Palette.canvas, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: s.status === 'active' ? Palette.success : Palette.textMuted, textTransform: 'capitalize' }}>{s.status}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : null}
+
+          {/* Available (live) plans */}
+          <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 16, marginBottom: 12 }}>available plans</Text>
+          {isLoading ? (
+            <ActivityIndicator color={ORANGE} style={{ marginVertical: 16 }} />
+          ) : livePlans && livePlans.length > 0 ? (
+            <View style={{ paddingHorizontal: 20, gap: 14 }}>
+              {livePlans.map((p) => (
+                <LivePlanCard key={p.id} plan={p} busy={subscribe.isPending} subscribed={subscribedPlanNames.has(p.name)} onSubscribe={() => onSubscribe(p)} />
+              ))}
+            </View>
+          ) : (
+            <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: Radius.md, padding: 20, alignItems: 'center', gap: 8 }}>
+              <ChefHat size={26} color={Palette.textMuted} />
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, textAlign: 'center', lineHeight: 19 }}>
+                No live plans in your area yet. Browse the featured plans below — or follow your favourite preppers to hear when they launch one.
+              </Text>
+            </View>
+          )}
+
+          {/* Featured showcase (illustrative) */}
+          <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>featured plans</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
+            {featuredMealPlans.map((p) => <FeaturedCard key={p.id} plan={p} />)}
+          </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
+  );
+}
