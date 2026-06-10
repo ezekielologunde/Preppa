@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
@@ -25,7 +26,7 @@ import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MealCard } from '@/components/meal-card';
-import { Avatar } from '@/components/ui/avatar';
+import { PreppaLogo } from '@/components/preppa-logo';
 import { Font } from '@/constants/fonts';
 import { categories, recommendedMeals } from '@/constants/mock';
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -110,8 +111,13 @@ export default function HomeScreen() {
               onPress={() => router.push('/profile')}
               accessibilityRole="button"
               accessibilityLabel="Your profile"
-              style={{ width: 52, height: 52, borderRadius: 26, borderWidth: 2, borderColor: ORANGE, padding: 2 }}>
-              <Avatar name={firstName ?? user?.email ?? 'guest'} url={user?.user_metadata?.avatar_url as string | undefined} size={44} />
+              style={{ width: 52, height: 52, alignItems: 'center', justifyContent: 'center' }}>
+              <MotiView
+                from={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'timing', duration: 1500, loop: true, repeatReverse: true }}>
+                <PreppaLogo size={48} glow />
+              </MotiView>
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>{greeting()}{firstName ? `, ${firstName}` : ''} 👋</Text>
