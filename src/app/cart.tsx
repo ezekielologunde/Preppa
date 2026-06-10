@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { feedback } from '@/lib/feedback';
 import { Palette, Radius } from '@/constants/theme';
 import { useCart, usePlaceOrder, useRemoveItems, useStripeCheckout, useUpdateCartItem } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
@@ -78,15 +79,17 @@ export default function CartScreen() {
       }
     } catch (e) {
       // Order exists but payment didn't start — let them retry from Orders.
+      feedback.error();
       setErr((e instanceof Error ? e.message : 'Could not start payment.') + ' Your order is saved — pay it from Orders.');
     }
   }
 
   function checkout() {
+    if (busy) return; // guard against a double-tap creating two orders
     if (!user) return router.push('/auth?mode=signin');
-    if (mixed) return setErr('Pick one kitchen to order from above.');
-    if (method === 'delivery' && note.trim().length < 5) return setErr('Add a delivery address.');
-    if (method === 'meetup' && note.trim().length < 3) return setErr('Where should you meet?');
+    if (mixed) { feedback.warning(); return setErr('Pick one kitchen to order from above.'); }
+    if (method === 'delivery' && note.trim().length < 5) { feedback.warning(); return setErr('Add a delivery address.'); }
+    if (method === 'meetup' && note.trim().length < 3) { feedback.warning(); return setErr('Where should you meet?'); }
     setErr(null);
     placeOrder.mutate(
       { userId: user.id, fulfillment: method, note: note.trim() || null, tip },
@@ -95,7 +98,7 @@ export default function CartScreen() {
           if (paymentsOn) startPayment(orderId);
           else setPlaced(true);
         },
-        onError: (e) => setErr(e instanceof Error ? e.message : 'Could not place order.'),
+        onError: (e) => { feedback.error(); setErr(e instanceof Error ? e.message : 'Could not place order.'); },
       },
     );
   }
@@ -158,10 +161,25 @@ export default function CartScreen() {
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
               <ShoppingBag size={28} color={Palette.textMuted} />
             </View>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Your cart is empty</Text>
-            <PressableScale onPress={() => router.replace('/explore')} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
-            </PressableScale>
+            {canceled ? (
+              <>
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Payment canceled</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 300 }}>Your order is saved. You can finish paying for it any time in your orders.</Text>
+                <PressableScale onPress={() => router.replace('/orders')} accessibilityRole="button" accessibilityLabel="Go to orders" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Go to orders</Text>
+                </PressableScale>
+                <PressableScale onPress={() => router.replace('/explore')} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ paddingHorizontal: 22, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Browse meals</Text>
+                </PressableScale>
+              </>
+            ) : (
+              <>
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Your cart is empty</Text>
+                <PressableScale onPress={() => router.replace('/explore')} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
+                </PressableScale>
+              </>
+            )}
           </View>
         ) : (
           <>

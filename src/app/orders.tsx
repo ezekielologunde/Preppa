@@ -1,14 +1,17 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Check, ChevronLeft, Receipt, Star } from 'lucide-react-native';
+import * as WebBrowser from 'expo-web-browser';
+import { Check, ChevronLeft, Lock, Receipt, Star } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
-import { useRefundOrder } from '@/lib/queries/cart';
+import { useRefundOrder, useStripeCheckout } from '@/lib/queries/cart';
+import { useFeatureEnabled } from '@/lib/queries/feature-flags';
+import { feedback } from '@/lib/feedback';
 import { useCancelOrder, useMyOrders, useOrdersRealtime, type OrderSummary } from '@/lib/queries/orders';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -38,7 +41,7 @@ function dateLabel(iso: string): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-function OrderCard({ order, onCancel, onReview, cancelling }: { order: OrderSummary; onCancel: () => void; onReview: () => void; cancelling: boolean }) {
+function OrderCard({ order, onCancel, onReview, onPay, cancelling, needsPayment, paying }: { order: OrderSummary; onCancel: () => void; onReview: () => void; onPay: () => void; cancelling: boolean; needsPayment: boolean; paying: boolean }) {
   const st = statusStyle(order.status);
   return (
     <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, gap: 12 }}>
@@ -69,7 +72,31 @@ function OrderCard({ order, onCancel, onReview, cancelling }: { order: OrderSumm
         <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Total</Text>
         <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, fontVariant: ['tabular-nums'] }}>{money(order.total)}</Text>
       </View>
-      {order.status === 'pending' ? (
+      {needsPayment ? (
+        <View style={{ gap: 8 }}>
+          <PressableScale
+            onPress={onPay}
+            disabled={paying}
+            accessibilityRole="button"
+            accessibilityLabel={`Complete payment, ${money(order.total)}`}
+            style={{ height: 46, borderRadius: Radius.sm, backgroundColor: ORANGE, flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center', opacity: paying ? 0.7 : 1 }}>
+            {paying ? <ActivityIndicator color="#fff" /> : (
+              <>
+                <Lock size={15} color="#fff" />
+                <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: '#fff' }}>Complete payment · {money(order.total)}</Text>
+              </>
+            )}
+          </PressableScale>
+          <PressableScale
+            onPress={onCancel}
+            disabled={cancelling}
+            accessibilityRole="button"
+            accessibilityLabel="Cancel order"
+            style={{ height: 40, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center', opacity: cancelling ? 0.6 : 1 }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textSecondary }}>Cancel order</Text>
+          </PressableScale>
+        </View>
+      ) : order.status === 'pending' ? (
         <PressableScale
           onPress={onCancel}
           disabled={cancelling}
@@ -99,9 +126,32 @@ export default function OrdersScreen() {
   useOrdersRealtime('customer_id', user?.id);
   const cancelOrder = useCancelOrder();
   const refundOrder = useRefundOrder();
+  const checkoutStripe = useStripeCheckout();
+  const paymentsOn = useFeatureEnabled('payments');
   const { paid } = useLocalSearchParams<{ paid?: string }>();
   const [actionErr, setActionErr] = useState<string | null>(null);
   const [showPaid, setShowPaid] = useState(!!paid);
+  const [payingId, setPayingId] = useState<string | null>(null);
+
+  // Finish paying an order whose checkout was canceled/declined (the order is
+  // saved but unpaid). Reuses the same Stripe Checkout edge function.
+  async function payOrder(orderId: string) {
+    setActionErr(null);
+    setPayingId(orderId);
+    try {
+      const url = await checkoutStripe.mutateAsync(orderId);
+      if (Platform.OS === 'web') {
+        window.location.assign(url);
+      } else {
+        await WebBrowser.openBrowserAsync(url);
+        setPayingId(null);
+      }
+    } catch (e) {
+      feedback.error();
+      setPayingId(null);
+      setActionErr(e instanceof Error ? e.message : 'Could not start payment. Try again.');
+    }
+  }
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -157,8 +207,11 @@ export default function OrdersScreen() {
               <OrderCard
                 key={o.id}
                 order={o}
+                needsPayment={paymentsOn && o.status === 'pending' && o.paymentStatus !== 'succeeded' && o.paymentStatus !== 'refunded'}
+                paying={payingId === o.id}
+                onPay={() => payOrder(o.id)}
                 cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
-                onCancel={() => { setActionErr(null); cancelOrder.mutate(o.id, { onSuccess: () => refundOrder.mutate(o.id), onError: (e) => setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.') }); }}
+                onCancel={() => { setActionErr(null); cancelOrder.mutate(o.id, { onSuccess: () => refundOrder.mutate(o.id), onError: (e) => { feedback.error(); setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.'); } }); }}
                 onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
               />
             ))}
