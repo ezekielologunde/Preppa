@@ -34,6 +34,7 @@ import { useFeaturedMeals } from '@/lib/queries/meals';
 import { useFeatureFlags } from '@/lib/queries/feature-flags';
 import { useMyOrders } from '@/lib/queries/orders';
 import { useNotifications } from '@/lib/queries/notifications';
+import { useRewards } from '@/lib/queries/rewards';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
@@ -78,6 +79,7 @@ export default function HomeScreen() {
   const { data: myOrders } = useMyOrders(user?.id);
   const lastDone = myOrders?.find((o) => o.status === 'completed');
   const { data: notifications } = useNotifications(user?.id);
+  const rewards = useRewards(user?.id);
   // Bell badge = orders in motion + unread notifications (real, actionable).
   const activeOrders = (myOrders ?? []).filter(
     (o) => o.status !== 'completed' && o.status !== 'cancelled',
@@ -218,20 +220,24 @@ export default function HomeScreen() {
             </View>
           </Pressable>
 
-          {/* Points banner */}
-          <View style={{ marginHorizontal: 20, marginBottom: 28, backgroundColor: '#E7F6EC', borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          {/* Points banner — real points from completed orders */}
+          <PressableScale onPress={() => router.push('/rewards')} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 28, backgroundColor: '#E7F6EC', borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#22c55e', alignItems: 'center', justifyContent: 'center' }}>
               <Gift size={20} color="#fff" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#14532d' }}>you have 350 points</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#3f6212' }}>unlock rewards & save on your next order</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#14532d' }}>
+                {rewards.points > 0 ? `you have ${rewards.points.toLocaleString()} points` : 'start earning rewards'}
+              </Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#3f6212' }}>
+                {rewards.nextTier ? `${rewards.tier.name} · $${rewards.toNext.toFixed(0)} to ${rewards.nextTier.name}` : `${rewards.tier.name} member · top tier 🎉`}
+              </Text>
             </View>
             <View style={{ backgroundColor: INK, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>view rewards</Text>
               <ChevronRight size={13} color="#fff" />
             </View>
-          </View>
+          </PressableScale>
 
           {/* Order again — the user's real last delivered order */}
           {lastDone ? (
