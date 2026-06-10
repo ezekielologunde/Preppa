@@ -9,13 +9,15 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
   httpClient: Stripe.createFetchHttpClient(),
 });
 const whsec = Deno.env.get('STRIPE_WEBHOOK_SECRET')!;
+// Deno's edge runtime needs the Web Crypto provider for async signature checks.
+const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 Deno.serve(async (req) => {
   const sig = req.headers.get('stripe-signature');
   const body = await req.text();
   let event: Stripe.Event;
   try {
-    event = await stripe.webhooks.constructEventAsync(body, sig!, whsec);
+    event = await stripe.webhooks.constructEventAsync(body, sig!, whsec, undefined, cryptoProvider);
   } catch (e) {
     return new Response(`Bad signature: ${e instanceof Error ? e.message : 'error'}`, { status: 400 });
   }
