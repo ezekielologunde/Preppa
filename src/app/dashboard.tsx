@@ -266,10 +266,10 @@ export default function DashboardScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}>
             <QuickAction Icon={ShoppingBag} label="orders" color={ORANGE} badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
             <QuickAction Icon={UtensilsCrossed} label="menu" color={GREEN} onPress={() => router.push('/meal-editor')} />
-            <QuickAction Icon={Boxes} label="inventory" color={BLUE} />
+            <QuickAction Icon={Boxes} label="inventory" color={BLUE} onPress={() => router.push('/meal-editor')} />
             <QuickAction Icon={DollarSign} label="earnings" color={GREEN} onPress={() => router.push('/earnings')} />
             <QuickAction Icon={Users} label="customers" color={PURPLE} onPress={() => router.push('/customers')} />
-            <QuickAction Icon={TrendingUp} label="insights" color={BLUE} />
+            <QuickAction Icon={TrendingUp} label="insights" color={BLUE} onPress={() => router.push('/earnings')} />
           </ScrollView>
           </View>
 
@@ -311,14 +311,14 @@ export default function DashboardScreen() {
 
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
         <View style={[{ position: 'absolute', left: 16, right: 16, bottom: 78, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
-          <ActionItem Icon={UtensilsCrossed} label="add meal" color="#fff" />
-          <ActionItem Icon={Video} label="go live" color={PINK} />
-          <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal">
+          <ActionItem Icon={UtensilsCrossed} label="add meal" color="#fff" onPress={() => router.push('/meal-editor')} />
+          <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/feeds')} />
+          <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => router.push('/meal-editor')}>
             <View style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginTop: -26, backgroundColor: ORANGE, ...Shadow.floating, shadowColor: ORANGE, shadowOpacity: 0.45 }}>
               <Plus size={28} color="#fff" />
             </View>
           </PressableScale>
-          <ActionItem Icon={Gift} label="new drop" color="#fff" />
+          <ActionItem Icon={Gift} label="new drop" color="#fff" onPress={() => router.push('/meal-editor')} />
           <ActionItem Icon={Briefcase} label="opportunity" color={ORANGE} onPress={() => router.push('/opportunities')} />
         </View>
 
