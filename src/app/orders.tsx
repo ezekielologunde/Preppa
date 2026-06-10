@@ -1,13 +1,14 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Receipt, Star } from 'lucide-react-native';
+import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
-import { useCancelOrder, useMyOrders, type OrderSummary } from '@/lib/queries/orders';
+import { useCancelOrder, useMyOrders, useOrdersRealtime, type OrderSummary } from '@/lib/queries/orders';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
 
@@ -94,7 +95,9 @@ export default function OrdersScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data: orders, isLoading } = useMyOrders(user?.id);
+  useOrdersRealtime('customer_id', user?.id);
   const cancelOrder = useCancelOrder();
+  const [actionErr, setActionErr] = useState<string | null>(null);
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -110,6 +113,12 @@ export default function OrdersScreen() {
           </PressableScale>
           <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>your orders</Text>
         </View>
+
+        {actionErr ? (
+          <PressableScale onPress={() => setActionErr(null)} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#b91c1c' }}>{actionErr} (tap to dismiss)</Text>
+          </PressableScale>
+        ) : null}
 
         {!user ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
@@ -139,7 +148,7 @@ export default function OrdersScreen() {
                 key={o.id}
                 order={o}
                 cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
-                onCancel={() => cancelOrder.mutate(o.id)}
+                onCancel={() => { setActionErr(null); cancelOrder.mutate(o.id, { onError: (e) => setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.') }); }}
                 onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
               />
             ))}

@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import { supabase } from '@/lib/supabase';
 import type { FulfillmentType, OrderStatus } from '@/types/database.types';
@@ -124,6 +125,29 @@ export function usePrepperOrders(prepperId?: string | null, status?: OrderStatus
       return ((data ?? []) as unknown as Row[]).map(toSummary);
     },
   });
+}
+
+/**
+ * Live order updates: refresh the order lists the moment a relevant order row
+ * changes. Realtime enforces RLS, so each subscriber only hears about its own
+ * orders. Polling stays as a safety net if the socket drops.
+ */
+export function useOrdersRealtime(column: 'customer_id' | 'prepper_id', value?: string | null) {
+  const qc = useQueryClient();
+  useEffect(() => {
+    if (!value) return;
+    const channel = supabase
+      .channel(`orders-${column}-${value}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders', filter: `${column}=eq.${value}` },
+        () => qc.invalidateQueries({ queryKey: ['orders'] }),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [column, value, qc]);
 }
 
 /** Move an order to the next legal status (prepper/admin only — enforced server-side). */

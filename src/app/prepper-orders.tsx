@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, ShoppingBag } from 'lucide-react-native';
+import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
-import { useAdvanceOrder, useCancelOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
+import { useAdvanceOrder, useCancelOrder, useOrdersRealtime, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -100,9 +101,12 @@ export default function PrepperOrdersScreen() {
   const { data: prepper } = useMyPrepperApplication(user?.id);
   const prepperId = prepper?.id;
   const { data: orders, isLoading } = usePrepperOrders(prepperId);
+  useOrdersRealtime('prepper_id', prepperId);
   const advance = useAdvanceOrder();
   const cancel = useCancelOrder();
   const busyId = advance.isPending ? advance.variables?.orderId : cancel.isPending ? cancel.variables : undefined;
+  const [actionErr, setActionErr] = useState<string | null>(null);
+  const onErr = (e: unknown) => setActionErr(e instanceof Error ? e.message : 'Could not update the order. Try again.');
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
@@ -113,6 +117,12 @@ export default function PrepperOrdersScreen() {
           </PressableScale>
           <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>incoming orders</Text>
         </View>
+
+        {actionErr ? (
+          <PressableScale onPress={() => setActionErr(null)} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#7f1d1d', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fecaca' }}>{actionErr} (tap to dismiss)</Text>
+          </PressableScale>
+        ) : null}
 
         {!prepperId ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
@@ -136,8 +146,8 @@ export default function PrepperOrdersScreen() {
                 key={o.id}
                 order={o}
                 busy={busyId === o.id}
-                onAdvance={(next) => advance.mutate({ orderId: o.id, next })}
-                onCancel={() => cancel.mutate(o.id)}
+                onAdvance={(next) => { setActionErr(null); advance.mutate({ orderId: o.id, next }, { onError: onErr }); }}
+                onCancel={() => { setActionErr(null); cancel.mutate(o.id, { onError: onErr }); }}
               />
             ))}
           </ScrollView>
