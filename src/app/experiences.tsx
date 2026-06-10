@@ -1,7 +1,9 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import {
+  CalendarCheck,
   ChefHat,
+  ChevronRight,
   ClipboardList,
   GraduationCap,
   HandPlatter,
@@ -117,6 +119,22 @@ export default function ExperiencesScreen() {
               </PressableScale>
             );
           })}
+
+          {/* Meal plans live here too — weekly/family subscriptions */}
+          <PressableScale
+            onPress={() => router.push('/meal-plans')}
+            accessibilityRole="button"
+            accessibilityLabel="Meal plans — weekly and family subscriptions"
+            style={{ marginHorizontal: 20, marginTop: 12, backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+              <CalendarCheck size={18} color={ORANGE} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: INK }}>meal plans & subscriptions</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }}>weekly, monthly & family — delivered on repeat</Text>
+            </View>
+            <ChevronRight size={18} color={Palette.textMuted} />
+          </PressableScale>
 
           {/* Experience types */}
           <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
