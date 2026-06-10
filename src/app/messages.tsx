@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { ChevronLeft, MessageCircle } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Bell, Bike, ChefHat, ChevronLeft, CircleCheck, CircleX, MessageCircle, Package, Star, UtensilsCrossed } from 'lucide-react-native';
+import { useState } from 'react';
 import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,10 +9,13 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { useConversations, type Conversation } from '@/lib/queries/messages';
+import { useMyOrders, type OrderSummary } from '@/lib/queries/orders';
 import { useAuth } from '@/providers/auth-provider';
+import type { OrderStatus } from '@/types/database.types';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
+type LucideIcon = typeof Bell;
 
 function timeAgo(iso: string | null) {
   if (!iso) return '';
@@ -28,7 +32,24 @@ function initials(name: string) {
   return name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase() || '?';
 }
 
-function Row({ c, onPress }: { c: Conversation; onPress: () => void }) {
+// Map an order's current status to a customer-facing notification.
+function notify(o: OrderSummary): { Icon: LucideIcon; color: string; bg: string; title: string; sub: string } {
+  const item = o.items[0]?.title ?? 'your order';
+  const by = o.prepper;
+  const map: Partial<Record<OrderStatus, { Icon: LucideIcon; color: string; bg: string; title: string }>> = {
+    pending: { Icon: Package, color: '#f59e0b', bg: '#FEF3C7', title: 'Order placed' },
+    confirmed: { Icon: CircleCheck, color: '#16a34a', bg: '#DCFCE7', title: `${by} accepted your order` },
+    preparing: { Icon: ChefHat, color: ORANGE, bg: Palette.brandTint, title: 'Your food is being prepared' },
+    ready: { Icon: UtensilsCrossed, color: ORANGE, bg: Palette.brandTint, title: 'Your order is ready' },
+    out_for_delivery: { Icon: Bike, color: '#8b5cf6', bg: '#EDE9FE', title: 'Your order is on the way' },
+    completed: { Icon: Star, color: '#f59e0b', bg: '#FEF3C7', title: 'Delivered — leave a review' },
+    cancelled: { Icon: CircleX, color: '#ef4444', bg: '#FEE2E2', title: 'Order cancelled & refunded' },
+  };
+  const m = map[o.status] ?? map.pending!;
+  return { ...m, sub: `${item} · by ${by}` };
+}
+
+function ConversationRow({ c, onPress }: { c: Conversation; onPress: () => void }) {
   return (
     <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chat with ${c.otherName}`}
       style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 12 }}>
@@ -53,15 +74,66 @@ function Row({ c, onPress }: { c: Conversation; onPress: () => void }) {
   );
 }
 
+function NotificationRow({ o, onPress }: { o: OrderSummary; onPress: () => void }) {
+  const n = notify(o);
+  return (
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={n.title}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 12 }}>
+      <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: n.bg, alignItems: 'center', justifyContent: 'center' }}>
+        <n.Icon size={21} color={n.color} />
+      </View>
+      <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK, flex: 1 }} numberOfLines={1}>{n.title}</Text>
+          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>{timeAgo(o.created_at)}</Text>
+        </View>
+        <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 2 }} numberOfLines={1}>{n.sub}</Text>
+      </View>
+    </PressableScale>
+  );
+}
+
+function Empty({ Icon, title, sub }: { Icon: LucideIcon; title: string; sub: string }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+      <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={28} color={Palette.textMuted} />
+      </View>
+      <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>{title}</Text>
+      <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center', maxWidth: 280, lineHeight: 19 }}>{sub}</Text>
+    </View>
+  );
+}
+
 export default function MessagesScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: conversations, isLoading } = useConversations(user?.id);
+  const { tab: tabParam } = useLocalSearchParams<{ tab?: string }>();
+  const [tab, setTab] = useState<'updates' | 'messages'>(tabParam === 'messages' ? 'messages' : 'updates');
+  const { data: conversations, isLoading: convLoading } = useConversations(user?.id);
+  const { data: orders, isLoading: ordersLoading } = useMyOrders(user?.id);
 
   function goBack() {
     if (router.canGoBack()) router.back();
-    else router.replace('/profile');
+    else router.replace('/');
   }
+
+  const TabButton = ({ id, label, count }: { id: 'updates' | 'messages'; label: string; count?: number }) => {
+    const on = tab === id;
+    return (
+      <PressableScale onPress={() => setTab(id)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={label}
+        style={{ flex: 1, height: 40, borderRadius: 999, backgroundColor: on ? INK : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: on ? '#fff' : Palette.textSecondary }}>{label}</Text>
+        {count ? (
+          <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 5, backgroundColor: on ? ORANGE : Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: on ? '#fff' : ORANGE }}>{count}</Text>
+          </View>
+        ) : null}
+      </PressableScale>
+    );
+  };
+
+  const unreadCount = (conversations ?? []).filter((c) => c.unread).length;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -70,35 +142,49 @@ export default function MessagesScreen() {
           <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color={INK} />
           </PressableScale>
-          <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>messages</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>inbox</Text>
         </View>
 
         {!user ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
-            <MessageCircle size={28} color={Palette.textMuted} />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to message preppers and track your conversations.</Text>
+            <Bell size={28} color={Palette.textMuted} />
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to see your updates and messages.</Text>
             <PressableScale onPress={() => router.push('/auth?mode=signin')} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>
-        ) : isLoading ? (
-          <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
-        ) : !conversations?.length ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
-              <MessageCircle size={28} color={Palette.textMuted} />
-            </View>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>No messages yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center', maxWidth: 280, lineHeight: 19 }}>
-              Message a prepper from a meal or experience to start a conversation.
-            </Text>
-          </View>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 40 }}>
-            {conversations.map((c) => (
-              <Row key={c.id} c={c} onPress={() => router.push(`/chat?id=${c.id}&name=${encodeURIComponent(c.otherName)}`)} />
-            ))}
-          </ScrollView>
+          <>
+            {/* Tabs */}
+            <View style={{ flexDirection: 'row', marginHorizontal: 16, marginBottom: 6, backgroundColor: Palette.canvas, borderRadius: 999, padding: 4 }}>
+              <TabButton id="updates" label="Updates" />
+              <TabButton id="messages" label="Messages" count={unreadCount || undefined} />
+            </View>
+
+            {tab === 'updates' ? (
+              ordersLoading ? (
+                <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+              ) : !orders?.length ? (
+                <Empty Icon={Bell} title="No updates yet" sub="Order updates — confirmed, preparing, on the way — will show up here." />
+              ) : (
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 40 }}>
+                  {orders.map((o) => (
+                    <NotificationRow key={o.id} o={o} onPress={() => router.push('/orders')} />
+                  ))}
+                </ScrollView>
+              )
+            ) : convLoading ? (
+              <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+            ) : !conversations?.length ? (
+              <Empty Icon={MessageCircle} title="No messages yet" sub="Message a prepper from a meal or experience to start a conversation." />
+            ) : (
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 40 }}>
+                {conversations.map((c) => (
+                  <ConversationRow key={c.id} c={c} onPress={() => router.push(`/chat?id=${c.id}&name=${encodeURIComponent(c.otherName)}`)} />
+                ))}
+              </ScrollView>
+            )}
+          </>
         )}
       </SafeAreaView>
     </View>

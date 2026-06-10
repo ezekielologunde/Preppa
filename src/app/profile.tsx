@@ -53,7 +53,7 @@ const quickLinks = [
 
 const hub: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
   { label: 'your orders', sub: 'track & reorder', Icon: Receipt, route: '/orders' },
-  { label: 'messages', sub: 'chat with preppers', Icon: MessageCircle, route: '/messages' },
+  { label: 'messages', sub: 'chat with preppers', Icon: MessageCircle, route: '/messages?tab=messages' },
   { label: 'addresses', sub: '2 saved', Icon: MapPin },
   { label: 'payment methods', sub: 'Visa •••• 4242', Icon: CreditCard },
   { label: 'notifications', sub: 'email, sms, push', Icon: Bell },
