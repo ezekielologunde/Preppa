@@ -28,11 +28,14 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react-native';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useState } from 'react';
+import { Linking, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { feedback } from '@/lib/feedback';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = '#f15f22';
@@ -73,28 +76,67 @@ export default function ProfileScreen() {
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
 
+  const [toast, setToast] = useState<string | null>(null);
+  const [dark, setDark] = useState(false);
+
+  const flash = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast((t) => (t === msg ? null : t)), 2400);
+  };
+  const soon = (label: string) => {
+    feedback.warning();
+    flash(`${label} — coming soon`);
+  };
+  const go = (route: string) => router.push(route as never);
+
+  const onQuick = (label: string) => {
+    if (label === 'recent') return go('/orders');
+    if (label === 'following') return go('/explore');
+    return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
+  };
+  const onHub = (h: { label: string; route?: string; accent?: boolean }) => {
+    if (h.accent) return go('/become-prepper');
+    if (h.route) return go(h.route);
+    if (h.label === 'notifications') return go('/messages');
+    if (h.label === 'help center') {
+      Linking.openURL('mailto:support@preppa.live?subject=Preppa%20support').catch(() => soon('Help center'));
+      return;
+    }
+    if (h.label === 'invite friends') {
+      feedback.success();
+      try {
+        (navigator as unknown as { clipboard?: { writeText?: (s: string) => void } })?.clipboard?.writeText?.('https://app.preppa.live');
+      } catch {
+        /* clipboard unavailable */
+      }
+      flash('Invite link copied — share it with friends!');
+      return;
+    }
+    return soon(h.label.replace(/\b\w/g, (c) => c.toUpperCase()));
+  };
+
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Top actions */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, gap: 10 }}>
-            <PressableScale accessibilityRole="button" accessibilityLabel="Settings" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Settings size={19} color={INK} /></PressableScale>
-            <PressableScale accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Bell size={19} color={INK} /></PressableScale>
+            <PressableScale onPress={() => soon('Settings')} accessibilityRole="button" accessibilityLabel="Settings" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Settings size={19} color={INK} /></PressableScale>
+            <PressableScale onPress={() => go('/messages')} accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}><Bell size={19} color={INK} /></PressableScale>
           </View>
 
           {/* Identity */}
           <View style={{ alignItems: 'center', paddingHorizontal: 20, marginTop: 6 }}>
             <View style={{ width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: ORANGE, padding: 3 }}>
               <Image source="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60" style={{ flex: 1, borderRadius: 42 }} contentFit="cover" />
-              <View style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#F7F7F8' }}>
+              <PressableScale onPress={() => soon('Change photo')} accessibilityRole="button" accessibilityLabel="Change photo" style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#F7F7F8' }}>
                 <Camera size={14} color="#fff" />
-              </View>
+              </PressableScale>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
+            <PressableScale onPress={() => soon('Edit profile')} accessibilityRole="button" accessibilityLabel="Edit profile" style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 12 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>{displayName}</Text>
               <Pencil size={16} color={ORANGE} />
-            </View>
+            </PressableScale>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#6b7280', marginTop: 2 }}>good food. good mood. always.</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}>
               <MapPin size={13} color="#9ca3af" />
@@ -146,7 +188,7 @@ export default function ProfileScreen() {
           {/* Quick links */}
           <View style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 20, padding: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
             {quickLinks.map((q) => (
-              <PressableScale key={q.label} accessibilityRole="button" accessibilityLabel={`${q.label}, ${q.sub}`} style={{ alignItems: 'center', gap: 7, flex: 1 }}>
+              <PressableScale key={q.label} onPress={() => onQuick(q.label)} accessibilityRole="button" accessibilityLabel={`${q.label}, ${q.sub}`} style={{ alignItems: 'center', gap: 7, flex: 1 }}>
                 <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: q.bg, alignItems: 'center', justifyContent: 'center' }}>
                   <q.Icon size={19} color={q.color} />
                 </View>
@@ -162,7 +204,7 @@ export default function ProfileScreen() {
             {hub.map((h, i) => (
               <PressableScale
                 key={h.label}
-                onPress={() => (h.accent ? router.push('/become-prepper') : h.route ? router.push(h.route as never) : undefined)}
+                onPress={() => onHub(h)}
                 accessibilityRole="button"
                 accessibilityLabel={`${h.label}, ${h.sub}`}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
@@ -176,15 +218,15 @@ export default function ProfileScreen() {
                 <ChevronRight size={18} color="#d1d5db" />
               </PressableScale>
             ))}
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: 1, borderTopColor: '#f3f4f6' }}>
+            <PressableScale onPress={() => { feedback.tap(); setDark((d) => !d); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode" style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: 1, borderTopColor: '#f3f4f6' }}>
               <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
                 <Moon size={18} color="#6b7280" />
               </View>
               <Text style={{ flex: 1, fontFamily: Font.heading, fontSize: 15, color: INK }}>dark mode</Text>
-              <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: '#e5e7eb', justifyContent: 'center', paddingHorizontal: 3 }}>
-                <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff' }} />
+              <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: dark ? ORANGE : '#e5e7eb', justifyContent: 'center', paddingHorizontal: 3, alignItems: dark ? 'flex-end' : 'flex-start' }}>
+                <MotiView animate={{ translateX: 0 }} style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff' }} />
               </View>
-            </View>
+            </PressableScale>
           </View>
 
           <PressableScale
@@ -197,6 +239,16 @@ export default function ProfileScreen() {
             </Text>
           </PressableScale>
         </ScrollView>
+
+        {toast ? (
+          <MotiView
+            from={{ opacity: 0, translateY: 14 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing', duration: 200 }}
+            style={{ position: 'absolute', left: 20, right: 20, bottom: 24, backgroundColor: INK, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13, shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 14, shadowOffset: { width: 0, height: 6 } }}>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fff', textAlign: 'center' }}>{toast}</Text>
+          </MotiView>
+        ) : null}
       </SafeAreaView>
     </View>
   );

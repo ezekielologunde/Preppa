@@ -9,6 +9,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
+import { feedback } from '@/lib/feedback';
 import { useAddToCart, useCart } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useMeal } from '@/lib/queries/meals';
@@ -63,8 +64,10 @@ export default function MealScreen() {
         onSuccess: () => {
           setSwitchPrompt(false);
           setAdded(true);
+          feedback.success();
           setTimeout(() => setAdded(false), 1800);
         },
+        onError: () => feedback.error(),
       },
     );
   }
@@ -76,6 +79,7 @@ export default function MealScreen() {
     }
     if (!meal) return;
     if (conflicts) {
+      feedback.warning();
       setSwitchPrompt(true);
       return;
     }

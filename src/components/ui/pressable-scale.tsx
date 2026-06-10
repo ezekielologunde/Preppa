@@ -1,7 +1,8 @@
-import * as Haptics from 'expo-haptics';
 import { MotiView } from 'moti';
 import { useState, type ReactNode } from 'react';
-import { Platform, Pressable, type GestureResponderEvent, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, type GestureResponderEvent, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+
+import { feedback } from '@/lib/feedback';
 
 type Props = Omit<PressableProps, 'style' | 'children'> & {
   children: ReactNode;
@@ -38,7 +39,7 @@ export function PressableScale({
         onPressOut?.(e);
       }}
       onPress={(e: GestureResponderEvent) => {
-        if (haptic && Platform.OS !== 'web') Haptics.selectionAsync();
+        if (haptic) feedback.tap();
         onPress?.(e);
       }}
       {...rest}>

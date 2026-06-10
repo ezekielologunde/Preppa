@@ -75,13 +75,17 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
-            <View style={{ width: 52, height: 52, borderRadius: 26, borderWidth: 2, borderColor: ORANGE, padding: 2 }}>
+            <PressableScale
+              onPress={() => router.push('/profile')}
+              accessibilityRole="button"
+              accessibilityLabel="Your profile"
+              style={{ width: 52, height: 52, borderRadius: 26, borderWidth: 2, borderColor: ORANGE, padding: 2 }}>
               <Image
                 source="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60"
                 style={{ flex: 1, borderRadius: 22 }}
                 contentFit="cover"
               />
-            </View>
+            </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>good morning, alex</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6, lineHeight: 28 }}>
@@ -89,19 +93,21 @@ export default function HomeScreen() {
                 <Text style={{ color: ORANGE }}>craving today?</Text>
               </Text>
             </View>
-            <Pressable accessibilityRole="button" accessibilityLabel="Notifications, 3 unread" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => router.push('/messages')} accessibilityRole="button" accessibilityLabel="Notifications and messages" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={20} color={INK} />
               <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>3</Text>
               </View>
-            </Pressable>
+            </PressableScale>
           </View>
 
-          {/* Location */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginTop: 6, gap: 4 }}>
-            <MapPin size={14} color={ORANGE} />
-            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#374151' }}>New York, NY</Text>
-            <ChevronDown size={14} color="#6b7280" />
+          {/* Location — right-aligned pill */}
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, marginTop: 10 }}>
+            <PressableScale accessibilityRole="button" accessibilityLabel="Change location, New York, NY" style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 }}>
+              <MapPin size={14} color={ORANGE} />
+              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#374151' }}>New York, NY</Text>
+              <ChevronDown size={14} color="#6b7280" />
+            </PressableScale>
           </View>
 
           {/* Search */}
