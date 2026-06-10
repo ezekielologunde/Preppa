@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { Check, ChevronLeft, Lock, Receipt, Star } from 'lucide-react-native';
+import { Check, ChevronLeft, Lock, Receipt, Star, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HandoffCard } from '@/components/handoff-card';
@@ -144,6 +144,17 @@ export default function OrdersScreen() {
   const [actionErr, setActionErr] = useState<string | null>(null);
   const [showPaid, setShowPaid] = useState(!!paid);
   const [payingId, setPayingId] = useState<string | null>(null);
+  // Cancelling is destructive → confirm in an overlay first.
+  const [confirmCancel, setConfirmCancel] = useState<OrderSummary | null>(null);
+
+  function doCancel(o: OrderSummary) {
+    setConfirmCancel(null);
+    setActionErr(null);
+    cancelOrder.mutate(o.id, {
+      onSuccess: () => refundOrder.mutate(o.id),
+      onError: (e) => { feedback.error(); setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.'); },
+    });
+  }
 
   // Finish paying an order whose checkout was canceled/declined (the order is
   // saved but unpaid). Reuses the same Stripe Checkout edge function.
@@ -223,13 +234,35 @@ export default function OrdersScreen() {
                 paying={payingId === o.id}
                 onPay={() => payOrder(o.id)}
                 cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
-                onCancel={() => { setActionErr(null); cancelOrder.mutate(o.id, { onSuccess: () => refundOrder.mutate(o.id), onError: (e) => { feedback.error(); setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.'); } }); }}
+                onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
                 onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
               />
             ))}
           </ScrollView>
         )}
       </SafeAreaView>
+
+      {/* Cancel confirmation overlay */}
+      <Modal visible={!!confirmCancel} transparent animationType="fade" onRequestClose={() => setConfirmCancel(null)}>
+        <Pressable onPress={() => setConfirmCancel(null)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.55)', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 360, backgroundColor: '#fff', borderRadius: 24, padding: 22, gap: 14 }}>
+            <View style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: '#FEE2E2', alignItems: 'center', justifyContent: 'center' }}>
+              <X size={26} color="#ef4444" strokeWidth={2.6} />
+            </View>
+            <Text style={{ fontFamily: Font.display, fontSize: 21, color: INK, letterSpacing: -0.4 }}>Cancel this order?</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, lineHeight: 20 }}>
+              {confirmCancel ? `Your order from ${confirmCancel.prepper} (${money(confirmCancel.total)}) will be cancelled.` : ''}
+              {confirmCancel?.paymentStatus === 'succeeded' ? ' You’ll be refunded automatically.' : ''}
+            </Text>
+            <PressableScale onPress={() => confirmCancel && doCancel(confirmCancel)} accessibilityRole="button" accessibilityLabel="Yes, cancel the order" style={{ height: 50, borderRadius: 14, backgroundColor: '#ef4444', alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Yes, cancel order</Text>
+            </PressableScale>
+            <PressableScale onPress={() => setConfirmCancel(null)} accessibilityRole="button" accessibilityLabel="Keep the order" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary }}>Keep my order</Text>
+            </PressableScale>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
