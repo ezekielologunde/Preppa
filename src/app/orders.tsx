@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { ChevronLeft, Receipt, Star } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Check, ChevronLeft, Receipt, Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
+import { useRefundOrder } from '@/lib/queries/cart';
 import { useCancelOrder, useMyOrders, useOrdersRealtime, type OrderSummary } from '@/lib/queries/orders';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -97,7 +98,10 @@ export default function OrdersScreen() {
   const { data: orders, isLoading } = useMyOrders(user?.id);
   useOrdersRealtime('customer_id', user?.id);
   const cancelOrder = useCancelOrder();
+  const refundOrder = useRefundOrder();
+  const { paid } = useLocalSearchParams<{ paid?: string }>();
   const [actionErr, setActionErr] = useState<string | null>(null);
+  const [showPaid, setShowPaid] = useState(!!paid);
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -114,6 +118,12 @@ export default function OrdersScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>your orders</Text>
         </View>
 
+        {showPaid ? (
+          <PressableScale onPress={() => setShowPaid(false)} accessibilityRole="button" accessibilityLabel="Dismiss" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '55', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Check size={16} color={Palette.success} strokeWidth={3} />
+            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#15803d', flex: 1 }}>Payment received — your order is in. The prepper will confirm shortly.</Text>
+          </PressableScale>
+        ) : null}
         {actionErr ? (
           <PressableScale onPress={() => setActionErr(null)} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
             <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#b91c1c' }}>{actionErr} (tap to dismiss)</Text>
@@ -148,7 +158,7 @@ export default function OrdersScreen() {
                 key={o.id}
                 order={o}
                 cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
-                onCancel={() => { setActionErr(null); cancelOrder.mutate(o.id, { onError: (e) => setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.') }); }}
+                onCancel={() => { setActionErr(null); cancelOrder.mutate(o.id, { onSuccess: () => refundOrder.mutate(o.id), onError: (e) => setActionErr(e instanceof Error ? e.message : 'Could not cancel. Try again.') }); }}
                 onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
               />
             ))}

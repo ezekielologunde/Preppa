@@ -1,14 +1,16 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
-import { Bike, Check, ChevronLeft, MapPin, Minus, Plus, ShoppingBag, Store, Trash2 } from 'lucide-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
+import { Bike, Check, ChevronLeft, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2 } from 'lucide-react-native';
 import { useState, type ComponentType } from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
-import { useCart, usePlaceOrder, useRemoveItems, useUpdateCartItem } from '@/lib/queries/cart';
+import { useCart, usePlaceOrder, useRemoveItems, useStripeCheckout, useUpdateCartItem } from '@/lib/queries/cart';
+import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useAuth } from '@/providers/auth-provider';
 import type { FulfillmentType } from '@/types/database.types';
 
@@ -32,11 +34,15 @@ export default function CartScreen() {
   const updateItem = useUpdateCartItem(user?.id);
   const removeItems = useRemoveItems(user?.id);
   const placeOrder = usePlaceOrder();
+  const checkoutStripe = useStripeCheckout();
+  const paymentsOn = useFeatureEnabled('payments');
+  const { canceled } = useLocalSearchParams<{ canceled?: string }>();
   const [placed, setPlaced] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(canceled ? 'Payment canceled — your cart is still here.' : null);
   const [method, setMethod] = useState<FulfillmentType>('delivery');
   const [note, setNote] = useState('');
   const [tip, setTip] = useState(0);
+  const busy = placeOrder.isPending || checkoutStripe.isPending;
 
   const prepper = cart?.items[0]?.prepper ?? 'the prepper';
 
@@ -61,6 +67,21 @@ export default function CartScreen() {
     else router.replace('/');
   }
 
+  async function startPayment(orderId: string) {
+    try {
+      const url = await checkoutStripe.mutateAsync(orderId);
+      if (Platform.OS === 'web') {
+        window.location.assign(url);
+      } else {
+        await WebBrowser.openBrowserAsync(url);
+        router.replace('/orders');
+      }
+    } catch (e) {
+      // Order exists but payment didn't start — let them retry from Orders.
+      setErr((e instanceof Error ? e.message : 'Could not start payment.') + ' Your order is saved — pay it from Orders.');
+    }
+  }
+
   function checkout() {
     if (!user) return router.push('/auth?mode=signin');
     if (mixed) return setErr('Pick one kitchen to order from above.');
@@ -69,7 +90,13 @@ export default function CartScreen() {
     setErr(null);
     placeOrder.mutate(
       { userId: user.id, fulfillment: method, note: note.trim() || null, tip },
-      { onSuccess: () => setPlaced(true), onError: (e) => setErr(e instanceof Error ? e.message : 'Could not place order.') },
+      {
+        onSuccess: (orderId) => {
+          if (paymentsOn) startPayment(orderId);
+          else setPlaced(true);
+        },
+        onError: (e) => setErr(e instanceof Error ? e.message : 'Could not place order.'),
+      },
     );
   }
 
@@ -259,12 +286,19 @@ export default function CartScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Total</Text>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, fontVariant: ['tabular-nums'] }}>{money(total)}</Text>
               </View>
-              <PressableScale onPress={checkout} disabled={placeOrder.isPending || mixed} accessibilityRole="button" accessibilityLabel="Place order"
-                style={{ height: 54, borderRadius: 16, backgroundColor: mixed ? Palette.textMuted : ORANGE, alignItems: 'center', justifyContent: 'center', opacity: placeOrder.isPending ? 0.7 : 1 }}>
-                {placeOrder.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{mixed ? 'Pick one kitchen above' : `Place order · ${money(total)}`}</Text>}
+              <PressableScale onPress={checkout} disabled={busy || mixed} accessibilityRole="button" accessibilityLabel={paymentsOn ? 'Pay and place order' : 'Place order'}
+                style={{ height: 54, borderRadius: 16, backgroundColor: mixed ? Palette.textMuted : ORANGE, flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.7 : 1 }}>
+                {busy ? <ActivityIndicator color="#fff" /> : (
+                  <>
+                    {paymentsOn && !mixed ? <Lock size={16} color="#fff" /> : null}
+                    <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
+                      {mixed ? 'Pick one kitchen above' : paymentsOn ? `Pay · ${money(total)}` : `Place order · ${money(total)}`}
+                    </Text>
+                  </>
+                )}
               </PressableScale>
               <Text style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, textAlign: 'center', marginTop: 8 }}>
-                Payment is collected when the prepper confirms.
+                {paymentsOn ? 'Secure card payment via Stripe. Auto-refunded if your order is declined.' : 'Payment is collected when the prepper confirms.'}
               </Text>
             </SafeAreaView>
           </>

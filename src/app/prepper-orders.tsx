@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
+import { useRefundOrder } from '@/lib/queries/cart';
 import { useAdvanceOrder, useCancelOrder, useOrdersRealtime, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { useAuth } from '@/providers/auth-provider';
@@ -104,6 +105,7 @@ export default function PrepperOrdersScreen() {
   useOrdersRealtime('prepper_id', prepperId);
   const advance = useAdvanceOrder();
   const cancel = useCancelOrder();
+  const refund = useRefundOrder();
   const busyId = advance.isPending ? advance.variables?.orderId : cancel.isPending ? cancel.variables : undefined;
   const [actionErr, setActionErr] = useState<string | null>(null);
   const onErr = (e: unknown) => setActionErr(e instanceof Error ? e.message : 'Could not update the order. Try again.');
@@ -147,7 +149,7 @@ export default function PrepperOrdersScreen() {
                 order={o}
                 busy={busyId === o.id}
                 onAdvance={(next) => { setActionErr(null); advance.mutate({ orderId: o.id, next }, { onError: onErr }); }}
-                onCancel={() => { setActionErr(null); cancel.mutate(o.id, { onError: onErr }); }}
+                onCancel={() => { setActionErr(null); cancel.mutate(o.id, { onSuccess: () => refund.mutate(o.id), onError: onErr }); }}
               />
             ))}
           </ScrollView>

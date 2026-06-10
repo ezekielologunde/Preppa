@@ -121,6 +121,28 @@ export function useUpdateCartItem(userId?: string | null) {
   });
 }
 
+/** Start a Stripe Checkout for an order; returns the hosted payment-page URL. */
+export function useStripeCheckout() {
+  return useMutation({
+    mutationFn: async (orderId: string): Promise<string> => {
+      const { data, error } = await supabase.functions.invoke('stripe-checkout', { body: { orderId } });
+      if (error) throw error;
+      const url = (data as { url?: string; error?: string })?.url;
+      if (!url) throw new Error((data as { error?: string })?.error || 'Could not start checkout.');
+      return url;
+    },
+  });
+}
+
+/** Best-effort refund for a cancelled order. No-ops if the order was never paid. */
+export function useRefundOrder() {
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      await supabase.functions.invoke('stripe-refund', { body: { orderId } });
+    },
+  });
+}
+
 /** Remove a set of line items by id (used to resolve a mixed-prepper cart). */
 export function useRemoveItems(userId?: string | null) {
   const qc = useQueryClient();
