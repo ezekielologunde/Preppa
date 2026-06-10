@@ -22,6 +22,8 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { experienceTypes, featuredExperiences, type Experience } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
+import { useMyExperienceRequests } from '@/lib/queries/experiences';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -57,6 +59,10 @@ function ExperienceCard({ exp, onPress }: { exp: Experience; onPress: () => void
 
 export default function ExperiencesScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  // Live feedback loop: posted requests show their bid count right on the tab.
+  const { data: myRequests } = useMyExperienceRequests(user?.id);
+  const activeRequests = (myRequests ?? []).filter((r) => r.status === 'open').slice(0, 2);
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
@@ -83,6 +89,34 @@ export default function ExperiencesScreen() {
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 1 }}>Describe your event — get bids from local preppers</Text>
             </View>
           </PressableScale>
+
+          {/* Live status of my open requests — the post→bids feedback loop */}
+          {activeRequests.map((r) => {
+            const pending = r.bids.filter((b) => b.status === 'pending').length;
+            return (
+              <PressableScale
+                key={r.id}
+                onPress={() => router.push('/experience-request')}
+                accessibilityRole="button"
+                accessibilityLabel={`Your request ${r.title}: ${pending ? `${pending} bids received, compare now` : 'waiting for bids'}`}
+                style={{ marginHorizontal: 20, marginTop: 12, backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: pending ? ORANGE + '55' : Palette.border }}>
+                <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: pending ? Palette.brandTint : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                  <MessageSquareQuote size={18} color={pending ? ORANGE : Palette.textSecondary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: INK }} numberOfLines={1}>{r.title}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: pending ? Palette.brandPressed : Palette.textSecondary, marginTop: 1 }}>
+                    {pending ? `${pending} bid${pending === 1 ? '' : 's'} received — compare & book` : 'request posted · waiting for bids'}
+                  </Text>
+                </View>
+                {pending ? (
+                  <View style={{ minWidth: 24, height: 24, borderRadius: 12, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 7 }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>{pending}</Text>
+                  </View>
+                ) : null}
+              </PressableScale>
+            );
+          })}
 
           {/* Experience types */}
           <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
