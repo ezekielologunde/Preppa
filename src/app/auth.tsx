@@ -1,12 +1,14 @@
-import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Eye, EyeOff } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useRef, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PreppaLogo } from '@/components/preppa-logo';
+import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { feedback } from '@/lib/feedback';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = '#f15f22';
@@ -38,12 +40,14 @@ export default function AuthScreen() {
   const [msg, setMsg] = useState<{ text: string; ok: boolean } | null>(null);
   const codeRef = useRef<TextInput>(null);
 
-  const tap = () => Platform.OS !== 'web' && Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  const tap = () => feedback.impact();
   const fail = (text: string) => {
+    feedback.error();
     setBusy(false);
     setMsg({ text, ok: false });
   };
   const goCode = (next: Intent, text: string) => {
+    feedback.success();
     setBusy(false);
     setIntent(next);
     setStep('code');
@@ -65,10 +69,12 @@ export default function AuthScreen() {
       const { error, needsConfirmation } = await signUp(email.trim().toLowerCase(), password, name.trim());
       if (error) return fail(error);
       if (needsConfirmation) return goCode('signup', `We sent a 6-digit code to ${email.trim().toLowerCase()} to confirm your email.`);
+      feedback.success();
       return router.replace('/'); // confirmation disabled — straight in
     }
     const { error } = await signIn(email.trim().toLowerCase(), password);
     if (error) return fail(/invalid login/i.test(error) ? 'Wrong email or password. Forgot it, or use a sign-in code below.' : error);
+    feedback.success();
     router.replace('/');
   }
 
@@ -108,6 +114,7 @@ export default function AuthScreen() {
       const up = await updatePassword(newPassword);
       if (up.error) return fail(up.error);
     }
+    feedback.success();
     router.replace('/');
   }
 
@@ -157,19 +164,43 @@ export default function AuthScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      {/* Soft brand glow drifting behind the form */}
+      <MotiView
+        from={{ translateY: -18, opacity: 0.7 }}
+        animate={{ translateY: 14, opacity: 1 }}
+        transition={{ type: 'timing', duration: 4800, loop: true, repeatReverse: true }}
+        pointerEvents="none"
+        style={{ position: 'absolute', top: -120, alignSelf: 'center', width: 420, height: 420, borderRadius: 210, experimental_backgroundImage: 'radial-gradient(circle, rgba(241,95,34,0.16), transparent 70%)' }}
+      />
       <SafeAreaView style={{ flex: 1, paddingHorizontal: 24 }}>
         <Pressable onPress={() => router.replace('/')} style={{ alignSelf: 'flex-end', paddingVertical: 12 }}>
           <Text style={{ fontFamily: Font.medium, fontSize: 14, color: '#9ca3af' }}>continue as guest →</Text>
         </Pressable>
 
-        <View style={{ alignItems: 'center', marginTop: 12, marginBottom: 28, gap: 16 }}>
+        <MotiView
+          from={{ opacity: 0, translateY: 18, scale: 0.96 }}
+          animate={{ opacity: 1, translateY: 0, scale: 1 }}
+          transition={{ type: 'spring', damping: 15, stiffness: 140 }}
+          style={{ alignItems: 'center', marginTop: 12, marginBottom: 28, gap: 16 }}>
           <PreppaLogo size={72} glow />
-          <Text style={{ fontFamily: Font.display, fontSize: 30, color: INK, letterSpacing: -0.8 }}>{title}</Text>
-          <Text style={{ fontFamily: Font.body, fontSize: 15, color: '#6b7280', textAlign: 'center', maxWidth: 300 }}>{subtitle}</Text>
-        </View>
+          <MotiView
+            key={title}
+            from={{ opacity: 0, translateY: 8 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing', duration: 220 }}
+            style={{ alignItems: 'center', gap: 8 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 30, color: INK, letterSpacing: -0.8 }}>{title}</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 15, color: '#6b7280', textAlign: 'center', maxWidth: 300 }}>{subtitle}</Text>
+          </MotiView>
+        </MotiView>
 
         {step === 'form' ? (
-          <View style={{ gap: 12 }}>
+          <MotiView
+            key={`form-${mode}`}
+            from={{ opacity: 0, translateX: 22 }}
+            animate={{ opacity: 1, translateX: 0 }}
+            transition={{ type: 'spring', damping: 17, stiffness: 170 }}
+            style={{ gap: 12 }}>
             {mode === 'signup' ? (
               <TextInput style={input} placeholder="full name" placeholderTextColor="#9ca3af" autoCapitalize="words" textContentType="name" value={name} onChangeText={setName} />
             ) : null}
@@ -208,20 +239,29 @@ export default function AuthScreen() {
               </Pressable>
             ) : null}
 
-            {msg ? <Text style={{ fontFamily: Font.medium, fontSize: 14, color: msg.ok ? '#16a34a' : '#ef4444', paddingHorizontal: 4 }}>{msg.text}</Text> : null}
+            {msg ? (
+              <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 180 }}>
+                <Text style={{ fontFamily: Font.medium, fontSize: 14, color: msg.ok ? '#16a34a' : '#ef4444', paddingHorizontal: 4 }}>{msg.text}</Text>
+              </MotiView>
+            ) : null}
 
-            <Pressable onPress={submit} disabled={busy} style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
+            <PressableScale onPress={submit} disabled={busy} accessibilityRole="button" accessibilityLabel={mode === 'signup' ? 'Create account' : 'Sign in'} style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
               {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{mode === 'signup' ? 'Create account' : 'Sign in'}</Text>}
-            </Pressable>
+            </PressableScale>
 
             <Pressable onPress={sendOtp} disabled={busy} style={{ alignItems: 'center', paddingVertical: 10 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 14, color: '#6b7280' }}>
                 Email me a sign-in code <Text style={{ fontFamily: Font.heading, color: ORANGE }}>instead</Text>
               </Text>
             </Pressable>
-          </View>
+          </MotiView>
         ) : (
-          <View style={{ gap: 12 }}>
+          <MotiView
+            key="code"
+            from={{ opacity: 0, translateX: 22 }}
+            animate={{ opacity: 1, translateX: 0 }}
+            transition={{ type: 'spring', damping: 17, stiffness: 170 }}
+            style={{ gap: 12 }}>
             <TextInput
               ref={codeRef}
               style={[input, { textAlign: 'center', fontSize: 30, letterSpacing: 14, fontFamily: Font.display, height: 64 }]}
@@ -256,11 +296,15 @@ export default function AuthScreen() {
               </View>
             ) : null}
 
-            {msg ? <Text style={{ fontFamily: Font.medium, fontSize: 14, color: msg.ok ? '#16a34a' : '#ef4444', paddingHorizontal: 4, textAlign: 'center' }}>{msg.text}</Text> : null}
+            {msg ? (
+              <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 180 }}>
+                <Text style={{ fontFamily: Font.medium, fontSize: 14, color: msg.ok ? '#16a34a' : '#ef4444', paddingHorizontal: 4, textAlign: 'center' }}>{msg.text}</Text>
+              </MotiView>
+            ) : null}
 
-            <Pressable onPress={() => verify()} disabled={busy} style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
+            <PressableScale onPress={() => verify()} disabled={busy} accessibilityRole="button" accessibilityLabel={intent === 'recovery' ? 'Reset and sign in' : 'Verify and continue'} style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
               {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{intent === 'recovery' ? 'Reset & sign in' : 'Verify & continue'}</Text>}
-            </Pressable>
+            </PressableScale>
             <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 18, marginTop: 8 }}>
               <Pressable onPress={() => { setStep('form'); setCode(''); setMsg(null); }}>
                 <Text style={{ fontFamily: Font.medium, fontSize: 14, color: '#6b7280' }}>← back</Text>
@@ -269,7 +313,7 @@ export default function AuthScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 14, color: ORANGE }}>Resend code</Text>
               </Pressable>
             </View>
-          </View>
+          </MotiView>
         )}
 
         {step === 'form' ? (
