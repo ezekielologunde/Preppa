@@ -48,10 +48,12 @@ export function useDarkMode(): boolean {
   return useSyncExternalStore(subscribe, () => dark);
 }
 
-// Counter-invert media inside the inverted frame so photos keep true colors.
+// Counter-invert media inside the inverted frame so photos keep true colors,
+// plus an escape hatch (dataSet={{ noinvert: 'true' }}) for elements that are
+// dark by design and should stay dark (e.g. the admin-console card).
 if (Platform.OS === 'web' && typeof document !== 'undefined') {
   const style = document.createElement('style');
   style.textContent =
-    '[data-preppadark="true"] img, [data-preppadark="true"] video { filter: invert(1) hue-rotate(180deg); }';
+    '[data-preppadark="true"] img, [data-preppadark="true"] video, [data-preppadark="true"] [data-noinvert="true"] { filter: invert(1) hue-rotate(180deg); }';
   document.head.appendChild(style);
 }

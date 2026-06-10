@@ -180,6 +180,7 @@ export default function ProfileScreen() {
               onPress={() => router.push('/admin')}
               accessibilityRole="button"
               accessibilityLabel="Open admin console"
+              {...({ dataSet: { noinvert: 'true' } } as object)}
               style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: '#0C0E13', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: 'rgba(241,95,34,0.18)', alignItems: 'center', justifyContent: 'center' }}>
                 <ShieldCheck size={20} color={ORANGE} />

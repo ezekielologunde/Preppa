@@ -61,7 +61,7 @@ export default function AuthScreen() {
     setMsg(null);
     if (mode === 'signup' && name.trim().length < 2) return setMsg({ text: 'Tell us your name.', ok: false });
     if (!emailOk(email)) return setMsg({ text: 'Enter a valid email.', ok: false });
-    if (password.length < 6) return setMsg({ text: 'Password must be at least 6 characters.', ok: false });
+    if (password.length < 8) return setMsg({ text: 'Password must be at least 8 characters.', ok: false });
 
     setBusy(true);
     tap();
@@ -103,7 +103,7 @@ export default function AuthScreen() {
     const c = (value ?? code).replace(/\D/g, '').slice(0, 6);
     setMsg(null);
     if (c.length !== 6) return setMsg({ text: 'Enter the 6-digit code.', ok: false });
-    if (intent === 'recovery' && newPassword.length < 6) return setMsg({ text: 'Choose a password (6+ characters).', ok: false });
+    if (intent === 'recovery' && newPassword.length < 8) return setMsg({ text: 'Choose a password (8+ characters).', ok: false });
 
     setBusy(true);
     tap();
