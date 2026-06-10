@@ -8,11 +8,40 @@ import { MealCard } from '@/components/meal-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
+import { Palette } from '@/constants/theme';
 import { useMealSearch } from '@/lib/queries/meals';
+import { useMealCategories } from '@/lib/queries/my-meals';
 
-const ORANGE = '#f15f22';
-const INK = '#111827';
+const ORANGE = Palette.brand;
+const INK = Palette.ink;
 const CARD_W = (Dimensions.get('window').width - 52) / 2;
+
+const PRICES = [
+  { key: 'under10', label: 'under $10', min: null, max: 10 },
+  { key: '10to15', label: '$10–15', min: 10, max: 15 },
+  { key: 'over15', label: '$15+', min: 15, max: null },
+] as const;
+type PriceKey = (typeof PRICES)[number]['key'] | null;
+
+function Chip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
+  return (
+    <PressableScale
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Filter: ${label}`}
+      accessibilityState={{ selected }}
+      style={{
+        paddingHorizontal: 14,
+        height: 36,
+        borderRadius: 999,
+        backgroundColor: selected ? INK : '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
+    </PressableScale>
+  );
+}
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -20,18 +49,28 @@ export default function SearchScreen() {
   const initial = (q || '').toString();
   const [text, setText] = useState(initial);
   const [debounced, setDebounced] = useState(initial);
-  const { data: results, isLoading, isFetching } = useMealSearch(debounced);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [priceKey, setPriceKey] = useState<PriceKey>(null);
+
+  const { data: categories } = useMealCategories();
+  const price = PRICES.find((p) => p.key === priceKey);
+  const { data: results, isLoading, isFetching } = useMealSearch(debounced, {
+    categoryId,
+    priceMin: price?.min ?? null,
+    priceMax: price?.max ?? null,
+  });
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(text), 250);
     return () => clearTimeout(t);
   }, [text]);
 
-  const active = debounced.trim().length >= 2;
+  const hasFilters = categoryId !== null || priceKey !== null;
+  const active = debounced.trim().length >= 2 || hasFilters;
   const loading = active && (isLoading || isFetching);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {/* Search bar */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingTop: 8 }}>
@@ -39,38 +78,49 @@ export default function SearchScreen() {
             <ChevronLeft size={24} color={INK} />
           </PressableScale>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, height: 50, gap: 8 }}>
-            <Search size={19} color="#9ca3af" />
+            <Search size={19} color={Palette.textMuted} />
             <TextInput
               autoFocus
               value={text}
               onChangeText={setText}
               placeholder="search meals, cuisines, preppers"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor={Palette.textMuted}
               returnKeyType="search"
               style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: INK }}
             />
             {text.length > 0 ? (
               <Pressable onPress={() => setText('')} accessibilityLabel="Clear" hitSlop={8}>
-                <X size={18} color="#9ca3af" />
+                <X size={18} color={Palette.textMuted} />
               </Pressable>
             ) : null}
           </View>
         </View>
 
+        {/* Filters — categories then price; tap again to clear */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 4, gap: 8, alignItems: 'center' }}>
+          {(categories ?? []).map((c) => (
+            <Chip key={c.id} label={c.name.toLowerCase()} selected={categoryId === c.id} onPress={() => setCategoryId(categoryId === c.id ? null : c.id)} />
+          ))}
+          <View style={{ width: 1, height: 22, backgroundColor: Palette.divider, marginHorizontal: 2 }} />
+          {PRICES.map((p) => (
+            <Chip key={p.key} label={p.label} selected={priceKey === p.key} onPress={() => setPriceKey(priceKey === p.key ? null : p.key)} />
+          ))}
+        </ScrollView>
+
         {/* Results */}
         {!active ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <Search size={40} color="#d1d5db" />
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#6b7280' }}>find your next meal</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>type at least 2 letters to search</Text>
+            <Search size={40} color={Palette.divider} />
+            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: Palette.textSecondary }}>find your next meal</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>type to search — or tap a filter to browse</Text>
           </View>
         ) : loading ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: 20 }}>
             {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} width={CARD_W} />)}
           </View>
         ) : results && results.length > 0 ? (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#6b7280', marginBottom: 14 }}>{results.length} result{results.length === 1 ? '' : 's'}</Text>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingTop: 14, paddingBottom: 40 }}>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary, marginBottom: 14 }}>{results.length} result{results.length === 1 ? '' : 's'}</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
               {results.map((m) => <MealCard key={m.id} meal={m} width={CARD_W} />)}
             </View>
@@ -78,7 +128,14 @@ export default function SearchScreen() {
         ) : (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 8 }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>no meals found</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>try a different search — like &quot;bowl&quot; or &quot;pasta&quot;</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
+              {hasFilters ? 'try removing a filter, or search something else' : 'try a different search — like "bowl" or "pasta"'}
+            </Text>
+            {hasFilters ? (
+              <PressableScale onPress={() => { setCategoryId(null); setPriceKey(null); }} accessibilityRole="button" accessibilityLabel="Clear all filters" style={{ marginTop: 6, paddingHorizontal: 18, height: 42, borderRadius: 12, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>clear filters</Text>
+              </PressableScale>
+            ) : null}
           </View>
         )}
       </SafeAreaView>

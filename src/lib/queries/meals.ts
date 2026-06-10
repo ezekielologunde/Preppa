@@ -97,19 +97,27 @@ export function useMealsByCategory(categoryKey?: string, limit = 40) {
   });
 }
 
-/** Search published meals by title (RLS: public read). */
-export function useMealSearch(query: string) {
-  const q = query.trim();
+export type SearchFilters = { categoryId?: number | null; priceMin?: number | null; priceMax?: number | null };
+
+/**
+ * Search published meals by text and/or filters (RLS: public read).
+ * Active with 2+ characters OR any filter — filters alone browse the catalog.
+ */
+export function useMealSearch(query: string, filters: SearchFilters = {}) {
+  // PostgREST or() syntax breaks on commas/parens — strip them from user text.
+  const q = query.trim().replace(/[,()]/g, ' ').replace(/\s+/g, ' ').trim();
+  const { categoryId = null, priceMin = null, priceMax = null } = filters;
+  const hasFilters = categoryId !== null || priceMin !== null || priceMax !== null;
   return useQuery({
-    queryKey: ['meals', 'search', q],
-    enabled: q.length >= 2,
+    queryKey: ['meals', 'search', q, categoryId, priceMin, priceMax],
+    enabled: q.length >= 2 || hasFilters,
     queryFn: async (): Promise<Meal[]> => {
-      const { data, error } = await supabase
-        .from('meals')
-        .select(SELECT)
-        .eq('status', 'published')
-        .ilike('title', `%${q}%`)
-        .limit(20);
+      let req = supabase.from('meals').select(SELECT).eq('status', 'published');
+      if (q.length >= 2) req = req.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
+      if (categoryId !== null) req = req.eq('category_id', categoryId);
+      if (priceMin !== null) req = req.gte('base_price', priceMin);
+      if (priceMax !== null) req = req.lte('base_price', priceMax);
+      const { data, error } = await req.limit(30);
       if (error) throw error;
       return ((data ?? []) as unknown as MealRow[]).map(mapMeal);
     },
