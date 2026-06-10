@@ -33,6 +33,16 @@ export type OrderSummary = {
 
 const one = <T,>(v: T | T[] | null | undefined): T | undefined => (Array.isArray(v) ? v[0] : v ?? undefined);
 
+// Customer names come from profiles.full_name (PII). The customer's name is
+// shown to the prepper fulfilling the order, so reduce it to "First L." rather
+// than exposing the full legal name.
+const maskName = (full?: string | null): string | null => {
+  const t = (full ?? '').trim();
+  if (!t) return null;
+  const parts = t.split(/\s+/);
+  return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.` : parts[0];
+};
+
 type Row = {
   id: string;
   prepper_id: string;
@@ -80,7 +90,7 @@ function toSummary(r: Row): OrderSummary {
     created_at: r.created_at,
     prepperId: r.prepper_id,
     prepper: prepper?.display_name ?? 'preppa',
-    customer: customer?.display_name ?? 'customer',
+    customer: maskName(customer?.display_name) ?? 'customer',
     paymentStatus: payment?.status ?? null,
     firstMealId: r.items?.[0]?.meal_id ?? null,
     reviewed: !!(r.review && r.review.length),

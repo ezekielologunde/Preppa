@@ -4,6 +4,15 @@ import { supabase } from '@/lib/supabase';
 
 const one = <T,>(v: T | T[] | null | undefined): T | undefined => (Array.isArray(v) ? v[0] : v ?? undefined);
 
+// Review authors are public (shown on the meal page to everyone). profiles.full_name
+// is PII, so display only "First L." instead of the reviewer's full legal name.
+const maskName = (full?: string | null): string | null => {
+  const t = (full ?? '').trim();
+  if (!t) return null;
+  const parts = t.split(/\s+/);
+  return parts.length > 1 ? `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.` : parts[0];
+};
+
 export type ReviewableOrder = {
   orderId: string;
   prepperId: string;
@@ -87,7 +96,7 @@ export function usePrepperReviews(prepperId?: string | null, limit = 20) {
         id: r.id,
         rating: r.rating,
         body: r.body,
-        author: one(r.author)?.display_name ?? 'a customer',
+        author: maskName(one(r.author)?.display_name) ?? 'a customer',
         created_at: r.created_at,
       }));
     },
