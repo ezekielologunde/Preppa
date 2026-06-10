@@ -195,9 +195,9 @@ export interface Database {
         Relationships: [];
       };
       subscriptions: {
-        Row: { id: string; customer_id: string; prepper_id: string; plan_id: string | null; plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus } & Timestamps;
-        Insert: { customer_id: string; prepper_id: string; plan_name: string; frequency: string; plan_id?: string | null; next_billing_at?: string | null };
-        Update: Partial<{ plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus }>;
+        Row: { id: string; customer_id: string; prepper_id: string; plan_id: string | null; plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus; qty: number; delivery_day: string | null } & Timestamps;
+        Insert: { customer_id: string; prepper_id: string; plan_name: string; frequency: string; plan_id?: string | null; next_billing_at?: string | null; qty?: number; delivery_day?: string | null };
+        Update: Partial<{ plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus; qty: number; delivery_day: string | null }>;
         Relationships: [];
       };
     };
