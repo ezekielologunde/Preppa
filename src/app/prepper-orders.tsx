@@ -126,7 +126,7 @@ export default function PrepperOrdersScreen() {
   const [verifyMsg, setVerifyMsg] = useState<string | null>(null);
   function openVerify(o: OrderSummary) { setVerifyOrder(o); setPin(''); setVerifyMsg(null); }
   function submitPin() {
-    if (!verifyOrder || pin.replace(/\D/g, '').length !== 4) { setVerifyMsg('Enter the 4-digit code.'); return; }
+    if (!verifyOrder || pin.replace(/\D/g, '').length !== 3) { setVerifyMsg('Enter the 3-digit code.'); return; }
     setVerifyMsg(null);
     verify.mutate({ orderId: verifyOrder.id, pin }, {
       onSuccess: (r) => {
@@ -199,15 +199,15 @@ export default function PrepperOrdersScreen() {
             </View>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.4 }}>Verify the handoff</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: '#9ca3af', lineHeight: 19 }}>
-              Ask {verifyOrder?.customer ?? 'the customer'} for their 4-digit code, or scan their QR with your camera.
+              Ask {verifyOrder?.customer ?? 'the customer'} for their 3-digit code, or scan their QR with your camera.
             </Text>
             <TextInput
               value={pin}
-              onChangeText={(t) => { setPin(t.replace(/\D/g, '').slice(0, 4)); setVerifyMsg(null); }}
-              placeholder="••••"
+              onChangeText={(t) => { setPin(t.replace(/\D/g, '').slice(0, 3)); setVerifyMsg(null); }}
+              placeholder="•••"
               placeholderTextColor="#4b5563"
               keyboardType="number-pad"
-              maxLength={4}
+              maxLength={3}
               autoFocus
               style={{ height: 64, borderRadius: 16, backgroundColor: '#1d2129', textAlign: 'center', fontSize: 30, letterSpacing: 16, fontFamily: Font.display, color: '#fff' }}
             />
