@@ -39,6 +39,7 @@ import { Font } from '@/constants/fonts';
 import { useFavoritesCount } from '@/lib/favorites';
 import { feedback } from '@/lib/feedback';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
+import { toggleDarkMode, useDarkMode } from '@/lib/theme-mode';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = '#f15f22';
@@ -83,7 +84,7 @@ export default function ProfileScreen() {
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
 
   const [toast, setToast] = useState<string | null>(null);
-  const [dark, setDark] = useState(false);
+  const dark = useDarkMode();
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -277,7 +278,7 @@ export default function ProfileScreen() {
                 <ChevronRight size={15} color="#d1d5db" />
               </PressableScale>
             ))}
-            <PressableScale onPress={() => { feedback.tap(); setDark((d) => !d); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
+            <PressableScale onPress={toggleDarkMode} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
               style={{ flexGrow: 1, flexBasis: '46%', backgroundColor: '#fff', borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 11 }}>
               <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
                 <Moon size={17} color="#6b7280" />

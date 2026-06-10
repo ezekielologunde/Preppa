@@ -2,9 +2,11 @@ import '@/global.css';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, ThemeProvider, useRouter } from 'expo-router';
+import { DarkTheme, DefaultTheme, ThemeProvider, usePathname, useRouter } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, useColorScheme, useWindowDimensions, View } from 'react-native';
+
+import { useDarkMode } from '@/lib/theme-mode';
 
 import AppTabs from '@/components/app-tabs';
 import { LoadingSplash } from '@/components/loading-splash';
@@ -14,29 +16,42 @@ import { AppProviders } from '@/providers/app-providers';
 
 const ONBOARDED_KEY = 'preppa.onboarded.v1';
 
+// Screens that are dark by design — inverting them would make them light.
+const DARK_BY_DESIGN = ['/dashboard', '/prepper-orders', '/earnings', '/admin'];
+
 /**
  * On desktop web the app is a phone-class layout — let it stretch across a
  * monitor and every card's proportions break. Frame it as a centered,
  * phone-width column instead (native and small windows are untouched).
+ * The frame also carries dark mode on web: a smart-invert flips every light
+ * surface dark in one move; photos are counter-inverted (see theme-mode.ts).
  */
 function PhoneFrame({ children }: { children: ReactNode }) {
   const { width } = useWindowDimensions();
-  if (Platform.OS !== 'web' || width <= 560) return <>{children}</>;
+  const dark = useDarkMode();
+  const pathname = usePathname();
+  const invert = Platform.OS === 'web' && dark && !DARK_BY_DESIGN.some((r) => pathname.startsWith(r));
+  const darkProps = invert
+    ? { dataSet: { preppadark: 'true' }, style: { flex: 1, filter: 'invert(0.93) hue-rotate(180deg)' } as never }
+    : { style: { flex: 1 } };
+  if (Platform.OS !== 'web' || width <= 560) return <View {...darkProps}>{children}</View>;
   return (
-    <View style={{ flex: 1, backgroundColor: '#E9E7E4', alignItems: 'center' }}>
-      <View
-        style={{
-          flex: 1,
-          width: '100%',
-          maxWidth: 480,
-          backgroundColor: '#F7F7F8',
-          overflow: 'hidden',
-          shadowColor: '#000',
-          shadowOpacity: 0.12,
-          shadowRadius: 32,
-          shadowOffset: { width: 0, height: 0 },
-        }}>
-        {children}
+    <View {...darkProps}>
+      <View style={{ flex: 1, backgroundColor: '#E9E7E4', alignItems: 'center' }}>
+        <View
+          style={{
+            flex: 1,
+            width: '100%',
+            maxWidth: 480,
+            backgroundColor: '#F7F7F8',
+            overflow: 'hidden',
+            shadowColor: '#000',
+            shadowOpacity: 0.12,
+            shadowRadius: 32,
+            shadowOffset: { width: 0, height: 0 },
+          }}>
+          {children}
+        </View>
       </View>
     </View>
   );
