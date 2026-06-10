@@ -18,7 +18,7 @@ const LOGO = 'https://nfwfnnfbikjxwflpmsnu.supabase.co/storage/v1/object/public/
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 const money = (n: unknown) => `$${Number(n ?? 0).toFixed(2)}`;
-const firstName = (full?: string | null) => (full ?? '').trim().split(/\s+/)[0] || 'there';
+const firstName = (full?: string | null) => (full ?? '').trim().split(/\s+/)[0] || '';
 const esc = (s: unknown) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 
@@ -105,11 +105,12 @@ async function sendOrderEmails(supabase: SupabaseClient, orderId: string) {
     ? `<p style="margin:0 0 10px;font-size:13px;color:#6b7280">${esc(fLabel)} · ${esc(payload.note)}</p>`
     : `<p style="margin:0 0 10px;font-size:13px;color:#6b7280">${esc(fLabel)}</p>`;
 
+  const custFirst = firstName(payload.customer_name);
   const tasks: Promise<void>[] = [];
   if (payload.customer_email) {
     const html = shell(
       'Order confirmed 🎉',
-      `Thanks ${esc(firstName(payload.customer_name))}! <b>${esc(payload.prepper_name ?? 'Your prepper')}</b> got your order and will confirm it shortly.`,
+      `Thanks${custFirst ? ' ' + esc(custFirst) : ''}! <b>${esc(payload.prepper_name ?? 'Your prepper')}</b> got your order and will confirm it shortly.`,
       payload,
       noteRow,
       { label: 'View your order', url: `${SITE}/orders` },
@@ -119,7 +120,7 @@ async function sendOrderEmails(supabase: SupabaseClient, orderId: string) {
   if (payload.prepper_email) {
     const html = shell(
       'New paid order',
-      `<b>${esc(firstName(payload.customer_name))}</b> just paid for an order. Confirm it in your kitchen to get cooking.`,
+      `<b>${custFirst ? esc(custFirst) : 'A customer'}</b> just paid for an order. Confirm it in your kitchen to get cooking.`,
       payload,
       noteRow,
       { label: 'Open my kitchen', url: `${SITE}/prepper-orders` },
