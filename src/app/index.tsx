@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
   Bell,
+  Bike,
   CalendarCheck,
   ChevronDown,
   ChevronRight,
@@ -46,6 +47,14 @@ const ORANGE = Palette.brand;
 const INK = Palette.ink;
 const MUTED = Palette.textMuted;
 
+const ORDER_STATUS_LABEL: Record<string, string> = {
+  pending: 'Order placed — awaiting the kitchen',
+  confirmed: 'Order confirmed 🎉',
+  preparing: 'Your food is being prepared',
+  ready: 'Your order is ready',
+  out_for_delivery: 'On the way to you',
+};
+
 const ICONS: Record<string, LucideIcon> = {
   Coffee,
   Salad,
@@ -84,6 +93,8 @@ export default function HomeScreen() {
   // "Order again" = the user's most recent delivered order (hidden until one exists).
   const { data: myOrders } = useMyOrders(user?.id);
   const lastDone = myOrders?.find((o) => o.status === 'completed');
+  // Most recent in-progress order → a live tracker banner so orders are always findable.
+  const activeOrder = (myOrders ?? []).find((o) => o.status !== 'completed' && o.status !== 'cancelled');
   const { data: notifications } = useNotifications(user?.id);
   const rewards = useRewards(user?.id);
   // Preppa AI: rank meals from real signals (time of day, favorites, history).
@@ -155,6 +166,28 @@ export default function HomeScreen() {
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>Search meals, cuisines, or preppers…</Text>
             <SlidersHorizontal size={20} color={ORANGE} />
           </PressableScale>
+
+          {/* Active order tracker — always-findable live status */}
+          {activeOrder ? (
+            <PressableScale
+              onPress={() => router.push('/orders')}
+              accessibilityRole="button"
+              accessibilityLabel={`Track your order from ${activeOrder.prepper}, ${ORDER_STATUS_LABEL[activeOrder.status]}`}
+              style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: INK, borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <MotiView
+                from={{ opacity: 0.5 }}
+                animate={{ opacity: 1 }}
+                transition={{ type: 'timing', duration: 900, loop: true, repeatReverse: true }}
+                style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <Bike size={19} color="#fff" />
+              </MotiView>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }} numberOfLines={1}>{ORDER_STATUS_LABEL[activeOrder.status]}</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.7)' }} numberOfLines={1}>{activeOrder.prepper} · ${activeOrder.total.toFixed(2)} · tap to track</Text>
+              </View>
+              <ChevronRight size={20} color="rgba(255,255,255,0.6)" />
+            </PressableScale>
+          ) : null}
 
           {/* Categories */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>
