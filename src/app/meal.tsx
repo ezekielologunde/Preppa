@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { BadgeCheck, Check, ChevronLeft, Clock, Heart, MessageCircle, ShoppingBag, Star } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -35,6 +35,7 @@ export default function MealScreen() {
   const { user } = useAuth();
   const { data: meal, isLoading, isError } = useMeal(id);
   const [added, setAdded] = useState(false);
+  const [switchPrompt, setSwitchPrompt] = useState(false);
   const startConv = useStartConversation();
   const addToCart = useAddToCart();
   const { data: cart } = useCart(user?.id);
@@ -49,21 +50,36 @@ export default function MealScreen() {
     });
   }
 
+  // A cart holds one prepper at a time (each prepper cooks & fulfils its own order).
+  const cartPrepperId = cart?.items[0]?.prepperId ?? null;
+  const cartPrepperName = cart?.items[0]?.prepper ?? 'another kitchen';
+  const conflicts = !!meal && !!cartPrepperId && !!meal.prepperId && cartPrepperId !== meal.prepperId;
+
+  function doAdd(replace: boolean) {
+    if (!user || !meal) return;
+    addToCart.mutate(
+      { userId: user.id, mealId: meal.id, price: meal.price, replace },
+      {
+        onSuccess: () => {
+          setSwitchPrompt(false);
+          setAdded(true);
+          setTimeout(() => setAdded(false), 1800);
+        },
+      },
+    );
+  }
+
   function handleAddToCart() {
     if (!user) {
       router.push('/auth?mode=signup');
       return;
     }
     if (!meal) return;
-    addToCart.mutate(
-      { userId: user.id, mealId: meal.id, price: meal.price },
-      {
-        onSuccess: () => {
-          setAdded(true);
-          setTimeout(() => setAdded(false), 1800);
-        },
-      },
-    );
+    if (conflicts) {
+      setSwitchPrompt(true);
+      return;
+    }
+    doAdd(false);
   }
 
   return (
@@ -213,6 +229,29 @@ export default function MealScreen() {
           <ActivityIndicator color={ORANGE} />
         </View>
       ) : null}
+
+      {/* Switching kitchens — one prepper per cart */}
+      <Modal visible={switchPrompt} transparent animationType="fade" onRequestClose={() => setSwitchPrompt(false)}>
+        <Pressable onPress={() => setSwitchPrompt(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.5)', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 360, backgroundColor: '#fff', borderRadius: 22, padding: 22, gap: 10 }}>
+            <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+              <ShoppingBag size={22} color={ORANGE} />
+            </View>
+            <Text style={{ fontFamily: Font.display, fontSize: 21, color: INK, letterSpacing: -0.4 }}>Start a new cart?</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14.5, lineHeight: 21, color: Palette.textSecondary }}>
+              Your cart has items from {cartPrepperName}. Each order is from one kitchen, so adding {meal?.prepper} will clear your current cart.
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>
+              <PressableScale onPress={() => setSwitchPrompt(false)} accessibilityRole="button" accessibilityLabel="Keep current cart" style={{ flex: 1, height: 50, borderRadius: 14, borderWidth: 1, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Keep cart</Text>
+              </PressableScale>
+              <PressableScale onPress={() => doAdd(true)} disabled={addToCart.isPending} accessibilityRole="button" accessibilityLabel="Start a new cart" style={{ flex: 1, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: addToCart.isPending ? 0.7 : 1 }}>
+                {addToCart.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>New cart</Text>}
+              </PressableScale>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

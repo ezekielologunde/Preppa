@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
-import { useCart, usePlaceOrder, useUpdateCartItem } from '@/lib/queries/cart';
+import { useCart, usePlaceOrder, useRemoveItems, useUpdateCartItem } from '@/lib/queries/cart';
 import { useAuth } from '@/providers/auth-provider';
 import type { FulfillmentType } from '@/types/database.types';
 
@@ -30,6 +30,7 @@ export default function CartScreen() {
   const { user } = useAuth();
   const { data: cart, isLoading } = useCart(user?.id);
   const updateItem = useUpdateCartItem(user?.id);
+  const removeItems = useRemoveItems(user?.id);
   const placeOrder = usePlaceOrder();
   const [placed, setPlaced] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -39,6 +40,22 @@ export default function CartScreen() {
 
   const prepper = cart?.items[0]?.prepper ?? 'the prepper';
 
+  // One order = one kitchen. Detect (and let the user resolve) a mixed-prepper cart.
+  const kitchens = (() => {
+    const seen = new Map<string, { id: string; name: string }>();
+    for (const it of cart?.items ?? []) {
+      const key = it.prepperId ?? it.prepper;
+      if (!seen.has(key)) seen.set(key, { id: key, name: it.prepper });
+    }
+    return [...seen.values()];
+  })();
+  const mixed = kitchens.length > 1;
+
+  function keepOnly(keepKey: string) {
+    const drop = (cart?.items ?? []).filter((it) => (it.prepperId ?? it.prepper) !== keepKey).map((it) => it.id);
+    removeItems.mutate(drop);
+  }
+
   function goBack() {
     if (router.canGoBack()) router.back();
     else router.replace('/');
@@ -46,6 +63,7 @@ export default function CartScreen() {
 
   function checkout() {
     if (!user) return router.push('/auth?mode=signin');
+    if (mixed) return setErr('Pick one kitchen to order from above.');
     if (method === 'delivery' && note.trim().length < 5) return setErr('Add a delivery address.');
     if (method === 'meetup' && note.trim().length < 3) return setErr('Where should you meet?');
     setErr(null);
@@ -121,6 +139,20 @@ export default function CartScreen() {
         ) : (
           <>
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 20 }}>
+              {mixed ? (
+                <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.md, padding: 14, gap: 10 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: Palette.brandPressed }}>Items from {kitchens.length} kitchens</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 13, lineHeight: 19, color: Palette.brandPressed }}>You can order from one kitchen at a time. Keep one to check out — the other items will be removed.</Text>
+                  <View style={{ gap: 8, marginTop: 2 }}>
+                    {kitchens.map((k) => (
+                      <PressableScale key={k.id} onPress={() => keepOnly(k.id)} disabled={removeItems.isPending} accessibilityRole="button" accessibilityLabel={`Keep only ${k.name}`}
+                        style={{ height: 44, borderRadius: Radius.sm, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', opacity: removeItems.isPending ? 0.6 : 1 }}>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Keep {k.name}</Text>
+                      </PressableScale>
+                    ))}
+                  </View>
+                </View>
+              ) : null}
               {cart.items.map((it) => (
                 <View key={it.id} style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   {it.image ? <Image source={it.image} style={{ width: 64, height: 64, borderRadius: 12 }} contentFit="cover" /> : <View style={{ width: 64, height: 64, borderRadius: 12, backgroundColor: Palette.canvas }} />}
@@ -227,9 +259,9 @@ export default function CartScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Total</Text>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, fontVariant: ['tabular-nums'] }}>{money(total)}</Text>
               </View>
-              <PressableScale onPress={checkout} disabled={placeOrder.isPending} accessibilityRole="button" accessibilityLabel="Place order"
-                style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: placeOrder.isPending ? 0.7 : 1 }}>
-                {placeOrder.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Place order · {money(total)}</Text>}
+              <PressableScale onPress={checkout} disabled={placeOrder.isPending || mixed} accessibilityRole="button" accessibilityLabel="Place order"
+                style={{ height: 54, borderRadius: 16, backgroundColor: mixed ? Palette.textMuted : ORANGE, alignItems: 'center', justifyContent: 'center', opacity: placeOrder.isPending ? 0.7 : 1 }}>
+                {placeOrder.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{mixed ? 'Pick one kitchen above' : `Place order · ${money(total)}`}</Text>}
               </PressableScale>
               <Text style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, textAlign: 'center', marginTop: 8 }}>
                 Payment is collected when the prepper confirms.

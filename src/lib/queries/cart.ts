@@ -10,6 +10,7 @@ export type CartItem = {
   title: string;
   image: string | null;
   prepper: string;
+  prepperId: string | null;
 };
 
 type Row = {
@@ -20,7 +21,7 @@ type Row = {
   meal: {
     title: string;
     images: { url: string }[] | null;
-    prepper: { display_name: string } | { display_name: string }[] | null;
+    prepper: { id: string; display_name: string } | { id: string; display_name: string }[] | null;
   } | null;
 };
 
@@ -44,7 +45,7 @@ export function useCart(userId?: string | null) {
       if (!cartId) return { items: [], subtotal: 0, count: 0 };
       const { data, error } = await supabase
         .from('cart_items')
-        .select('id,meal_id,quantity,price_snapshot,meal:meals(title,images:meal_images(url),prepper:prepper_profiles(display_name))')
+        .select('id,meal_id,quantity,price_snapshot,meal:meals(title,images:meal_images(url),prepper:prepper_profiles(id,display_name))')
         .eq('cart_id', cartId)
         .order('created_at', { ascending: true });
       if (error) throw error;
@@ -58,6 +59,7 @@ export function useCart(userId?: string | null) {
           title: r.meal?.title ?? 'meal',
           image: r.meal?.images?.[0]?.url ?? null,
           prepper: prepper?.display_name ?? 'preppa',
+          prepperId: prepper?.id ?? null,
         };
       });
       const subtotal = items.reduce((s, i) => s + i.price_snapshot * i.quantity, 0);
@@ -67,13 +69,18 @@ export function useCart(userId?: string | null) {
   });
 }
 
-/** Add a meal to the cart (or bump quantity if already present). */
+/** Add a meal to the cart (or bump quantity if already present). Pass `replace` to
+ * empty the cart first — used when switching to a different prepper (one prepper per order). */
 export function useAddToCart() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (v: { userId: string; mealId: string; price: number; quantity?: number }) => {
+    mutationFn: async (v: { userId: string; mealId: string; price: number; quantity?: number; replace?: boolean }) => {
       const cartId = await getCartId(v.userId);
       if (!cartId) throw new Error('No cart found for this account.');
+      if (v.replace) {
+        const { error } = await supabase.from('cart_items').delete().eq('cart_id', cartId);
+        if (error) throw error;
+      }
       const { data: existing } = await supabase
         .from('cart_items')
         .select('id,quantity')
@@ -109,6 +116,19 @@ export function useUpdateCartItem(userId?: string | null) {
         const { error } = await supabase.from('cart_items').update({ quantity: v.quantity }).eq('id', v.itemId);
         if (error) throw error;
       }
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['cart', userId ?? 'anon'] }),
+  });
+}
+
+/** Remove a set of line items by id (used to resolve a mixed-prepper cart). */
+export function useRemoveItems(userId?: string | null) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (itemIds: string[]) => {
+      if (!itemIds.length) return;
+      const { error } = await supabase.from('cart_items').delete().in('id', itemIds);
+      if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['cart', userId ?? 'anon'] }),
   });
