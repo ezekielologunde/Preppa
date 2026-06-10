@@ -5,6 +5,7 @@ import { MotiView } from 'moti';
 import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Font } from '@/constants/fonts';
 import { PreppaLogo } from './preppa-logo';
 
 type Props = {
@@ -16,6 +17,7 @@ const FONT = {
   display: 'Bricolage-ExtraBold',
   bold: 'Bricolage-Bold',
   body: 'Jakarta-Medium',
+  logo: Font.logo,
 };
 
 /** A soft, drifting gradient orb for depth/motion behind the content. */
@@ -129,7 +131,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 28, paddingTop: 24, paddingBottom: 40 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   brandBlock: { alignItems: 'center', gap: 18 },
-  wordmark: { fontFamily: FONT.display, fontSize: 56, color: '#fff', letterSpacing: -2, marginTop: 4 },
+  wordmark: { fontFamily: FONT.logo, fontSize: 58, color: '#fff', letterSpacing: -1.5, marginTop: 4 },
   tagline: {
     fontFamily: FONT.body,
     fontSize: 19,
