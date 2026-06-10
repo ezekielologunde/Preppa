@@ -59,6 +59,23 @@ export function useFavorite(key: string): boolean {
   return useSyncExternalStore(subscribe, () => favorites.has(key));
 }
 
+// Cached array snapshot — recomputed only when the favorites Set is replaced,
+// so useSyncExternalStore gets a stable reference between unrelated renders.
+let snapSource: Set<string> | null = null;
+let snapKeys: string[] = [];
+function favoriteKeysSnapshot(): string[] {
+  if (snapSource !== favorites) {
+    snapSource = favorites;
+    snapKeys = [...favorites];
+  }
+  return snapKeys;
+}
+
+/** All favorited keys (e.g. "meal:<id>"), live. */
+export function useFavoriteKeys(): string[] {
+  return useSyncExternalStore(subscribe, favoriteKeysSnapshot);
+}
+
 /** Live count of favorites with the given namespace prefix (e.g. "meal:"). */
 export function useFavoritesCount(prefix = ''): number {
   return useSyncExternalStore(subscribe, () => {

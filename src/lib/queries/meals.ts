@@ -49,6 +49,8 @@ function mapMeal(row: MealRow): Meal {
     | { average_rating: number; total_reviews: number }
     | undefined;
   const prep = row.prep_time_min;
+  const images = (row.images ?? []).map((i) => i.url).filter(Boolean);
+  const cat = one(row.category as never) as { key: string } | undefined;
   return {
     id: row.id,
     title: row.title,
@@ -57,7 +59,9 @@ function mapMeal(row: MealRow): Meal {
     reviews: rating?.total_reviews ?? 0,
     price: row.base_price,
     time: prep ? `${Math.max(prep - 5, 5)}–${prep + 5} min` : '20–30 min',
-    image: row.images?.[0]?.url ?? '',
+    image: images[0] ?? '',
+    images,
+    category: cat?.key ?? null,
     badge: deriveBadge(row, rating),
   };
 }

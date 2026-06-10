@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
   Bell,
@@ -10,6 +11,7 @@ import {
   Leaf,
   MapPin,
   MoreHorizontal,
+  RefreshCw,
   Salad,
   Search,
   SlidersHorizontal,
@@ -35,6 +37,8 @@ import { useFeatureFlags } from '@/lib/queries/feature-flags';
 import { useMyOrders } from '@/lib/queries/orders';
 import { useNotifications } from '@/lib/queries/notifications';
 import { useRewards } from '@/lib/queries/rewards';
+import { usePersonalizedMeals } from '@/lib/queries/recommend';
+import { useContentWidth } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
@@ -48,6 +52,7 @@ const ICONS: Record<string, LucideIcon> = {
   Leaf,
   Sprout,
   MoreHorizontal,
+  RefreshCw,
 };
 
 function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
@@ -80,6 +85,12 @@ export default function HomeScreen() {
   const lastDone = myOrders?.find((o) => o.status === 'completed');
   const { data: notifications } = useNotifications(user?.id);
   const rewards = useRewards(user?.id);
+  // Preppa AI: rank meals from real signals (time of day, favorites, history).
+  const contentWidth = useContentWidth();
+  const ranked = usePersonalizedMeals(meals, user?.id);
+  const [aiIdx, setAiIdx] = useState(0);
+  const topPicks = ranked.slice(0, Math.min(5, ranked.length));
+  const aiPick = topPicks.length ? topPicks[aiIdx % topPicks.length] : null;
   // Bell badge = orders in motion + unread notifications (real, actionable).
   const activeOrders = (myOrders ?? []).filter(
     (o) => o.status !== 'completed' && o.status !== 'cancelled',
@@ -184,41 +195,51 @@ export default function HomeScreen() {
             </View>
           ) : null}
 
-          {/* Recommended — real meals lead; discovery toys come after */}
+          {/* Recommended — personalized, dynamic mix of a big hero + carousel */}
           <SectionHeader title="recommended for you" onSeeAll={() => router.push('/category?key=all&label=recommended')} />
           {mealsLoading ? (
             <View style={{ paddingBottom: 26 }}>
               <CardRowSkeleton count={3} />
             </View>
           ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-              {meals.map((m) => (
-                <MealCard key={m.id} meal={m} />
-              ))}
-            </ScrollView>
+            <>
+              {aiPick ? (
+                <View style={{ paddingHorizontal: 20, marginBottom: 14 }}>
+                  <MealCard meal={aiPick.meal} variant="big" width={contentWidth - 40} />
+                </View>
+              ) : null}
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+                {(aiPick ? ranked.slice(1) : ranked).map((s) => (
+                  <MealCard key={s.meal.id} meal={s.meal} />
+                ))}
+              </ScrollView>
+            </>
           )}
 
-          {/* Chef surprise me — flat brand-tint accent (the one accent surface on Home) */}
-          <Pressable
-            onPress={() => {
-              const pick = meals[Math.floor(Math.random() * meals.length)];
-              if (pick) router.push(`/meal?id=${pick.id}`);
-            }}
-            accessibilityRole="button"
-            accessibilityLabel="Surprise me with a meal"
-            style={{ marginHorizontal: 20, marginBottom: 26 }}>
-            <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.lg, padding: 20, flexDirection: 'row', alignItems: 'center', overflow: 'hidden' }}>
-              <View style={{ flex: 1, gap: 6 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5 }}>chef surprise me</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 18 }}>tell us your mood, we&apos;ll pick the perfect meal</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', backgroundColor: INK, borderRadius: Radius.pill, paddingHorizontal: 16, paddingVertical: 10, marginTop: 8, gap: 6 }}>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>surprise me</Text>
-                  <Sparkles size={14} color={ORANGE} />
+          {/* Preppa AI — a personalized pick that learns from your taste */}
+          {aiPick ? (
+            <View style={{ marginHorizontal: 20, marginBottom: 26, backgroundColor: '#11151C', borderRadius: Radius.lg, padding: 18, gap: 12, overflow: 'hidden' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <View style={{ width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: ORANGE }}>
+                  <Sparkles size={14} color="#fff" />
                 </View>
+                <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff', flex: 1 }}>Preppa AI · picked for you</Text>
+                <PressableScale onPress={() => setAiIdx((i) => i + 1)} accessibilityRole="button" accessibilityLabel="Suggest another meal" hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, height: 30, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.12)' }}>
+                  <RefreshCw size={13} color="#fff" />
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>shuffle</Text>
+                </PressableScale>
               </View>
-              <Image source="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=300&q=60" style={{ width: 110, height: 110, borderRadius: 55 }} contentFit="cover" />
+              <PressableScale onPress={() => router.push(`/meal?id=${aiPick.meal.id}`)} accessibilityRole="button" accessibilityLabel={`${aiPick.meal.title} — ${aiPick.reason}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Image source={aiPick.meal.image} style={{ width: 76, height: 76, borderRadius: 16 }} contentFit="cover" transition={200} />
+                <View style={{ flex: 1, gap: 3 }}>
+                  <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{aiPick.meal.title}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: ORANGE }} numberOfLines={1}>{aiPick.reason}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }} numberOfLines={1}>by {aiPick.meal.prepper} · ${aiPick.meal.price.toFixed(2)}</Text>
+                </View>
+                <ChevronRight size={20} color="#6b7280" />
+              </PressableScale>
             </View>
-          </Pressable>
+          ) : null}
 
           {/* Points banner — real points from completed orders */}
           <PressableScale onPress={() => router.push('/rewards')} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 28, backgroundColor: '#E7F6EC', borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
