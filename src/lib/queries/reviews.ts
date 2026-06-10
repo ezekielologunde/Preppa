@@ -78,7 +78,7 @@ export function usePrepperReviews(prepperId?: string | null, limit = 20) {
     queryFn: async (): Promise<ReviewCard[]> => {
       const { data, error } = await supabase
         .from('reviews')
-        .select('id,rating,body,created_at,author:profiles(display_name)')
+        .select('id,rating,body,created_at,author:profiles(display_name:full_name)')
         .eq('prepper_id', prepperId!)
         .order('created_at', { ascending: false })
         .limit(limit);

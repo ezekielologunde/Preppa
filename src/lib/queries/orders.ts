@@ -62,7 +62,7 @@ type Row = {
 const SELECT =
   'id,prepper_id,status,subtotal,tip,total,delivery_fee,fulfillment_type,fulfillment_note,created_at,' +
   'prepper:prepper_profiles(display_name),' +
-  'customer:profiles(display_name),' +
+  'customer:profiles(display_name:full_name),' +
   'payment:payments(status),' +
   'review:reviews(id),' +
   'items:order_items(id,meal_id,quantity,total,meal:meals(title,images:meal_images(url)))';
