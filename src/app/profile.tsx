@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import {
   Bell,
   Bookmark,
+  CalendarCheck,
   Camera,
   ChefHat,
   ChevronRight,
@@ -36,6 +37,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
+import { useMySubscriptions } from '@/lib/queries/meal-plans';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = '#f15f22';
@@ -44,7 +46,7 @@ const INK = '#111827';
 const quickLinks = [
   { label: 'favorites', sub: '24 meals', Icon: Heart, color: '#ef4444', bg: '#FEE2E2' },
   { label: 'saved', sub: '18 items', Icon: Bookmark, color: '#f59e0b', bg: '#FEF3C7' },
-  { label: 'recent', sub: '32 meals', Icon: Clock, color: '#16a34a', bg: '#DCFCE7' },
+  { label: 'recently viewed', sub: '32 meals', Icon: Clock, color: '#16a34a', bg: '#DCFCE7' },
   { label: 'following', sub: '12 preppers', Icon: Users, color: '#8b5cf6', bg: '#EDE9FE' },
   { label: 'referrals', sub: 'invite', Icon: Ticket, color: '#f59e0b', bg: '#FEF3C7' },
 ];
@@ -73,6 +75,7 @@ function Badge({ Icon, label, color }: { Icon: LucideIcon; label: string; color:
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut, isAdmin } = useAuth();
+  const { data: subs } = useMySubscriptions(user?.id);
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
 
@@ -90,7 +93,7 @@ export default function ProfileScreen() {
   const go = (route: string) => router.push(route as never);
 
   const onQuick = (label: string) => {
-    if (label === 'recent') return go('/orders');
+    if (label === 'recently viewed') return go('/explore');
     if (label === 'following') return go('/explore');
     return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
   };
@@ -197,6 +200,57 @@ export default function ProfileScreen() {
               </PressableScale>
             ))}
           </View>
+
+          {/* Meal plans & subscriptions */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5 }}>meal plans &amp; subscriptions</Text>
+            <PressableScale onPress={() => go('/meal-plans')} accessibilityRole="button" accessibilityLabel="View all meal plans">
+              <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>view all</Text>
+            </PressableScale>
+          </View>
+          {subs && subs.length > 0 ? (
+            <View style={{ marginHorizontal: 20, gap: 10 }}>
+              {subs.map((s) => {
+                const active = s.status === 'active';
+                const badge = active ? { bg: '#DCFCE7', fg: '#15803d' } : s.status === 'paused' ? { bg: '#FEF3C7', fg: '#b45309' } : { bg: '#F3F4F6', fg: '#6b7280' };
+                const next = s.next_billing_at ? new Date(s.next_billing_at) : null;
+                const nextLabel = next && !isNaN(next.getTime()) ? next.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : null;
+                return (
+                  <PressableScale key={s.id} onPress={() => go('/meal-plans')} accessibilityRole="button" accessibilityLabel={`${s.plan_name}, ${s.status}`}
+                    style={{ backgroundColor: '#fff', borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <View style={{ width: 56, height: 56, borderRadius: 14, backgroundColor: '#FDEDE4', alignItems: 'center', justifyContent: 'center' }}>
+                      <CalendarCheck size={24} color={ORANGE} />
+                    </View>
+                    <View style={{ flex: 1, gap: 3 }}>
+                      <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{s.plan_name}</Text>
+                      {s.prepper?.display_name ? <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }}>by {s.prepper.display_name}</Text> : null}
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
+                        <View style={{ paddingHorizontal: 9, height: 22, borderRadius: 999, backgroundColor: badge.bg, alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: badge.fg, textTransform: 'capitalize' }}>{s.status}</Text>
+                        </View>
+                        <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#6b7280', textTransform: 'capitalize' }}>
+                          {nextLabel ? `next: ${nextLabel} · ` : ''}{s.frequency}
+                        </Text>
+                      </View>
+                    </View>
+                    <ChevronRight size={18} color="#d1d5db" />
+                  </PressableScale>
+                );
+              })}
+            </View>
+          ) : (
+            <PressableScale onPress={() => go('/meal-plans')} accessibilityRole="button" accessibilityLabel="Discover meal plans"
+              style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ width: 48, height: 48, borderRadius: 14, backgroundColor: '#FDEDE4', alignItems: 'center', justifyContent: 'center' }}>
+                <CalendarCheck size={22} color={ORANGE} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>Subscribe & save</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: '#9ca3af', marginTop: 1 }}>Weekly meal plans from your favorite kitchens, on repeat.</Text>
+              </View>
+              <ChevronRight size={18} color="#d1d5db" />
+            </PressableScale>
+          )}
 
           {/* Hub */}
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>your hub</Text>
