@@ -1,4 +1,3 @@
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
@@ -34,6 +33,7 @@ import { useState } from 'react';
 import { Linking, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { useFavoritesCount } from '@/lib/favorites';
@@ -134,7 +134,7 @@ export default function ProfileScreen() {
           {/* Identity */}
           <View style={{ alignItems: 'center', paddingHorizontal: 20, marginTop: 6 }}>
             <View style={{ width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: ORANGE, padding: 3 }}>
-              <Image source="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60" style={{ flex: 1, borderRadius: 42 }} contentFit="cover" />
+              <Avatar name={displayName} url={user?.user_metadata?.avatar_url as string | undefined} size={84} />
               <PressableScale onPress={() => soon('Change photo')} accessibilityRole="button" accessibilityLabel="Change photo" style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#F7F7F8' }}>
                 <Camera size={14} color="#fff" />
               </PressableScale>

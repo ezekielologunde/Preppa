@@ -23,6 +23,7 @@ import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MealCard } from '@/components/meal-card';
+import { Avatar } from '@/components/ui/avatar';
 import { Font } from '@/constants/fonts';
 import { categories, recommendedMeals } from '@/constants/mock';
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -90,11 +91,7 @@ export default function HomeScreen() {
               accessibilityRole="button"
               accessibilityLabel="Your profile"
               style={{ width: 52, height: 52, borderRadius: 26, borderWidth: 2, borderColor: ORANGE, padding: 2 }}>
-              <Image
-                source="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=60"
-                style={{ flex: 1, borderRadius: 22 }}
-                contentFit="cover"
-              />
+              <Avatar name={firstName} url={user?.user_metadata?.avatar_url as string | undefined} size={44} />
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>{greeting()}, {firstName} 👋</Text>

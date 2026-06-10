@@ -1,6 +1,8 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Star } from 'lucide-react-native';
+import { MotiView } from 'moti';
+import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { FavoriteButton } from '@/components/ui/favorite-button';
@@ -22,15 +24,24 @@ export type Meal = {
 /** Recommended-style meal card (image, badge, title, prepper, rating, time/price). */
 export function MealCard({ meal, width = 200 }: { meal: Meal; width?: number }) {
   const router = useRouter();
+  // Hovering (web) slowly pans across the photo — a living preview, not a still.
+  const [hovered, setHovered] = useState(false);
   return (
     <PressableScale
       onPress={() => router.push(`/meal?id=${meal.id}`)}
+      onHoverIn={() => setHovered(true)}
+      onHoverOut={() => setHovered(false)}
       style={{ width }}
       accessibilityRole="button"
       accessibilityLabel={`${meal.title} by ${meal.prepper}, $${meal.price.toFixed(2)}`}>
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
-        <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
-          <Image source={meal.image} style={{ flex: 1 }} contentFit="cover" transition={250} />
+        <View style={{ height: 130, backgroundColor: '#FCE9DD', overflow: 'hidden' }}>
+          <MotiView
+            animate={{ scale: hovered ? 1.12 : 1, translateX: hovered ? -10 : 0 }}
+            transition={{ type: 'timing', duration: hovered ? 3500 : 350 }}
+            style={{ flex: 1 }}>
+            <Image source={meal.image} style={{ flex: 1 }} contentFit="cover" transition={250} />
+          </MotiView>
           {meal.badge ? (
             <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4, flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: meal.badge.color, marginRight: 5 }} />

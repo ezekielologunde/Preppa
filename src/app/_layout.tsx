@@ -3,8 +3,8 @@ import '@/global.css';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, ThemeProvider, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Platform, useColorScheme, useWindowDimensions, View } from 'react-native';
 
 import AppTabs from '@/components/app-tabs';
 import { LoadingSplash } from '@/components/loading-splash';
@@ -13,6 +13,34 @@ import { fontAssets } from '@/constants/fonts';
 import { AppProviders } from '@/providers/app-providers';
 
 const ONBOARDED_KEY = 'preppa.onboarded.v1';
+
+/**
+ * On desktop web the app is a phone-class layout — let it stretch across a
+ * monitor and every card's proportions break. Frame it as a centered,
+ * phone-width column instead (native and small windows are untouched).
+ */
+function PhoneFrame({ children }: { children: ReactNode }) {
+  const { width } = useWindowDimensions();
+  if (Platform.OS !== 'web' || width <= 560) return <>{children}</>;
+  return (
+    <View style={{ flex: 1, backgroundColor: '#E9E7E4', alignItems: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          width: '100%',
+          maxWidth: 480,
+          backgroundColor: '#F7F7F8',
+          overflow: 'hidden',
+          shadowColor: '#000',
+          shadowOpacity: 0.12,
+          shadowRadius: 32,
+          shadowOffset: { width: 0, height: 0 },
+        }}>
+        {children}
+      </View>
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -52,12 +80,14 @@ export default function RootLayout() {
   return (
     <AppProviders>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        {/* Navigator always mounted so routing stays valid; overlays sit on top. */}
-        <AppTabs />
-        {ready && !onboarded && (
-          <Onboarding onGetStarted={() => goToAuth('signup')} onSignIn={() => goToAuth('signin')} />
-        )}
-        {!ready && <LoadingSplash />}
+        <PhoneFrame>
+          {/* Navigator always mounted so routing stays valid; overlays sit on top. */}
+          <AppTabs />
+          {ready && !onboarded && (
+            <Onboarding onGetStarted={() => goToAuth('signup')} onSignIn={() => goToAuth('signin')} />
+          )}
+          {!ready && <LoadingSplash />}
+        </PhoneFrame>
       </ThemeProvider>
     </AppProviders>
   );
