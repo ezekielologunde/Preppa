@@ -254,7 +254,7 @@ export default function DashboardScreen() {
             <QuickAction Icon={UtensilsCrossed} label="menu" color={GREEN} onPress={() => router.push('/meal-editor')} />
             <QuickAction Icon={Boxes} label="inventory" color={BLUE} />
             <QuickAction Icon={DollarSign} label="earnings" color={GREEN} onPress={() => router.push('/earnings')} />
-            <QuickAction Icon={Users} label="customers" color={PURPLE} />
+            <QuickAction Icon={Users} label="customers" color={PURPLE} onPress={() => router.push('/customers')} />
             <QuickAction Icon={TrendingUp} label="insights" color={BLUE} />
           </ScrollView>
 

@@ -15,6 +15,7 @@ export type OrderLine = {
 export type OrderSummary = {
   id: string;
   status: OrderStatus;
+  customerId: string;
   subtotal: number;
   tip: number;
   total: number;
@@ -48,6 +49,7 @@ const maskName = (full?: string | null): string | null => {
 type Row = {
   id: string;
   prepper_id: string;
+  customer_id: string;
   status: OrderStatus;
   subtotal: number;
   tip: number;
@@ -73,7 +75,7 @@ type Row = {
 };
 
 const SELECT =
-  'id,prepper_id,status,subtotal,tip,total,delivery_fee,fulfillment_type,fulfillment_note,created_at,' +
+  'id,prepper_id,customer_id,status,subtotal,tip,total,delivery_fee,fulfillment_type,fulfillment_note,created_at,' +
   'prepper:prepper_profiles(display_name),' +
   'customer:profiles(display_name:full_name),' +
   'payment:payments(status),' +
@@ -88,6 +90,7 @@ function toSummary(r: Row): OrderSummary {
   return {
     id: r.id,
     status: r.status,
+    customerId: r.customer_id,
     subtotal: r.subtotal,
     tip: r.tip,
     total: r.total,
