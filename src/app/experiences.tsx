@@ -5,6 +5,7 @@ import {
   ChefHat,
   ChevronRight,
   ClipboardList,
+  Crown,
   GraduationCap,
   HandPlatter,
   MapPin,
@@ -73,9 +74,36 @@ export default function ExperiencesScreen() {
           <View style={{ paddingHorizontal: 20 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 32, color: INK, letterSpacing: -1 }}>experiences</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 2 }}>
-              catering, private chefs, classes & tastings near you
+              private chefs, catering, classes & tastings near you
             </Text>
           </View>
+
+          {/* PREMIUM FLAGSHIP — Chef at Home */}
+          <PressableScale
+            onPress={() => router.push('/experience-request?kind=private_chef')}
+            accessibilityRole="button"
+            accessibilityLabel="Book a private chef to cook at your home"
+            style={{ marginHorizontal: 20, marginTop: 16, borderRadius: Radius.lg, overflow: 'hidden', backgroundColor: '#11151C', ...Shadow.floating }}>
+            <Image source="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=70" style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '52%', opacity: 0.55 }} contentFit="cover" transition={250} />
+            <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, right: 0, backgroundColor: 'rgba(17,21,28,0.45)' }} />
+            <View style={{ padding: 20, gap: 10 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: 'rgba(241,95,34,0.92)', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}>
+                <Crown size={13} color="#fff" />
+                <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#fff', letterSpacing: 0.3 }}>PREMIUM</Text>
+              </View>
+              <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6, maxWidth: '78%', lineHeight: 28 }}>chef at your home</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: 'rgba(255,255,255,0.88)', maxWidth: '70%', lineHeight: 19 }}>
+                A personal chef shops, cooks a multi-course dinner in your kitchen, and cleans up. You just show up hungry.
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                <View style={{ backgroundColor: '#fff', borderRadius: Radius.pill, paddingHorizontal: 18, height: 42, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>Request a chef</Text>
+                  <ChevronRight size={16} color={INK} />
+                </View>
+                <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: 'rgba(255,255,255,0.85)' }}>from $65 / guest</Text>
+              </View>
+            </View>
+          </PressableScale>
 
           {/* Primary action — post a request */}
           <PressableScale
@@ -87,8 +115,8 @@ export default function ExperiencesScreen() {
               <Plus size={24} color="#fff" strokeWidth={2.6} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Post a request</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 1 }}>Describe your event — get bids from local preppers</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Post a custom request</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 1 }}>Catering, classes, food service & more — get bids</Text>
             </View>
           </PressableScale>
 
