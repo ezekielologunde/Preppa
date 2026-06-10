@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
-import { BadgeCheck, Heart, Star } from 'lucide-react-native';
+import { BadgeCheck, Star } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
+import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import type { TopPrepper } from '@/lib/queries/preppers';
@@ -15,8 +16,8 @@ export function PrepperCard({ prepper }: { prepper: TopPrepper }) {
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
         <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
           {prepper.image ? <Image source={prepper.image} style={{ flex: 1 }} contentFit="cover" transition={250} /> : null}
-          <View style={{ position: 'absolute', top: 10, right: 10, width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
-            <Heart size={16} color="#9ca3af" />
+          <View style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FavoriteButton id={`prepper:${prepper.id}`} />
           </View>
         </View>
         <View style={{ padding: 12, gap: 4 }}>

@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Heart, Star } from 'lucide-react-native';
+import { Star } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
+import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 
@@ -36,8 +37,8 @@ export function MealCard({ meal, width = 200 }: { meal: Meal; width?: number }) 
               <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#1f2937' }}>{meal.badge.label}</Text>
             </View>
           ) : null}
-          <View style={{ position: 'absolute', top: 10, right: 10, width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
-            <Heart size={16} color="#9ca3af" />
+          <View style={{ position: 'absolute', top: 10, right: 10 }}>
+            <FavoriteButton id={`meal:${meal.id}`} />
           </View>
         </View>
         <View style={{ padding: 12, gap: 3 }}>

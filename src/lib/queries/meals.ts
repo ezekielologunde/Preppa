@@ -9,18 +9,35 @@ type MealRow = {
   title: string;
   base_price: number;
   prep_time_min: number | null;
+  created_at: string | null;
   prepper: {
     display_name: string;
     verified: boolean;
     rating: { average_rating: number; total_reviews: number } | { average_rating: number; total_reviews: number }[] | null;
   } | { display_name: string; verified: boolean; rating: unknown }[] | null;
   images: { url: string }[];
+  category: { key: string } | { key: string }[] | null;
 };
 
 const SELECT =
-  'id,title,base_price,prep_time_min,' +
+  'id,title,base_price,prep_time_min,created_at,' +
   'prepper:prepper_profiles(display_name,verified,rating:prepper_rating_summary(average_rating,total_reviews)),' +
-  'images:meal_images(url)';
+  'images:meal_images(url),' +
+  'category:meal_categories(key)';
+
+const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000;
+
+// One badge per card, mockup-style. Priority: social proof > diet > freshness
+// (everything is "new" in a young catalog — popular/diet badges say more).
+function deriveBadge(row: MealRow, rating?: { average_rating: number; total_reviews: number }): Meal['badge'] {
+  if ((rating?.average_rating ?? 0) >= 4.85 && (rating?.total_reviews ?? 0) >= 90) return { label: 'popular', color: '#f15f22' };
+  const cat = one(row.category as never) as { key: string } | undefined;
+  if (cat?.key === 'healthy') return { label: 'healthy', color: '#16a34a' };
+  if (cat?.key === 'vegan') return { label: 'vegan', color: '#8b5cf6' };
+  const created = row.created_at ? new Date(row.created_at).getTime() : 0;
+  if (created && Date.now() - created < TWO_WEEKS) return { label: 'new', color: '#22c55e' };
+  return undefined;
+}
 
 function one<T>(v: T | T[] | null | undefined): T | undefined {
   return Array.isArray(v) ? v[0] : (v ?? undefined);
@@ -41,6 +58,7 @@ function mapMeal(row: MealRow): Meal {
     price: row.base_price,
     time: prep ? `${Math.max(prep - 5, 5)}–${prep + 5} min` : '20–30 min',
     image: row.images?.[0]?.url ?? '',
+    badge: deriveBadge(row, rating),
   };
 }
 
@@ -68,7 +86,7 @@ export function useMealsByCategory(categoryKey?: string, limit = 40) {
     queryFn: async (): Promise<Meal[]> => {
       // Inner-join meal_categories so we can filter on its key; falls back to all when no key.
       const select = key
-        ? SELECT + ',category:meal_categories!inner(key)'
+        ? SELECT.replace('category:meal_categories(key)', 'category:meal_categories!inner(key)')
         : SELECT;
       let q = supabase.from('meals').select(select).eq('status', 'published');
       if (key) q = q.eq('category.key', key);

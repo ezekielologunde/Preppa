@@ -1,10 +1,11 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, Check, ChevronLeft, Clock, Heart, MessageCircle, ShoppingBag, Star } from 'lucide-react-native';
+import { BadgeCheck, Check, ChevronLeft, Clock, MessageCircle, ShoppingBag, Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
@@ -109,9 +110,7 @@ export default function MealScreen() {
                   </View>
                 </PressableScale>
               ) : null}
-              <PressableScale accessibilityRole="button" accessibilityLabel="Save" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
-                <Heart size={20} color="#6b7280" />
-              </PressableScale>
+              {id ? <FavoriteButton id={`meal:${id}`} size={42} /> : null}
             </View>
           </SafeAreaView>
         </View>

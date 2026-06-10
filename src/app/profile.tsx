@@ -36,6 +36,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { useFavoritesCount } from '@/lib/favorites';
 import { feedback } from '@/lib/feedback';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
 import { useAuth } from '@/providers/auth-provider';
@@ -76,6 +77,8 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut, isAdmin } = useAuth();
   const { data: subs } = useMySubscriptions(user?.id);
+  const favMeals = useFavoritesCount('meal:');
+  const followed = useFavoritesCount('prepper:');
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
 
@@ -196,7 +199,9 @@ export default function ProfileScreen() {
                   <q.Icon size={19} color={q.color} />
                 </View>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#374151' }}>{q.label}</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 10, color: '#9ca3af' }}>{q.sub}</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 10, color: '#9ca3af' }}>
+                  {q.label === 'favorites' ? `${favMeals} meal${favMeals === 1 ? '' : 's'}` : q.label === 'following' ? `${followed} prepper${followed === 1 ? '' : 's'}` : q.sub}
+                </Text>
               </PressableScale>
             ))}
           </View>
@@ -252,33 +257,37 @@ export default function ProfileScreen() {
             </PressableScale>
           )}
 
-          {/* Hub */}
+          {/* Hub — two-column grid (mockup) */}
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>your hub</Text>
-          <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: 20, overflow: 'hidden' }}>
-            {hub.map((h, i) => (
+          <View style={{ marginHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+            {hub.map((h) => (
               <PressableScale
                 key={h.label}
                 onPress={() => onHub(h)}
                 accessibilityRole="button"
                 accessibilityLabel={`${h.label}, ${h.sub}`}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
-                <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: h.accent ? '#FDEDE4' : '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
-                  <h.Icon size={18} color={h.accent ? ORANGE : '#6b7280'} />
+                style={{ flexGrow: 1, flexBasis: '46%', backgroundColor: '#fff', borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 11 }}>
+                <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: h.accent ? '#FDEDE4' : '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
+                  <h.Icon size={17} color={h.accent ? ORANGE : '#6b7280'} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: h.accent ? ORANGE : INK }}>{h.label}</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af', marginTop: 1 }}>{h.sub}</Text>
+                  <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 13.5, color: h.accent ? ORANGE : INK }}>{h.label}</Text>
+                  <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11, color: '#9ca3af', marginTop: 1 }}>{h.sub}</Text>
                 </View>
-                <ChevronRight size={18} color="#d1d5db" />
+                <ChevronRight size={15} color="#d1d5db" />
               </PressableScale>
             ))}
-            <PressableScale onPress={() => { feedback.tap(); setDark((d) => !d); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode" style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 15, borderTopWidth: 1, borderTopColor: '#f3f4f6' }}>
-              <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
-                <Moon size={18} color="#6b7280" />
+            <PressableScale onPress={() => { feedback.tap(); setDark((d) => !d); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
+              style={{ flexGrow: 1, flexBasis: '46%', backgroundColor: '#fff', borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 11 }}>
+              <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' }}>
+                <Moon size={17} color="#6b7280" />
               </View>
-              <Text style={{ flex: 1, fontFamily: Font.heading, fontSize: 15, color: INK }}>dark mode</Text>
-              <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: dark ? ORANGE : '#e5e7eb', justifyContent: 'center', paddingHorizontal: 3, alignItems: dark ? 'flex-end' : 'flex-start' }}>
-                <MotiView animate={{ translateX: 0 }} style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff' }} />
+              <View style={{ flex: 1 }}>
+                <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 13.5, color: INK }}>dark mode</Text>
+                <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11, color: '#9ca3af', marginTop: 1 }}>{dark ? 'on' : 'off'}</Text>
+              </View>
+              <View style={{ width: 40, height: 24, borderRadius: 12, backgroundColor: dark ? ORANGE : '#e5e7eb', justifyContent: 'center', paddingHorizontal: 3, alignItems: dark ? 'flex-end' : 'flex-start' }}>
+                <MotiView animate={{ translateX: 0 }} style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: '#fff' }} />
               </View>
             </PressableScale>
           </View>

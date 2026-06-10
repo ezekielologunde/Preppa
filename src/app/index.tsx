@@ -29,8 +29,10 @@ import { categories, orderAgain, recommendedMeals } from '@/constants/mock';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Palette, Radius } from '@/constants/theme';
+import { greeting } from '@/lib/greeting';
 import { useFeaturedMeals } from '@/lib/queries/meals';
 import { useFeatureFlags } from '@/lib/queries/feature-flags';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -60,6 +62,11 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  const firstName =
+    ((user?.user_metadata?.full_name as string | undefined)?.trim().split(/\s+/)[0] ??
+      user?.email?.split('@')[0] ??
+      'there').toLowerCase();
   // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
   const { data: liveMeals, isLoading: mealsLoading } = useFeaturedMeals();
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
@@ -87,7 +94,7 @@ export default function HomeScreen() {
               />
             </PressableScale>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>good morning, alex</Text>
+              <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>{greeting()}, {firstName} 👋</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6, lineHeight: 28 }}>
                 what are you{'\n'}
                 <Text style={{ color: ORANGE }}>craving today?</Text>

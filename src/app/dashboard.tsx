@@ -28,6 +28,7 @@ import Svg, { Circle, Polyline } from 'react-native-svg';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
+import { greeting } from '@/lib/greeting';
 import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
@@ -124,13 +125,6 @@ function QuickAction({ Icon, label, color, badge, onPress }: { Icon: LucideIcon;
   );
 }
 
-function greeting(): string {
-  const h = new Date().getHours();
-  if (h < 12) return 'good morning';
-  if (h < 18) return 'good afternoon';
-  return 'good evening';
-}
-
 export default function DashboardScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -165,7 +159,7 @@ export default function DashboardScreen() {
               <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
             </PressableScale>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef 👋</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 27, color: '#fff', letterSpacing: -0.8 }}>my kitchen</Text>
                 <Flame size={20} color={ORANGE} fill={ORANGE} />
