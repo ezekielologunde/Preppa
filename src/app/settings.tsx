@@ -54,11 +54,11 @@ function Toggle({ value, onToggle }: { value: boolean; onToggle: () => void }) {
         backgroundColor: value ? Palette.brand : Palette.border,
         justifyContent: 'center',
         paddingHorizontal: 3,
-        alignItems: value ? 'flex-end' : 'flex-start',
+        alignItems: 'flex-start',
       }}>
       <MotiView
-        animate={{ translateX: value ? 0 : 0 }}
-        transition={{ type: 'timing', duration: 200 }}
+        animate={{ translateX: value ? 16 : 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
         style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: Palette.surface }}
       />
     </PressableScale>
