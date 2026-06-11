@@ -40,7 +40,9 @@ import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { useFavoritesCount } from '@/lib/favorites';
 import { feedback } from '@/lib/feedback';
+import { useAddresses } from '@/lib/queries/addresses';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
+import { usePaymentMethods } from '@/lib/queries/payment-methods';
 import { useCustomerBadges, useMyPrepperApplication } from '@/lib/queries/preppers';
 import { toggleDarkMode, useDarkMode } from '@/lib/theme-mode';
 import { useAuth } from '@/providers/auth-provider';
@@ -53,11 +55,11 @@ const quickLinks = [
   { label: 'referrals', sub: 'invite', Icon: Ticket, color: Palette.amber, bg: '#FEF3C7' },
 ];
 
-const BASE_HUB: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
+const STATIC_HUB: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
   { label: 'your orders', sub: 'track & reorder', Icon: Receipt, route: '/orders' },
   { label: 'messages', sub: 'chat with preppers', Icon: MessageCircle, route: '/messages?tab=messages' },
-  { label: 'addresses', sub: '2 saved', Icon: MapPin, route: '/addresses' },
-  { label: 'payment methods', sub: 'Visa •••• 4242', Icon: CreditCard, route: '/payment-methods' },
+  { label: 'addresses', sub: 'saved', Icon: MapPin, route: '/addresses' },
+  { label: 'payment methods', sub: 'manage', Icon: CreditCard, route: '/payment-methods' },
   { label: 'notifications', sub: 'email, sms, push', Icon: Bell },
   { label: 'help center', sub: 'faq & support', Icon: HelpCircle },
   { label: 'dietary preferences', sub: 'manage', Icon: Leaf },
@@ -121,8 +123,21 @@ export default function ProfileScreen() {
   const isApprovedPrepper = myPrepper?.status === 'approved';
   const isPendingPrepper = myPrepper?.status === 'pending';
 
+  const { data: addresses } = useAddresses(user?.id);
+  const { data: pmData } = usePaymentMethods();
+  const addrCount = addresses?.length ?? 0;
+  const defaultCard = pmData?.methods.find((m) => m.isDefault);
+
   const hub: HubItem[] = [
-    ...BASE_HUB,
+    ...STATIC_HUB.map((item) => {
+      if (item.label === 'addresses') {
+        return { ...item, sub: addrCount === 0 ? 'none saved' : `${addrCount} saved` };
+      }
+      if (item.label === 'payment methods') {
+        return { ...item, sub: defaultCard ? `${defaultCard.brand} ···· ${defaultCard.last4}` : 'none saved' };
+      }
+      return item;
+    }),
     ...(isApprovedPrepper ? [{ label: 'my kitchen', sub: 'dashboard & earnings', Icon: ChefHat, accent: true, route: '/dashboard' }] : []),
   ];
   const favMeals = useFavoritesCount('meal:');
