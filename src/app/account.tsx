@@ -118,7 +118,7 @@ export default function AccountScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ padding: 20, paddingBottom: 60, gap: 28 }}>
           {/* ── SECURITY ─────────────────────────────────────────────────── */}
-          <View>
+          <MotiView from={{ opacity: 0, translateY: 16 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
             <SectionLabel label="security" />
             <View
               style={{
@@ -215,10 +215,10 @@ export default function AccountScreen() {
                 />
               </View>
             </View>
-          </View>
+          </MotiView>
 
           {/* ── CONNECTED ACCOUNTS ───────────────────────────────────────── */}
-          <View>
+          <MotiView from={{ opacity: 0, translateY: 16 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 80 }}>
             <SectionLabel label="connected accounts" />
             <View
               style={{
@@ -317,10 +317,10 @@ export default function AccountScreen() {
                 <Lock size={15} color={Palette.divider} />
               </View>
             </View>
-          </View>
+          </MotiView>
 
           {/* ── DATA & PRIVACY ───────────────────────────────────────────── */}
-          <View>
+          <MotiView from={{ opacity: 0, translateY: 16 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 160 }}>
             <SectionLabel label="data & privacy" />
             <View
               style={{
@@ -344,10 +344,10 @@ export default function AccountScreen() {
                 accessLabel="Privacy settings"
               />
             </View>
-          </View>
+          </MotiView>
 
           {/* ── DANGER ZONE ──────────────────────────────────────────────── */}
-          <View>
+          <MotiView from={{ opacity: 0, translateY: 16 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 240 }}>
             <SectionLabel label="danger zone" />
             <View
               style={{
@@ -387,7 +387,7 @@ export default function AccountScreen() {
                 </Text>
               </PressableScale>
             </View>
-          </View>
+          </MotiView>
         </ScrollView>
 
         {/* ── Toast ──────────────────────────────────────────────────────── */}
