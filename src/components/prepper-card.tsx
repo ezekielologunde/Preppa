@@ -6,10 +6,9 @@ import { Text, View } from 'react-native';
 import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { Palette } from '@/constants/theme';
 import { imgUrl } from '@/lib/img';
 import type { TopPrepper } from '@/lib/queries/preppers';
-
-const ORANGE = '#f15f22';
 
 /** Reputation-rank badge for the "Top kitchens" rail. #1 = Trophy; #2/#3 = chip. */
 function RankBadge({ rank }: { rank: number }) {
@@ -45,20 +44,20 @@ export function PrepperCard({ prepper, showRank = false }: { prepper: TopPrepper
         </View>
         <View style={{ padding: 12, gap: 4 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 15, color: '#111827', flexShrink: 1 }}>{prepper.name}</Text>
-            {prepper.verified ? <BadgeCheck size={15} color={ORANGE} fill={ORANGE} stroke="#fff" /> : null}
+            <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink, flexShrink: 1 }}>{prepper.name}</Text>
+            {prepper.verified ? <BadgeCheck size={15} color={Palette.brand} fill={Palette.brand} stroke="#fff" /> : null}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <Star size={13} color="#f59e0b" fill="#f59e0b" />
-            <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#374151' }}>{prepper.rating.toFixed(1)}</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }}>({prepper.reviews})</Text>
+            <Star size={13} color={Palette.amber} fill={Palette.amber} />
+            <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.inkSoft }}>{prepper.rating.toFixed(1)}</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>({prepper.reviews})</Text>
           </View>
           {prepper.tags.length ? (
-            <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }}>{prepper.tags.join(' · ')}</Text>
+            <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>{prepper.tags.join(' · ')}</Text>
           ) : null}
           {prepper.from != null ? (
-            <View style={{ alignSelf: 'flex-start', backgroundColor: '#FDEDE4', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 2 }}>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE, fontVariant: ['tabular-nums'] }}>from ${prepper.from.toFixed(0)}</Text>
+            <View style={{ alignSelf: 'flex-start', backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 2 }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.brand, fontVariant: ['tabular-nums'] }}>from ${prepper.from.toFixed(0)}</Text>
             </View>
           ) : null}
         </View>
