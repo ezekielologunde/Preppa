@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Check, ChevronLeft } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -74,6 +75,7 @@ export default function ExperienceRequestScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 130 }} keyboardShouldPersistTaps="handled">
           {/* Kind selector */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <Text style={{ fontFamily: Font.heading, fontSize: 13, color: INK, marginTop: 8, marginBottom: 8 }}>What do you need?</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {KINDS.map((k) => {
@@ -87,6 +89,8 @@ export default function ExperienceRequestScreen() {
             })}
           </View>
 
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 80 }}>
           <View style={{ gap: 12, marginTop: 16 }}>
             <TextInput style={inputStyle} placeholder="Title — e.g. Birthday dinner for 8" placeholderTextColor="#9ca3af" value={title} onChangeText={setTitle} />
             <TextInput style={[inputStyle, { height: 90, paddingTop: 14, textAlignVertical: 'top' }]} placeholder="Details — cuisine, dietary needs, vibe…" placeholderTextColor="#9ca3af" value={details} onChangeText={setDetails} multiline />
@@ -96,13 +100,16 @@ export default function ExperienceRequestScreen() {
             </View>
             <TextInput style={inputStyle} placeholder="Location — neighbourhood or address" placeholderTextColor="#9ca3af" value={location} onChangeText={setLocation} />
           </View>
+          </MotiView>
 
           {err ? <Text style={{ fontFamily: Font.medium, fontSize: 14, color: '#ef4444', marginTop: 14 }}>{err}</Text> : null}
 
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
           <PressableScale onPress={submit} disabled={create.isPending} accessibilityRole="button" accessibilityLabel="Post request"
             style={{ height: 52, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 18, opacity: create.isPending ? 0.7 : 1 }}>
             {create.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Post request</Text>}
           </PressableScale>
+          </MotiView>
 
           {/* My requests */}
           <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, marginTop: 32, marginBottom: 12 }}>my requests</Text>
@@ -116,8 +123,9 @@ export default function ExperienceRequestScreen() {
             </View>
           ) : (
             <View style={{ gap: 12 }}>
-              {requests.map((r) => (
-                <View key={r.id} style={{ backgroundColor: '#fff', borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
+              {requests.map((r, i) => (
+                <MotiView key={r.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 60 }}>
+                <View style={{ backgroundColor: '#fff', borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, flex: 1 }}>{r.title}</Text>
                     <View style={{ backgroundColor: r.status === 'open' ? Palette.brandTint : '#DCFCE7', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
@@ -154,6 +162,7 @@ export default function ExperienceRequestScreen() {
                     </View>
                   ))}
                 </View>
+                </MotiView>
               ))}
             </View>
           )}

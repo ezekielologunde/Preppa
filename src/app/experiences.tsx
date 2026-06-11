@@ -18,6 +18,7 @@ import {
   Wine,
   type LucideIcon,
 } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -71,14 +72,17 @@ export default function ExperiencesScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
+          <MotiView from={{ opacity: 0, translateY: -6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ paddingHorizontal: 20 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 32, color: INK, letterSpacing: -1 }}>experiences</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 2 }}>
               private chefs, catering, classes & tastings near you
             </Text>
           </View>
+          </MotiView>
 
           {/* PREMIUM FLAGSHIP — Chef at Home */}
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 80 }}>
           <PressableScale
             onPress={() => router.push('/experience-request?kind=private_chef')}
             accessibilityRole="button"
@@ -104,8 +108,10 @@ export default function ExperiencesScreen() {
               </View>
             </View>
           </PressableScale>
+          </MotiView>
 
           {/* Primary action — post a request */}
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
           <PressableScale
             onPress={() => router.push('/experience-request')}
             accessibilityRole="button"
@@ -163,6 +169,7 @@ export default function ExperiencesScreen() {
             </View>
             <ChevronRight size={18} color={Palette.textMuted} />
           </PressableScale>
+          </MotiView>
 
           {/* Experience types */}
           <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
@@ -183,7 +190,8 @@ export default function ExperiencesScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 30, marginBottom: 14 }}>how it works</Text>
           <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 4 }}>
             {STEPS.map((s, i) => (
-              <View key={s.title} style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
+              <MotiView key={s.title} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 + i * 70 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
                 <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                   <s.Icon size={19} color={ORANGE} />
                 </View>
@@ -193,6 +201,7 @@ export default function ExperiencesScreen() {
                 </View>
                 <Text style={{ fontFamily: Font.display, fontSize: 18, color: '#E5E7EB' }}>{i + 1}</Text>
               </View>
+              </MotiView>
             ))}
           </View>
 

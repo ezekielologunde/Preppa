@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Check, ChevronLeft, Inbox, Lock, MapPin, Users, Wallet } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -139,7 +140,11 @@ export default function OpportunitiesScreen() {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingTop: Platform.OS === 'web' ? 12 : 8, gap: 12, paddingBottom: 60 }}>
-            {requests.map((r) => <RequestCard key={r.id} req={r} prepperId={application!.id} />)}
+            {requests.map((r, i) => (
+              <MotiView key={r.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 60 }}>
+                <RequestCard req={r} prepperId={application!.id} />
+              </MotiView>
+            ))}
           </ScrollView>
         )}
       </SafeAreaView>
