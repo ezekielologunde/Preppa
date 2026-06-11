@@ -33,12 +33,14 @@ import { useState } from 'react';
 import { Linking, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CustomerBadgeShelf } from '@/components/badge-shelf';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { useFavoritesCount } from '@/lib/favorites';
 import { feedback } from '@/lib/feedback';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
+import { useCustomerBadges } from '@/lib/queries/preppers';
 import { toggleDarkMode, useDarkMode } from '@/lib/theme-mode';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -78,6 +80,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut, isAdmin } = useAuth();
   const { data: subs } = useMySubscriptions(user?.id);
+  const { data: earnedBadges } = useCustomerBadges(user?.id);
   const favMeals = useFavoritesCount('meal:');
   const followed = useFavoritesCount('prepper:');
   const displayName =
@@ -149,11 +152,17 @@ export default function ProfileScreen() {
               <MapPin size={13} color="#9ca3af" />
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#6b7280' }}>New York, NY</Text>
             </View>
-            <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
-              <Badge Icon={Sparkles} label="foodie" color="#f59e0b" />
-              <Badge Icon={Compass} label="explorer" color="#8b5cf6" />
-              <Badge Icon={Heart} label="plan lover" color="#ef4444" />
-            </View>
+            {earnedBadges?.length ? (
+              <View style={{ marginTop: 14, maxWidth: '100%' }}>
+                <CustomerBadgeShelf badges={earnedBadges} />
+              </View>
+            ) : (
+              <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
+                <Badge Icon={Sparkles} label="foodie" color="#f59e0b" />
+                <Badge Icon={Compass} label="explorer" color="#8b5cf6" />
+                <Badge Icon={Heart} label="plan lover" color="#ef4444" />
+              </View>
+            )}
           </View>
 
           {/* Rewards / tier */}

@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, ChevronRight, Phone, Receipt, Send } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, MessageCircle, Phone, Receipt, Send } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +15,16 @@ import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
+
+/** Centered "2:34 PM" / "Mon 2:34 PM" caption shown when >20 min passed. */
+function timeLabel(iso: string): string {
+  const d = new Date(iso);
+  const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const sameDay = new Date().toDateString() === d.toDateString();
+  return sameDay ? time : `${d.toLocaleDateString('en-US', { weekday: 'short' })} ${time}`;
+}
+
+const TIME_GAP_MS = 20 * 60 * 1000;
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -46,6 +57,7 @@ export default function ChatScreen() {
   function submit() {
     const body = text.trim();
     if (!body || !id || !user) return;
+    feedback.tap();
     setText('');
     send.mutate({ conversationId: id, senderId: user.id, body });
   }
@@ -99,15 +111,36 @@ export default function ChatScreen() {
           ) : (
             <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 8, flexGrow: 1, justifyContent: (messages?.length ?? 0) ? 'flex-end' : 'center' }}>
               {!messages?.length ? (
-                <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center' }}>
-                  No messages yet. Send the first one below.
-                </Text>
-              ) : (
-                messages.map((m) => (
-                  <View key={m.id} style={{ alignSelf: m.mine ? 'flex-end' : 'flex-start', maxWidth: '78%', backgroundColor: m.mine ? ORANGE : Palette.canvas, borderRadius: 18, borderBottomRightRadius: m.mine ? 4 : 18, borderBottomLeftRadius: m.mine ? 18 : 4, paddingHorizontal: 14, paddingVertical: 9 }}>
-                    <Text style={{ fontFamily: Font.body, fontSize: 14.5, color: m.mine ? '#fff' : INK, lineHeight: 20 }}>{m.body}</Text>
+                <View style={{ alignItems: 'center', gap: 10 }}>
+                  <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
+                    <MessageCircle size={28} color={Palette.textMuted} />
                   </View>
-                ))
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Say hello</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center', maxWidth: 260, lineHeight: 19 }}>
+                    No messages yet — send the first one below.
+                  </Text>
+                </View>
+              ) : (
+                messages.map((m, i) => {
+                  const prev = messages[i - 1];
+                  const showTime = !prev || new Date(m.created_at).getTime() - new Date(prev.created_at).getTime() > TIME_GAP_MS;
+                  return (
+                    <View key={m.id} style={{ gap: 8 }}>
+                      {showTime ? (
+                        <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.textMuted, textAlign: 'center', marginVertical: 4 }}>
+                          {timeLabel(m.created_at)}
+                        </Text>
+                      ) : null}
+                      <MotiView
+                        from={{ opacity: 0, translateY: 6 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ type: 'timing', duration: 160 }}
+                        style={{ alignSelf: m.mine ? 'flex-end' : 'flex-start', maxWidth: '78%', backgroundColor: m.mine ? ORANGE : Palette.canvas, borderRadius: 18, borderBottomRightRadius: m.mine ? 4 : 18, borderBottomLeftRadius: m.mine ? 18 : 4, paddingHorizontal: 14, paddingVertical: 9 }}>
+                        <Text style={{ fontFamily: Font.body, fontSize: 14.5, color: m.mine ? '#fff' : INK, lineHeight: 20 }}>{m.body}</Text>
+                      </MotiView>
+                    </View>
+                  );
+                })
               )}
             </ScrollView>
           )}
