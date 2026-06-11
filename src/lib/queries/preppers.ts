@@ -156,6 +156,25 @@ export function useTopPreppers(limit = 10) {
   });
 }
 
+/** Search approved preppers by name or specialty (public read). */
+export function usePrepperSearch(query: string) {
+  const q = query.trim().replace(/[,()]/g, ' ').replace(/\s+/g, ' ').trim();
+  return useQuery({
+    queryKey: ['preppers', 'search', q],
+    enabled: q.length >= 2,
+    queryFn: async (): Promise<TopPrepper[]> => {
+      const { data, error } = await supabase
+        .from('prepper_profiles')
+        .select(SELECT)
+        .eq('status', 'approved')
+        .or(`display_name.ilike.%${q}%,specialties.cs.{${q}}`)
+        .limit(12);
+      if (error) throw error;
+      return ((data ?? []) as unknown as Row[]).map(mapPrepper);
+    },
+  });
+}
+
 export type MyPrepperApplication = {
   id: string;
   display_name: string;

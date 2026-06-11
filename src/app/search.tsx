@@ -5,12 +5,14 @@ import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MealCard } from '@/components/meal-card';
+import { PrepperCard } from '@/components/prepper-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
 import { useMealSearch } from '@/lib/queries/meals';
+import { usePrepperSearch } from '@/lib/queries/preppers';
 import { useMealCategories } from '@/lib/queries/my-meals';
 
 const ORANGE = Palette.brand;
@@ -56,6 +58,7 @@ export default function SearchScreen() {
 
   const { data: categories } = useMealCategories();
   const price = PRICES.find((p) => p.key === priceKey);
+  const { data: preppers } = usePrepperSearch(debounced);
   const { data: results, isLoading, isFetching } = useMealSearch(debounced, {
     categoryId,
     priceMin: price?.min ?? null,
@@ -120,18 +123,30 @@ export default function SearchScreen() {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: 20 }}>
             {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} width={CARD_W} />)}
           </View>
-        ) : results && results.length > 0 ? (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingTop: 14, paddingBottom: 40 }}>
-            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary, marginBottom: 14 }}>{results.length} result{results.length === 1 ? '' : 's'}</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-              {results.map((m) => <MealCard key={m.id} meal={m} width={CARD_W} />)}
-            </View>
+        ) : (results && results.length > 0) || (preppers && preppers.length > 0) ? (
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+            {preppers && preppers.length > 0 ? (
+              <View style={{ paddingTop: 14 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, paddingHorizontal: 20, marginBottom: 10 }}>kitchens</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
+                  {preppers.map((p) => <PrepperCard key={p.id} prepper={p} />)}
+                </ScrollView>
+              </View>
+            ) : null}
+            {results && results.length > 0 ? (
+              <View style={{ padding: 20, paddingTop: 16 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginBottom: 12 }}>meals</Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                  {results.map((m) => <MealCard key={m.id} meal={m} width={CARD_W} />)}
+                </View>
+              </View>
+            ) : null}
           </ScrollView>
         ) : (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 8 }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>no meals found</Text>
+            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>nothing found</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
-              {hasFilters ? 'try removing a filter, or search something else' : 'try a different search — like "bowl" or "pasta"'}
+              {hasFilters ? 'try removing a filter, or search something else' : 'try a meal, cuisine, or kitchen — like "bowl" or "Kelsey"'}
             </Text>
             {hasFilters ? (
               <PressableScale onPress={() => { setCategoryId(null); setPriceKey(null); }} accessibilityRole="button" accessibilityLabel="Clear all filters" style={{ marginTop: 6, paddingHorizontal: 18, height: 42, borderRadius: 12, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
