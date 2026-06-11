@@ -43,7 +43,7 @@ function Chip({ label, color, active, onPress }: { label: string; color: string;
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
       accessibilityLabel={label}
-      style={{ paddingHorizontal: 16, paddingVertical: 10, borderRadius: 999, backgroundColor: active ? color + '22' : '#fff', borderWidth: 1.5, borderColor: active ? color : Palette.border, ...Shadow.card }}>
+      style={{ paddingHorizontal: 16, paddingVertical: 10, borderRadius: 999, backgroundColor: active ? color + '22' : Palette.surface, borderWidth: 1.5, borderColor: active ? color : Palette.border, ...Shadow.card }}>
       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: active ? color : Palette.textSecondary }}>{label}</Text>
     </PressableScale>
   );
@@ -86,12 +86,12 @@ export default function SurpriseScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 20 }}>
-            <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft size={22} color={INK} />
             </PressableScale>
             <View style={{ flex: 1 }}>

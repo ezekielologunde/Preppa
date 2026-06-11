@@ -41,7 +41,7 @@ const STEPS: { Icon: LucideIcon; title: string; body: string }[] = [
 
 function ExperienceCard({ exp, onPress }: { exp: Experience; onPress: () => void }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${exp.title} by ${exp.host}, from $${exp.from} ${exp.per}`} style={{ width: 260, backgroundColor: '#fff', borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${exp.title} by ${exp.host}, from $${exp.from} ${exp.per}`} style={{ width: 260, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
       <Image source={exp.image} style={{ width: '100%', height: 150 }} contentFit="cover" transition={200} />
       <View style={{ padding: 14 }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{exp.title}</Text>
@@ -68,7 +68,7 @@ export default function ExperiencesScreen() {
   const { data: myRequests } = useMyExperienceRequests(user?.id);
   const activeRequests = (myRequests ?? []).filter((r) => r.status === 'open').slice(0, 2);
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
@@ -135,7 +135,7 @@ export default function ExperiencesScreen() {
                 onPress={() => router.push('/experience-request')}
                 accessibilityRole="button"
                 accessibilityLabel={`Your request ${r.title}: ${pending ? `${pending} bids received, compare now` : 'waiting for bids'}`}
-                style={{ marginHorizontal: 20, marginTop: 12, backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: pending ? ORANGE + '55' : Palette.border }}>
+                style={{ marginHorizontal: 20, marginTop: 12, backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: pending ? ORANGE + '55' : Palette.border }}>
                 <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: pending ? Palette.brandTint : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
                   <MessageSquareQuote size={18} color={pending ? ORANGE : Palette.textSecondary} />
                 </View>
@@ -159,7 +159,7 @@ export default function ExperiencesScreen() {
             onPress={() => router.push('/meal-plans')}
             accessibilityRole="button"
             accessibilityLabel="Meal plans — weekly and family subscriptions"
-            style={{ marginHorizontal: 20, marginTop: 12, backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            style={{ marginHorizontal: 20, marginTop: 12, backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
               <CalendarCheck size={18} color={ORANGE} />
             </View>
@@ -176,7 +176,7 @@ export default function ExperiencesScreen() {
             {experienceTypes.map((t) => {
               const Icon = TYPE_ICONS[t.icon] ?? UtensilsCrossed;
               return (
-                <PressableScale key={t.key} onPress={() => router.push(`/experience-request?kind=${t.key}`)} accessibilityRole="button" accessibilityLabel={t.label} style={{ flex: 1, alignItems: 'center', gap: 8, backgroundColor: '#fff', borderRadius: Radius.md, paddingVertical: 14 }}>
+                <PressableScale key={t.key} onPress={() => router.push(`/experience-request?kind=${t.key}`)} accessibilityRole="button" accessibilityLabel={t.label} style={{ flex: 1, alignItems: 'center', gap: 8, backgroundColor: Palette.surface, borderRadius: Radius.md, paddingVertical: 14 }}>
                   <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={20} color={ORANGE} />
                   </View>
@@ -188,10 +188,10 @@ export default function ExperiencesScreen() {
 
           {/* How it works */}
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 30, marginBottom: 14 }}>how it works</Text>
-          <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 4 }}>
+          <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 4 }}>
             {STEPS.map((s, i) => (
               <MotiView key={s.title} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 + i * 70 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: '#f3f4f6' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.chip }}>
                 <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                   <s.Icon size={19} color={ORANGE} />
                 </View>
@@ -214,7 +214,7 @@ export default function ExperiencesScreen() {
           </ScrollView>
 
           {/* My requests entry */}
-          <PressableScale onPress={() => router.push('/experience-request')} accessibilityRole="button" accessibilityLabel="View my requests" style={{ marginHorizontal: 20, marginTop: 24, alignItems: 'center', paddingVertical: 15, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border, backgroundColor: '#fff' }}>
+          <PressableScale onPress={() => router.push('/experience-request')} accessibilityRole="button" accessibilityLabel="View my requests" style={{ marginHorizontal: 20, marginTop: 24, alignItems: 'center', paddingVertical: 15, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border, backgroundColor: Palette.surface }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>view my requests & bids</Text>
           </PressableScale>
         </ScrollView>

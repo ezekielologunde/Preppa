@@ -72,7 +72,7 @@ export default function ExploreScreen() {
   const { data: drops } = useLimitedDrops(6);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
@@ -83,10 +83,10 @@ export default function ExploreScreen() {
                 amazing meals from <Text style={{ fontFamily: Font.semibold, color: ORANGE }}>local preppers</Text>
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9 }}>
               <MapPin size={14} color={ORANGE} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#374151' }}>New York, NY</Text>
-              <ChevronDown size={14} color="#6b7280" />
+              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>New York, NY</Text>
+              <ChevronDown size={14} color={Palette.textSecondary} />
             </View>
           </View>
 
@@ -95,7 +95,7 @@ export default function ExploreScreen() {
             onPress={() => router.push('/search')}
             accessibilityRole="search"
             accessibilityLabel="Search meals, cuisines, or preppers"
-            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
             <Scan size={20} color={ORANGE} />
@@ -112,10 +112,10 @@ export default function ExploreScreen() {
                   : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
               return (
                 <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 60 }}>
-                  <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: active ? '#FDEDE4' : '#fff', alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
+                  <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: active ? Palette.brandTint : Palette.surface, alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
                     <Icon size={24} color={c.color} />
                   </View>
-                  <Text style={{ fontFamily: active ? Font.semibold : Font.medium, fontSize: 12, color: active ? ORANGE : '#374151' }}>{c.label}</Text>
+                  <Text style={{ fontFamily: active ? Font.semibold : Font.medium, fontSize: 12, color: active ? ORANGE : Palette.inkSoft }}>{c.label}</Text>
                 </PressableScale>
               );
             })}
@@ -140,7 +140,7 @@ export default function ExploreScreen() {
                     onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`)}
                     accessibilityRole="button"
                     accessibilityLabel={`${t.tag} kitchens`}
-                    style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
+                    style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
                     <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
                     <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
                   </PressableScale>

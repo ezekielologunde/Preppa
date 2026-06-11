@@ -39,7 +39,7 @@ function Meta({ Icon, text }: { Icon: typeof Users; text: string }) {
 
 function LivePlanCard({ plan, onSubscribe, busy, subscribed }: { plan: MealPlan; onSubscribe: () => void; busy: boolean; subscribed: boolean }) {
   return (
-    <View style={{ backgroundColor: '#fff', borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+    <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
       {plan.image_url ? <Image source={plan.image_url} style={{ width: '100%', height: 140 }} contentFit="cover" transition={200} /> : null}
       <View style={{ padding: 16 }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>{plan.name}</Text>
@@ -66,7 +66,7 @@ function LivePlanCard({ plan, onSubscribe, busy, subscribed }: { plan: MealPlan;
 
 function FeaturedCard({ plan }: { plan: MealPlanCard }) {
   return (
-    <View style={{ width: 230, backgroundColor: '#fff', borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+    <View style={{ width: 230, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
       <Image source={plan.image} style={{ width: '100%', height: 120 }} contentFit="cover" transition={200} />
       <View style={{ padding: 14 }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{plan.name}</Text>
@@ -107,10 +107,10 @@ export default function MealPlansScreen() {
   const subscribedPlanNames = new Set((subs ?? []).filter((s) => s.status !== 'cancelled').map((s) => s.plan_name));
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 }}>
-          <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+          <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color={INK} />
           </PressableScale>
           <View style={{ flex: 1 }}>
@@ -127,7 +127,7 @@ export default function MealPlansScreen() {
               <View style={{ paddingHorizontal: 20, gap: 10 }}>
                 {subs.filter((s) => s.status !== 'cancelled').map((s, i) => (
                   <MotiView key={s.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 60 }}>
-                  <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, gap: 10 }}>
+                  <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 10 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                       <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                         <RefreshCw size={18} color={ORANGE} />
@@ -169,7 +169,7 @@ export default function MealPlansScreen() {
                         accessibilityRole="button"
                         accessibilityLabel="Cancel plan"
                         style={{ flex: 1, height: 38, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#ef4444' }}>Cancel</Text>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.danger }}>Cancel</Text>
                       </PressableScale>
                     </View>
                   </View>
@@ -192,7 +192,7 @@ export default function MealPlansScreen() {
               ))}
             </View>
           ) : (
-            <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: Radius.md, padding: 20, alignItems: 'center', gap: 8 }}>
+            <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 20, alignItems: 'center', gap: 8 }}>
               <ChefHat size={26} color={Palette.textMuted} />
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, textAlign: 'center', lineHeight: 19 }}>
                 No live plans in your area yet. Browse the featured plans below — or follow your favourite preppers to hear when they launch one.
