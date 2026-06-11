@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { CalendarCheck, Check, ChefHat, ChevronLeft, RefreshCw, Users } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -182,8 +183,10 @@ export default function MealPlansScreen() {
             <ActivityIndicator color={ORANGE} style={{ marginVertical: 16 }} />
           ) : livePlans && livePlans.length > 0 ? (
             <View style={{ paddingHorizontal: 20, gap: 14 }}>
-              {livePlans.map((p) => (
-                <LivePlanCard key={p.id} plan={p} busy={false} subscribed={subscribedPlanNames.has(p.name)} onSubscribe={() => onSubscribe(p)} />
+              {livePlans.map((p, i) => (
+                <MotiView key={p.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: i * 70 }}>
+                  <LivePlanCard plan={p} busy={false} subscribed={subscribedPlanNames.has(p.name)} onSubscribe={() => onSubscribe(p)} />
+                </MotiView>
               ))}
             </View>
           ) : (

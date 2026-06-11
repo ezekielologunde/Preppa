@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { CircleCheck, CircleX, QrCode } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -68,18 +69,26 @@ export default function VerifyScreen() {
           </>
         ) : (
           <>
-            <View style={{ width: 84, height: 84, borderRadius: 26, backgroundColor: color + '26', alignItems: 'center', justifyContent: 'center' }}>
-              <Icon size={40} color={color} strokeWidth={2.4} />
-            </View>
-            <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', textAlign: 'center', letterSpacing: -0.5 }}>
-              {state === 'ok' ? 'Handoff confirmed' : 'Could not verify'}
-            </Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14.5, color: '#9ca3af', textAlign: 'center', maxWidth: 300, lineHeight: 21 }}>
-              {state === 'ok' ? 'The order is now marked complete and counts toward your earnings.' : reason}
-            </Text>
-            <PressableScale onPress={() => router.replace('/prepper-orders')} accessibilityRole="button" accessibilityLabel="Back to orders" style={{ marginTop: 6, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Back to orders</Text>
-            </PressableScale>
+            <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 380, bounce: 0.2 }}>
+              <View style={{ width: 84, height: 84, borderRadius: 26, backgroundColor: color + '26', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon size={40} color={color} strokeWidth={2.4} />
+              </View>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', textAlign: 'center', letterSpacing: -0.5 }}>
+                {state === 'ok' ? 'Handoff confirmed' : 'Could not verify'}
+              </Text>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
+              <Text style={{ fontFamily: Font.body, fontSize: 14.5, color: '#9ca3af', textAlign: 'center', maxWidth: 300, lineHeight: 21 }}>
+                {state === 'ok' ? 'The order is now marked complete and counts toward your earnings.' : reason}
+              </Text>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
+              <PressableScale onPress={() => router.replace('/prepper-orders')} accessibilityRole="button" accessibilityLabel="Back to orders" style={{ marginTop: 6, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Back to orders</Text>
+              </PressableScale>
+            </MotiView>
           </>
         )}
       </SafeAreaView>

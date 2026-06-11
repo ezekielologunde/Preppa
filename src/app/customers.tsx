@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Repeat, Users } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -77,6 +78,7 @@ export default function CustomersScreen() {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 10, paddingBottom: 40 }}>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
             <View style={{ flexDirection: 'row', gap: 10, marginBottom: 6 }}>
               <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 16, padding: 14, gap: 2 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', fontVariant: ['tabular-nums'] }}>{rows.length}</Text>
@@ -87,9 +89,11 @@ export default function CustomersScreen() {
                 <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#9ca3af' }}>repeat buyers</Text>
               </View>
             </View>
+            </MotiView>
 
-            {rows.map((c) => (
-              <View key={c.id} style={{ backgroundColor: CARD, borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            {rows.map((c, i) => (
+              <MotiView key={c.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 250, delay: 60 + i * 50 }}>
+              <View style={{ backgroundColor: CARD, borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 <Avatar name={c.name} size={44} />
                 <View style={{ flex: 1, gap: 2 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -107,6 +111,7 @@ export default function CustomersScreen() {
                 </View>
                 <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#fff', fontVariant: ['tabular-nums'] }}>{money(c.paidTotal)}</Text>
               </View>
+              </MotiView>
             ))}
           </ScrollView>
         )}
