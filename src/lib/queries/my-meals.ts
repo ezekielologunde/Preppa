@@ -12,6 +12,8 @@ export type MyMeal = {
   category_id: number | null;
   status: MealStatus;
   image: string | null;
+  is_limited: boolean;
+  expires_at: string | null;
 };
 
 type Row = Omit<MyMeal, 'image'> & { images: { url: string }[] | null };
@@ -24,7 +26,7 @@ export function useMyMeals(prepperId?: string | null) {
     queryFn: async (): Promise<MyMeal[]> => {
       const { data, error } = await supabase
         .from('meals')
-        .select('id,title,description,base_price,prep_time_min,category_id,status,images:meal_images(url)')
+        .select('id,title,description,base_price,prep_time_min,category_id,status,is_limited,expires_at,images:meal_images(url)')
         .eq('prepper_id', prepperId!)
         .order('created_at', { ascending: false });
       if (error) throw error;

@@ -30,6 +30,22 @@ const STATUS_STYLE: Record<MealStatus, { label: string; color: string }> = {
 
 const EMPTY: MealDraft = { title: '', description: '', base_price: 0, prep_time_min: null, category_id: null, imageUrl: '', is_limited: false };
 
+const DROP_DURATIONS = [
+  { key: '24h', label: '24 hours', hours: 24 },
+  { key: '3d', label: '3 days', hours: 72 },
+  { key: '7d', label: '1 week', hours: 168 },
+  { key: 'none', label: 'No end', hours: null },
+] as const;
+
+/** Which duration chip matches a stored expiry (closest bucket). */
+function dropChipFor(expiresAt: string | null | undefined): string {
+  if (!expiresAt) return 'none';
+  const h = (new Date(expiresAt).getTime() - Date.now()) / 3_600_000;
+  if (h <= 36) return '24h';
+  if (h <= 120) return '3d';
+  return '7d';
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <View style={{ gap: 6 }}>
@@ -125,7 +141,7 @@ export default function MealEditorScreen() {
     setFormErr(null);
   }
   function openEdit(m: MyMeal) {
-    setDraft({ id: m.id, title: m.title, description: m.description ?? '', base_price: m.base_price, prep_time_min: m.prep_time_min, category_id: m.category_id, imageUrl: m.image ?? '' });
+    setDraft({ id: m.id, title: m.title, description: m.description ?? '', base_price: m.base_price, prep_time_min: m.prep_time_min, category_id: m.category_id, imageUrl: m.image ?? '', is_limited: m.is_limited, expires_at: m.expires_at });
     setPriceText(String(m.base_price));
     setTimeText(m.prep_time_min ? String(m.prep_time_min) : '');
     setFormErr(null);
@@ -252,7 +268,7 @@ export default function MealEditorScreen() {
               </Field>
               {/* Limited drop toggle */}
               <PressableScale
-                onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, is_limited: !d.is_limited }); }}
+                onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, is_limited: !d.is_limited, expires_at: d.is_limited ? null : d.expires_at }); }}
                 accessibilityRole="switch"
                 accessibilityState={{ checked: !!draft?.is_limited }}
                 accessibilityLabel="Mark as limited drop"
@@ -272,6 +288,37 @@ export default function MealEditorScreen() {
                   />
                 </MotiView>
               </PressableScale>
+              {draft?.is_limited ? (
+                <MotiView
+                  from={{ opacity: 0, translateY: -6 }}
+                  animate={{ opacity: 1, translateY: 0 }}
+                  transition={{ type: 'timing', duration: 220 }}
+                  style={{ gap: 6 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#9ca3af' }}>Drop ends</Text>
+                  <View style={{ flexDirection: 'row', gap: 8 }}>
+                    {DROP_DURATIONS.map((d) => {
+                      const on = dropChipFor(draft?.expires_at) === d.key;
+                      return (
+                        <PressableScale
+                          key={d.key}
+                          onPress={() => {
+                            feedback.tap();
+                            setDraft((dr) => dr && {
+                              ...dr,
+                              expires_at: d.hours ? new Date(Date.now() + d.hours * 3_600_000).toISOString() : null,
+                            });
+                          }}
+                          accessibilityRole="button"
+                          accessibilityState={{ selected: on }}
+                          accessibilityLabel={`Drop ends: ${d.label}`}
+                          style={{ flex: 1, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: on ? ORANGE + '26' : '#1d2129', borderWidth: 1.5, borderColor: on ? ORANGE : 'transparent' }}>
+                          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: on ? ORANGE : '#9ca3af' }}>{d.label}</Text>
+                        </PressableScale>
+                      );
+                    })}
+                  </View>
+                </MotiView>
+              ) : null}
 
               {formErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5' }}>{formErr}</Text> : null}
               <PressableScale onPress={submit} disabled={save.isPending} accessibilityRole="button" accessibilityLabel="Save meal" style={{ height: 52, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: save.isPending ? 0.7 : 1 }}>
