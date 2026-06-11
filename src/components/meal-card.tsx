@@ -8,6 +8,7 @@ import { Text, View } from 'react-native';
 import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { imgUrl } from '@/lib/img';
 import { Palette } from '@/constants/theme';
 
 export type Meal = {
@@ -49,7 +50,7 @@ function CardGallery({ images, hovered, height }: { images: string[]; hovered: b
           animate={{ opacity: i === idx ? 1 : 0, scale: hovered && i === idx ? 1.06 : 1 }}
           transition={{ opacity: { type: 'timing', duration: 450 }, scale: { type: 'timing', duration: 1100 } }}
           style={{ ...StyleSheetAbsolute }}>
-          <Image source={src} style={{ flex: 1 }} contentFit="cover" transition={150} />
+          <Image source={imgUrl(src, 700)} style={{ flex: 1 }} contentFit="cover" transition={150} />
         </MotiView>
       ))}
       {images.length > 1 ? (

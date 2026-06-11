@@ -12,6 +12,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { imgUrl } from '@/lib/img';
 import { useAddToCart, useCart } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useMeal } from '@/lib/queries/meals';
@@ -96,7 +97,7 @@ export default function MealScreen() {
           {isLoading ? (
             <Skeleton width="100%" height={320} radius={0} />
           ) : meal?.images[0] ? (
-            <Image source={meal.images[0]} style={{ flex: 1 }} contentFit="cover" transition={250} />
+            <Image source={imgUrl(meal.images[0], 1000)} style={{ flex: 1 }} contentFit="cover" transition={250} />
           ) : null}
           <SafeAreaView edges={['top']} style={{ position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8 }}>
             <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
