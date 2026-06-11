@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, DollarSign, Receipt, TrendingUp, Wallet } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -87,6 +88,7 @@ export default function EarningsScreen() {
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 48 }}>
             {/* Hero: net earnings */}
+            <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
             <View style={{ backgroundColor: CARD, borderRadius: 22, padding: 22, gap: 6 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <View style={{ width: 30, height: 30, borderRadius: 10, backgroundColor: GREEN + '22', alignItems: 'center', justifyContent: 'center' }}>
@@ -107,20 +109,25 @@ export default function EarningsScreen() {
                 </View>
               ) : null}
             </View>
+            </MotiView>
 
             {/* Week / month */}
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
             <View style={{ flexDirection: 'row', gap: 14 }}>
               <MiniStat label="This week" value={money(data.net_week)} Icon={TrendingUp} color={ORANGE} />
               <MiniStat label="This month" value={money(data.net_month)} Icon={Wallet} color="#a78bfa" />
             </View>
+            </MotiView>
 
             {/* Frictionless payouts: Preppa pays the cook — no Stripe account needed */}
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
             <View style={{ backgroundColor: '#1f2937', borderRadius: 16, padding: 14, flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
               <Wallet size={18} color={ORANGE} style={{ marginTop: 1 }} />
               <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: '#cbd5e1', lineHeight: 18 }}>
                 Preppa pays you directly — no Stripe account or setup needed. Card processing and the Preppa platform fee are calculated automatically on each order and already deducted from the amounts shown here.
               </Text>
             </View>
+            </MotiView>
 
             {/* Recent paid orders */}
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff', marginTop: 4 }}>Recent</Text>
@@ -128,7 +135,11 @@ export default function EarningsScreen() {
               <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: MUTED }}>No paid orders yet. They&apos;ll appear here as customers check out.</Text>
             ) : (
               <View style={{ gap: 10 }}>
-                {data.recent.map((it) => <EarningRow key={it.order_id} item={it} />)}
+                {data.recent.map((it, i) => (
+                  <MotiView key={it.order_id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 240, delay: 180 + i * 50 }}>
+                    <EarningRow item={it} />
+                  </MotiView>
+                ))}
               </View>
             )}
           </ScrollView>

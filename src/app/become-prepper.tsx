@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ChefHat, ChevronLeft, Clock, ShieldX, Sparkles } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -79,15 +80,23 @@ export default function BecomePrepperScreen() {
         <SafeAreaView style={{ flex: 1 }}>
           {Header}
           <Centered>
-            <View style={{ width: 72, height: 72, borderRadius: 22, backgroundColor: map.tint + '1F', alignItems: 'center', justifyContent: 'center' }}>
-              <map.Icon size={32} color={map.tint} />
-            </View>
-            <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, textAlign: 'center', letterSpacing: -0.6 }}>{map.title}</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 15, color: '#6b7280', textAlign: 'center', lineHeight: 22, maxWidth: 320 }}>{map.body}</Text>
+            <MotiView from={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 380, bounce: 0.2 }}>
+              <View style={{ width: 72, height: 72, borderRadius: 22, backgroundColor: map.tint + '1F', alignItems: 'center', justifyContent: 'center' }}>
+                <map.Icon size={32} color={map.tint} />
+              </View>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, textAlign: 'center', letterSpacing: -0.6 }}>{map.title}</Text>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
+              <Text style={{ fontFamily: Font.body, fontSize: 15, color: '#6b7280', textAlign: 'center', lineHeight: 22, maxWidth: 320 }}>{map.body}</Text>
+            </MotiView>
             {map.cta ? (
-              <PressableScale onPress={map.cta.onPress} accessibilityRole="button" accessibilityLabel={map.cta.label} style={{ marginTop: 8, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{map.cta.label}</Text>
-              </PressableScale>
+              <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
+                <PressableScale onPress={map.cta.onPress} accessibilityRole="button" accessibilityLabel={map.cta.label} style={{ marginTop: 8, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{map.cta.label}</Text>
+                </PressableScale>
+              </MotiView>
             ) : null}
           </Centered>
         </SafeAreaView>
@@ -121,6 +130,7 @@ export default function BecomePrepperScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         {Header}
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320 }}>
           <View style={{ alignItems: 'center', gap: 12, marginTop: 4, marginBottom: 24 }}>
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
               <ChefHat size={30} color={ORANGE} />
@@ -130,6 +140,7 @@ export default function BecomePrepperScreen() {
               Share your cooking, build a following, and earn from your kitchen.
             </Text>
           </View>
+          </MotiView>
 
           <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK, marginBottom: 8 }}>Kitchen / chef name</Text>
           <TextInput value={name} onChangeText={setName} placeholder="e.g. Kelsi's Kitchen" placeholderTextColor="#9ca3af" autoCapitalize="words"

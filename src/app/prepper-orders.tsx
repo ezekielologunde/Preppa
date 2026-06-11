@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, QrCode, ShoppingBag, X } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -178,15 +179,16 @@ export default function PrepperOrdersScreen() {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
-            {orders.map((o) => (
-              <OrderCard
-                key={o.id}
-                order={o}
-                busy={busyId === o.id}
-                onAdvance={(next) => { setActionErr(null); advance.mutate({ orderId: o.id, next }, { onError: onErr }); }}
-                onCancel={() => { feedback.warning(); setDeclineOrder(o); }}
-                onVerify={() => openVerify(o)}
-              />
+            {orders.map((o, i) => (
+              <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 60 }}>
+                <OrderCard
+                  order={o}
+                  busy={busyId === o.id}
+                  onAdvance={(next) => { setActionErr(null); advance.mutate({ orderId: o.id, next }, { onError: onErr }); }}
+                  onCancel={() => { feedback.warning(); setDeclineOrder(o); }}
+                  onVerify={() => openVerify(o)}
+                />
+              </MotiView>
             ))}
           </ScrollView>
         )}
