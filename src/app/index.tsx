@@ -209,31 +209,37 @@ export default function HomeScreen() {
             })}
           </ScrollView>
 
-          {/* Primary products — Meal Plans + Experiences, surfaced (not hidden) */}
-          {showPlans || showExperiences ? (
-            <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12, marginBottom: 26 }}>
-              {showPlans ? (
-                <PressableScale onPress={() => router.push('/meal-plans')} accessibilityRole="button" accessibilityLabel="Meal plans"
-                  style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
-                  <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-                    <CalendarCheck size={20} color={ORANGE} />
-                  </View>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>meal plans</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>weekly & family, on repeat</Text>
-                </PressableScale>
-              ) : null}
-              {showExperiences ? (
-                <PressableScale onPress={() => router.push('/experiences')} accessibilityRole="button" accessibilityLabel="Experiences"
-                  style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
-                  <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ticket size={20} color={ORANGE} />
-                  </View>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>experiences</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>catering, chefs & classes</Text>
-                </PressableScale>
-              ) : null}
-            </View>
-          ) : null}
+          {/* Primary products — Meal Plans + Experiences + Requests */}
+          <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12, marginBottom: 26 }}>
+            {showPlans ? (
+              <PressableScale onPress={() => router.push('/meal-plans')} accessibilityRole="button" accessibilityLabel="Meal plans"
+                style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+                <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                  <CalendarCheck size={20} color={ORANGE} />
+                </View>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>meal plans</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>weekly & family, on repeat</Text>
+              </PressableScale>
+            ) : null}
+            {showExperiences ? (
+              <PressableScale onPress={() => router.push('/experiences')} accessibilityRole="button" accessibilityLabel="Experiences"
+                style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+                <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                  <Ticket size={20} color={ORANGE} />
+                </View>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>experiences</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>catering, chefs & classes</Text>
+              </PressableScale>
+            ) : null}
+            <PressableScale onPress={() => router.push('/bid-requests')} accessibilityRole="button" accessibilityLabel="Meal requests"
+              style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+              <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                <UtensilsCrossed size={20} color={ORANGE} />
+              </View>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>requests</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>post a request, get bids</Text>
+            </PressableScale>
+          </View>
 
           {/* From kitchens you follow — the creator-economy retention loop */}
           {followingFeed && followingFeed.length > 0 ? (

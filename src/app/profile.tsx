@@ -40,7 +40,7 @@ import { Font } from '@/constants/fonts';
 import { useFavoritesCount } from '@/lib/favorites';
 import { feedback } from '@/lib/feedback';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
-import { useCustomerBadges } from '@/lib/queries/preppers';
+import { useCustomerBadges, useMyPrepperApplication } from '@/lib/queries/preppers';
 import { toggleDarkMode, useDarkMode } from '@/lib/theme-mode';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -55,7 +55,7 @@ const quickLinks = [
   { label: 'referrals', sub: 'invite', Icon: Ticket, color: '#f59e0b', bg: '#FEF3C7' },
 ];
 
-const hub: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
+const BASE_HUB: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
   { label: 'your orders', sub: 'track & reorder', Icon: Receipt, route: '/orders' },
   { label: 'messages', sub: 'chat with preppers', Icon: MessageCircle, route: '/messages?tab=messages' },
   { label: 'addresses', sub: '2 saved', Icon: MapPin },
@@ -63,7 +63,6 @@ const hub: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; rou
   { label: 'notifications', sub: 'email, sms, push', Icon: Bell },
   { label: 'help center', sub: 'faq & support', Icon: HelpCircle },
   { label: 'dietary preferences', sub: 'manage', Icon: Leaf },
-  { label: 'become a prepper', sub: 'share your kitchen', Icon: ChefHat, accent: true },
   { label: 'invite friends', sub: 'earn rewards', Icon: UserPlus },
 ];
 
@@ -81,6 +80,14 @@ export default function ProfileScreen() {
   const { user, signOut, isAdmin } = useAuth();
   const { data: subs } = useMySubscriptions(user?.id);
   const { data: earnedBadges } = useCustomerBadges(user?.id);
+  const { data: myPrepper } = useMyPrepperApplication(user?.id);
+  const isApprovedPrepper = myPrepper?.status === 'approved';
+  const hub = [
+    ...BASE_HUB,
+    isApprovedPrepper
+      ? { label: 'my kitchen', sub: 'dashboard & earnings', Icon: ChefHat, accent: true, route: '/dashboard' }
+      : { label: 'become a prepper', sub: 'share your kitchen', Icon: ChefHat, accent: true },
+  ];
   const favMeals = useFavoritesCount('meal:');
   const followed = useFavoritesCount('prepper:');
   const displayName =
@@ -105,7 +112,7 @@ export default function ProfileScreen() {
     return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
   };
   const onHub = (h: { label: string; route?: string; accent?: boolean }) => {
-    if (h.accent) return go('/become-prepper');
+    if (h.accent) return go(isApprovedPrepper ? '/dashboard' : '/become-prepper');
     if (h.route) return go(h.route);
     if (h.label === 'notifications') return go('/messages');
     if (h.label === 'help center') {
@@ -182,6 +189,24 @@ export default function ProfileScreen() {
             </View>
             <Gift size={56} color="#d97706" />
           </LinearGradient>
+
+          {/* My Kitchen — approved preppers get a persistent mode-switch card */}
+          {isApprovedPrepper ? (
+            <PressableScale
+              onPress={() => router.push('/dashboard')}
+              accessibilityRole="button"
+              accessibilityLabel="Open my kitchen"
+              style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: Palette.prepperBg ?? '#0C0E13', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+              <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: 'rgba(241,95,34,0.18)', alignItems: 'center', justifyContent: 'center' }}>
+                <ChefHat size={20} color={ORANGE} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>my kitchen</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9AA1AD', marginTop: 1 }}>meals, orders, earnings & go live</Text>
+              </View>
+              <ChevronRight size={18} color="#6B7280" />
+            </PressableScale>
+          ) : null}
 
           {/* Admin console — only granted admins see this */}
           {isAdmin ? (

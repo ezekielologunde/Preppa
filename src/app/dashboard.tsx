@@ -292,6 +292,7 @@ export default function DashboardScreen() {
             <QuickAction Icon={DollarSign} label="earnings" color={GREEN} onPress={() => router.push('/earnings')} />
             <QuickAction Icon={Users} label="customers" color={PURPLE} onPress={() => router.push('/customers')} />
             <QuickAction Icon={TrendingUp} label="insights" color={BLUE} onPress={() => router.push('/earnings')} />
+            <QuickAction Icon={Briefcase} label="requests" color={PINK} onPress={() => router.push('/bid-requests')} />
           </ScrollView>
           </View>
 
@@ -334,7 +335,7 @@ export default function DashboardScreen() {
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
         <View style={[{ position: 'absolute', left: 16, right: 16, bottom: 78, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
           <ActionItem Icon={UtensilsCrossed} label="add meal" color="#fff" onPress={() => router.push('/meal-editor')} />
-          <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/feeds')} />
+          <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/post-video')} />
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => router.push('/meal-editor')}>
             <View style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginTop: -26, backgroundColor: ORANGE, ...Shadow.floating, shadowColor: ORANGE, shadowOpacity: 0.45 }}>
               <Plus size={28} color="#fff" />
