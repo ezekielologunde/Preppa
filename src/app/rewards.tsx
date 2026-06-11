@@ -1,12 +1,14 @@
 import { useRouter } from 'expo-router';
 import { Check, ChevronLeft, Gift, Lock, Sparkles, Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
+import { useMyOrders } from '@/lib/queries/orders';
 import { TIERS, useRewards, type Tier } from '@/lib/queries/rewards';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -50,6 +52,9 @@ export default function RewardsScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const r = useRewards(user?.id);
+  const { refetch } = useMyOrders(user?.id);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -75,7 +80,7 @@ export default function RewardsScreen() {
             </PressableScale>
           </View>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 130 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 130 }}>
             {/* Points hero */}
             <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
             <View style={{ backgroundColor: r.tier.color, borderRadius: Radius.lg, padding: 22, gap: 6, overflow: 'hidden' }}>
