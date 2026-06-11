@@ -18,7 +18,7 @@ const INK = Palette.ink;
 const KINDS = experienceTypes.map((t) => ({ key: t.key as ExperienceKind, label: t.label }));
 const money = (n: number | null) => (n == null ? '—' : `$${n.toLocaleString('en-US')}`);
 
-const inputStyle = { height: 50, borderRadius: 14, backgroundColor: '#F4F4F6', paddingHorizontal: 14, fontSize: 15, fontFamily: Font.body, color: INK } as const;
+const inputStyle = { height: 50, borderRadius: 14, backgroundColor: Palette.canvas, paddingHorizontal: 14, fontSize: 15, fontFamily: Font.body, color: INK } as const;
 
 export default function ExperienceRequestScreen() {
   const router = useRouter();
@@ -64,7 +64,7 @@ export default function ExperienceRequestScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.surface }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8 }}>
           <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
@@ -82,8 +82,8 @@ export default function ExperienceRequestScreen() {
               const on = kind === k.key;
               return (
                 <PressableScale key={k.key} onPress={() => setKind(k.key)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={k.label}
-                  style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : '#F4F4F6', borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : '#374151' }}>{k.label}</Text>
+                  style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : Palette.canvas, borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{k.label}</Text>
                 </PressableScale>
               );
             })}
@@ -92,17 +92,17 @@ export default function ExperienceRequestScreen() {
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 80 }}>
           <View style={{ gap: 12, marginTop: 16 }}>
-            <TextInput style={inputStyle} placeholder="Title — e.g. Birthday dinner for 8" placeholderTextColor="#9ca3af" value={title} onChangeText={setTitle} />
-            <TextInput style={[inputStyle, { height: 90, paddingTop: 14, textAlignVertical: 'top' }]} placeholder="Details — cuisine, dietary needs, vibe…" placeholderTextColor="#9ca3af" value={details} onChangeText={setDetails} multiline />
+            <TextInput style={inputStyle} placeholder="Title — e.g. Birthday dinner for 8" placeholderTextColor={Palette.textMuted} value={title} onChangeText={setTitle} />
+            <TextInput style={[inputStyle, { height: 90, paddingTop: 14, textAlignVertical: 'top' }]} placeholder="Details — cuisine, dietary needs, vibe…" placeholderTextColor={Palette.textMuted} value={details} onChangeText={setDetails} multiline />
             <View style={{ flexDirection: 'row', gap: 12 }}>
-              <TextInput style={[inputStyle, { flex: 1 }]} placeholder="Guests" placeholderTextColor="#9ca3af" keyboardType="number-pad" value={guests} onChangeText={setGuests} />
-              <TextInput style={[inputStyle, { flex: 1 }]} placeholder="Budget $" placeholderTextColor="#9ca3af" keyboardType="decimal-pad" value={budget} onChangeText={setBudget} />
+              <TextInput style={[inputStyle, { flex: 1 }]} placeholder="Guests" placeholderTextColor={Palette.textMuted} keyboardType="number-pad" value={guests} onChangeText={setGuests} />
+              <TextInput style={[inputStyle, { flex: 1 }]} placeholder="Budget $" placeholderTextColor={Palette.textMuted} keyboardType="decimal-pad" value={budget} onChangeText={setBudget} />
             </View>
-            <TextInput style={inputStyle} placeholder="Location — neighbourhood or address" placeholderTextColor="#9ca3af" value={location} onChangeText={setLocation} />
+            <TextInput style={inputStyle} placeholder="Location — neighbourhood or address" placeholderTextColor={Palette.textMuted} value={location} onChangeText={setLocation} />
           </View>
           </MotiView>
 
-          {err ? <Text style={{ fontFamily: Font.medium, fontSize: 14, color: '#ef4444', marginTop: 14 }}>{err}</Text> : null}
+          {err ? <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.danger, marginTop: 14 }}>{err}</Text> : null}
 
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
           <PressableScale onPress={submit} disabled={create.isPending} accessibilityRole="button" accessibilityLabel="Post request"
@@ -125,7 +125,7 @@ export default function ExperienceRequestScreen() {
             <View style={{ gap: 12 }}>
               {requests.map((r, i) => (
                 <MotiView key={r.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 60 }}>
-                <View style={{ backgroundColor: '#fff', borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
+                <View style={{ backgroundColor: Palette.surface, borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, flex: 1 }}>{r.title}</Text>
                     <View style={{ backgroundColor: r.status === 'open' ? Palette.brandTint : '#DCFCE7', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
@@ -141,7 +141,7 @@ export default function ExperienceRequestScreen() {
                     {r.bids.length ? `${r.bids.length} bid${r.bids.length === 1 ? '' : 's'}` : 'No bids yet'}
                   </Text>
                   {r.bids.map((b) => (
-                    <View key={b.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#f3f4f6' }}>
+                    <View key={b.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: Palette.border }}>
                       <View style={{ flex: 1 }}>
                         <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>{b.prepper?.display_name ?? 'Prepper'} · {money(b.amount)}</Text>
                         {b.message ? <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }} numberOfLines={2}>{b.message}</Text> : null}

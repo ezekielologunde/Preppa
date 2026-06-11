@@ -122,7 +122,7 @@ export default function OpportunitiesScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {Header}
         {appLoading ? (

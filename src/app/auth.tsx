@@ -164,7 +164,7 @@ export default function AuthScreen() {
         : 'Real food from real local Preppas. Create your account.';
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.surface }}>
       {/* Soft brand glow drifting behind the form */}
       <MotiView
         from={{ translateY: -18, opacity: 0.7 }}

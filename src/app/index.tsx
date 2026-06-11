@@ -112,7 +112,7 @@ export default function HomeScreen() {
   const badgeCount = activeOrders + unreadNotifs;
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -139,7 +139,7 @@ export default function HomeScreen() {
                 <Text style={{ color: ORANGE }}>craving today?</Text>
               </Text>
             </View>
-            <PressableScale onPress={() => router.push('/messages')} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => router.push('/messages')} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={20} color={INK} />
               {badgeCount > 0 ? (
                 <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
@@ -151,10 +151,10 @@ export default function HomeScreen() {
 
           {/* Location — right-aligned pill */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, marginTop: 10 }}>
-            <PressableScale accessibilityRole="button" accessibilityLabel="Change location, New York, NY" style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 }}>
+            <PressableScale accessibilityRole="button" accessibilityLabel="Change location, New York, NY" style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 }}>
               <MapPin size={14} color={ORANGE} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#374151' }}>New York, NY</Text>
-              <ChevronDown size={14} color="#6b7280" />
+              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>New York, NY</Text>
+              <ChevronDown size={14} color={Palette.textSecondary} />
             </PressableScale>
           </View>
           </MotiView>
@@ -165,7 +165,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/search')}
             accessibilityRole="search"
             accessibilityLabel="Search meals, cuisines, or preppers"
-            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: '#fff', borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>Search meals, cuisines, or preppers…</Text>
             <SlidersHorizontal size={20} color={ORANGE} />
@@ -205,10 +205,10 @@ export default function HomeScreen() {
               return (
                 <MotiView key={c.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 100 + i * 35 }}>
                 <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 58 }}>
-                  <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
+                  <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={24} color={c.color} />
                   </View>
-                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#374151' }}>{c.label}</Text>
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.inkSoft }}>{c.label}</Text>
                 </PressableScale>
                 </MotiView>
               );
@@ -220,7 +220,7 @@ export default function HomeScreen() {
             {showPlans ? (
               <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }} style={{ flex: 1 }}>
               <PressableScale onPress={() => router.push('/meal-plans')} accessibilityRole="button" accessibilityLabel="Meal plans"
-                style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+                style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 10 }}>
                 <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                   <CalendarCheck size={20} color={ORANGE} />
                 </View>
@@ -232,7 +232,7 @@ export default function HomeScreen() {
             {showExperiences ? (
               <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 220 }} style={{ flex: 1 }}>
               <PressableScale onPress={() => router.push('/experiences')} accessibilityRole="button" accessibilityLabel="Experiences"
-                style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+                style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 10 }}>
                 <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                   <Ticket size={20} color={ORANGE} />
                 </View>
@@ -243,7 +243,7 @@ export default function HomeScreen() {
             ) : null}
             <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 260 }} style={{ flex: 1 }}>
             <PressableScale onPress={() => router.push('/bid-requests')} accessibilityRole="button" accessibilityLabel="Meal requests"
-              style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
+              style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 10 }}>
               <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                 <UtensilsCrossed size={20} color={ORANGE} />
               </View>
@@ -304,9 +304,9 @@ export default function HomeScreen() {
                 <View style={{ flex: 1, gap: 3 }}>
                   <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{aiPick.meal.title}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: ORANGE }} numberOfLines={1}>{aiPick.reason}</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af' }} numberOfLines={1}>by {aiPick.meal.prepper} · ${aiPick.meal.price.toFixed(2)}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED }} numberOfLines={1}>by {aiPick.meal.prepper} · ${aiPick.meal.price.toFixed(2)}</Text>
                 </View>
-                <ChevronRight size={20} color="#6b7280" />
+                <ChevronRight size={20} color={Palette.textSecondary} />
               </PressableScale>
             </View>
           ) : null}
@@ -334,7 +334,7 @@ export default function HomeScreen() {
           {lastDone ? (
             <>
               <SectionHeader title="order again" />
-              <View style={{ marginHorizontal: 20, backgroundColor: '#fff', borderRadius: 20, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 20, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 {lastDone.items[0]?.image ? (
                   <Image source={lastDone.items[0].image} style={{ width: 60, height: 60, borderRadius: 14 }} contentFit="cover" />
                 ) : (
@@ -343,7 +343,7 @@ export default function HomeScreen() {
                 <View style={{ flex: 1 }}>
                   <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{lastDone.items[0]?.title ?? 'Your order'}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, marginTop: 2 }}>by {lastDone.prepper}</Text>
-                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#6b7280', marginTop: 4 }}>
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary, marginTop: 4 }}>
                     ${lastDone.total.toFixed(2)} · delivered {new Date(lastDone.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </Text>
                 </View>

@@ -64,7 +64,7 @@ export default function CustomersScreen() {
         {!prepperId ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Users size={28} color="#5b6170" />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>Approved preppers see their customer roster here.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>Approved preppers see their customer roster here.</Text>
           </View>
         ) : isLoading ? (
           <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
@@ -74,7 +74,7 @@ export default function CustomersScreen() {
               <Users size={28} color="#5b6170" />
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No customers yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center', maxWidth: 280 }}>Every customer who orders from your kitchen shows up here, with their order history.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 280 }}>Every customer who orders from your kitchen shows up here, with their order history.</Text>
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 10, paddingBottom: 40 }}>
@@ -82,11 +82,11 @@ export default function CustomersScreen() {
             <View style={{ flexDirection: 'row', gap: 10, marginBottom: 6 }}>
               <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 16, padding: 14, gap: 2 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', fontVariant: ['tabular-nums'] }}>{rows.length}</Text>
-                <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#9ca3af' }}>customers</Text>
+                <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textMuted }}>customers</Text>
               </View>
               <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 16, padding: 14, gap: 2 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 24, color: Palette.success, fontVariant: ['tabular-nums'] }}>{repeat}</Text>
-                <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#9ca3af' }}>repeat buyers</Text>
+                <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textMuted }}>repeat buyers</Text>
               </View>
             </View>
             </MotiView>
@@ -105,7 +105,7 @@ export default function CustomersScreen() {
                       </View>
                     ) : null}
                   </View>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: '#9ca3af' }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted }}>
                     {c.orders} order{c.orders === 1 ? '' : 's'} · last {fmtDate(c.lastOrder)}
                   </Text>
                 </View>

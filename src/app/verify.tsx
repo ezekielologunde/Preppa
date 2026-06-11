@@ -44,7 +44,7 @@ export default function VerifyScreen() {
   }, [loading, user, token, verify]);
 
   const Icon = state === 'ok' ? CircleCheck : state === 'fail' ? CircleX : QrCode;
-  const color = state === 'ok' ? Palette.success : state === 'fail' ? '#ef4444' : ORANGE;
+  const color = state === 'ok' ? Palette.success : state === 'fail' ? Palette.danger : ORANGE;
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.prepperBg }}>
@@ -60,7 +60,7 @@ export default function VerifyScreen() {
               <QrCode size={32} color={ORANGE} />
             </View>
             <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff', textAlign: 'center' }}>Sign in to verify</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center', maxWidth: 300, lineHeight: 20 }}>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 300, lineHeight: 20 }}>
               Only the order&apos;s kitchen can confirm a handoff. Sign in to your prepper account to continue.
             </Text>
             <PressableScale onPress={() => router.replace(`/auth?mode=signin`)} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
@@ -80,7 +80,7 @@ export default function VerifyScreen() {
               </Text>
             </MotiView>
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 14.5, color: '#9ca3af', textAlign: 'center', maxWidth: 300, lineHeight: 21 }}>
+              <Text style={{ fontFamily: Font.body, fontSize: 14.5, color: Palette.textMuted, textAlign: 'center', maxWidth: 300, lineHeight: 21 }}>
                 {state === 'ok' ? 'The order is now marked complete and counts toward your earnings.' : reason}
               </Text>
             </MotiView>
