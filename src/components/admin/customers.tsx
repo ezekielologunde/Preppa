@@ -1,4 +1,5 @@
 import { Search, ShieldCheck, Users } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
@@ -38,11 +39,12 @@ export function AdminCustomers() {
 
       <SectionState loading={isLoading} error={isError} empty={!data?.length} emptyText="No customers found." Icon={Users} />
 
-      {(data ?? []).map((c) => {
+      {(data ?? []).map((c, i) => {
         const name = c.full_name ?? c.email?.split('@')[0] ?? 'guest';
         const suspended = c.status === 'suspended';
         return (
-          <Card key={c.id}>
+          <MotiView key={c.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 50 }}>
+          <Card>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <Avatar name={name} />
               <View style={{ flex: 1 }}>
@@ -73,6 +75,7 @@ export function AdminCustomers() {
               </PressableScale>
             </View>
           </Card>
+          </MotiView>
         );
       })}
     </View>

@@ -1,4 +1,5 @@
 import { BadgeCheck, Wallet } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Text, View } from 'react-native';
 
 import { Font } from '@/constants/fonts';
@@ -27,10 +28,11 @@ export function AdminEarnings() {
         </Card>
       ) : null}
 
-      {rows.map((r) => {
+      {rows.map((r, i) => {
         const pct = top > 0 ? Math.max(4, (Number(r.completed_sales) / top) * 100) : 0;
         return (
-          <Card key={r.prepper_id}>
+          <MotiView key={r.prepper_id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 50 }}>
+          <Card>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Admin.text, flex: 1 }} numberOfLines={1}>{r.display_name}</Text>
               {r.verified ? <BadgeCheck size={15} color={Admin.brand} /> : null}
@@ -52,6 +54,7 @@ export function AdminEarnings() {
               <View style={{ width: `${pct}%`, height: 6, borderRadius: 3, backgroundColor: Admin.brand }} />
             </View>
           </Card>
+          </MotiView>
         );
       })}
     </View>
