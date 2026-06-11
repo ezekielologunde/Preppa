@@ -183,7 +183,7 @@ export default function SurpriseScreen() {
                       transition={{ type: 'timing', duration: 280, delay: i * 70 }}
                       style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
                       <View style={{ flex: 1 }}>
-                        <MealCard meal={meal} width={undefined as unknown as number} />
+                        <MealCard meal={meal} width={null} />
                       </View>
                       <PressableScale
                         onPress={() => addPick(meal.id, meal.price)}

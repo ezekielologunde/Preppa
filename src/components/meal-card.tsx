@@ -76,7 +76,8 @@ const StyleSheetAbsolute = { position: 'absolute' as const, top: 0, left: 0, rig
  * default is the standard carousel card. Hovering (web) auto-scrolls the photo
  * gallery and gently zooms.
  */
-export function MealCard({ meal, width = 200, variant = 'normal' }: { meal: Meal; width?: number; variant?: 'normal' | 'big' }) {
+/** `width: null` makes the card fluid — it fills its container. */
+export function MealCard({ meal, width = 200, variant = 'normal' }: { meal: Meal; width?: number | null; variant?: 'normal' | 'big' }) {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const images = meal.images && meal.images.length ? meal.images : meal.image ? [meal.image] : [];
@@ -88,7 +89,7 @@ export function MealCard({ meal, width = 200, variant = 'normal' }: { meal: Meal
       onPress={() => router.push(`/meal?id=${meal.id}`)}
       onHoverIn={() => setHovered(true)}
       onHoverOut={() => setHovered(false)}
-      style={{ width }}
+      style={width === null ? { width: '100%' } : { width }}
       accessibilityRole="button"
       accessibilityLabel={`${meal.title} by ${meal.prepper}, $${meal.price.toFixed(2)}`}>
       <View style={{ borderRadius: big ? 24 : 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
