@@ -163,20 +163,20 @@ export default function PrepperOrdersScreen() {
         ) : null}
 
         {!prepperId ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <ShoppingBag size={28} color="#5b6170" />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>This is your kitchen&apos;s order queue. Approved preppers see incoming orders here.</Text>
-          </View>
+          </MotiView>
         ) : isLoading ? (
           <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
         ) : !orders?.length ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <ShoppingBag size={28} color="#5b6170" />
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No orders yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New orders from customers will appear here in real time.</Text>
-          </View>
+          </MotiView>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
             {orders.map((o, i) => (
