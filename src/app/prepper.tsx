@@ -225,10 +225,11 @@ export default function PrepperScreen() {
               </Text>
             </View>
             <View style={{ marginHorizontal: 16, gap: 10 }}>
-              {plans.map((plan) => {
+              {plans.map((plan, i) => {
                 const subscribed = subscribedNames.has(plan.name);
                 return (
-                  <View key={plan.id} style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
+                  <MotiView key={plan.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 60 }}>
+                  <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
                     <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                       <RefreshCw size={20} color={ORANGE} />
                     </View>
@@ -259,6 +260,7 @@ export default function PrepperScreen() {
                       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{subscribed ? 'Subscribed' : 'Subscribe'}</Text>
                     </PressableScale>
                   </View>
+                  </MotiView>
                 );
               })}
             </View>
@@ -291,8 +293,9 @@ export default function PrepperScreen() {
           <>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, marginHorizontal: 20, marginTop: 28, marginBottom: 12 }}>reviews</Text>
             <View style={{ gap: 10, marginHorizontal: 16 }}>
-              {reviews.map((r) => (
-                <View key={r.id} style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 6 }}>
+              {reviews.map((r, i) => (
+                <MotiView key={r.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 50 }}>
+                <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 6 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Avatar name={r.author} size={32} />
                     <Text style={{ flex: 1, fontFamily: Font.heading, fontSize: 13.5, color: INK }}>{r.author}</Text>
@@ -303,6 +306,7 @@ export default function PrepperScreen() {
                   </View>
                   {r.body ? <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{r.body}</Text> : null}
                 </View>
+                </MotiView>
               ))}
             </View>
           </>
