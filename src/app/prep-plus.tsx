@@ -6,13 +6,14 @@ import {
 } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { supabase } from '@/lib/supabase';
 import { useCustomerMembership } from '@/lib/queries/memberships';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -56,14 +57,32 @@ export default function PrepPlusScreen() {
   const { user } = useAuth();
   const { data: membership } = useCustomerMembership(user?.id);
   const [yearly, setYearly] = useState(false);
+  const [loading, setLoading] = useState(false);
   const price = yearly ? `$${YEARLY}` : `$${MONTHLY.toFixed(2)}`;
   const period = yearly ? 'year' : 'month';
   const isPlus = membership?.isPlus === true;
 
-  function handleJoin() {
+  async function handleJoin() {
     if (!user) { router.push('/auth?mode=signup'); return; }
+    if (isPlus || loading) return;
     feedback.tap();
-    // TODO: initiate Stripe checkout for Prep+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('stripe-subscribe', {
+        body: { type: 'customer_plus', period: yearly ? 'yearly' : 'monthly' },
+      });
+      if (error || !data?.url) throw new Error(error?.message ?? 'Checkout failed');
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.location.href = data.url;
+      } else {
+        Linking.openURL(data.url);
+      }
+    } catch (e) {
+      feedback.error?.();
+      console.error('stripe-subscribe error', e);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -160,10 +179,15 @@ export default function PrepPlusScreen() {
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Prep+ Active ✦</Text>
             </View>
           ) : (
-            <PressableScale onPress={handleJoin} accessibilityRole="button" accessibilityLabel="Join Prep+"
-              style={{ height: 56, borderRadius: Radius.md, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
-              <Crown size={18} color="#fff" />
-              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Join Prep+ · {price}/{period}</Text>
+            <PressableScale onPress={handleJoin} disabled={loading}
+              accessibilityRole="button" accessibilityLabel="Join Prep+"
+              style={{ height: 56, borderRadius: Radius.md, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: loading ? 0.7 : 1 }}>
+              {loading ? <ActivityIndicator color="#fff" /> : (
+                <>
+                  <Crown size={18} color="#fff" />
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Join Prep+ · {price}/{period}</Text>
+                </>
+              )}
             </PressableScale>
           )}
           <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, textAlign: 'center' }}>

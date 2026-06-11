@@ -1,13 +1,14 @@
 import { Minus, Plus, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Modal, Platform, Pressable, Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
-import { nextDeliveryDate, useSubscribeToPlan, type DeliveryDay, type MealPlan } from '@/lib/queries/meal-plans';
+import { supabase } from '@/lib/supabase';
+import { nextDeliveryDate, type DeliveryDay, type MealPlan } from '@/lib/queries/meal-plans';
 
 const DAYS: { key: DeliveryDay; label: string }[] = [
   { key: 'mon', label: 'Mon' }, { key: 'tue', label: 'Tue' }, { key: 'wed', label: 'Wed' },
@@ -20,27 +21,42 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
 
 /**
  * Bottom-sheet to subscribe to a meal plan — servings + delivery-day schedule.
- * Shared by the meal-plans catalog and the kitchen storefront. Pass `plan=null`
- * to keep it closed; `userId` must be set (callers gate sign-in before opening).
+ * Sends the user to Stripe for billing, then the webhook creates the subscription.
+ * Pass `plan=null` to keep it closed; `userId` must be set (callers gate sign-in before opening).
  */
 export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan | null; userId: string; onClose: () => void }) {
-  const subscribe = useSubscribeToPlan();
   const [qty, setQty] = useState(1);
   const [day, setDay] = useState<DeliveryDay>('mon');
+  const [loading, setLoading] = useState(false);
 
-  // Reset the form each time a new plan opens the sheet (render-time adjustment).
+  // Reset form each time a new plan opens the sheet.
   const [prevPlanId, setPrevPlanId] = useState<string | null>(plan?.id ?? null);
   if ((plan?.id ?? null) !== prevPlanId) {
     setPrevPlanId(plan?.id ?? null);
     if (plan) { setQty(1); setDay('mon'); }
   }
 
-  function confirm() {
-    if (!plan) return;
-    subscribe.mutate(
-      { userId, planId: plan.id, prepperId: plan.prepper_id, planName: plan.name, frequency: plan.frequency, qty, deliveryDay: day },
-      { onSuccess: () => { feedback.success(); onClose(); }, onError: () => feedback.error() },
-    );
+  async function confirm() {
+    if (!plan || loading) return;
+    feedback.tap();
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('stripe-subscribe', {
+        body: { type: 'meal_plan', planId: plan.id, prepperId: plan.prepper_id, qty, deliveryDay: day },
+      });
+      if (error || !data?.url) throw new Error(error?.message ?? 'Checkout failed');
+      onClose();
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.location.href = data.url;
+      } else {
+        Linking.openURL(data.url);
+      }
+    } catch (e) {
+      feedback.error?.();
+      console.error('subscribe-sheet stripe error', e);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -105,11 +121,11 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 }}>
           <PressableScale
             onPress={confirm}
-            disabled={subscribe.isPending}
+            disabled={loading}
             accessibilityRole="button"
             accessibilityLabel="Start plan"
-            style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: subscribe.isPending ? 0.7 : 1 }}>
-            {subscribe.isPending ? (
+            style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: loading ? 0.7 : 1 }}>
+            {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>

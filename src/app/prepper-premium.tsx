@@ -5,13 +5,16 @@ import {
 } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { supabase } from '@/lib/supabase';
+import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const CARD = Palette.prepperCard;
@@ -61,13 +64,34 @@ function FeatureRow({ item, i }: { item: ProFeature; i: number }) {
 
 export default function PrepperPremiumScreen() {
   const router = useRouter();
+  const { user } = useAuth();
+  const { data: myPrepper } = useMyPrepperApplication(user?.id);
   const [yearly, setYearly] = useState(false);
+  const [loading, setLoading] = useState(false);
   const price = yearly ? YEARLY : MONTHLY;
   const period = yearly ? 'year' : 'month';
 
-  function handleUpgrade() {
+  async function handleUpgrade() {
+    if (!user) { router.push('/auth?mode=signup'); return; }
+    if (!myPrepper?.id || loading) return;
     feedback.tap();
-    // TODO: initiate Stripe checkout for prepper Pro
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('stripe-subscribe', {
+        body: { type: 'prepper_pro', period: yearly ? 'yearly' : 'monthly', prepperId: myPrepper.id },
+      });
+      if (error || !data?.url) throw new Error(error?.message ?? 'Checkout failed');
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.location.href = data.url;
+      } else {
+        Linking.openURL(data.url);
+      }
+    } catch (e) {
+      feedback.error?.();
+      console.error('stripe-subscribe error', e);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -164,10 +188,15 @@ export default function PrepperPremiumScreen() {
 
         {/* Sticky CTA */}
         <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: BG, paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20, gap: 8 }}>
-          <PressableScale onPress={handleUpgrade} accessibilityRole="button" accessibilityLabel="Upgrade to Pro"
-            style={{ height: 56, borderRadius: Radius.md, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
-            <Crown size={18} color="#fff" />
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Upgrade to Pro · ${price}/{period}</Text>
+          <PressableScale onPress={handleUpgrade} disabled={loading}
+            accessibilityRole="button" accessibilityLabel="Upgrade to Pro"
+            style={{ height: 56, borderRadius: Radius.md, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: loading ? 0.7 : 1 }}>
+            {loading ? <ActivityIndicator color="#fff" /> : (
+              <>
+                <Crown size={18} color="#fff" />
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Upgrade to Pro · ${price}/{period}</Text>
+              </>
+            )}
           </PressableScale>
           <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, textAlign: 'center' }}>
             Cancel anytime · Stripe-secured billing

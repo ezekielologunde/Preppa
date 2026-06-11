@@ -1,7 +1,7 @@
-// Stripe webhook → keeps payment state in sync with Stripe and sends receipts.
-// Verifies the signature, records paid / refunded outcomes, then emails the
-// customer a receipt and the prepper a new-order alert (exactly once).
-// Deploy with verify_jwt = false (Stripe does not send a Supabase JWT).
+// Stripe webhook — keeps Preppa DB in sync with Stripe.
+// Handles one-time order payments AND subscription lifecycle events.
+// Verifies signature, records outcomes, sends emails (orders only).
+// Deploy with verify_jwt = false (Stripe sends no Supabase JWT).
 import Stripe from 'https://esm.sh/stripe@14.21.0?target=denonext';
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 
@@ -14,7 +14,6 @@ const RESEND_KEY = Deno.env.get('RESEND_API_KEY');
 const SITE = Deno.env.get('SITE_URL') ?? 'https://app.preppa.live';
 const FROM = 'Preppa <noreply@preppa.live>';
 const LOGO = 'https://nfwfnnfbikjxwflpmsnu.supabase.co/storage/v1/object/public/brand/preppa-logo.png';
-// Deno's edge runtime needs the Web Crypto provider for async signature checks.
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 const money = (n: unknown) => `$${Number(n ?? 0).toFixed(2)}`;
@@ -35,7 +34,17 @@ type Payload = {
 const fulfillmentLabel = (f: string) =>
   f === 'delivery' ? 'Delivery' : f === 'pickup' ? 'Pickup' : f === 'meetup' ? 'Meet up' : f;
 
-// Shared branded shell. `rows` is pre-built HTML for the body.
+function nextDelivery(day: string): string {
+  const MAP: Record<string, number> = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+  const target = MAP[day] ?? 1;
+  const now = new Date();
+  const diff = (target - now.getDay() + 7) % 7 || 7;
+  const d = new Date(now);
+  d.setDate(now.getDate() + diff);
+  d.setHours(12, 0, 0, 0);
+  return d.toISOString();
+}
+
 function shell(heading: string, intro: string, p: Payload, rows: string, cta?: { label: string; url: string }) {
   const lines = p.items
     .map(
@@ -44,14 +53,10 @@ function shell(heading: string, intro: string, p: Payload, rows: string, cta?: {
         `<td style="padding:6px 0;text-align:right;color:#1f2937">${money(it.price * it.qty)}</td></tr>`,
     )
     .join('');
-  const feeRow =
-    Number(p.delivery_fee) > 0
-      ? `<tr><td style="padding:2px 0;color:#6b7280">Delivery</td><td style="padding:2px 0;text-align:right;color:#6b7280">${money(p.delivery_fee)}</td></tr>`
-      : '';
-  const tipRow =
-    Number(p.tip) > 0
-      ? `<tr><td style="padding:2px 0;color:#6b7280">Tip</td><td style="padding:2px 0;text-align:right;color:#6b7280">${money(p.tip)}</td></tr>`
-      : '';
+  const feeRow = Number(p.delivery_fee) > 0
+    ? `<tr><td style="padding:2px 0;color:#6b7280">Delivery</td><td style="padding:2px 0;text-align:right;color:#6b7280">${money(p.delivery_fee)}</td></tr>` : '';
+  const tipRow = Number(p.tip) > 0
+    ? `<tr><td style="padding:2px 0;color:#6b7280">Tip</td><td style="padding:2px 0;text-align:right;color:#6b7280">${money(p.tip)}</td></tr>` : '';
   const ctaHtml = cta
     ? `<a href="${esc(cta.url)}" style="display:inline-block;margin-top:20px;background:#F15F22;color:#fff;text-decoration:none;font-weight:600;padding:12px 22px;border-radius:12px">${esc(cta.label)}</a>`
     : '';
@@ -91,12 +96,9 @@ async function sendEmail(to: string, subject: string, html: string) {
   if (!res.ok) console.error('resend send failed', to, res.status, await res.text());
 }
 
-// Email both sides exactly once. Any failure here is swallowed — the webhook
-// must still return 200 so Stripe doesn't retry a payment that was recorded.
 async function sendOrderEmails(supabase: SupabaseClient, orderId: string) {
   const { data: claimed } = await supabase.rpc('claim_order_receipt', { p_order_id: orderId });
-  if (!claimed) return; // already emailed (Stripe retry)
-
+  if (!claimed) return;
   const { data: p } = await supabase.rpc('order_email_payload', { p_order_id: orderId });
   if (!p) return;
   const payload = p as Payload;
@@ -104,9 +106,7 @@ async function sendOrderEmails(supabase: SupabaseClient, orderId: string) {
   const noteRow = payload.note
     ? `<p style="margin:0 0 10px;font-size:13px;color:#6b7280">${esc(fLabel)} · ${esc(payload.note)}</p>`
     : `<p style="margin:0 0 10px;font-size:13px;color:#6b7280">${esc(fLabel)}</p>`;
-
   const custFirst = firstName(payload.customer_name);
-  // Pickup/meet-up orders show the anti-fraud handoff code in the receipt.
   const isPickup = payload.fulfillment === 'pickup' || payload.fulfillment === 'meetup';
   const codeRow = isPickup && payload.handoff_pin
     ? `<div style="margin:0 0 12px;background:#FDEDE4;border-radius:12px;padding:12px 14px"><span style="font-size:12.5px;color:#9a3412">Your ${esc(fulfillmentLabel(payload.fulfillment).toLowerCase())} code — show it when you collect</span><div style="font-size:30px;letter-spacing:8px;font-weight:700;color:#F15F22;margin-top:4px">${esc(payload.handoff_pin)}</div></div>`
@@ -116,8 +116,7 @@ async function sendOrderEmails(supabase: SupabaseClient, orderId: string) {
     const html = shell(
       'Order confirmed 🎉',
       `Thanks${custFirst ? ' ' + esc(custFirst) : ''}! <b>${esc(payload.prepper_name ?? 'Your prepper')}</b> got your order and will confirm it shortly.`,
-      payload,
-      codeRow + noteRow,
+      payload, codeRow + noteRow,
       { label: 'View your order', url: `${SITE}/orders` },
     );
     tasks.push(sendEmail(payload.customer_email, 'Your Preppa order is confirmed', html));
@@ -126,13 +125,103 @@ async function sendOrderEmails(supabase: SupabaseClient, orderId: string) {
     const html = shell(
       'New paid order',
       `<b>${custFirst ? esc(custFirst) : 'A customer'}</b> just paid for an order. Confirm it in your kitchen to get cooking.`,
-      payload,
-      noteRow,
+      payload, noteRow,
       { label: 'Open my kitchen', url: `${SITE}/prepper-orders` },
     );
     tasks.push(sendEmail(payload.prepper_email, `New order · ${money(payload.total)}`, html));
   }
   await Promise.all(tasks);
+}
+
+// Provision access after subscription checkout completes.
+async function provisionSubscription(
+  supabase: SupabaseClient,
+  meta: Record<string, string>,
+  subId: string | null,
+) {
+  if (meta.type === 'prepper_pro' && meta.prepper_id) {
+    await supabase.from('prepper_memberships').upsert({
+      prepper_id: meta.prepper_id,
+      tier: 'pro',
+      billing_period: meta.period ?? 'monthly',
+      stripe_subscription_id: subId,
+      status: 'active',
+    }, { onConflict: 'prepper_id' });
+
+  } else if (meta.type === 'customer_plus' && meta.user_id) {
+    await supabase.from('customer_memberships').upsert({
+      customer_id: meta.user_id,
+      tier: 'plus',
+      billing_period: meta.period ?? 'monthly',
+      stripe_subscription_id: subId,
+      status: 'active',
+    }, { onConflict: 'customer_id' });
+
+  } else if (meta.type === 'meal_plan' && meta.plan_id && meta.customer_id) {
+    // Idempotent: skip if already provisioned with this Stripe subscription
+    const { data: dup } = await supabase.from('subscriptions')
+      .select('id').eq('stripe_subscription_id', subId!).maybeSingle();
+    if (!dup) {
+      await supabase.from('subscriptions').insert({
+        customer_id: meta.customer_id,
+        prepper_id:  meta.prepper_id ?? '',
+        plan_id:     meta.plan_id,
+        plan_name:   meta.plan_name ?? '',
+        frequency:   meta.frequency ?? 'weekly',
+        qty:         Number(meta.qty) || 1,
+        delivery_day: meta.delivery_day ?? 'mon',
+        next_billing_at: nextDelivery(meta.delivery_day ?? 'mon'),
+        stripe_subscription_id: subId,
+        status: 'active',
+      });
+    }
+
+  } else if (meta.type === 'custom_plan' && meta.plan_id && meta.customer_id) {
+    await supabase.from('customer_meal_plans')
+      .update({ stripe_subscription_id: subId, status: 'active' })
+      .eq('id', meta.plan_id).eq('customer_id', meta.customer_id);
+  }
+}
+
+// Sync subscription status changes (renewals, pauses, reactivations).
+async function syncSubscriptionStatus(supabase: SupabaseClient, sub: Stripe.Subscription) {
+  const meta = sub.metadata ?? {};
+  const periodEnd = new Date(sub.current_period_end * 1000).toISOString();
+  const isActive = sub.status === 'active' || sub.status === 'trialing';
+  const memberStatus = isActive ? 'active' : sub.status === 'past_due' ? 'past_due' : 'cancelled';
+  const planStatus   = isActive ? 'active' : 'paused';
+
+  if (meta.type === 'prepper_pro') {
+    await supabase.from('prepper_memberships')
+      .update({ status: memberStatus, current_period_end: periodEnd })
+      .eq('stripe_subscription_id', sub.id);
+  } else if (meta.type === 'customer_plus') {
+    await supabase.from('customer_memberships')
+      .update({ status: memberStatus, current_period_end: periodEnd })
+      .eq('stripe_subscription_id', sub.id);
+  } else if (meta.type === 'meal_plan') {
+    await supabase.from('subscriptions')
+      .update({ status: planStatus, next_billing_at: periodEnd })
+      .eq('stripe_subscription_id', sub.id);
+  } else if (meta.type === 'custom_plan') {
+    await supabase.from('customer_meal_plans')
+      .update({ status: planStatus, next_billing_at: periodEnd })
+      .eq('stripe_subscription_id', sub.id);
+  }
+}
+
+// Cancel access when subscription ends.
+async function cancelSubscription(supabase: SupabaseClient, sub: Stripe.Subscription) {
+  const meta = sub.metadata ?? {};
+  if (meta.type === 'prepper_pro') {
+    await supabase.from('prepper_memberships').update({ status: 'cancelled' }).eq('stripe_subscription_id', sub.id);
+  } else if (meta.type === 'customer_plus') {
+    await supabase.from('customer_memberships').update({ status: 'cancelled' }).eq('stripe_subscription_id', sub.id);
+  } else if (meta.type === 'meal_plan') {
+    await supabase.from('subscriptions').update({ status: 'cancelled' }).eq('stripe_subscription_id', sub.id);
+  } else if (meta.type === 'custom_plan') {
+    await supabase.from('customer_meal_plans').update({ status: 'cancelled' }).eq('stripe_subscription_id', sub.id);
+  }
 }
 
 Deno.serve(async (req) => {
@@ -150,6 +239,14 @@ Deno.serve(async (req) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const s = event.data.object as Stripe.Checkout.Session;
+
+        if (s.mode === 'subscription') {
+          const subId = typeof s.subscription === 'string' ? s.subscription : null;
+          await provisionSubscription(supabase, s.metadata ?? {}, subId);
+          break;
+        }
+
+        // One-time order payment
         const orderId = s.metadata?.order_id ?? s.client_reference_id ?? undefined;
         if (orderId && s.payment_status === 'paid') {
           await supabase.rpc('record_payment', {
@@ -158,10 +255,6 @@ Deno.serve(async (req) => {
             p_status: 'succeeded',
             p_amount: (s.amount_total ?? 0) / 100,
           });
-          // Frictionless payouts: Preppa collects, the cook never touches
-          // Stripe. Pull the EXACT processing fee from the balance transaction
-          // and snapshot stripe+platform fees on the payment (the RPC falls
-          // back to a fee_config estimate when we pass null).
           let stripeFee: number | null = null;
           try {
             const pi = await stripe.paymentIntents.retrieve(String(s.payment_intent), {
@@ -174,27 +267,44 @@ Deno.serve(async (req) => {
             console.error('balance txn fetch failed (estimating fee)', e instanceof Error ? e.message : e);
           }
           await supabase.rpc('apply_payment_fees', { p_order_id: orderId, p_stripe_fee: stripeFee });
-          try {
-            await sendOrderEmails(supabase, orderId);
-          } catch (e) {
+          try { await sendOrderEmails(supabase, orderId); } catch (e) {
             console.error('order email error', e instanceof Error ? e.message : e);
           }
         }
         break;
       }
+
+      case 'customer.subscription.updated': {
+        const sub = event.data.object as Stripe.Subscription;
+        await syncSubscriptionStatus(supabase, sub);
+        break;
+      }
+
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object as Stripe.Subscription;
+        await cancelSubscription(supabase, sub);
+        break;
+      }
+
       case 'charge.refunded': {
         const ch = event.data.object as Stripe.Charge;
         const { data: p } = await supabase
-          .from('payments')
-          .select('order_id')
-          .eq('transaction_id', String(ch.payment_intent))
-          .maybeSingle();
+          .from('payments').select('order_id').eq('transaction_id', String(ch.payment_intent)).maybeSingle();
         if (p?.order_id) {
           await supabase.rpc('record_refund', {
             p_order_id: p.order_id,
             p_amount: (ch.amount_refunded ?? 0) / 100,
             p_reason: 'stripe refund',
           });
+        }
+        break;
+      }
+
+      case 'invoice.payment_failed': {
+        const inv = event.data.object as Stripe.Invoice;
+        if (typeof inv.subscription === 'string') {
+          const sub = await stripe.subscriptions.retrieve(inv.subscription);
+          await syncSubscriptionStatus(supabase, sub);
         }
         break;
       }

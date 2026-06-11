@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, ChevronRight, Plus, Search, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Linking, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { Meal } from '@/components/meal-card';
@@ -11,6 +11,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { supabase } from '@/lib/supabase';
 import { useCreateCustomPlan } from '@/lib/queries/custom-meal-plans';
 import { useFeaturedMeals, useMealSearch } from '@/lib/queries/meals';
 import { useAuth } from '@/providers/auth-provider';
@@ -81,15 +82,27 @@ export default function CreateMealPlanScreen() {
     if (!canCreate) return;
     feedback.tap();
     try {
-      await createPlan.mutateAsync({
+      const planId = await createPlan.mutateAsync({
         userId: user.id,
         name: name.trim(),
         frequency: freq,
         deliveryDay: day,
         mealIds: [...selectedMeals.keys()],
       });
+      // Set up recurring billing via Stripe; plan stays active either way for MVP.
+      const { data } = await supabase.functions.invoke('stripe-subscribe', {
+        body: { type: 'custom_plan', planId },
+      });
       feedback.success();
-      router.replace('/meal-plans');
+      if (data?.url) {
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
+          window.location.href = data.url;
+        } else {
+          Linking.openURL(data.url);
+        }
+      } else {
+        router.replace('/meal-plans');
+      }
     } catch {
       feedback.error?.();
     }
