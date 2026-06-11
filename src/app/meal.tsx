@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { BadgeCheck, Check, ChevronLeft, Clock, MessageCircle, ShoppingBag, Star, Zap } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MotiView } from 'moti';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -51,10 +51,11 @@ export default function MealScreen() {
   const { user } = useAuth();
   const { data: meal, isLoading, isError } = useMeal(id);
   const [added, setAdded] = useState(false);
-
-  // Record view as soon as meal data arrives (deduplicated in the store)
-  if (meal?.id) recordMealView(meal.id);
   const [switchPrompt, setSwitchPrompt] = useState(false);
+
+  useEffect(() => {
+    if (meal?.id) recordMealView(meal.id);
+  }, [meal?.id]);
   const startConv = useStartConversation();
   const addToCart = useAddToCart();
   const { data: cart } = useCart(user?.id);
