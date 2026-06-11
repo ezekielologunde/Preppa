@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Bell, Bike, CalendarCheck, ChefHat, ChevronLeft, CircleCheck, CircleX, Heart, MessageCircle, MessageSquareQuote, Package, Star, UtensilsCrossed } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -215,11 +216,15 @@ export default function MessagesScreen() {
                 <Empty Icon={Bell} title="No updates yet" sub="Order updates, new bids, reviews and renewals will show up here." />
               ) : (
                 <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
-                  {(notifications ?? []).map((n) => (
-                    <NotificationItemRow key={n.id} n={n} onPress={() => routeNotification(n)} />
+                  {(notifications ?? []).map((n, i) => (
+                    <MotiView key={n.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 35 }}>
+                      <NotificationItemRow n={n} onPress={() => routeNotification(n)} />
+                    </MotiView>
                   ))}
-                  {orders?.map((o) => (
-                    <NotificationRow key={o.id} o={o} onPress={() => router.push('/orders')} />
+                  {orders?.map((o, i) => (
+                    <MotiView key={o.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: ((notifications?.length ?? 0) + i) * 35 }}>
+                      <NotificationRow o={o} onPress={() => router.push('/orders')} />
+                    </MotiView>
                   ))}
                 </ScrollView>
               )
@@ -229,8 +234,10 @@ export default function MessagesScreen() {
               <Empty Icon={MessageCircle} title="No messages yet" sub="Message a prepper from a meal or experience to start a conversation." />
             ) : (
               <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
-                {conversations.map((c) => (
-                  <ConversationRow key={c.id} c={c} onPress={() => router.push(`/chat?id=${c.id}&name=${encodeURIComponent(c.otherName)}`)} />
+                {conversations.map((c, i) => (
+                  <MotiView key={c.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 40 }}>
+                    <ConversationRow c={c} onPress={() => router.push(`/chat?id=${c.id}&name=${encodeURIComponent(c.otherName)}`)} />
+                  </MotiView>
                 ))}
               </ScrollView>
             )}
