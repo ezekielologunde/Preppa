@@ -1,6 +1,5 @@
-import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, MessageCircle, RefreshCw, Repeat, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
+import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, RefreshCw, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

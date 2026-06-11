@@ -44,7 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeRole, setActiveRoleState] = useState<ActiveRole>('customer');
-  const [roles, setRoles] = useState<string[]>([]);
+  // Roles are stored with the user they were fetched for, so a signed-out (or
+  // switched) user can never see a previous user's roles — no reset effect needed.
+  const [rolesFor, setRolesFor] = useState<{ uid: string; keys: string[] } | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -61,10 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Load granted roles whenever the signed-in user changes (drives admin access).
   const userId = session?.user?.id ?? null;
   useEffect(() => {
-    if (!userId) {
-      setRoles([]);
-      return;
-    }
+    if (!userId) return;
     let cancelled = false;
     supabase
       .from('user_roles')
@@ -77,12 +76,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .flatMap((r) => (Array.isArray(r.roles) ? r.roles : r.roles ? [r.roles] : []))
           .map((role) => role.key)
           .filter((k): k is string => !!k);
-        setRoles(keys);
+        setRolesFor({ uid: userId, keys });
       });
     return () => {
       cancelled = true;
     };
   }, [userId]);
+
+  const roles = useMemo(
+    () => (userId && rolesFor?.uid === userId ? rolesFor.keys : []),
+    [userId, rolesFor],
+  );
 
   function setActiveRole(role: ActiveRole) {
     setActiveRoleState(role);

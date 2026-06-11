@@ -137,6 +137,20 @@ function Empty({ Icon, title, sub }: { Icon: LucideIcon; title: string; sub: str
   );
 }
 
+function TabButton({ active, label, count, onPress }: { active: boolean; label: string; count?: number; onPress: () => void }) {
+  return (
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: active }} accessibilityLabel={label}
+      style={{ flex: 1, height: 40, borderRadius: 999, backgroundColor: active ? INK : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
+      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: active ? '#fff' : Palette.textSecondary }}>{label}</Text>
+      {count ? (
+        <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 5, backgroundColor: active ? ORANGE : Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: active ? '#fff' : ORANGE }}>{count}</Text>
+        </View>
+      ) : null}
+    </PressableScale>
+  );
+}
+
 export default function MessagesScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -166,21 +180,6 @@ export default function MessagesScreen() {
     else router.replace('/');
   }
 
-  const TabButton = ({ id, label, count }: { id: 'updates' | 'messages'; label: string; count?: number }) => {
-    const on = tab === id;
-    return (
-      <PressableScale onPress={() => setTab(id)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={label}
-        style={{ flex: 1, height: 40, borderRadius: 999, backgroundColor: on ? INK : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
-        <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: on ? '#fff' : Palette.textSecondary }}>{label}</Text>
-        {count ? (
-          <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 5, backgroundColor: on ? ORANGE : Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: on ? '#fff' : ORANGE }}>{count}</Text>
-          </View>
-        ) : null}
-      </PressableScale>
-    );
-  };
-
   const unreadCount = (conversations ?? []).filter((c) => c.unread).length;
 
   return (
@@ -205,8 +204,8 @@ export default function MessagesScreen() {
           <>
             {/* Tabs */}
             <View style={{ flexDirection: 'row', marginHorizontal: 16, marginBottom: 6, backgroundColor: Palette.canvas, borderRadius: 999, padding: 4 }}>
-              <TabButton id="updates" label="Updates" />
-              <TabButton id="messages" label="Messages" count={unreadCount || undefined} />
+              <TabButton active={tab === 'updates'} label="Updates" onPress={() => setTab('updates')} />
+              <TabButton active={tab === 'messages'} label="Messages" count={unreadCount || undefined} onPress={() => setTab('messages')} />
             </View>
 
             {tab === 'updates' ? (

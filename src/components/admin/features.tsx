@@ -3,7 +3,6 @@ import { Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Radius } from '@/constants/theme';
 import { useAdminFlags, useSetFeatureFlag } from '@/lib/queries/admin';
 import { Admin, Card, SectionState } from './ui';
 

@@ -12,7 +12,6 @@ import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useKitchensByTag, useKitchenTags } from '@/lib/queries/preppers';
 
-const ORANGE = Palette.brand;
 const INK = Palette.ink;
 
 function TagChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {

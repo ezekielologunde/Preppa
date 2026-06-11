@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { FavoriteButton } from '@/components/ui/favorite-button';
@@ -29,18 +29,23 @@ export type Meal = {
 
 /** Crossfading gallery that advances while hovered (web) — a living preview. */
 function CardGallery({ images, hovered, height }: { images: string[]; hovered: boolean; height: number }) {
-  const [idx, setIdx] = useState(0);
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [cycle, setCycle] = useState(0);
+
+  // Each new hover restarts the tour from the hero shot (render-time adjustment).
+  const [prevHovered, setPrevHovered] = useState(hovered);
+  if (hovered !== prevHovered) {
+    setPrevHovered(hovered);
+    if (hovered) setCycle(0);
+  }
 
   useEffect(() => {
-    if (hovered && images.length > 1) {
-      timer.current = setInterval(() => setIdx((i) => (i + 1) % images.length), 1100);
-    } else {
-      if (timer.current) clearInterval(timer.current);
-      setIdx(0); // reset to the hero shot when not hovering
-    }
-    return () => { if (timer.current) clearInterval(timer.current); };
+    if (!hovered || images.length <= 1) return;
+    const timer = setInterval(() => setCycle((i) => i + 1), 1100);
+    return () => clearInterval(timer);
   }, [hovered, images.length]);
+
+  // Shown frame derives from hover state — no reset effect needed on unhover.
+  const idx = hovered && images.length > 1 ? cycle % images.length : 0;
 
   return (
     <View style={{ height, backgroundColor: '#FCE9DD', overflow: 'hidden' }}>

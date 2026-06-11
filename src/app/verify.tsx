@@ -23,14 +23,14 @@ export default function VerifyScreen() {
   const { user, loading } = useAuth();
   const { t } = useLocalSearchParams<{ t?: string }>();
   const verify = useVerifyHandoffToken();
-  const [state, setState] = useState<'working' | 'ok' | 'fail'>('working');
-  const [reason, setReason] = useState<string | null>(null);
+  // A link with no token can never verify — start in the failed state directly.
+  const token = (t ?? '').toString();
+  const [state, setState] = useState<'working' | 'ok' | 'fail'>(token ? 'working' : 'fail');
+  const [reason, setReason] = useState<string | null>(token ? null : 'No code in the link.');
   const ran = useRef(false);
 
   useEffect(() => {
-    if (loading || ran.current) return;
-    const token = (t ?? '').toString();
-    if (!token) { setState('fail'); setReason('No code in the link.'); return; }
+    if (loading || ran.current || !token) return;
     if (!user) return; // wait for sign-in (handled in render)
     ran.current = true;
     verify.mutate(token, {
@@ -40,7 +40,7 @@ export default function VerifyScreen() {
       },
       onError: (e) => { feedback.error(); setState('fail'); setReason(e instanceof Error ? e.message : 'Could not verify.'); },
     });
-  }, [loading, user, t, verify]);
+  }, [loading, user, token, verify]);
 
   const Icon = state === 'ok' ? CircleCheck : state === 'fail' ? CircleX : QrCode;
   const color = state === 'ok' ? Palette.success : state === 'fail' ? '#ef4444' : ORANGE;

@@ -1,10 +1,10 @@
 import { Minus, Plus, X } from 'lucide-react-native';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette, Radius } from '@/constants/theme';
+import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { nextDeliveryDate, useSubscribeToPlan, type DeliveryDay, type MealPlan } from '@/lib/queries/meal-plans';
 
@@ -27,8 +27,12 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
   const [qty, setQty] = useState(1);
   const [day, setDay] = useState<DeliveryDay>('mon');
 
-  // Reset the form each time a new plan opens the sheet.
-  useEffect(() => { if (plan) { setQty(1); setDay('mon'); } }, [plan?.id]);
+  // Reset the form each time a new plan opens the sheet (render-time adjustment).
+  const [prevPlanId, setPrevPlanId] = useState<string | null>(plan?.id ?? null);
+  if ((plan?.id ?? null) !== prevPlanId) {
+    setPrevPlanId(plan?.id ?? null);
+    if (plan) { setQty(1); setDay('mon'); }
+  }
 
   function confirm() {
     if (!plan) return;

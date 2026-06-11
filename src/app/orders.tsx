@@ -147,7 +147,7 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
         order.disputed ? (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 2 }}>
             <AlertTriangle size={13} color={Palette.textMuted} />
-            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>Issue reported — we're looking into it.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>Issue reported — we&apos;re looking into it.</Text>
           </View>
         ) : (
           <PressableScale

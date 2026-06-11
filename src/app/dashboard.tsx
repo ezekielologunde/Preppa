@@ -147,7 +147,6 @@ export default function DashboardScreen() {
   const subscribers = new Set(list.map((o) => o.customer)).size;
   const reviewCount = reviews?.length ?? 0;
   const avgRating = reviewCount ? reviews!.reduce((s, r) => s + r.rating, 0) / reviewCount : 0;
-  const firstName = prepper?.display_name?.split(' ')[0]?.toLowerCase() ?? 'chef';
 
   // Oldest still-active order = the one to act on next.
   const active = list.filter((o) => o.status === 'pending' || o.status === 'confirmed' || o.status === 'preparing' || o.status === 'ready');
