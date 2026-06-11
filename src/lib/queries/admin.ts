@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { supabase } from '@/lib/supabase';
 import type {
+  MarketplaceFit,
   OrderStatus,
   PlatformStats,
   PrepperEarningsRow,
@@ -21,6 +22,18 @@ export function usePlatformStats() {
       const { data, error } = await supabase.rpc('admin_platform_stats');
       if (error) throw error;
       return (data as PlatformStats | null) ?? null;
+    },
+  });
+}
+
+/** The marketplace-fit signal: do customers reorder from the same prepper? */
+export function useMarketplaceFit() {
+  return useQuery({
+    queryKey: ['admin', 'marketplace-fit'],
+    queryFn: async (): Promise<MarketplaceFit | null> => {
+      const { data, error } = await supabase.rpc('admin_marketplace_fit');
+      if (error) throw error;
+      return (data as MarketplaceFit | null) ?? null;
     },
   });
 }

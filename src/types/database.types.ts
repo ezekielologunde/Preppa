@@ -46,6 +46,16 @@ export type TopPrepperRankedRow = {
   rank: number;
 };
 
+/** Shape returned by admin_marketplace_fit() — the repeat-purchase signal. */
+export type MarketplaceFit = {
+  buyers: number;
+  repeat_buyers: number;
+  repeat_buyer_rate: number | null;
+  completed_orders: number;
+  repeat_order_share: number | null;
+  active_preppers_30d: number;
+};
+
 /** Shape returned by the admin_platform_stats() RPC. */
 export type PlatformStats = {
   total_users: number;
@@ -235,6 +245,7 @@ export interface Database {
       admin_set_user_status: { Args: { p_user: string; p_status: UserStatus }; Returns: undefined };
       admin_prepper_earnings: { Args: Record<string, never>; Returns: PrepperEarningsRow[] };
       admin_platform_stats: { Args: Record<string, never>; Returns: PlatformStats };
+      admin_marketplace_fit: { Args: Record<string, never>; Returns: MarketplaceFit };
       accept_experience_bid: { Args: { p_bid: string }; Returns: undefined };
       start_conversation: { Args: { p_other: string }; Returns: string };
       mark_conversation_read: { Args: { p_conversation: string }; Returns: undefined };

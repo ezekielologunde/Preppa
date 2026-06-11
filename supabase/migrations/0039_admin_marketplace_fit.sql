@@ -1,0 +1,6 @@
+-- 0039 — The marketplace-fit signal. admin_marketplace_fit() (SECURITY DEFINER,
+-- admin-only) computes whether customers REORDER from the same prepper:
+-- repeat_buyer_rate (% of buyers with >=2 completed orders from one kitchen),
+-- repeat_order_share, active_preppers_30d. This is the retention metric that
+-- separates a real marketplace from a fragile one-time-transaction app — the
+-- number the founder watches before scaling. Canonical body in the DB.

@@ -1,9 +1,56 @@
-import { ClipboardList, DollarSign, ShoppingBag, Store, TrendingUp, Users } from 'lucide-react-native';
+import { ClipboardList, DollarSign, Repeat, ShoppingBag, Store, TrendingUp, Users } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
 import { Font } from '@/constants/fonts';
-import { usePlatformStats } from '@/lib/queries/admin';
+import { useMarketplaceFit, usePlatformStats } from '@/lib/queries/admin';
 import { Admin, Card, money, compact, SectionState, StatCard } from './ui';
+
+/**
+ * The one signal that separates a marketplace from a fragile one-time app:
+ * do customers reorder from the SAME kitchen? Shown front-and-centre.
+ */
+function MarketplaceFitCard() {
+  const { data: f } = useMarketplaceFit();
+  if (!f) return null;
+  const rate = f.repeat_buyer_rate;
+  const enoughData = f.completed_orders >= 10 && f.buyers >= 5;
+  const strong = (rate ?? 0) >= 30;
+  const heroColor = !enoughData ? Admin.textDim : strong ? Admin.success : Admin.warn;
+  return (
+    <Card style={{ borderColor: heroColor + '40', backgroundColor: heroColor + '0E' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+        <Repeat size={16} color={heroColor} />
+        <Text style={{ fontFamily: Font.heading, fontSize: 14, color: Admin.text }}>Marketplace fit — do customers reorder?</Text>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+        <Text style={{ fontFamily: Font.display, fontSize: 40, color: heroColor, lineHeight: 44, fontVariant: ['tabular-nums'] }}>
+          {rate == null ? '—' : `${rate}%`}
+        </Text>
+        <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Admin.textDim, flex: 1, marginBottom: 5, lineHeight: 17 }}>
+          of buyers reordered from the same kitchen
+          {f.buyers > 0 ? ` (${compact(f.repeat_buyers)}/${compact(f.buyers)})` : ''}
+        </Text>
+      </View>
+      <View style={{ flexDirection: 'row', gap: 18, marginTop: 10 }}>
+        <View>
+          <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Admin.text, fontVariant: ['tabular-nums'] }}>{f.repeat_order_share == null ? '—' : `${f.repeat_order_share}%`}</Text>
+          <Text style={{ fontFamily: Font.body, fontSize: 11, color: Admin.textDim }}>of orders are repeats</Text>
+        </View>
+        <View>
+          <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Admin.text, fontVariant: ['tabular-nums'] }}>{compact(f.active_preppers_30d)}</Text>
+          <Text style={{ fontFamily: Font.body, fontSize: 11, color: Admin.textDim }}>kitchens active (30d)</Text>
+        </View>
+      </View>
+      <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: Admin.textDim, lineHeight: 17, marginTop: 10 }}>
+        {!enoughData
+          ? 'Not enough completed orders yet to read the signal — this is the number to watch as supply and demand grow.'
+          : strong
+            ? 'Customers are coming back to the same kitchens — the marketplace flywheel is turning.'
+            : 'Repeat rate is low — focus on retention before scaling, or growth just amplifies churn.'}
+      </Text>
+    </Card>
+  );
+}
 
 export function AdminOverview({ onReviewPreppers }: { onReviewPreppers: () => void }) {
   const { data, isLoading, isError } = usePlatformStats();
@@ -20,6 +67,8 @@ export function AdminOverview({ onReviewPreppers }: { onReviewPreppers: () => vo
             <StatCard label="Customers" value={compact(s.total_users)} Icon={Users} tone="brand" />
             <StatCard label="Preppers" value={compact(s.approved_preppers)} sub={`${compact(s.total_preppers)} total`} Icon={Store} tone="success" />
           </View>
+
+          <MarketplaceFitCard />
 
           {s.pending_preppers > 0 ? (
             <Card style={{ borderColor: Admin.warn + '55', backgroundColor: Admin.warn + '14' }}>
