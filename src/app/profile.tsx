@@ -39,6 +39,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { useFavoritesCount } from '@/lib/favorites';
+import { useRecentlyViewedCount } from '@/lib/recently-viewed';
 import { feedback } from '@/lib/feedback';
 import { useAddresses } from '@/lib/queries/addresses';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
@@ -50,7 +51,7 @@ import { useAuth } from '@/providers/auth-provider';
 const quickLinks = [
   { label: 'favorites', sub: '0 meals', Icon: Heart, color: Palette.danger, bg: '#FEE2E2' },
   { label: 'saved', sub: '0 items', Icon: Bookmark, color: Palette.amber, bg: '#FEF3C7' },
-  { label: 'recently viewed', sub: '32 meals', Icon: Clock, color: Palette.success, bg: '#DCFCE7' }, // TODO: replace with real query
+  { label: 'recently viewed', sub: '0 meals', Icon: Clock, color: Palette.success, bg: '#DCFCE7' },
   { label: 'following', sub: '0 preppers', Icon: Users, color: '#8b5cf6', bg: '#EDE9FE' },
   { label: 'referrals', sub: 'invite', Icon: Ticket, color: Palette.amber, bg: '#FEF3C7' },
 ];
@@ -142,6 +143,7 @@ export default function ProfileScreen() {
   ];
   const favMeals = useFavoritesCount('meal:');
   const followed = useFavoritesCount('prepper:');
+  const recentCount = useRecentlyViewedCount();
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
   const bio = (user?.user_metadata?.bio as string | undefined) || 'good food. good mood. always.';
@@ -311,6 +313,8 @@ export default function ProfileScreen() {
                     ? `${followed} prepper${followed === 1 ? '' : 's'}`
                     : q.label === 'saved'
                     ? `${favMeals + followed} items`
+                    : q.label === 'recently viewed'
+                    ? `${recentCount} meal${recentCount === 1 ? '' : 's'}`
                     : q.sub}
                 </Text>
               </PressableScale>

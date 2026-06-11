@@ -13,6 +13,7 @@ import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { imgUrl } from '@/lib/img';
+import { recordMealView } from '@/lib/recently-viewed';
 import { useAddToCart, useCart } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useMeal } from '@/lib/queries/meals';
@@ -50,6 +51,9 @@ export default function MealScreen() {
   const { user } = useAuth();
   const { data: meal, isLoading, isError } = useMeal(id);
   const [added, setAdded] = useState(false);
+
+  // Record view as soon as meal data arrives (deduplicated in the store)
+  if (meal?.id) recordMealView(meal.id);
   const [switchPrompt, setSwitchPrompt] = useState(false);
   const startConv = useStartConversation();
   const addToCart = useAddToCart();
