@@ -27,9 +27,9 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { cuisines, exploreCategories } from '@/constants/mock';
-import { Palette, Radius } from '@/constants/theme';
+import { Palette, Radius, Shadow } from '@/constants/theme';
 import { useFeaturedMeals } from '@/lib/queries/meals';
-import { useTopPreppers } from '@/lib/queries/preppers';
+import { useKitchenTags, useTopPreppers } from '@/lib/queries/preppers';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -55,6 +55,7 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
 export default function ExploreScreen() {
   const router = useRouter();
   const { data: preppers, isLoading: preppersLoading } = useTopPreppers();
+  const { data: kitchenTags } = useKitchenTags();
   const { data: meals, isLoading: mealsLoading } = useFeaturedMeals();
 
   return (
@@ -114,6 +115,26 @@ export default function ExploreScreen() {
               <CuisineCard key={c.id} cuisine={c} onPress={() => router.push(`/search?q=${encodeURIComponent(c.name)}`)} />
             ))}
           </ScrollView>
+
+          {/* Find your kind of kitchen — identity/diet/cuisine discovery */}
+          {kitchenTags && kitchenTags.length > 0 ? (
+            <>
+              <SectionHeader title="find your kind of kitchen" onSeeAll={() => router.push('/kitchens')} />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 26 }}>
+                {kitchenTags.map((t) => (
+                  <PressableScale
+                    key={t.tag}
+                    onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${t.tag} kitchens`}
+                    style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
+                    <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
+                  </PressableScale>
+                ))}
+              </ScrollView>
+            </>
+          ) : null}
 
           {/* Top kitchens — reputation-ranked (live) */}
           <SectionHeader title="top kitchens this week" />

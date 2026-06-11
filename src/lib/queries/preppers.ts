@@ -178,6 +178,41 @@ export function useTopPreppers(limit = 10) {
   });
 }
 
+/** Distinct discovery tags across approved kitchens, with counts (most first). */
+export function useKitchenTags() {
+  return useQuery({
+    queryKey: ['preppers', 'tags'],
+    queryFn: async (): Promise<{ tag: string; count: number }[]> => {
+      const { data, error } = await supabase
+        .from('prepper_profiles')
+        .select('specialties')
+        .eq('status', 'approved');
+      if (error) throw error;
+      const counts = new Map<string, number>();
+      for (const row of (data ?? []) as { specialties: string[] | null }[]) {
+        for (const t of row.specialties ?? []) counts.set(t, (counts.get(t) ?? 0) + 1);
+      }
+      return [...counts.entries()]
+        .map(([tag, count]) => ({ tag, count }))
+        .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
+    },
+  });
+}
+
+/** Approved kitchens carrying a given tag (identity/diet/cuisine). Public read. */
+export function useKitchensByTag(tag?: string | null) {
+  return useQuery({
+    queryKey: ['preppers', 'by-tag', tag ?? 'all'],
+    queryFn: async (): Promise<TopPrepper[]> => {
+      let q = supabase.from('prepper_profiles').select(SELECT).eq('status', 'approved');
+      if (tag) q = q.contains('specialties', [tag]);
+      const { data, error } = await q.limit(30);
+      if (error) throw error;
+      return ((data ?? []) as unknown as Row[]).map(mapPrepper);
+    },
+  });
+}
+
 /** Search approved preppers by name or specialty (public read). */
 export function usePrepperSearch(query: string) {
   const q = query.trim().replace(/[,()]/g, ' ').replace(/\s+/g, ' ').trim();
