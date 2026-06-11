@@ -7,11 +7,12 @@ import { ActivityIndicator, Platform, ScrollView, Text, TextInput, View } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { StripeEmbeddedSheet } from '@/components/stripe-embedded';
 import { ListSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
 import { Palette, Radius } from '@/constants/theme';
-import { useCart, usePlaceOrder, useRemoveItems, useStripeCheckout, useUpdateCartItem } from '@/lib/queries/cart';
+import { useCart, useEmbeddedCheckout, usePlaceOrder, useRemoveItems, useStripeCheckout, useUpdateCartItem, type EmbeddedPay } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useAuth } from '@/providers/auth-provider';
 import type { FulfillmentType } from '@/types/database.types';
@@ -37,6 +38,8 @@ export default function CartScreen() {
   const removeItems = useRemoveItems(user?.id);
   const placeOrder = usePlaceOrder();
   const checkoutStripe = useStripeCheckout();
+  const embeddedCheckout = useEmbeddedCheckout();
+  const [paySheet, setPaySheet] = useState<Extract<EmbeddedPay, { clientSecret: string }> | null>(null);
   const paymentsOn = useFeatureEnabled('payments');
   const { canceled } = useLocalSearchParams<{ canceled?: string }>();
   const [placed, setPlaced] = useState(false);
@@ -45,7 +48,7 @@ export default function CartScreen() {
   const [note, setNote] = useState('');
   const [tip, setTip] = useState(0);
   const [customTip, setCustomTip] = useState(false);
-  const busy = placeOrder.isPending || checkoutStripe.isPending;
+  const busy = placeOrder.isPending || checkoutStripe.isPending || embeddedCheckout.isPending;
 
   const prepper = cart?.items[0]?.prepper ?? 'the prepper';
 
@@ -72,10 +75,13 @@ export default function CartScreen() {
 
   async function startPayment(orderId: string) {
     try {
-      const url = await checkoutStripe.mutateAsync(orderId);
       if (Platform.OS === 'web') {
-        window.location.assign(url);
+        // Pay inside Preppa — embedded sheet, no redirect to Stripe.
+        const r = await embeddedCheckout.mutateAsync(orderId);
+        if ('clientSecret' in r) setPaySheet(r);
+        else window.location.assign(r.url);
       } else {
+        const url = await checkoutStripe.mutateAsync(orderId);
         await WebBrowser.openBrowserAsync(url);
         router.replace('/orders');
       }
@@ -114,6 +120,15 @@ export default function CartScreen() {
     meetup: { label: 'Where & when to meet', placeholder: 'e.g. Park gate, today 6pm' },
     pickup: { label: 'Pickup note (optional)', placeholder: 'Any pickup details?' },
   };
+
+  // In-app payment sheet (web) — closing keeps the order; pay later from Orders.
+  const paymentSheet = paySheet ? (
+    <StripeEmbeddedSheet
+      clientSecret={paySheet.clientSecret}
+      pk={paySheet.pk}
+      onClose={() => { setPaySheet(null); router.replace('/orders'); }}
+    />
+  ) : null;
 
   // Order-placed confirmation
   if (placed) {
@@ -359,6 +374,7 @@ export default function CartScreen() {
           </>
         )}
       </SafeAreaView>
+      {paymentSheet}
     </View>
   );
 }

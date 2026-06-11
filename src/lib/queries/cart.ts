@@ -150,6 +150,24 @@ export function useStripeCheckout() {
   });
 }
 
+export type EmbeddedPay = { clientSecret: string; pk: string } | { url: string };
+
+/** In-app (embedded) Stripe Checkout — the customer pays without leaving
+ * Preppa. Falls back to the hosted-page URL if the embedded mode is
+ * unavailable for any reason. */
+export function useEmbeddedCheckout() {
+  return useMutation({
+    mutationFn: async (orderId: string): Promise<EmbeddedPay> => {
+      const { data, error } = await supabase.functions.invoke('stripe-checkout', { body: { orderId, embedded: true } });
+      if (error) throw error;
+      const d = data as { clientSecret?: string; pk?: string; url?: string; error?: string };
+      if (d?.clientSecret && d?.pk) return { clientSecret: d.clientSecret, pk: d.pk };
+      if (d?.url) return { url: d.url };
+      throw new Error(d?.error || 'Could not start checkout.');
+    },
+  });
+}
+
 /** Best-effort refund for a cancelled order. No-ops if the order was never paid. */
 export function useRefundOrder() {
   return useMutation({

@@ -7,11 +7,12 @@ import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, Text, View }
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HandoffCard } from '@/components/handoff-card';
+import { StripeEmbeddedSheet } from '@/components/stripe-embedded';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { ListSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
-import { useRefundOrder, useStripeCheckout } from '@/lib/queries/cart';
+import { useEmbeddedCheckout, useRefundOrder, useStripeCheckout, type EmbeddedPay } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { feedback } from '@/lib/feedback';
 import { useCancelOrder, useMyOrders, useOrdersRealtime, type OrderSummary } from '@/lib/queries/orders';
@@ -139,6 +140,8 @@ export default function OrdersScreen() {
   const cancelOrder = useCancelOrder();
   const refundOrder = useRefundOrder();
   const checkoutStripe = useStripeCheckout();
+  const embeddedCheckout = useEmbeddedCheckout();
+  const [paySheet, setPaySheet] = useState<Extract<EmbeddedPay, { clientSecret: string }> | null>(null);
   const paymentsOn = useFeatureEnabled('payments');
   const { paid } = useLocalSearchParams<{ paid?: string }>();
   const [actionErr, setActionErr] = useState<string | null>(null);
@@ -157,15 +160,20 @@ export default function OrdersScreen() {
   }
 
   // Finish paying an order whose checkout was canceled/declined (the order is
-  // saved but unpaid). Reuses the same Stripe Checkout edge function.
+  // saved but unpaid). Web pays in-app via the embedded sheet.
   async function payOrder(orderId: string) {
     setActionErr(null);
     setPayingId(orderId);
     try {
-      const url = await checkoutStripe.mutateAsync(orderId);
       if (Platform.OS === 'web') {
-        window.location.assign(url);
-      } else {
+        const r = await embeddedCheckout.mutateAsync(orderId);
+        setPayingId(null);
+        if ('clientSecret' in r) setPaySheet(r);
+        else window.location.assign(r.url);
+        return;
+      }
+      const url = await checkoutStripe.mutateAsync(orderId);
+      {
         await WebBrowser.openBrowserAsync(url);
         setPayingId(null);
       }
@@ -241,6 +249,10 @@ export default function OrdersScreen() {
           </ScrollView>
         )}
       </SafeAreaView>
+
+      {paySheet ? (
+        <StripeEmbeddedSheet clientSecret={paySheet.clientSecret} pk={paySheet.pk} onClose={() => setPaySheet(null)} />
+      ) : null}
 
       {/* Cancel confirmation overlay */}
       <Modal visible={!!confirmCancel} transparent animationType="fade" onRequestClose={() => setConfirmCancel(null)}>

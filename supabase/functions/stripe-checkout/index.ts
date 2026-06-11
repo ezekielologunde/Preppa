@@ -1,4 +1,7 @@
-// Creates a Stripe Checkout Session for an order and returns the hosted-page URL.
+// Creates a Stripe Checkout Session for an order. Two modes:
+//  - default: hosted page (returns { url }) — used by native, and as fallback
+//  - embedded: in-app Checkout (returns { clientSecret, pk }) — the customer
+//    pays inside Preppa, no redirect. Same session type, same webhook.
 // Called by the signed-in customer right after their order row is created.
 import Stripe from 'https://esm.sh/stripe@14.21.0?target=denonext';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
@@ -25,7 +28,7 @@ Deno.serve(async (req) => {
     const { data: { user }, error: uerr } = await supabase.auth.getUser(token);
     if (uerr || !user) return json({ error: 'Not authenticated' }, 401);
 
-    const { orderId } = await req.json().catch(() => ({}));
+    const { orderId, embedded } = await req.json().catch(() => ({}));
     if (!orderId) return json({ error: 'Missing orderId' }, 400);
 
     const { data: order, error: oerr } = await supabase
@@ -55,18 +58,30 @@ Deno.serve(async (req) => {
       line_items.push({ price_data: { currency: 'usd', product_data: { name: 'Tip for your prepper' }, unit_amount: cents(order.tip) }, quantity: 1 });
     if (line_items.length === 0) return json({ error: 'Order has no items' }, 400);
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
+    const common = {
+      mode: 'payment' as const,
       line_items,
-      success_url: `${SITE}/orders?paid=1`,
-      cancel_url: `${SITE}/cart?canceled=1`,
       client_reference_id: orderId,
       metadata: { order_id: orderId },
       payment_intent_data: { metadata: { order_id: orderId } },
       customer_email: user.email ?? undefined,
-    });
+    };
+    const session = embedded
+      ? await stripe.checkout.sessions.create({
+          ...common,
+          ui_mode: 'embedded',
+          return_url: `${SITE}/orders?paid=1`,
+        })
+      : await stripe.checkout.sessions.create({
+          ...common,
+          success_url: `${SITE}/orders?paid=1`,
+          cancel_url: `${SITE}/cart?canceled=1`,
+        });
 
     await supabase.rpc('record_payment', { p_order_id: orderId, p_txn: session.id, p_status: 'pending', p_amount: Number(order.total) });
+    if (embedded) {
+      return json({ clientSecret: session.client_secret, pk: Deno.env.get('STRIPE_PUBLISHABLE_KEY') ?? null });
+    }
     return json({ url: session.url });
   } catch (e) {
     return json({ error: e instanceof Error ? e.message : 'Checkout failed' }, 500);
