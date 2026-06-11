@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { Bike, Check, ChefHat, ChevronLeft, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2, Heart } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState, type ComponentType } from 'react';
 import { ActivityIndicator, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -137,19 +138,29 @@ export default function CartScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: '#fff' }}>
         <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 }}>
-          <View style={{ width: 76, height: 76, borderRadius: 24, backgroundColor: Palette.success + '1F', alignItems: 'center', justifyContent: 'center' }}>
-            <Check size={36} color={Palette.success} strokeWidth={3} />
-          </View>
-          <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, textAlign: 'center' }}>Order placed!</Text>
-          <Text style={{ fontFamily: Font.body, fontSize: 15, color: Palette.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
-            Your order is in. The prepper will confirm shortly — track it in your orders.
-          </Text>
-          <PressableScale onPress={() => router.replace('/orders')} accessibilityRole="button" accessibilityLabel="Track your order" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Track your order</Text>
-          </PressableScale>
-          <PressableScale onPress={() => router.replace('/')} accessibilityRole="button" accessibilityLabel="Back to home" style={{ paddingHorizontal: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Back to home</Text>
-          </PressableScale>
+          <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 400, bounce: 0.25 }}>
+            <View style={{ width: 76, height: 76, borderRadius: 24, backgroundColor: Palette.success + '1F', alignItems: 'center', justifyContent: 'center' }}>
+              <Check size={36} color={Palette.success} strokeWidth={3} />
+            </View>
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, textAlign: 'center' }}>Order placed!</Text>
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
+            <Text style={{ fontFamily: Font.body, fontSize: 15, color: Palette.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
+              Your order is in. The prepper will confirm shortly — track it in your orders.
+            </Text>
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
+            <PressableScale onPress={() => router.replace('/orders')} accessibilityRole="button" accessibilityLabel="Track your order" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Track your order</Text>
+            </PressableScale>
+          </MotiView>
+          <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 240, delay: 280 }}>
+            <PressableScale onPress={() => router.replace('/')} accessibilityRole="button" accessibilityLabel="Back to home" style={{ paddingHorizontal: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Back to home</Text>
+            </PressableScale>
+          </MotiView>
         </SafeAreaView>
       </View>
     );
@@ -217,8 +228,9 @@ export default function CartScreen() {
                   </View>
                 </View>
               ) : null}
-              {cart.items.map((it) => (
-                <View key={it.id} style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              {cart.items.map((it, i) => (
+                <MotiView key={it.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 50 }}>
+                <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   {it.image ? <Image source={it.image} style={{ width: 64, height: 64, borderRadius: 12 }} contentFit="cover" /> : <View style={{ width: 64, height: 64, borderRadius: 12, backgroundColor: Palette.canvas }} />}
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{it.title}</Text>
@@ -238,6 +250,7 @@ export default function CartScreen() {
                     </View>
                   </View>
                 </View>
+                </MotiView>
               ))}
 
               {/* Fulfillment method */}

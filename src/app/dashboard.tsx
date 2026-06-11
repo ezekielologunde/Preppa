@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
   Bell,
@@ -161,6 +162,7 @@ export default function DashboardScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 150 }}>
           {/* Header */}
+          <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
             <PressableScale onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile'))} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
@@ -199,8 +201,10 @@ export default function DashboardScreen() {
               ) : null}
             </PressableScale>
           </View>
+          </MotiView>
 
           {/* Stat cards — KPI row on desktop, swipeable on phones */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 80 }}>
           {(() => {
             const cards = (
               <>
@@ -216,6 +220,7 @@ export default function DashboardScreen() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingVertical: 20 }}>{cards}</ScrollView>
             );
           })()}
+          </MotiView>
 
           {/* Badges earned */}
           {prepperBadges && prepperBadges.length > 0 ? (
@@ -228,6 +233,7 @@ export default function DashboardScreen() {
           <View style={desktop ? { flexDirection: 'row', alignItems: 'flex-start' } : undefined}>
           <View style={desktop ? { flex: 3 } : undefined}>
           {/* Next order */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 160 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, marginBottom: 12 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>next order</Text>
             {next ? (
@@ -278,7 +284,10 @@ export default function DashboardScreen() {
             </View>
           )}
 
+          </MotiView>
+
           {/* Today at a glance */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 240 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 26, marginBottom: 14 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>at a glance</Text>
             <PressableScale onPress={() => router.push('/prepper-orders')} accessibilityRole="button" accessibilityLabel="View all orders">
@@ -294,9 +303,11 @@ export default function DashboardScreen() {
             <QuickAction Icon={TrendingUp} label="insights" color={BLUE} onPress={() => router.push('/earnings')} />
             <QuickAction Icon={Briefcase} label="requests" color={PINK} onPress={() => router.push('/bid-requests')} />
           </ScrollView>
+          </MotiView>
           </View>
 
           {/* Goal + streak */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 300 }}>
           <View style={desktop ? { flex: 2 } : undefined}>
           <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: desktop ? 0 : 22 }}>
             <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 12 }}>
@@ -329,6 +340,7 @@ export default function DashboardScreen() {
             </View>
           </View>
           </View>
+          </MotiView>
           </View>
         </ScrollView>
 
