@@ -20,6 +20,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -174,7 +175,11 @@ export default function ExploreScreen() {
             <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} width={210} /></View>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-              {(preppers ?? []).map((p) => <PrepperCard key={p.id} prepper={p} showRank />)}
+              {(preppers ?? []).map((p, i) => (
+                <MotiView key={p.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 40 }}>
+                  <PrepperCard prepper={p} showRank />
+                </MotiView>
+              ))}
             </ScrollView>
           )}
 
@@ -183,7 +188,11 @@ export default function ExploreScreen() {
             <>
               <SectionHeader title="limited drops" />
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-                {drops.map((m) => <MealCard key={m.id} meal={m} />)}
+                {drops.map((m, i) => (
+                  <MotiView key={m.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
+                    <MealCard meal={m} />
+                  </MotiView>
+                ))}
               </ScrollView>
             </>
           ) : null}
@@ -194,7 +203,11 @@ export default function ExploreScreen() {
             <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} /></View>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-              {(meals ?? []).map((m) => <MealCard key={m.id} meal={m} />)}
+              {(meals ?? []).map((m, i) => (
+                <MotiView key={m.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
+                  <MealCard meal={m} />
+                </MotiView>
+              ))}
             </ScrollView>
           )}
 

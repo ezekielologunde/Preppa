@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, RefreshCw, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
+import { MotiView } from 'moti';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -138,11 +139,17 @@ export default function PrepperScreen() {
         </View>
 
         {/* Trust stats — overlaps the header band */}
-        <View style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: '#fff', borderRadius: Radius.lg, paddingVertical: 16, paddingHorizontal: 8, flexDirection: 'row', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}>
-          {trustRow(p?.rating ?? 0, p?.reviews ?? 0, p?.stats ?? null).map((t) => (
-            <TrustStat key={t.label} value={t.value} label={t.label} color={t.color} />
+        <MotiView
+          from={{ opacity: 0, translateY: 10, scale: 0.98 }}
+          animate={{ opacity: 1, translateY: 0, scale: 1 }}
+          transition={{ type: 'timing', duration: 280 }}
+          style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: '#fff', borderRadius: Radius.lg, paddingVertical: 16, paddingHorizontal: 8, flexDirection: 'row', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}>
+          {trustRow(p?.rating ?? 0, p?.reviews ?? 0, p?.stats ?? null).map((t, i) => (
+            <MotiView key={t.label} from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 200, delay: 100 + i * 50 }}>
+              <TrustStat value={t.value} label={t.label} color={t.color} />
+            </MotiView>
           ))}
-        </View>
+        </MotiView>
 
         {/* Achievement badges */}
         {badges && badges.length > 0 ? (
@@ -271,7 +278,11 @@ export default function PrepperScreen() {
           </View>
         ) : (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16 }}>
-            {p.meals.map((m) => <MealCard key={m.id} meal={m} width={cardW} />)}
+            {p.meals.map((m, i) => (
+              <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 210, delay: i * 40 }}>
+                <MealCard meal={m} width={cardW} />
+              </MotiView>
+            ))}
           </View>
         )}
 

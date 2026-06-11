@@ -139,7 +139,7 @@ export default function MealScreen() {
           ) : isError || !meal ? (
             <Text style={{ fontFamily: Font.medium, fontSize: 15, color: '#ef4444' }}>Couldn&apos;t load this meal. Please try again.</Text>
           ) : (
-            <>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
               {meal.isLimited ? (
                 <MotiView
                   from={{ opacity: 0, translateY: -4 }}
@@ -225,7 +225,7 @@ export default function MealScreen() {
                   ))}
                 </View>
               ) : null}
-            </>
+            </MotiView>
           )}
         </View>
       </ScrollView>
