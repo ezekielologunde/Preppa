@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { Bike, Check, ChevronLeft, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2, Heart } from 'lucide-react-native';
+import { Bike, Check, ChefHat, ChevronLeft, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2, Heart } from 'lucide-react-native';
 import { useState, type ComponentType } from 'react';
 import { ActivityIndicator, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -44,7 +44,7 @@ export default function CartScreen() {
   const { canceled } = useLocalSearchParams<{ canceled?: string }>();
   const [placed, setPlaced] = useState(false);
   const [err, setErr] = useState<string | null>(canceled ? 'Payment canceled — your cart is still here.' : null);
-  const [method, setMethod] = useState<FulfillmentType>('delivery');
+  const [method, setMethod] = useState<FulfillmentType | 'in_home'>('delivery');
   const [note, setNote] = useState('');
   const [tip, setTip] = useState(0);
   const [customTip, setCustomTip] = useState(false);
@@ -96,6 +96,7 @@ export default function CartScreen() {
     if (busy) return; // guard against a double-tap creating two orders
     if (!user) return router.push('/auth?mode=signin');
     if (mixed) { feedback.warning(); return setErr('Pick one kitchen to order from above.'); }
+    if (method === 'in_home') { feedback.tap(); router.push('/experience-request?kind=private_chef'); return; }
     if (method === 'delivery' && note.trim().length < 5) { feedback.warning(); return setErr('Add a delivery address.'); }
     if (method === 'meetup' && note.trim().length < 3) { feedback.warning(); return setErr('Where should you meet?'); }
     setErr(null);
@@ -115,10 +116,11 @@ export default function CartScreen() {
   const deliveryFee = method === 'delivery' ? DELIVERY_FEE : 0;
   const total = subtotal + deliveryFee + tip;
 
-  const noteConfig: Record<FulfillmentType, { label: string; placeholder: string } | null> = {
+  const noteConfig: Record<FulfillmentType | 'in_home', { label: string; placeholder: string } | null> = {
     delivery: { label: 'Delivery address', placeholder: 'Street, apt, city' },
     meetup: { label: 'Where & when to meet', placeholder: 'e.g. Park gate, today 6pm' },
     pickup: { label: 'Pickup note (optional)', placeholder: 'Any pickup details?' },
+    in_home: null,
   };
 
   // In-app payment sheet (web) — closing keeps the order; pay later from Orders.
@@ -267,11 +269,42 @@ export default function CartScreen() {
                 })}
               </View>
 
+              {/* In-home prep option */}
+              <PressableScale
+                onPress={() => { feedback.tap(); setMethod(‘in_home’); setErr(null); }}
+                accessibilityRole="button"
+                accessibilityState={{ selected: method === ‘in_home’ }}
+                accessibilityLabel="Cooked in my kitchen — a prepper visits your home"
+                style={{ backgroundColor: method === ‘in_home’ ? ‘#11151C’ : ‘#fff’, borderWidth: 1.5, borderColor: method === ‘in_home’ ? ‘#11151C’ : Palette.border, borderRadius: Radius.md, paddingHorizontal: 16, paddingVertical: 14, flexDirection: ‘row’, alignItems: ‘center’, gap: 12 }}>
+                {method === ‘in_home’ ? (
+                  <View style={{ position: ‘absolute’, top: 10, right: 12, width: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: ‘center’, justifyContent: ‘center’ }}>
+                    <Check size={11} color="#fff" strokeWidth={3.5} />
+                  </View>
+                ) : null}
+                <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: method === ‘in_home’ ? ORANGE : Palette.chip, alignItems: ‘center’, justifyContent: ‘center’ }}>
+                  <ChefHat size={22} color={method === ‘in_home’ ? ‘#fff’ : Palette.textSecondary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: method === ‘in_home’ ? ‘#fff’ : INK }}>Cooked in my kitchen</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: method === ‘in_home’ ? ‘#adb5bd’ : Palette.textSecondary, marginTop: 2 }}>
+                    A prepper comes to your home and cooks fresh · Request a quote
+                  </Text>
+                </View>
+              </PressableScale>
+
               {/* Contextual detail */}
-              {method === 'pickup' ? (
-                <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              {method === ‘pickup’ ? (
+                <View style={{ backgroundColor: ‘#fff’, borderRadius: Radius.md, padding: 12, flexDirection: ‘row’, alignItems: ‘center’, gap: 8 }}>
                   <Store size={16} color={ORANGE} />
                   <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Pick up from {prepper}. They’ll share the spot when they confirm.</Text>
+                </View>
+              ) : null}
+              {method === ‘in_home’ ? (
+                <View style={{ backgroundColor: Palette.canvas, borderRadius: Radius.md, padding: 12, flexDirection: ‘row’, alignItems: ‘flex-start’, gap: 8 }}>
+                  <ChefHat size={15} color={Palette.textMuted} style={{ marginTop: 1 }} />
+                  <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>
+                    You’ll post a request and receive quotes from available preppers. Tapping below takes you to the request form.
+                  </Text>
                 </View>
               ) : null}
               {noteConfig[method] ? (
@@ -343,8 +376,8 @@ export default function CartScreen() {
                 <Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, fontVariant: ['tabular-nums'] }}>{money(subtotal)}</Text>
               </View>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>{method === 'delivery' ? 'Delivery fee' : 'Pickup / meet up'}</Text>
-                <Text style={{ fontFamily: Font.medium, fontSize: 13, color: deliveryFee ? INK : Palette.success, fontVariant: ['tabular-nums'] }}>{deliveryFee ? money(deliveryFee) : 'Free'}</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>{method === 'delivery' ? 'Delivery fee' : method === 'in_home' ? 'In-home prep' : 'Pickup / meet up'}</Text>
+                <Text style={{ fontFamily: Font.medium, fontSize: 13, color: method === 'in_home' ? Palette.textSecondary : deliveryFee ? INK : Palette.success, fontVariant: ['tabular-nums'] }}>{method === 'in_home' ? 'Quoted' : deliveryFee ? money(deliveryFee) : 'Free'}</Text>
               </View>
               {tip > 0 ? (
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -362,7 +395,7 @@ export default function CartScreen() {
                   <>
                     {paymentsOn && !mixed ? <Lock size={16} color="#fff" /> : null}
                     <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
-                      {mixed ? 'Pick one kitchen above' : paymentsOn ? `Pay · ${money(total)}` : `Place order · ${money(total)}`}
+                      {mixed ? 'Pick one kitchen above' : method === 'in_home' ? 'Request in-home prep →' : paymentsOn ? `Pay · ${money(total)}` : `Place order · ${money(total)}`}
                     </Text>
                   </>
                 )}
