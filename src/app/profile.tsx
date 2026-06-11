@@ -40,6 +40,7 @@ import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { useFavoritesCount } from '@/lib/favorites';
 import { useRecentlyViewedCount } from '@/lib/recently-viewed';
+import { useRewards } from '@/lib/queries/rewards';
 import { feedback } from '@/lib/feedback';
 import { useAddresses } from '@/lib/queries/addresses';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
@@ -144,6 +145,7 @@ export default function ProfileScreen() {
   const favMeals = useFavoritesCount('meal:');
   const followed = useFavoritesCount('prepper:');
   const recentCount = useRecentlyViewedCount();
+  const rewards = useRewards(user?.id);
   const displayName =
     (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split('@')[0] ?? 'guest';
   const bio = (user?.user_metadata?.bio as string | undefined) || 'good food. good mood. always.';
@@ -244,22 +246,34 @@ export default function ProfileScreen() {
           </View>
 
           {/* Rewards / tier */}
-          <LinearGradient colors={['#FFE9D6', '#FFDDBE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ marginHorizontal: 20, marginTop: 22, borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#7c5a42' }}>your balance</Text>
-              <Text style={{ fontFamily: Font.display, fontSize: 28, color: Palette.brand, letterSpacing: -0.5 }}>1,250 <Text style={{ fontSize: 15 }}>pts</Text></Text>
-              <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#7c5a42', marginTop: 2 }}>$12.50 in rewards ›</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
-                <Crown size={15} color="#d97706" />
-                <Text style={{ fontFamily: Font.heading, fontSize: 14, color: Palette.ink }}>gold chef</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#7c5a42' }}>· 750 pts to go</Text>
+          <PressableScale onPress={() => go('/rewards')} accessibilityRole="button" accessibilityLabel="View your rewards" style={{ marginHorizontal: 20, marginTop: 22 }}>
+            <LinearGradient colors={['#FFE9D6', '#FFDDBE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#7c5a42' }}>your balance</Text>
+                <Text style={{ fontFamily: Font.display, fontSize: 28, color: Palette.brand, letterSpacing: -0.5 }}>
+                  {rewards.points.toLocaleString()} <Text style={{ fontSize: 15 }}>pts</Text>
+                </Text>
+                <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#7c5a42', marginTop: 2 }}>
+                  ${(rewards.points * 0.01).toFixed(2)} in rewards ›
+                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
+                  <Crown size={15} color="#d97706" />
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14, color: Palette.ink }}>{rewards.tier.name.toLowerCase()} member</Text>
+                  {rewards.nextTier ? (
+                    <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#7c5a42' }}>
+                      · {Math.round(rewards.toNext * 10).toLocaleString()} pts to go
+                    </Text>
+                  ) : (
+                    <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#7c5a42' }}>· top tier 🎉</Text>
+                  )}
+                </View>
+                <View style={{ height: 7, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.08)', marginTop: 8, overflow: 'hidden' }}>
+                  <View style={{ width: `${Math.round(rewards.progress * 100)}%`, height: 7, borderRadius: 4, backgroundColor: Palette.brand }} />
+                </View>
               </View>
-              <View style={{ height: 7, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.08)', marginTop: 8, overflow: 'hidden' }}>
-                <View style={{ width: '62%', height: 7, borderRadius: 4, backgroundColor: Palette.brand }} />
-              </View>
-            </View>
-            <Gift size={56} color="#d97706" />
-          </LinearGradient>
+              <Gift size={56} color="#d97706" />
+            </LinearGradient>
+          </PressableScale>
 
           {/* My Kitchen — approved preppers */}
           {isApprovedPrepper ? (
