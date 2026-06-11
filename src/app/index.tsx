@@ -23,7 +23,7 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react-native';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MealCard } from '@/components/meal-card';
@@ -85,23 +85,25 @@ export default function HomeScreen() {
   const rawFirst = (user?.user_metadata?.full_name as string | undefined)?.trim().split(/\s+/)[0];
   const firstName = rawFirst ? rawFirst.toLowerCase() : null;
   // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
-  const { data: liveMeals, isLoading: mealsLoading } = useFeaturedMeals();
-  const { data: followingFeed } = useFollowingFeed(user?.id);
+  const { data: liveMeals, isLoading: mealsLoading, refetch: refetchMeals } = useFeaturedMeals();
+  const { data: followingFeed, refetch: refetchFeed } = useFollowingFeed(user?.id);
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
   const { data: flags } = useFeatureFlags();
   const showPlans = flags?.meal_plans !== false;
   const showExperiences = flags?.experiences !== false;
   // "Order again" = the user's most recent delivered order (hidden until one exists).
-  const { data: myOrders } = useMyOrders(user?.id);
+  const { data: myOrders, refetch: refetchOrders } = useMyOrders(user?.id);
   const lastDone = myOrders?.find((o) => o.status === 'completed');
   // Most recent in-progress order → a live tracker banner so orders are always findable.
   const activeOrder = (myOrders ?? []).find((o) => o.status !== 'completed' && o.status !== 'cancelled');
-  const { data: notifications } = useNotifications(user?.id);
+  const { data: notifications, refetch: refetchNotifs } = useNotifications(user?.id);
   const rewards = useRewards(user?.id);
   // Preppa AI: rank meals from real signals (time of day, favorites, history).
   const contentWidth = useContentWidth();
   const ranked = usePersonalizedMeals(meals, user?.id);
   const [aiIdx, setAiIdx] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await Promise.all([refetchMeals(), refetchFeed(), refetchOrders(), refetchNotifs()]); setRefreshing(false); }
   const topPicks = ranked.slice(0, Math.min(5, ranked.length));
   const aiPick = topPicks.length ? topPicks[aiIdx % topPicks.length] : null;
   // Bell badge = orders in motion + unread notifications (real, actionable).
@@ -116,6 +118,7 @@ export default function HomeScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />}
           contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
