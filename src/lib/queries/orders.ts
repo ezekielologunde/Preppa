@@ -27,6 +27,7 @@ export type OrderSummary = {
   paymentStatus: string | null;
   firstMealId: string | null;
   reviewed: boolean;
+  disputed: boolean;
   fulfillment: FulfillmentType;
   fulfillmentNote: string | null;
   deliveryFee: number;
@@ -63,6 +64,7 @@ type Row = {
   customer: { display_name: string } | { display_name: string }[] | null;
   payment: { status: string } | { status: string }[] | null;
   review: { id: string }[] | null;
+  dispute: { id: string }[] | null;
   handoff: { pin: string; token: string; verified_at: string | null } | { pin: string; token: string; verified_at: string | null }[] | null;
   items:
     | {
@@ -81,6 +83,7 @@ const SELECT =
   'customer:profiles(display_name:full_name),' +
   'payment:payments(status),' +
   'review:reviews(id),' +
+  'dispute:order_disputes(id),' +
   'handoff:order_handoff(pin,token,verified_at),' +
   'items:order_items(id,meal_id,quantity,total,meal:meals(title,images:meal_images(url)))';
 
@@ -102,6 +105,7 @@ function toSummary(r: Row): OrderSummary {
     paymentStatus: payment?.status ?? null,
     firstMealId: r.items?.[0]?.meal_id ?? null,
     reviewed: !!(r.review && r.review.length),
+    disputed: !!(r.dispute && r.dispute.length),
     fulfillment: r.fulfillment_type,
     fulfillmentNote: r.fulfillment_note,
     deliveryFee: r.delivery_fee,
@@ -219,6 +223,18 @@ export function useVerifyHandoffToken() {
       const { data, error } = await supabase.rpc('verify_handoff_token', { p_token: token });
       if (error) throw error;
       return data as unknown as HandoffResult;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['orders'] }),
+  });
+}
+
+/** Customer files a dispute for an order (one per order; enforced by unique index). */
+export function useReportDispute() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: { orderId: string; reason: string }) => {
+      const { error } = await supabase.from('order_disputes').insert({ order_id: v.orderId, reason: v.reason });
+      if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['orders'] }),
   });

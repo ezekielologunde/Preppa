@@ -85,6 +85,7 @@ export type PrepperProfile = {
   priceFrom: number | null;
   delivers: boolean;
   pickup: boolean;
+  acceptingOrders: boolean;
   rating: number;
   reviews: number;
   fiveStar: number;
@@ -101,7 +102,7 @@ export function usePrepperProfile(prepperId?: string | null) {
       const [profileRes, mealsRes, statsRes] = await Promise.all([
         supabase
           .from('prepper_profiles')
-          .select('id,display_name,bio,avatar_url,city,verified,specialties,certifications,price_from,delivers,pickup,rating:prepper_rating_summary(average_rating,total_reviews,five_star)')
+          .select('id,display_name,bio,avatar_url,city,verified,specialties,certifications,price_from,delivers,pickup,accepting_orders,rating:prepper_rating_summary(average_rating,total_reviews,five_star)')
           .eq('id', prepperId!)
           .single(),
         supabase
@@ -147,6 +148,7 @@ export function usePrepperProfile(prepperId?: string | null) {
         priceFrom: (p.price_from as number | null) ?? null,
         delivers: !!p.delivers,
         pickup: !!p.pickup,
+        acceptingOrders: p.accepting_orders !== false,
         rating: rating?.average_rating ?? 0,
         reviews: rating?.total_reviews ?? 0,
         fiveStar: rating?.five_star ?? 0,
@@ -206,7 +208,7 @@ export function useKitchensByTag(tag?: string | null) {
   return useQuery({
     queryKey: ['preppers', 'by-tag', tag ?? 'all'],
     queryFn: async (): Promise<TopPrepper[]> => {
-      let q = supabase.from('prepper_profiles').select(SELECT).eq('status', 'approved');
+      let q = supabase.from('prepper_profiles').select(SELECT).eq('status', 'approved').eq('accepting_orders', true);
       if (tag) q = q.contains('specialties', [tag]);
       const { data, error } = await q.limit(30);
       if (error) throw error;
@@ -226,6 +228,7 @@ export function usePrepperSearch(query: string) {
         .from('prepper_profiles')
         .select(SELECT)
         .eq('status', 'approved')
+        .eq('accepting_orders', true)
         .or(`display_name.ilike.%${q}%,specialties.cs.{${q}}`)
         .limit(12);
       if (error) throw error;
@@ -321,5 +324,21 @@ export function useApplyAsPrepper() {
       if (error) throw error;
     },
     onSuccess: (_d, v) => qc.invalidateQueries({ queryKey: ['prepper', 'mine', v.userId] }),
+  });
+}
+
+/** Toggle whether the signed-in prepper's kitchen is open for orders. */
+export function useToggleAvailability(prepperId?: string | null) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (open: boolean) => {
+      const { error } = await supabase.rpc('set_kitchen_availability', { p_open: open });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['prepper', 'mine'] });
+      if (prepperId) qc.invalidateQueries({ queryKey: ['prepper', 'profile', prepperId] });
+      qc.invalidateQueries({ queryKey: ['preppers'] });
+    },
   });
 }

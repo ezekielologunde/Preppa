@@ -46,6 +46,21 @@ export type TopPrepperRankedRow = {
   rank: number;
 };
 
+/** Shape returned by admin_list_disputes(). */
+export type AdminDisputeRow = {
+  id: string;
+  order_id: string;
+  reason: string;
+  status: 'open' | 'resolved' | 'dismissed';
+  admin_note: string | null;
+  created_at: string;
+  reporter_name: string | null;
+  reporter_email: string | null;
+  order_total: number;
+  order_status: string;
+  prepper_name: string;
+};
+
 /** Shape returned by admin_marketplace_fit() — the repeat-purchase signal. */
 export type MarketplaceFit = {
   buyers: number;
@@ -99,9 +114,15 @@ export interface Database {
         Relationships: [];
       };
       prepper_profiles: {
-        Row: { id: string; user_id: string; display_name: string; bio: string | null; verified: boolean; status: PrepperStatus; reviewed_by: string | null; reviewed_at: string | null; rejection_note: string | null; delivery_radius_km: number | null; specialties: string[] | null; certifications: string[] } & Timestamps;
-        Insert: { user_id: string; display_name: string; bio?: string | null; specialties?: string[] | null; certifications?: string[] };
-        Update: Partial<{ display_name: string; bio: string | null; specialties: string[] | null; certifications: string[] }>;
+        Row: { id: string; user_id: string; display_name: string; bio: string | null; verified: boolean; status: PrepperStatus; reviewed_by: string | null; reviewed_at: string | null; rejection_note: string | null; delivery_radius_km: number | null; specialties: string[] | null; certifications: string[]; accepting_orders: boolean } & Timestamps;
+        Insert: { user_id: string; display_name: string; bio?: string | null; specialties?: string[] | null; certifications?: string[]; accepting_orders?: boolean };
+        Update: Partial<{ display_name: string; bio: string | null; specialties: string[] | null; certifications: string[]; accepting_orders: boolean }>;
+        Relationships: [];
+      };
+      order_disputes: {
+        Row: { id: string; order_id: string; reporter_id: string; reason: string; status: 'open' | 'resolved' | 'dismissed'; admin_note: string | null; resolved_at: string | null } & Timestamps;
+        Insert: { order_id: string; reporter_id: string; reason: string };
+        Update: Partial<{ status: 'open' | 'resolved' | 'dismissed'; admin_note: string | null; resolved_at: string | null }>;
         Relationships: [];
       };
       prepper_rating_summary: {
@@ -246,6 +267,10 @@ export interface Database {
       admin_prepper_earnings: { Args: Record<string, never>; Returns: PrepperEarningsRow[] };
       admin_platform_stats: { Args: Record<string, never>; Returns: PlatformStats };
       admin_marketplace_fit: { Args: Record<string, never>; Returns: MarketplaceFit };
+      set_kitchen_availability: { Args: { p_open: boolean }; Returns: undefined };
+      admin_verify_prepper: { Args: { p_prepper: string; p_verified: boolean }; Returns: undefined };
+      admin_resolve_dispute: { Args: { p_dispute: string; p_resolution: string; p_note?: string | null }; Returns: undefined };
+      admin_list_disputes: { Args: { p_status?: string }; Returns: AdminDisputeRow[] };
       accept_experience_bid: { Args: { p_bid: string }; Returns: undefined };
       start_conversation: { Args: { p_other: string }; Returns: string };
       mark_conversation_read: { Args: { p_conversation: string }; Returns: undefined };

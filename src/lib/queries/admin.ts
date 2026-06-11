@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { supabase } from '@/lib/supabase';
 import type {
+  AdminDisputeRow,
   MarketplaceFit,
   OrderStatus,
   PlatformStats,
@@ -228,5 +229,45 @@ export function useGrantRole() {
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'customers'] }),
+  });
+}
+
+export function useVerifyPrepper() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: { prepperId: string; verified: boolean }) => {
+      const { error } = await supabase.rpc('admin_verify_prepper', { p_prepper: v.prepperId, p_verified: v.verified });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'preppers'] });
+      qc.invalidateQueries({ queryKey: ['preppers'] });
+    },
+  });
+}
+
+export function useAdminDisputes(status: 'open' | 'resolved' | 'dismissed' | 'all' = 'open') {
+  return useQuery({
+    queryKey: ['admin', 'disputes', status],
+    queryFn: async (): Promise<AdminDisputeRow[]> => {
+      const { data, error } = await supabase.rpc('admin_list_disputes', { p_status: status });
+      if (error) throw error;
+      return (data ?? []) as AdminDisputeRow[];
+    },
+  });
+}
+
+export function useResolveDispute() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: { disputeId: string; resolution: 'resolved' | 'dismissed'; note?: string }) => {
+      const { error } = await supabase.rpc('admin_resolve_dispute', {
+        p_dispute: v.disputeId,
+        p_resolution: v.resolution,
+        p_note: v.note ?? null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'disputes'] }),
   });
 }

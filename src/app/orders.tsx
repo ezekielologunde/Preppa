@@ -1,9 +1,9 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { Check, ChevronLeft, Lock, Receipt, RotateCcw, Star, X } from 'lucide-react-native';
+import { AlertTriangle, Check, ChevronLeft, Lock, Receipt, RotateCcw, Star, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HandoffCard } from '@/components/handoff-card';
@@ -15,7 +15,7 @@ import { Palette, Radius } from '@/constants/theme';
 import { useAddToCart, useEmbeddedCheckout, useRefundOrder, useStripeCheckout, type EmbeddedPay } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { feedback } from '@/lib/feedback';
-import { useCancelOrder, useMyOrders, useOrdersRealtime, type OrderSummary } from '@/lib/queries/orders';
+import { useCancelOrder, useMyOrders, useOrdersRealtime, useReportDispute, type OrderSummary } from '@/lib/queries/orders';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
 
@@ -44,7 +44,7 @@ function dateLabel(iso: string): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-function OrderCard({ order, onCancel, onReview, onPay, onReorder, cancelling, needsPayment, paying, reordering }: { order: OrderSummary; onCancel: () => void; onReview: () => void; onPay: () => void; onReorder: () => void; cancelling: boolean; needsPayment: boolean; paying: boolean; reordering: boolean }) {
+function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, cancelling, needsPayment, paying, reordering }: { order: OrderSummary; onCancel: () => void; onReview: () => void; onPay: () => void; onReorder: () => void; onReport: () => void; cancelling: boolean; needsPayment: boolean; paying: boolean; reordering: boolean }) {
   const st = statusStyle(order.status);
   return (
     <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 14, gap: 12 }}>
@@ -141,6 +141,25 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, cancelling, ne
           </PressableScale>
         </View>
       ) : null}
+
+      {/* Report / disputed indicator — completed and cancelled orders */}
+      {(order.status === 'completed' || order.status === 'cancelled') ? (
+        order.disputed ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 2 }}>
+            <AlertTriangle size={13} color={Palette.textMuted} />
+            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>Issue reported — we're looking into it.</Text>
+          </View>
+        ) : (
+          <PressableScale
+            onPress={onReport}
+            accessibilityRole="button"
+            accessibilityLabel="Report an issue with this order"
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, height: 36, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border }}>
+            <AlertTriangle size={13} color={Palette.textSecondary} />
+            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>Report an issue</Text>
+          </PressableScale>
+        )
+      ) : null}
     </View>
   );
 }
@@ -152,6 +171,24 @@ export default function OrdersScreen() {
   useOrdersRealtime('customer_id', user?.id);
   const cancelOrder = useCancelOrder();
   const refundOrder = useRefundOrder();
+  const reportDispute = useReportDispute();
+  const [reportModal, setReportModal] = useState<OrderSummary | null>(null);
+  const [reportReason, setReportReason] = useState('');
+  const [reportErr, setReportErr] = useState<string | null>(null);
+
+  function submitReport() {
+    const reason = reportReason.trim();
+    if (reason.length < 5) { setReportErr('Please describe the issue (at least 5 characters).'); return; }
+    if (reason.length > 1000) { setReportErr('Keep it under 1000 characters.'); return; }
+    setReportErr(null);
+    reportDispute.mutate(
+      { orderId: reportModal!.id, reason },
+      {
+        onSuccess: () => { feedback.success(); setReportModal(null); setReportReason(''); },
+        onError: (e) => { feedback.error(); setReportErr(e instanceof Error ? e.message : 'Could not submit. Try again.'); },
+      },
+    );
+  }
   const checkoutStripe = useStripeCheckout();
   const embeddedCheckout = useEmbeddedCheckout();
   const [paySheet, setPaySheet] = useState<Extract<EmbeddedPay, { clientSecret: string }> | null>(null);
@@ -286,6 +323,7 @@ export default function OrdersScreen() {
                 onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
                 onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
                 onReorder={() => reorder(o)}
+                onReport={() => { setReportReason(''); setReportErr(null); setReportModal(o); }}
                 reordering={reorderingId === o.id}
               />
             ))}
@@ -296,6 +334,42 @@ export default function OrdersScreen() {
       {paySheet ? (
         <StripeEmbeddedSheet clientSecret={paySheet.clientSecret} pk={paySheet.pk} onClose={() => setPaySheet(null)} />
       ) : null}
+
+      {/* Report an issue modal */}
+      <Modal visible={!!reportModal} transparent animationType="fade" onRequestClose={() => setReportModal(null)}>
+        <Pressable onPress={() => setReportModal(null)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.55)', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 360, backgroundColor: '#fff', borderRadius: 24, padding: 22, gap: 14 }}>
+            <View style={{ width: 52, height: 52, borderRadius: 16, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
+              <AlertTriangle size={26} color={Palette.textSecondary} />
+            </View>
+            <Text style={{ fontFamily: Font.display, fontSize: 21, color: INK, letterSpacing: -0.4 }}>Report an issue</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, lineHeight: 20 }}>
+              Tell us what went wrong with your order from {reportModal?.prepper ?? ''}. Our team will review it.
+            </Text>
+            <TextInput
+              value={reportReason}
+              onChangeText={setReportReason}
+              placeholder="Describe the issue…"
+              placeholderTextColor={Palette.textMuted}
+              multiline
+              maxLength={1000}
+              style={{ minHeight: 100, backgroundColor: '#F7F7F8', borderRadius: 12, borderWidth: 1, borderColor: Palette.border, padding: 12, fontFamily: Font.body, fontSize: 14, color: INK, textAlignVertical: 'top' }}
+            />
+            {reportErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#b91c1c' }}>{reportErr}</Text> : null}
+            <PressableScale
+              onPress={submitReport}
+              disabled={reportDispute.isPending}
+              accessibilityRole="button"
+              accessibilityLabel="Submit report"
+              style={{ height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: reportDispute.isPending ? 0.7 : 1 }}>
+              {reportDispute.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Submit report</Text>}
+            </PressableScale>
+            <PressableScale onPress={() => setReportModal(null)} accessibilityRole="button" accessibilityLabel="Cancel" style={{ height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary }}>Cancel</Text>
+            </PressableScale>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* Cancel confirmation overlay */}
       <Modal visible={!!confirmCancel} transparent animationType="fade" onRequestClose={() => setConfirmCancel(null)}>

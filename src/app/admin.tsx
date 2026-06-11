@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import {
+  AlertTriangle,
   ChevronLeft,
   LayoutDashboard,
   Lock,
@@ -15,6 +16,7 @@ import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AdminCustomers } from '@/components/admin/customers';
+import { AdminDisputes } from '@/components/admin/disputes';
 import { AdminEarnings } from '@/components/admin/earnings';
 import { AdminFeatures } from '@/components/admin/features';
 import { AdminOrders } from '@/components/admin/orders';
@@ -26,7 +28,7 @@ import { Font } from '@/constants/fonts';
 import { Radius } from '@/constants/theme';
 import { useAuth } from '@/providers/auth-provider';
 
-type SectionKey = 'overview' | 'preppers' | 'customers' | 'orders' | 'earnings' | 'features';
+type SectionKey = 'overview' | 'preppers' | 'customers' | 'orders' | 'earnings' | 'features' | 'disputes';
 const SECTIONS: { key: SectionKey; label: string; Icon: LucideIcon }[] = [
   { key: 'overview', label: 'Overview', Icon: LayoutDashboard },
   { key: 'preppers', label: 'Preppers', Icon: Store },
@@ -34,6 +36,7 @@ const SECTIONS: { key: SectionKey; label: string; Icon: LucideIcon }[] = [
   { key: 'orders', label: 'Orders', Icon: Receipt },
   { key: 'earnings', label: 'Earnings', Icon: Wallet },
   { key: 'features', label: 'Features', Icon: ToggleLeft },
+  { key: 'disputes', label: 'Disputes', Icon: AlertTriangle },
 ];
 
 export default function AdminScreen() {
@@ -106,6 +109,7 @@ export default function AdminScreen() {
           {section === 'orders' && <AdminOrders />}
           {section === 'earnings' && <AdminEarnings />}
           {section === 'features' && <AdminFeatures />}
+          {section === 'disputes' && <AdminDisputes />}
         </ScrollView>
       </SafeAreaView>
     </View>

@@ -31,7 +31,7 @@ import { Palette, Shadow } from '@/constants/theme';
 import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
 import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
-import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { useMyPrepperApplication, useToggleAvailability } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -134,6 +134,9 @@ export default function DashboardScreen() {
   const { data: orders } = usePrepperOrders(prepper?.id);
   const { data: reviews } = usePrepperReviews(prepper?.id);
   const advance = useAdvanceOrder();
+  const toggleAvailability = useToggleAvailability(prepper?.id);
+  const [accepting, setAccepting] = useState<boolean | null>(null);
+  const isOpen = accepting !== null ? accepting : ((prepper as unknown as { accepting_orders?: boolean })?.accepting_orders !== false);
 
   const list: OrderSummary[] = orders ?? [];
   const newCount = list.filter((o) => o.status === 'pending').length;
@@ -166,10 +169,20 @@ export default function DashboardScreen() {
                 <Text style={{ fontFamily: Font.display, fontSize: 27, color: '#fff', letterSpacing: -0.8 }}>my kitchen</Text>
                 <Flame size={20} color={ORANGE} fill={ORANGE} />
               </View>
-              <View style={{ flexDirection: 'row', gap: 5, marginTop: 1 }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>cook.</Text>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: GREEN }}>earn.</Text>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: PURPLE }}>inspire.</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
+                <PressableScale
+                  onPress={() => {
+                    const next = !isOpen;
+                    setAccepting(next);
+                    toggleAvailability.mutate(next, { onError: () => setAccepting(!next) });
+                  }}
+                  accessibilityRole="switch"
+                  accessibilityState={{ checked: isOpen }}
+                  accessibilityLabel={isOpen ? 'Kitchen is open — tap to close' : 'Kitchen is closed — tap to open'}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isOpen ? GREEN + '22' : '#252a34', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
+                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isOpen ? GREEN : MUTED }} />
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : MUTED }}>{isOpen ? 'Open' : 'Closed'}</Text>
+                </PressableScale>
               </View>
             </View>
             <PressableScale onPress={() => router.push('/search')} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>

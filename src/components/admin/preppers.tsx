@@ -1,11 +1,11 @@
-import { Check, Store, X } from 'lucide-react-native';
+import { BadgeCheck, Check, Store, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Radius } from '@/constants/theme';
-import { useAdminPreppers, useSetPrepperStatus } from '@/lib/queries/admin';
+import { useAdminPreppers, useSetPrepperStatus, useVerifyPrepper } from '@/lib/queries/admin';
 import type { PrepperStatus } from '@/types/database.types';
 import { Admin, Avatar, Card, Pill, SectionState } from './ui';
 
@@ -20,6 +20,7 @@ export function AdminPreppers() {
   const [filter, setFilter] = useState<PrepperStatus>('pending');
   const { data, isLoading, isError } = useAdminPreppers(filter);
   const setStatus = useSetPrepperStatus();
+  const verifyPrepper = useVerifyPrepper();
 
   function act(prepperId: string, status: PrepperStatus) {
     setStatus.mutate({ prepperId, status });
@@ -67,6 +68,19 @@ export function AdminPreppers() {
           ) : null}
           {p.rejection_note ? (
             <Text style={{ fontFamily: Font.body, fontSize: 12, color: Admin.danger, marginTop: 6 }}>Note: {p.rejection_note}</Text>
+          ) : null}
+
+          {/* Identity verification (approved preppers only) */}
+          {p.status === 'approved' ? (
+            <PressableScale
+              onPress={() => verifyPrepper.mutate({ prepperId: p.id, verified: !p.verified })}
+              disabled={verifyPrepper.isPending}
+              accessibilityRole="button"
+              accessibilityLabel={p.verified ? `Remove verification from ${p.display_name}` : `Verify ${p.display_name}`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12, paddingHorizontal: 12, height: 36, borderRadius: Radius.pill, alignSelf: 'flex-start', backgroundColor: p.verified ? Admin.success + '22' : Admin.card, borderWidth: 1, borderColor: p.verified ? Admin.success + '66' : Admin.border }}>
+              <BadgeCheck size={14} color={p.verified ? Admin.success : Admin.textDim} />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: p.verified ? Admin.success : Admin.textDim }}>{p.verified ? 'Verified' : 'Mark as verified'}</Text>
+            </PressableScale>
           ) : null}
 
           {/* Actions depend on current status */}
