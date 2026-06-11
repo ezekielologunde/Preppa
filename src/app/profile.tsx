@@ -109,9 +109,15 @@ function HubGrid({ hub, dark, onHub }: { hub: HubItem[]; dark: boolean; onHub: (
           <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 13.5, color: Palette.ink }}>dark mode</Text>
           <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, marginTop: 1 }}>{dark ? 'on' : 'off'}</Text>
         </View>
-        <View style={{ width: 40, height: 24, borderRadius: 12, backgroundColor: dark ? Palette.brand : Palette.border, justifyContent: 'center', paddingHorizontal: 3, alignItems: dark ? 'flex-end' : 'flex-start' }}>
-          <MotiView animate={{ translateX: 0 }} style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: Palette.surface }} />
-        </View>
+        <MotiView
+          animate={{ backgroundColor: dark ? Palette.brand : Palette.border }}
+          transition={{ type: 'timing', duration: 200 }}
+          style={{ width: 40, height: 24, borderRadius: 12, justifyContent: 'center', paddingHorizontal: 3 }}>
+          <MotiView
+            animate={{ translateX: dark ? 16 : 0 }}
+            transition={{ type: 'spring', damping: 14, stiffness: 200 }}
+            style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: Palette.surface }} />
+        </MotiView>
       </PressableScale>
     </View>
   );

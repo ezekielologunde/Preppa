@@ -174,6 +174,7 @@ export default function HomeScreen() {
 
           {/* Active order tracker — always-findable live status */}
           {activeOrder ? (
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
             <PressableScale
               onPress={() => router.push('/orders')}
               accessibilityRole="button"
@@ -192,6 +193,7 @@ export default function HomeScreen() {
               </View>
               <ChevronRight size={20} color="rgba(255,255,255,0.6)" />
             </PressableScale>
+            </MotiView>
           ) : null}
 
           {/* Categories */}
@@ -312,6 +314,7 @@ export default function HomeScreen() {
           ) : null}
 
           {/* Points banner — real points from completed orders */}
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
           <PressableScale onPress={() => router.push('/rewards')} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 28, backgroundColor: '#E7F6EC', borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#22c55e', alignItems: 'center', justifyContent: 'center' }}>
               <Gift size={20} color="#fff" />
@@ -329,10 +332,11 @@ export default function HomeScreen() {
               <ChevronRight size={13} color="#fff" />
             </View>
           </PressableScale>
+          </MotiView>
 
           {/* Order again — the user's real last delivered order */}
           {lastDone ? (
-            <>
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
               <SectionHeader title="order again" />
               <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 20, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 {lastDone.items[0]?.image ? (
@@ -355,7 +359,7 @@ export default function HomeScreen() {
                   <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>order again</Text>
                 </PressableScale>
               </View>
-            </>
+            </MotiView>
           ) : null}
         </ScrollView>
       </SafeAreaView>
