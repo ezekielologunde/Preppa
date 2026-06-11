@@ -34,7 +34,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Palette, Radius } from '@/constants/theme';
 import { greeting } from '@/lib/greeting';
-import { useFeaturedMeals } from '@/lib/queries/meals';
+import { useFeaturedMeals, useFollowingFeed } from '@/lib/queries/meals';
 import { useFeatureFlags } from '@/lib/queries/feature-flags';
 import { useMyOrders } from '@/lib/queries/orders';
 import { useNotifications } from '@/lib/queries/notifications';
@@ -86,6 +86,7 @@ export default function HomeScreen() {
   const firstName = rawFirst ? rawFirst.toLowerCase() : null;
   // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
   const { data: liveMeals, isLoading: mealsLoading } = useFeaturedMeals();
+  const { data: followingFeed } = useFollowingFeed(user?.id);
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
   const { data: flags } = useFeatureFlags();
   const showPlans = flags?.meal_plans !== false;
@@ -232,6 +233,18 @@ export default function HomeScreen() {
                 </PressableScale>
               ) : null}
             </View>
+          ) : null}
+
+          {/* From kitchens you follow — the creator-economy retention loop */}
+          {followingFeed && followingFeed.length > 0 ? (
+            <>
+              <SectionHeader title="from kitchens you follow" />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+                {followingFeed.map((m) => (
+                  <MealCard key={m.id} meal={m} />
+                ))}
+              </ScrollView>
+            </>
           ) : null}
 
           {/* Recommended — personalized, dynamic mix of a big hero + carousel */}

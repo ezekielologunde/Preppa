@@ -82,6 +82,38 @@ export function useFeaturedMeals(limit = 10) {
   });
 }
 
+/**
+ * "From kitchens you follow" — recent published meals from the kitchens the
+ * signed-in user follows, newest first. The retention loop for the creator
+ * economy: a reason to come back is a fresh drop from someone you follow.
+ * Empty array when the user follows nobody (or those kitchens have no meals).
+ */
+export function useFollowingFeed(userId?: string | null, limit = 12) {
+  return useQuery({
+    queryKey: ['meals', 'following-feed', userId ?? 'anon', limit],
+    enabled: !!userId,
+    queryFn: async (): Promise<Meal[]> => {
+      // RLS lets a user read their own follow rows.
+      const { data: follows, error: fErr } = await supabase
+        .from('follows')
+        .select('prepper_id')
+        .eq('follower_id', userId!);
+      if (fErr) throw fErr;
+      const ids = (follows ?? []).map((f) => (f as { prepper_id: string }).prepper_id);
+      if (ids.length === 0) return [];
+      const { data, error } = await supabase
+        .from('meals')
+        .select(SELECT)
+        .eq('status', 'published')
+        .in('prepper_id', ids)
+        .order('created_at', { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return ((data ?? []) as unknown as MealRow[]).map(mapMeal);
+    },
+  });
+}
+
 /** Live published meals filtered by category key (e.g. "dinner"); "all"/undefined = no filter. */
 export function useMealsByCategory(categoryKey?: string, limit = 40) {
   const key = categoryKey && categoryKey !== 'all' ? categoryKey : undefined;
