@@ -1,7 +1,10 @@
 -- Fix 1: admin_list_disputes lacked is_admin() gate — any authenticated user
 -- could enumerate all disputes + reporter PII. Add WHERE is_admin() guard and
 -- drop reporter_email from the projection (name is sufficient for triage).
-create or replace function public.admin_list_disputes(p_status text default 'open')
+-- Return type changes (reporter_email removed), so drop first.
+drop function if exists public.admin_list_disputes(text);
+
+create function public.admin_list_disputes(p_status text default 'open')
 returns table (
   id uuid, order_id uuid, reason text, status text, admin_note text, created_at timestamptz,
   reporter_name text, order_total numeric, order_status text, prepper_name text
