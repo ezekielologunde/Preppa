@@ -1,0 +1,7 @@
+-- 0037 — "Top Local Preppers" reputation ranking. SECURITY DEFINER function
+-- top_preppers_ranked(p_limit) returning approved kitchens (that have a live
+-- meal) ordered by a composite score: Bayesian-smoothed rating (prior pulls
+-- low-review kitchens toward the platform mean) + log-scaled completed-order
+-- volume + repeat-buyer rate. Aggregate-only, granted to anon for public
+-- discovery — the visible surface of the trust/reputation moat. Canonical body
+-- lives in the DB.

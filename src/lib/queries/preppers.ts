@@ -13,6 +13,20 @@ export type TopPrepper = {
   image: string;
   from: number | null;
   tags: string[];
+  /** Reputation rank within the "Top kitchens" rail (1 = best). */
+  rank?: number;
+};
+
+type RankedRow = {
+  id: string;
+  display_name: string;
+  verified: boolean;
+  specialties: string[] | null;
+  average_rating: number | string | null;
+  total_reviews: number | null;
+  from_price: number | string | null;
+  image_url: string | null;
+  rank: number;
 };
 
 type Row = {
@@ -145,13 +159,20 @@ export function useTopPreppers(limit = 10) {
   return useQuery({
     queryKey: ['preppers', 'top', limit],
     queryFn: async (): Promise<TopPrepper[]> => {
-      const { data, error } = await supabase
-        .from('prepper_profiles')
-        .select(SELECT)
-        .eq('verified', true)
-        .limit(limit);
+      // Reputation-ranked (Bayesian rating + order volume + repeat-buyer rate).
+      const { data, error } = await supabase.rpc('top_preppers_ranked', { p_limit: limit });
       if (error) throw error;
-      return ((data ?? []) as unknown as Row[]).map(mapPrepper);
+      return ((data ?? []) as unknown as RankedRow[]).map((r) => ({
+        id: r.id,
+        name: r.display_name,
+        verified: r.verified,
+        rating: Number(r.average_rating ?? 0),
+        reviews: r.total_reviews ?? 0,
+        image: r.image_url ?? '',
+        from: r.from_price != null ? Number(r.from_price) : null,
+        tags: r.specialties ?? [],
+        rank: r.rank,
+      }));
     },
   });
 }

@@ -115,13 +115,13 @@ export default function ExploreScreen() {
             ))}
           </ScrollView>
 
-          {/* Top preppers (live) */}
-          <SectionHeader title="top preppers near you" />
+          {/* Top kitchens — reputation-ranked (live) */}
+          <SectionHeader title="top kitchens this week" />
           {preppersLoading ? (
             <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} width={210} /></View>
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-              {(preppers ?? []).map((p) => <PrepperCard key={p.id} prepper={p} />)}
+              {(preppers ?? []).map((p) => <PrepperCard key={p.id} prepper={p} showRank />)}
             </ScrollView>
           )}
 

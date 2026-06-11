@@ -32,6 +32,20 @@ export type PrepperEarningsRow = {
   last_order_at: string | null;
 };
 
+/** Shape returned by the top_preppers_ranked() RPC. */
+export type TopPrepperRankedRow = {
+  id: string;
+  display_name: string;
+  verified: boolean;
+  specialties: string[] | null;
+  average_rating: number | string | null;
+  total_reviews: number | null;
+  from_price: number | string | null;
+  image_url: string | null;
+  score: number | string | null;
+  rank: number;
+};
+
 /** Shape returned by the admin_platform_stats() RPC. */
 export type PlatformStats = {
   total_users: number;
@@ -212,6 +226,7 @@ export interface Database {
       mark_notifications_read: { Args: { p_id?: string }; Returns: undefined };
       record_event: { Args: { p_event: string; p_props?: Json }; Returns: undefined };
       prepper_public_stats: { Args: { p_prepper: string }; Returns: Json };
+      top_preppers_ranked: { Args: { p_limit?: number }; Returns: TopPrepperRankedRow[] };
       my_prepper_earnings: { Args: Record<string, never>; Returns: Json };
       admin_set_prepper_status: { Args: { p_prepper: string; p_status: PrepperStatus; p_note?: string | null }; Returns: undefined };
       admin_grant_role: { Args: { p_user: string; p_role: string }; Returns: undefined };
