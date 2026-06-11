@@ -7,6 +7,8 @@ import {
   Boxes,
   Briefcase,
   ChefHat,
+  ChevronRight,
+  Crown,
   DollarSign,
   Flame,
   Gift,
@@ -33,6 +35,7 @@ import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
 import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
+import { usePrepperMembership } from '@/lib/queries/memberships';
 import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication, usePrepperBadges, useToggleAvailability } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
@@ -134,6 +137,8 @@ export default function DashboardScreen() {
   const desktop = useBreakpoint() === 'desktop';
   const { user } = useAuth();
   const { data: prepper } = useMyPrepperApplication(user?.id);
+  const { data: prepperMembership } = usePrepperMembership(prepper?.id);
+  const isPro = prepperMembership?.isPro === true;
   const { data: prepperBadges } = usePrepperBadges(prepper?.id);
   const { data: orders } = usePrepperOrders(prepper?.id);
   const { data: reviews } = usePrepperReviews(prepper?.id);
@@ -227,6 +232,23 @@ export default function DashboardScreen() {
             <View style={{ paddingHorizontal: 20, marginBottom: 4 }}>
               <PrepperBadgeShelf badges={prepperBadges} />
             </View>
+          ) : null}
+
+          {/* Pro upgrade nudge — shown only on free tier */}
+          {!isPro ? (
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 160 }}>
+              <PressableScale onPress={() => router.push('/prepper-premium')} accessibilityRole="button" accessibilityLabel="Upgrade to Prepper Pro"
+                style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: ORANGE + '15', borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: ORANGE + '30' }}>
+                <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: ORANGE + '22', alignItems: 'center', justifyContent: 'center' }}>
+                  <Crown size={19} color={ORANGE} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>Go Pro — unlock more</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, marginTop: 1 }}>Boosts, analytics, livestream & AI tools · $29/mo</Text>
+                </View>
+                <ChevronRight size={16} color={ORANGE} />
+              </PressableScale>
+            </MotiView>
           ) : null}
 
           {/* Desktop: operations on the left, performance on the right */}

@@ -43,6 +43,7 @@ import { useRecentlyViewedCount } from '@/lib/recently-viewed';
 import { useRewards } from '@/lib/queries/rewards';
 import { feedback } from '@/lib/feedback';
 import { useAddresses } from '@/lib/queries/addresses';
+import { useCustomerMembership } from '@/lib/queries/memberships';
 import { useMySubscriptions } from '@/lib/queries/meal-plans';
 import { usePaymentMethods } from '@/lib/queries/payment-methods';
 import { useCustomerBadges, useMyPrepperApplication } from '@/lib/queries/preppers';
@@ -120,6 +121,8 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { user, signOut, isAdmin } = useAuth();
   const { data: subs } = useMySubscriptions(user?.id);
+  const { data: membership } = useCustomerMembership(user?.id);
+  const isPlus = membership?.isPlus === true;
   const { data: earnedBadges } = useCustomerBadges(user?.id);
   const { data: myPrepper } = useMyPrepperApplication(user?.id);
   const isApprovedPrepper = myPrepper?.status === 'approved';
@@ -140,6 +143,7 @@ export default function ProfileScreen() {
       }
       return item;
     }),
+    { label: 'prep+', sub: isPlus ? 'member · active ✦' : 'perks & discounts', Icon: Sparkles, accent: isPlus, route: '/prep-plus' },
     ...(isApprovedPrepper ? [{ label: 'my kitchen', sub: 'dashboard & earnings', Icon: ChefHat, accent: true, route: '/dashboard' }] : []),
   ];
   const favMeals = useFavoritesCount('meal:');
