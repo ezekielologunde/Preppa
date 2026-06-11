@@ -1,9 +1,9 @@
-// TODO: replace with supabase addresses table once migrated
 import { useRouter } from 'expo-router';
 import { MapPin, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -20,32 +20,8 @@ import {
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius, Shadow, Spacing, Type } from '@/constants/theme';
-
-// ─── Initial mock data ────────────────────────────────────────────────────────
-
-const MOCK_ADDRESSES: Address[] = [
-  {
-    id: '1',
-    label: 'Home',
-    street1: '123 Maple Street',
-    street2: 'Apt 4B',
-    city: 'New York',
-    state: 'NY',
-    postalCode: '10001',
-    country: 'United States',
-    isDefault: true,
-  },
-  {
-    id: '2',
-    label: 'Work',
-    street1: '350 Fifth Avenue',
-    city: 'New York',
-    state: 'NY',
-    postalCode: '10118',
-    country: 'United States',
-    isDefault: false,
-  },
-];
+import { useAddresses, useDeleteAddress, useSetDefaultAddress, useUpsertAddress } from '@/lib/queries/addresses';
+import { useAuth } from '@/providers/auth-provider';
 
 // ─── Address Card ─────────────────────────────────────────────────────────────
 
@@ -235,67 +211,38 @@ function AddressCard({
 
 export default function AddressesScreen() {
   const router = useRouter();
-  const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
+  const { user } = useAuth();
+  const { data: addresses = [], isLoading } = useAddresses(user?.id);
+  const upsertAddress = useUpsertAddress(user?.id);
+  const deleteAddress = useDeleteAddress(user?.id);
+  const setDefaultAddress = useSetDefaultAddress(user?.id);
   const [sheetVisible, setSheetVisible] = useState(false);
   const [editing, setEditing] = useState<Address | undefined>(undefined);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
-  // Auto-clear delete confirmation after 3 s
   const triggerDelete = (id: string) => {
     setPendingDeleteId(id);
     setTimeout(() => setPendingDeleteId((prev) => (prev === id ? null : prev)), 3000);
   };
 
   const confirmDelete = (id: string) => {
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
+    deleteAddress.mutate(id);
     setPendingDeleteId(null);
   };
 
-  const openAdd = () => {
-    setEditing(undefined);
-    setSheetVisible(true);
-  };
-
-  const openEdit = (address: Address) => {
-    setEditing(address);
-    setSheetVisible(true);
-  };
+  const openAdd = () => { setEditing(undefined); setSheetVisible(true); };
+  const openEdit = (address: Address) => { setEditing(address); setSheetVisible(true); };
 
   const handleSave = (form: FormState) => {
     const label = resolvedLabel(form);
-    if (editing) {
-      setAddresses((prev) =>
-        prev.map((a) => {
-          if (a.id !== editing.id) {
-            return form.isDefault ? { ...a, isDefault: false } : a;
-          }
-          return { ...a, ...form, label };
-        }),
-      );
-    } else {
-      const newAddr: Address = {
-        id: Date.now().toString(),
-        label,
-        street1: form.street1,
-        street2: form.street2 || undefined,
-        city: form.city,
-        state: form.state,
-        postalCode: form.postalCode,
-        country: form.country,
-        isDefault: form.isDefault,
-      };
-      setAddresses((prev) => {
-        const updated = form.isDefault ? prev.map((a) => ({ ...a, isDefault: false })) : prev;
-        return [...updated, newAddr];
-      });
-    }
-    setSheetVisible(false);
+    upsertAddress.mutate(
+      { ...form, label, id: editing?.id },
+      { onSuccess: () => setSheetVisible(false) },
+    );
   };
 
   const setDefault = (id: string) => {
-    setAddresses((prev) =>
-      prev.map((a) => ({ ...a, isDefault: a.id === id })),
-    );
+    setDefaultAddress.mutate({ id, allIds: addresses.map((a) => a.id) });
   };
 
   return (
@@ -352,7 +299,11 @@ export default function AddressesScreen() {
         </View>
 
         {/* Content */}
-        {addresses.length === 0 ? (
+        {isLoading ? (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator color={Palette.brand} />
+          </View>
+        ) : addresses.length === 0 ? (
           /* Empty state */
           <MotiView
             from={{ opacity: 0, scale: 0.95 }}
