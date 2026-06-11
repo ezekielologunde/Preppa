@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Compass, RefreshCw, ShoppingCart, Sparkles } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -159,19 +160,28 @@ export default function SurpriseScreen() {
                 <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 12 }}>finding your perfect meal…</Text>
               </View>
             ) : !picks?.length ? (
-              <View style={{ alignItems: 'center', paddingVertical: 32, paddingHorizontal: 32, gap: 10 }}>
+              <MotiView
+                from={{ opacity: 0, translateY: 10 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                transition={{ type: 'timing', duration: 260 }}
+                style={{ alignItems: 'center', paddingVertical: 32, paddingHorizontal: 32, gap: 10 }}>
                 <Compass size={32} color={Palette.textMuted} />
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>No matches found</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20 }}>Try a higher budget or different vibe — preppers add new meals every week.</Text>
-              </View>
+              </MotiView>
             ) : (
               <View style={{ paddingHorizontal: 20 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK, marginBottom: 14 }}>
                   {picks.length === 1 ? 'here&apos;s your pick' : `here&apos;s ${picks.length} options`}
                 </Text>
                 <View style={{ gap: 16 }}>
-                  {picks.map((meal) => (
-                    <View key={meal.id} style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                  {picks.map((meal, i) => (
+                    <MotiView
+                      key={meal.id}
+                      from={{ opacity: 0, translateY: 14, scale: 0.97 }}
+                      animate={{ opacity: 1, translateY: 0, scale: 1 }}
+                      transition={{ type: 'timing', duration: 280, delay: i * 70 }}
+                      style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
                       <View style={{ flex: 1 }}>
                         <MealCard meal={meal} width={undefined as unknown as number} />
                       </View>
@@ -183,7 +193,7 @@ export default function SurpriseScreen() {
                         style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 8, opacity: addingId === meal.id ? 0.6 : 1 }}>
                         {addingId === meal.id ? <ActivityIndicator color="#fff" size="small" /> : <ShoppingCart size={18} color="#fff" />}
                       </PressableScale>
-                    </View>
+                    </MotiView>
                   ))}
                 </View>
               </View>

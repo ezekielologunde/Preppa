@@ -13,7 +13,8 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react-native';
-import { ScrollView, Text, View } from 'react-native';
+import { MotiView } from 'moti';
+import { ScrollView, Text } from 'react-native';
 
 import { Font } from '@/constants/fonts';
 import type { CustomerBadgeKey, PrepperBadgeKey } from '@/types/database.types';
@@ -42,16 +43,19 @@ const CUSTOMER_META: Record<CustomerBadgeKey, BadgeMeta> = {
   surprise_explorer:{ label: 'Surprise Explorer',Icon: ShieldCheck, color: '#06b6d4', bg: '#ecfeff', description: 'Used Surprise Me mode' },
 };
 
-function BadgePill({ meta }: { meta: BadgeMeta }) {
+function BadgePill({ meta, index }: { meta: BadgeMeta; index: number }) {
   const Icon = meta.Icon;
   return (
-    <View
+    <MotiView
+      from={{ opacity: 0, translateY: 6, scale: 0.95 }}
+      animate={{ opacity: 1, translateY: 0, scale: 1 }}
+      transition={{ type: 'timing', duration: 240, delay: index * 40 }}
       accessibilityRole="text"
       accessibilityLabel={`${meta.label}: ${meta.description}`}
       style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: meta.bg, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6 }}>
       <Icon size={13} color={meta.color} />
       <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: meta.color }}>{meta.label}</Text>
-    </View>
+    </MotiView>
   );
 }
 
@@ -59,9 +63,9 @@ export function PrepperBadgeShelf({ badges }: { badges: PrepperBadgeKey[] }) {
   if (!badges.length) return null;
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 0, paddingVertical: 2 }}>
-      {badges.map((key) => {
+      {badges.map((key, i) => {
         const meta = PREPPER_META[key];
-        return meta ? <BadgePill key={key} meta={meta} /> : null;
+        return meta ? <BadgePill key={key} meta={meta} index={i} /> : null;
       })}
     </ScrollView>
   );
@@ -71,9 +75,9 @@ export function CustomerBadgeShelf({ badges }: { badges: CustomerBadgeKey[] }) {
   if (!badges.length) return null;
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingHorizontal: 0, paddingVertical: 2 }}>
-      {badges.map((key) => {
+      {badges.map((key, i) => {
         const meta = CUSTOMER_META[key as CustomerBadgeKey];
-        return meta ? <BadgePill key={key} meta={meta} /> : null;
+        return meta ? <BadgePill key={key} meta={meta} index={i} /> : null;
       })}
     </ScrollView>
   );

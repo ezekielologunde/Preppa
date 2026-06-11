@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, ImageIcon, Plus, Upload, UtensilsCrossed } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -251,7 +252,7 @@ export default function MealEditorScreen() {
               </Field>
               {/* Limited drop toggle */}
               <PressableScale
-                onPress={() => setDraft((d) => d && { ...d, is_limited: !d.is_limited })}
+                onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, is_limited: !d.is_limited }); }}
                 accessibilityRole="switch"
                 accessibilityState={{ checked: !!draft?.is_limited }}
                 accessibilityLabel="Mark as limited drop"
@@ -260,9 +261,16 @@ export default function MealEditorScreen() {
                   <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>Limited drop</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#6b7280' }}>Show a &quot;limited drop&quot; badge — builds scarcity & hype</Text>
                 </View>
-                <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: draft?.is_limited ? ORANGE : '#374151', alignItems: 'center', justifyContent: 'center', padding: 3, marginLeft: 12 }}>
-                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff', alignSelf: draft?.is_limited ? 'flex-end' : 'flex-start' }} />
-                </View>
+                <MotiView
+                  animate={{ backgroundColor: draft?.is_limited ? ORANGE : '#374151' }}
+                  transition={{ type: 'timing', duration: 200 }}
+                  style={{ width: 44, height: 26, borderRadius: 13, padding: 3, marginLeft: 12 }}>
+                  <MotiView
+                    animate={{ translateX: draft?.is_limited ? 18 : 0 }}
+                    transition={{ type: 'timing', duration: 200 }}
+                    style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff' }}
+                  />
+                </MotiView>
               </PressableScale>
 
               {formErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5' }}>{formErr}</Text> : null}
