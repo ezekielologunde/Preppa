@@ -55,16 +55,23 @@ export function useAdminPreppers(status?: PrepperStatus) {
   return useQuery({
     queryKey: ['admin', 'preppers', status ?? 'all'],
     queryFn: async (): Promise<AdminPrepper[]> => {
-      // Disambiguate: prepper_profiles has two FKs to profiles (user_id + reviewed_by).
-      // PostgREST requires an explicit hint when multiple FKs point to the same table.
-      let q = supabase
-        .from('prepper_profiles')
-        .select('id,display_name,bio,verified,status,rejection_note,created_at,user:profiles!prepper_profiles_user_id_fkey(full_name,email,phone)')
-        .order('created_at', { ascending: false });
-      if (status) q = q.eq('status', status);
-      const { data, error } = await q;
+      // Use SECURITY DEFINER RPC to bypass RLS and avoid PostgREST FK ambiguity
+      // (prepper_profiles has two FKs to profiles: user_id + reviewed_by).
+      const { data, error } = await supabase.rpc('admin_list_preppers', {
+        p_status: status ?? 'all',
+      });
       if (error) throw error;
-      return (data ?? []) as unknown as AdminPrepper[];
+      type Row = { id: string; display_name: string; bio: string | null; verified: boolean; status: string; rejection_note: string | null; created_at: string; user_full_name: string | null; user_email: string | null; user_phone: string | null };
+      return ((data ?? []) as Row[]).map((r) => ({
+        id: r.id,
+        display_name: r.display_name,
+        bio: r.bio,
+        verified: r.verified,
+        status: r.status as PrepperStatus,
+        rejection_note: r.rejection_note,
+        created_at: r.created_at,
+        user: { full_name: r.user_full_name, email: r.user_email, phone: r.user_phone },
+      }));
     },
   });
 }
