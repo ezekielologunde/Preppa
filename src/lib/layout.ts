@@ -28,6 +28,15 @@ const ROUTE_CLASS: [string, WidthClass][] = [
   ['/messages', 'content'],
   ['/meal-plans', 'content'],
   ['/experiences', 'content'],
+  ['/rewards', 'content'],
+  ['/bid-requests', 'content'],
+  ['/settings', 'form'],
+  ['/edit-profile', 'form'],
+  ['/account', 'form'],
+  ['/addresses', 'form'],
+  ['/payment-methods', 'form'],
+  ['/post-video', 'form'],
+  ['/become-prepper', 'form'],
 ];
 
 const MAX: Record<WidthClass, { tablet: number; desktop: number }> = {
