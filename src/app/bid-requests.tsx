@@ -20,11 +20,7 @@ type Request = MealRequest;
 
 function RequestCard({ r, isPrepper, onBid }: { r: Request; isPrepper: boolean; onBid: (r: Request) => void }) {
   return (
-    <MotiView
-      from={{ opacity: 0, translateY: 8 }}
-      animate={{ opacity: 1, translateY: 0 }}
-      transition={{ type: 'timing', duration: 220 }}
-      style={{ backgroundColor: '#fff', borderRadius: 20, padding: 16, gap: 10, marginBottom: 12 }}>
+    <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 16, gap: 10, marginBottom: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>{r.title}</Text>
@@ -65,7 +61,7 @@ function RequestCard({ r, isPrepper, onBid }: { r: Request; isPrepper: boolean; 
           </PressableScale>
         ) : null}
       </View>
-    </MotiView>
+    </View>
   );
 }
 

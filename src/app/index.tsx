@@ -118,6 +118,7 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
+          <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
             <PressableScale
               onPress={() => router.push('/profile')}
@@ -156,8 +157,10 @@ export default function HomeScreen() {
               <ChevronDown size={14} color="#6b7280" />
             </PressableScale>
           </View>
+          </MotiView>
 
           {/* Search */}
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
           <PressableScale
             onPress={() => router.push('/search')}
             accessibilityRole="search"
@@ -167,6 +170,7 @@ export default function HomeScreen() {
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>Search meals, cuisines, or preppers…</Text>
             <SlidersHorizontal size={20} color={ORANGE} />
           </PressableScale>
+          </MotiView>
 
           {/* Active order tracker — always-findable live status */}
           {activeOrder ? (
@@ -192,19 +196,21 @@ export default function HomeScreen() {
 
           {/* Categories */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>
-            {categories.map((c) => {
+            {categories.map((c, i) => {
               const Icon = ICONS[c.icon] ?? MoreHorizontal;
               const onPress = () =>
                 c.key === 'more'
                   ? router.push('/explore')
                   : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
               return (
-                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 58 }}>
+                <MotiView key={c.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 100 + i * 35 }}>
+                <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 58 }}>
                   <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={24} color={c.color} />
                   </View>
                   <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#374151' }}>{c.label}</Text>
                 </PressableScale>
+                </MotiView>
               );
             })}
           </ScrollView>
@@ -212,6 +218,7 @@ export default function HomeScreen() {
           {/* Primary products — Meal Plans + Experiences + Requests */}
           <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12, marginBottom: 26 }}>
             {showPlans ? (
+              <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }} style={{ flex: 1 }}>
               <PressableScale onPress={() => router.push('/meal-plans')} accessibilityRole="button" accessibilityLabel="Meal plans"
                 style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
                 <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
@@ -220,8 +227,10 @@ export default function HomeScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>meal plans</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>weekly & family, on repeat</Text>
               </PressableScale>
+              </MotiView>
             ) : null}
             {showExperiences ? (
+              <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 220 }} style={{ flex: 1 }}>
               <PressableScale onPress={() => router.push('/experiences')} accessibilityRole="button" accessibilityLabel="Experiences"
                 style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
                 <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
@@ -230,7 +239,9 @@ export default function HomeScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>experiences</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>catering, chefs & classes</Text>
               </PressableScale>
+              </MotiView>
             ) : null}
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 260 }} style={{ flex: 1 }}>
             <PressableScale onPress={() => router.push('/bid-requests')} accessibilityRole="button" accessibilityLabel="Meal requests"
               style={{ flex: 1, backgroundColor: '#fff', borderRadius: Radius.lg, padding: 16, gap: 10 }}>
               <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
@@ -239,6 +250,7 @@ export default function HomeScreen() {
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>requests</Text>
               <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>post a request, get bids</Text>
             </PressableScale>
+            </MotiView>
           </View>
 
           {/* From kitchens you follow — the creator-economy retention loop */}
