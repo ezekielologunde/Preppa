@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Repeat, Users } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/avatar';
@@ -46,7 +47,9 @@ export default function CustomersScreen() {
   const { user } = useAuth();
   const { data: prepper } = useMyPrepperApplication(user?.id);
   const prepperId = prepper?.id;
-  const { data: orders, isLoading } = usePrepperOrders(prepperId);
+  const { data: orders, isLoading, refetch } = usePrepperOrders(prepperId);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   const rows = aggregate(orders ?? []);
   const repeat = rows.filter((r) => r.orders >= 2).length;
@@ -77,7 +80,7 @@ export default function CustomersScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 280 }}>Every customer who orders from your kitchen shows up here, with their order history.</Text>
           </View>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 10, paddingBottom: 40 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 10, paddingBottom: 40 }}>
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
             <View style={{ flexDirection: 'row', gap: 10, marginBottom: 6 }}>
               <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 16, padding: 14, gap: 2 }}>

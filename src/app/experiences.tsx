@@ -19,7 +19,8 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -65,12 +66,14 @@ export default function ExperiencesScreen() {
   const router = useRouter();
   const { user } = useAuth();
   // Live feedback loop: posted requests show their bid count right on the tab.
-  const { data: myRequests } = useMyExperienceRequests(user?.id);
+  const { data: myRequests, refetch } = useMyExperienceRequests(user?.id);
   const activeRequests = (myRequests ?? []).filter((r) => r.status === 'open').slice(0, 2);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ paddingHorizontal: 20 }}>

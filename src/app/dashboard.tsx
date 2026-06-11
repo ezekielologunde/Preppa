@@ -25,7 +25,7 @@ import {
   Video,
   type LucideIcon,
 } from 'lucide-react-native';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Polyline } from 'react-native-svg';
 
@@ -137,15 +137,17 @@ export default function DashboardScreen() {
   const router = useRouter();
   const desktop = useBreakpoint() === 'desktop';
   const { user } = useAuth();
-  const { data: prepper } = useMyPrepperApplication(user?.id);
-  const { data: prepperMembership } = usePrepperMembership(prepper?.id);
+  const { data: prepper, refetch: refetchPrepper } = useMyPrepperApplication(user?.id);
+  const { data: prepperMembership, refetch: refetchMembership } = usePrepperMembership(prepper?.id);
   const isPro = prepperMembership?.isPro === true;
-  const { data: prepperBadges } = usePrepperBadges(prepper?.id);
-  const { data: orders } = usePrepperOrders(prepper?.id);
-  const { data: reviews } = usePrepperReviews(prepper?.id);
+  const { data: prepperBadges, refetch: refetchBadges } = usePrepperBadges(prepper?.id);
+  const { data: orders, refetch: refetchOrders } = usePrepperOrders(prepper?.id);
+  const { data: reviews, refetch: refetchReviews } = usePrepperReviews(prepper?.id);
   const advance = useAdvanceOrder();
   const toggleAvailability = useToggleAvailability(prepper?.id);
   const [accepting, setAccepting] = useState<boolean | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPrepper(), refetchMembership(), refetchBadges(), refetchOrders(), refetchReviews()]); setRefreshing(false); }
   const isOpen = accepting !== null ? accepting : ((prepper as unknown as { accepting_orders?: boolean })?.accepting_orders !== false);
 
   const list: OrderSummary[] = orders ?? [];
@@ -166,7 +168,7 @@ export default function DashboardScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 150 }}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 150 }}>
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
