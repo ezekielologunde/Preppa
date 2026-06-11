@@ -68,21 +68,35 @@ export default function KitchensScreen() {
           <View style={{ paddingTop: 18 }}><CardRowSkeleton count={3} width={210} /></View>
         ) : kitchens && kitchens.length > 0 ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 60 }}>
-            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary, marginBottom: 14 }}>
-              {kitchens.length} {selected ? `${selected} ` : ''}kitchen{kitchens.length === 1 ? '' : 's'}
-            </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
-              {kitchens.map((k) => <PrepperCard key={k.id} prepper={k} />)}
-            </View>
+            <MotiView
+              key={selected ?? 'all'}
+              from={{ opacity: 0, translateY: 8 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: 'timing', duration: 240 }}>
+              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary, marginBottom: 14 }}>
+                {kitchens.length} {selected ? `${selected} ` : ''}kitchen{kitchens.length === 1 ? '' : 's'}
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
+                {kitchens.map((k, i) => (
+                  <MotiView key={k.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
+                    <PrepperCard prepper={k} />
+                  </MotiView>
+                ))}
+              </View>
+            </MotiView>
           </ScrollView>
         ) : (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+          <MotiView
+            from={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'timing', duration: 260 }}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
             <Compass size={40} color={Palette.divider} />
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>no kitchens here yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               {selected ? `No ${selected} kitchens nearby yet — try another tag.` : 'Check back soon as more kitchens join.'}
             </Text>
-          </View>
+          </MotiView>
         )}
       </SafeAreaView>
     </View>

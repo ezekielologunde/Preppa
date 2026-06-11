@@ -115,11 +115,15 @@ export default function SearchScreen() {
 
         {/* Results */}
         {!active ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+          <MotiView
+            from={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'timing', duration: 280 }}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
             <Search size={40} color={Palette.divider} />
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: Palette.textSecondary }}>find your next meal</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>type to search — or tap a filter to browse</Text>
-          </View>
+          </MotiView>
         ) : loading ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: 20 }}>
             {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} width={CARD_W} />)}
@@ -127,24 +131,44 @@ export default function SearchScreen() {
         ) : (results && results.length > 0) || (preppers && preppers.length > 0) ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
             {preppers && preppers.length > 0 ? (
-              <View style={{ paddingTop: 14 }}>
+              <MotiView
+                from={{ opacity: 0, translateY: 8 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                transition={{ type: 'timing', duration: 240 }}
+                style={{ paddingTop: 14 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, paddingHorizontal: 20, marginBottom: 10 }}>kitchens</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-                  {preppers.map((p) => <PrepperCard key={p.id} prepper={p} />)}
+                  {preppers.map((p, i) => (
+                    <MotiView key={p.id} from={{ opacity: 0, translateX: 12 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 40 }}>
+                      <PrepperCard prepper={p} />
+                    </MotiView>
+                  ))}
                 </ScrollView>
-              </View>
+              </MotiView>
             ) : null}
             {results && results.length > 0 ? (
-              <View style={{ padding: 20, paddingTop: 16 }}>
+              <MotiView
+                from={{ opacity: 0, translateY: 8 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                transition={{ type: 'timing', duration: 240, delay: preppers?.length ? 60 : 0 }}
+                style={{ padding: 20, paddingTop: 16 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginBottom: 12 }}>meals</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-                  {results.map((m) => <MealCard key={m.id} meal={m} width={CARD_W} />)}
+                  {results.map((m, i) => (
+                    <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 28 }}>
+                      <MealCard meal={m} width={CARD_W} />
+                    </MotiView>
+                  ))}
                 </View>
-              </View>
+              </MotiView>
             ) : null}
           </ScrollView>
         ) : (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 8 }}>
+          <MotiView
+            from={{ opacity: 0, translateY: 8 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing', duration: 240 }}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 8 }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>nothing found</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               {hasFilters ? 'try removing a filter, or search something else' : 'try a meal, cuisine, or kitchen — like "bowl" or "Kelsey"'}
@@ -154,7 +178,7 @@ export default function SearchScreen() {
                 <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>clear filters</Text>
               </PressableScale>
             ) : null}
-          </View>
+          </MotiView>
         )}
       </SafeAreaView>
     </View>

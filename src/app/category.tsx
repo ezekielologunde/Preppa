@@ -39,24 +39,32 @@ export default function CategoryScreen() {
           </View>
         ) : meals && meals.length > 0 ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#6b7280', marginBottom: 14 }}>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary, marginBottom: 14 }}>
               {meals.length} meal{meals.length === 1 ? '' : 's'}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-              {meals.map((m) => <MealCard key={m.id} meal={m} width={CARD_W} />)}
+              {meals.map((m, i) => (
+                <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 210, delay: i * 30 }}>
+                  <MealCard meal={m} width={CARD_W} />
+                </MotiView>
+              ))}
             </View>
           </ScrollView>
         ) : (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <UtensilsCrossed size={40} color="#d1d5db" />
+          <MotiView
+            from={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'timing', duration: 260 }}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+            <UtensilsCrossed size={40} color={Palette.divider} />
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>no meals here yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               fresh {title} meals from local preppas are coming soon
             </Text>
             <PressableScale onPress={() => router.push('/explore')} style={{ marginTop: 8, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 20, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>browse all meals</Text>
             </PressableScale>
-          </View>
+          </MotiView>
         )}
       </SafeAreaView>
     </View>
