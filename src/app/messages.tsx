@@ -3,9 +3,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Bell, Bike, CalendarCheck, ChefHat, ChevronLeft, CircleCheck, CircleX, Heart, MessageCircle, MessageSquareQuote, Package, Star, UtensilsCrossed } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
@@ -217,7 +218,7 @@ export default function MessagesScreen() {
 
             {tab === 'updates' ? (
               ordersLoading ? (
-                <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+                <ListSkeleton count={5} />
               ) : !orders?.length && !notifications?.length ? (
                 <Empty Icon={Bell} title="No updates yet" sub="Order updates, new bids, reviews and renewals will show up here." />
               ) : (
@@ -235,7 +236,7 @@ export default function MessagesScreen() {
                 </ScrollView>
               )
             ) : convLoading ? (
-              <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+              <ListSkeleton count={5} />
             ) : !conversations?.length ? (
               <Empty Icon={MessageCircle} title="No messages yet" sub="Message a prepper from a meal or experience to start a conversation." />
             ) : (
