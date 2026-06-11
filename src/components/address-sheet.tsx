@@ -1,4 +1,5 @@
 import { X } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -218,6 +219,7 @@ export function AddressSheet({
         style={{ flex: 1 }}>
         <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, backgroundColor: Palette.surface }}>
           {/* Sheet header */}
+          <MotiView from={{ opacity: 0, translateY: -6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -247,7 +249,9 @@ export function AddressSheet({
               <X size={18} color={Palette.inkSoft} />
             </PressableScale>
           </View>
+          </MotiView>
 
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 80 }} style={{ flex: 1 }}>
           <ScrollView
             contentContainerStyle={{ padding: Spacing.three }}
             keyboardShouldPersistTaps="handled"
@@ -412,6 +416,7 @@ export function AddressSheet({
               </Text>
             </PressableScale>
           </ScrollView>
+          </MotiView>
         </SafeAreaView>
       </KeyboardAvoidingView>
     </Modal>
