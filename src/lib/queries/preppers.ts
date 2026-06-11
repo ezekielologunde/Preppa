@@ -68,6 +68,7 @@ export type PrepperStats = {
   completed_orders: number;
   unique_customers: number;
   repeat_customers: number;
+  followers: number;
   completion_rate: number | null;
   member_since: string | null;
 };
@@ -192,6 +193,53 @@ export function usePrepperSearch(query: string) {
         .limit(12);
       if (error) throw error;
       return ((data ?? []) as unknown as Row[]).map(mapPrepper);
+    },
+  });
+}
+
+/** Whether the signed-in user follows this kitchen (own follow row is readable). */
+export function useIsFollowing(prepperId?: string | null, userId?: string | null) {
+  return useQuery({
+    queryKey: ['follow', prepperId ?? 'none', userId ?? 'anon'],
+    enabled: !!prepperId && !!userId,
+    queryFn: async (): Promise<boolean> => {
+      const { count, error } = await supabase
+        .from('follows')
+        .select('prepper_id', { count: 'exact', head: true })
+        .eq('prepper_id', prepperId!)
+        .eq('follower_id', userId!);
+      if (error) throw error;
+      return (count ?? 0) > 0;
+    },
+  });
+}
+
+/** Follow / unfollow a kitchen. Optimistic; refreshes follower count + state. */
+export function useToggleFollow(prepperId: string, userId?: string | null) {
+  const qc = useQueryClient();
+  const key = ['follow', prepperId, userId ?? 'anon'];
+  return useMutation({
+    mutationFn: async (following: boolean): Promise<boolean> => {
+      if (!userId) throw new Error('Sign in to follow kitchens');
+      if (following) {
+        const { error } = await supabase.from('follows').delete().eq('prepper_id', prepperId).eq('follower_id', userId);
+        if (error) throw error;
+        return false;
+      }
+      const { error } = await supabase.from('follows').insert({ prepper_id: prepperId, follower_id: userId });
+      if (error && error.code !== '23505') throw error; // ignore duplicate (already following)
+      return true;
+    },
+    onMutate: async (following) => {
+      await qc.cancelQueries({ queryKey: key });
+      const prev = qc.getQueryData<boolean>(key);
+      qc.setQueryData(key, !following);
+      return { prev };
+    },
+    onError: (_e, _v, ctx) => { if (ctx) qc.setQueryData(key, ctx.prev); },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: key });
+      qc.invalidateQueries({ queryKey: ['prepper', 'profile', prepperId] });
     },
   });
 }

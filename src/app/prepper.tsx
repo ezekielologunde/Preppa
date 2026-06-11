@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, ChevronLeft, MapPin, MessageCircle, Repeat, ShieldCheck, ShoppingBag, Star } from 'lucide-react-native';
+import { BadgeCheck, Check, ChevronLeft, MapPin, MessageCircle, Repeat, ShieldCheck, ShoppingBag, Star, UserPlus } from 'lucide-react-native';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,9 +10,11 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton, Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
+import { feedback } from '@/lib/feedback';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
-import { usePrepperProfile, type PrepperStats } from '@/lib/queries/preppers';
+import { useIsFollowing, usePrepperProfile, useToggleFollow, type PrepperStats } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -21,6 +23,12 @@ function memberSince(iso: string | null): string {
   if (!iso) return 'recently';
   const d = new Date(iso);
   return d.toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
+}
+
+/** 1234 → "1.2k". */
+function compact(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 >= 100 ? 1 : 0)}k`;
+  return String(n);
 }
 
 function TrustStat({ value, label, color = INK }: { value: string; label: string; color?: string }) {
@@ -45,9 +53,17 @@ function trustRow(rating: number, reviews: number, s: PrepperStats | null) {
 export default function PrepperScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id?: string }>();
+  const { user } = useAuth();
   const { data: p, isLoading } = usePrepperProfile(id);
   const { data: reviews } = usePrepperReviews(id, 6);
+  const { data: following } = useIsFollowing(id, user?.id);
+  const toggleFollow = useToggleFollow(id ?? '', user?.id);
   const cardW = gridCardWidth(useContentWidth());
+  const onToggleFollow = () => {
+    if (!user?.id) { router.push('/auth'); return; }
+    feedback.tap();
+    toggleFollow.mutate(!!following);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -80,6 +96,29 @@ export default function PrepperScreen() {
                   </View>
                 ) : null}
                 <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.6)' }}>Joined {memberSince(p?.stats?.member_since ?? null)}</Text>
+              </View>
+
+              {/* Followers + Follow — the creator-economy primitive */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 6 }}>
+                <Text style={{ fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>
+                  <Text style={{ fontFamily: Font.heading, color: '#fff', fontVariant: ['tabular-nums'] }}>{compact(p?.stats?.followers ?? 0)}</Text>
+                  {` follower${(p?.stats?.followers ?? 0) === 1 ? '' : 's'}`}
+                </Text>
+                {p ? (
+                  <PressableScale
+                    onPress={onToggleFollow}
+                    disabled={toggleFollow.isPending}
+                    accessibilityRole="button"
+                    accessibilityLabel={following ? `Following ${p.name}. Tap to unfollow` : `Follow ${p.name}`}
+                    style={{
+                      flexDirection: 'row', alignItems: 'center', gap: 6, height: 38, paddingHorizontal: 18, borderRadius: 19,
+                      backgroundColor: following ? 'transparent' : ORANGE,
+                      borderWidth: following ? 1.5 : 0, borderColor: 'rgba(255,255,255,0.35)',
+                    }}>
+                    {following ? <Check size={15} color="#fff" /> : <UserPlus size={15} color="#fff" />}
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{following ? 'Following' : 'Follow'}</Text>
+                  </PressableScale>
+                ) : null}
               </View>
             </View>
           </SafeAreaView>

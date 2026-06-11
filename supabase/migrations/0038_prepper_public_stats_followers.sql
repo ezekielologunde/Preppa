@@ -1,0 +1,4 @@
+-- 0038 — Add public follower count to prepper_public_stats(). follows RLS scopes
+-- row reads to self/owner, so the public count for creator-style profiles must
+-- come through this SECURITY DEFINER aggregate (count only — no follower
+-- identities exposed). Canonical body lives in the DB.
