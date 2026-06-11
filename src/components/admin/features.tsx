@@ -1,4 +1,5 @@
 import { ToggleLeft } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -8,9 +9,15 @@ import { Admin, Card, SectionState } from './ui';
 
 function Switch({ on }: { on: boolean }) {
   return (
-    <View style={{ width: 48, height: 28, borderRadius: 14, backgroundColor: on ? Admin.success : 'rgba(255,255,255,0.12)', justifyContent: 'center', paddingHorizontal: 3, alignItems: on ? 'flex-end' : 'flex-start' }}>
-      <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff' }} />
-    </View>
+    <MotiView
+      animate={{ backgroundColor: on ? Admin.success : 'rgba(255,255,255,0.12)' }}
+      transition={{ type: 'timing', duration: 200 }}
+      style={{ width: 48, height: 28, borderRadius: 14, justifyContent: 'center', paddingHorizontal: 3 }}>
+      <MotiView
+        animate={{ translateX: on ? 20 : 0 }}
+        transition={{ type: 'timing', duration: 200 }}
+        style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff' }} />
+    </MotiView>
   );
 }
 

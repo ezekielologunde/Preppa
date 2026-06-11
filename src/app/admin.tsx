@@ -11,6 +11,7 @@ import {
   Wallet,
   type LucideIcon,
 } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -103,13 +104,19 @@ export default function AdminScreen() {
         </ScrollView>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, paddingTop: 4, paddingBottom: 60 }}>
-          {section === 'overview' && <AdminOverview onReviewPreppers={() => setSection('preppers')} />}
-          {section === 'preppers' && <AdminPreppers />}
-          {section === 'customers' && <AdminCustomers />}
-          {section === 'orders' && <AdminOrders />}
-          {section === 'earnings' && <AdminEarnings />}
-          {section === 'features' && <AdminFeatures />}
-          {section === 'disputes' && <AdminDisputes />}
+          <MotiView
+            key={section}
+            from={{ opacity: 0, translateY: 10 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ type: 'timing', duration: 220 }}>
+            {section === 'overview' && <AdminOverview onReviewPreppers={() => setSection('preppers')} />}
+            {section === 'preppers' && <AdminPreppers />}
+            {section === 'customers' && <AdminCustomers />}
+            {section === 'orders' && <AdminOrders />}
+            {section === 'earnings' && <AdminEarnings />}
+            {section === 'features' && <AdminFeatures />}
+            {section === 'disputes' && <AdminDisputes />}
+          </MotiView>
         </ScrollView>
       </SafeAreaView>
     </View>

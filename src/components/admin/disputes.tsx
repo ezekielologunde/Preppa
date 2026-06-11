@@ -1,4 +1,5 @@
 import { AlertTriangle, Check, X } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
@@ -119,7 +120,14 @@ function DisputeCard({ d }: { d: AdminDisputeRow }) {
         </View>
       )}
 
-      {expanded ? <ResolveForm dispute={d} onDone={() => setExpanded(false)} /> : null}
+      {expanded ? (
+        <MotiView
+          from={{ opacity: 0, translateY: -6 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'timing', duration: 200 }}>
+          <ResolveForm dispute={d} onDone={() => setExpanded(false)} />
+        </MotiView>
+      ) : null}
     </Card>
   );
 }

@@ -1,4 +1,5 @@
 import { ClipboardList, DollarSign, Repeat, ShoppingBag, Store, TrendingUp, Users } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Text, View } from 'react-native';
 
 import { Font } from '@/constants/fonts';
@@ -62,13 +63,21 @@ export function AdminOverview({ onReviewPreppers }: { onReviewPreppers: () => vo
       {s ? (
         <>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-            <StatCard label="Total revenue" value={money(s.gmv)} sub={`${money(s.gmv_today)} today`} Icon={DollarSign} tone="success" />
-            <StatCard label="Orders" value={compact(s.total_orders)} sub={`${compact(s.orders_today)} today · ${compact(s.open_orders)} open`} Icon={ShoppingBag} tone="brand" />
-            <StatCard label="Customers" value={compact(s.total_users)} Icon={Users} tone="brand" />
-            <StatCard label="Preppers" value={compact(s.approved_preppers)} sub={`${compact(s.total_preppers)} total`} Icon={Store} tone="success" />
+            {([
+              <StatCard key="rev" label="Total revenue" value={money(s.gmv)} sub={`${money(s.gmv_today)} today`} Icon={DollarSign} tone="success" />,
+              <StatCard key="ord" label="Orders" value={compact(s.total_orders)} sub={`${compact(s.orders_today)} today · ${compact(s.open_orders)} open`} Icon={ShoppingBag} tone="brand" />,
+              <StatCard key="cust" label="Customers" value={compact(s.total_users)} Icon={Users} tone="brand" />,
+              <StatCard key="prep" label="Preppers" value={compact(s.approved_preppers)} sub={`${compact(s.total_preppers)} total`} Icon={Store} tone="success" />,
+            ]).map((card, i) => (
+              <MotiView key={i} from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 55 }} style={{ flex: 1, minWidth: 150 }}>
+                {card}
+              </MotiView>
+            ))}
           </View>
 
-          <MarketplaceFitCard />
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 200 }}>
+            <MarketplaceFitCard />
+          </MotiView>
 
           {s.pending_preppers > 0 ? (
             <Card style={{ borderColor: Admin.warn + '55', backgroundColor: Admin.warn + '14' }}>

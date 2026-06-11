@@ -172,7 +172,7 @@ export default function SurpriseScreen() {
             ) : (
               <View style={{ paddingHorizontal: 20 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK, marginBottom: 14 }}>
-                  {picks.length === 1 ? 'here&apos;s your pick' : `here&apos;s ${picks.length} options`}
+                  {picks.length === 1 ? "here's your pick" : `here's ${picks.length} options`}
                 </Text>
                 <View style={{ gap: 16 }}>
                   {picks.map((meal, i) => (

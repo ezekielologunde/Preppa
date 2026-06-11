@@ -1,4 +1,5 @@
 import { ChevronDown, ChevronUp, Receipt } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -48,7 +49,11 @@ export function AdminOrders() {
             </PressableScale>
 
             {expanded ? (
-              <View style={{ paddingHorizontal: 16, paddingBottom: 16, borderTopWidth: 1, borderTopColor: Admin.border, paddingTop: 12 }}>
+              <MotiView
+                from={{ opacity: 0, translateY: -6 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                transition={{ type: 'timing', duration: 200 }}
+                style={{ paddingHorizontal: 16, paddingBottom: 16, borderTopWidth: 1, borderTopColor: Admin.border, paddingTop: 12 }}>
                 {o.items.map((it, i) => (
                   <ReceiptLine key={i} label={`${it.quantity}× ${it.meal?.title ?? 'item'}`} value={money(it.total)} />
                 ))}
@@ -64,7 +69,7 @@ export function AdminOrders() {
                   <Pill label={o.payment?.status ?? 'unpaid'} />
                   {o.payment ? <Text style={{ fontFamily: Font.body, fontSize: 12, color: Admin.textMuted }}>· {o.payment.provider}</Text> : null}
                 </View>
-              </View>
+              </MotiView>
             ) : null}
           </Card>
         );
