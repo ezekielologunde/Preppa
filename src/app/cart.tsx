@@ -4,7 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { Bike, Check, ChefHat, ChevronLeft, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2, Heart } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState, type ComponentType } from 'react';
-import { ActivityIndicator, Platform, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -34,7 +34,7 @@ const TIPS = [0, 1, 2, 5];
 export default function CartScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: cart, isLoading } = useCart(user?.id);
+  const { data: cart, isLoading, refetch } = useCart(user?.id);
   const updateItem = useUpdateCartItem(user?.id);
   const removeItems = useRemoveItems(user?.id);
   const placeOrder = usePlaceOrder();
@@ -50,6 +50,8 @@ export default function CartScreen() {
   const [tip, setTip] = useState(0);
   const [customTip, setCustomTip] = useState(false);
   const busy = placeOrder.isPending || checkoutStripe.isPending || embeddedCheckout.isPending;
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   const prepper = cart?.items[0]?.prepper ?? 'the prepper';
 
@@ -213,7 +215,7 @@ export default function CartScreen() {
           </View>
         ) : (
           <>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 20 }}>
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 20 }}>
               {mixed ? (
                 <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.md, padding: 14, gap: 10 }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: Palette.brandPressed }}>Items from {kitchens.length} kitchens</Text>

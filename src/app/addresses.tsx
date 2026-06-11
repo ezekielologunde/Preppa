@@ -3,7 +3,7 @@ import { MapPin, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
-  ActivityIndicator,
+  RefreshControl,
   ScrollView,
   Text,
   View,
@@ -16,6 +16,7 @@ import {
   FormState,
   resolvedLabel,
 } from '@/components/address-sheet';
+import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius, Shadow, Spacing, Type } from '@/constants/theme';
@@ -211,13 +212,15 @@ function AddressCard({
 export default function AddressesScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: addresses = [], isLoading } = useAddresses(user?.id);
+  const { data: addresses = [], isLoading, refetch } = useAddresses(user?.id);
   const upsertAddress = useUpsertAddress(user?.id);
   const deleteAddress = useDeleteAddress(user?.id);
   const setDefaultAddress = useSetDefaultAddress(user?.id);
   const [sheetVisible, setSheetVisible] = useState(false);
   const [editing, setEditing] = useState<Address | undefined>(undefined);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   const triggerDelete = (id: string) => {
     setPendingDeleteId(id);
@@ -299,9 +302,7 @@ export default function AddressesScreen() {
 
         {/* Content */}
         {isLoading ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <ActivityIndicator color={Palette.brand} />
-          </View>
+          <ListSkeleton count={3} />
         ) : addresses.length === 0 ? (
           /* Empty state */
           <MotiView
@@ -368,6 +369,7 @@ export default function AddressesScreen() {
           </MotiView>
         ) : (
           <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />}
             contentContainerStyle={{
               padding: Spacing.three,
               gap: Spacing.three,

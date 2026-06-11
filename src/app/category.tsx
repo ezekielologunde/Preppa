@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, UtensilsCrossed } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MealCard } from '@/components/meal-card';
@@ -19,8 +20,10 @@ export default function CategoryScreen() {
   const router = useRouter();
   const CARD_W = gridCardWidth(useContentWidth());
   const { key, label } = useLocalSearchParams<{ key?: string; label?: string }>();
-  const { data: meals, isLoading } = useMealsByCategory(key);
+  const { data: meals, isLoading, refetch } = useMealsByCategory(key);
   const title = (label || key || 'all meals').toString();
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -38,7 +41,7 @@ export default function CategoryScreen() {
             {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} width={CARD_W} />)}
           </View>
         ) : meals && meals.length > 0 ? (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
             <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary, marginBottom: 14 }}>
               {meals.length} meal{meals.length === 1 ? '' : 's'}
             </Text>
