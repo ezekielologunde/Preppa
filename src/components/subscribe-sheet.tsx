@@ -1,4 +1,5 @@
 import { Minus, Plus, X } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, Text, View } from 'react-native';
 
@@ -46,6 +47,7 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
     <Modal visible={!!plan} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable onPress={onClose} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.5)', justifyContent: 'flex-end' }}>
         <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: '#fff', borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: 22, paddingBottom: 34, gap: 16, alignSelf: 'center', width: '100%', maxWidth: 480 }}>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 21, color: INK, letterSpacing: -0.4 }}>{plan?.name}</Text>
@@ -57,8 +59,10 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
               <X size={18} color={INK} />
             </PressableScale>
           </View>
+          </MotiView>
 
           {/* Servings */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 80 }}>
           <View style={{ gap: 8 }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>Servings of each meal</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
@@ -74,8 +78,10 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
               </Text>
             </View>
           </View>
+          </MotiView>
 
           {/* Delivery day */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 160 }}>
           <View style={{ gap: 8 }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>Delivery day</Text>
             <View style={{ flexDirection: 'row', gap: 6 }}>
@@ -93,8 +99,10 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
               First delivery {nextDeliveryDate(day).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })} · renews {plan?.frequency}
             </Text>
           </View>
+          </MotiView>
 
           {/* Confirm */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 }}>
           <PressableScale
             onPress={confirm}
             disabled={subscribe.isPending}
@@ -109,6 +117,7 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
               </Text>
             )}
           </PressableScale>
+          </MotiView>
         </Pressable>
       </Pressable>
     </Modal>

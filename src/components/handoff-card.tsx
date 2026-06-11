@@ -1,4 +1,5 @@
 import { CircleCheck, QrCode } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import QRCode from 'react-native-qrcode-svg';
 import { Text, View } from 'react-native';
 
@@ -34,14 +35,17 @@ function gradientFor(seed: string): [string, string] {
 export function HandoffCard({ pin, token, verified, label }: { pin: string; token: string; verified: boolean; label: string }) {
   if (verified) {
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '44', borderRadius: 14, padding: 12 }}>
-        <CircleCheck size={18} color={Palette.success} strokeWidth={2.5} />
-        <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#15803d' }}>Handoff verified — enjoy your meal!</Text>
-      </View>
+      <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 340, bounce: 0.15 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '44', borderRadius: 14, padding: 12 }}>
+          <CircleCheck size={18} color={Palette.success} strokeWidth={2.5} />
+          <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#15803d' }}>Handoff verified — enjoy your meal!</Text>
+        </View>
+      </MotiView>
     );
   }
   const [g1, g2] = gradientFor(token);
   return (
+    <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
     <View style={{ backgroundColor: Palette.brandTint, borderRadius: 16, padding: 16, gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
         <QrCode size={16} color={Palette.brandPressed} />
@@ -74,5 +78,6 @@ export function HandoffCard({ pin, token, verified, label }: { pin: string; toke
         </View>
       </View>
     </View>
+    </MotiView>
   );
 }
