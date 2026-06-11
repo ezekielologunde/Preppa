@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Clock, DollarSign, Plus, Users } from 'lucide-react-native';
+import { ChevronLeft, Clock, DollarSign, Plus, Users, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -187,15 +187,15 @@ export default function BidRequestsScreen() {
             <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, flex: 1 }} numberOfLines={1}>{bidTarget?.title}</Text>
-                <PressableScale onPress={() => setBidTarget(null)} accessibilityRole="button" accessibilityLabel="Close" style={{ padding: 4 }}>
-                  <ChevronLeft size={22} color={Palette.textMuted} style={{ transform: [{ rotate: '180deg' }] }} />
+                <PressableScale onPress={() => setBidTarget(null)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
+                  <X size={18} color={Palette.inkSoft} />
                 </PressableScale>
               </View>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{bidTarget?.description}</Text>
               <View style={{ flexDirection: 'row', gap: 10 }}>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, marginBottom: 6 }}>your price per serving ($)</Text>
-                  <TextInput value={bidPrice} onChangeText={setBidPrice} placeholder={`budget: $${bidTarget?.budget}`} placeholderTextColor="#9ca3af" keyboardType="decimal-pad"
+                  <TextInput value={bidPrice} onChangeText={setBidPrice} placeholder={bidTarget?.budget_per_serving != null ? `budget: $${bidTarget.budget_per_serving}/serving` : 'your price per serving'} placeholderTextColor="#9ca3af" keyboardType="decimal-pad"
                     style={{ height: 50, backgroundColor: '#F4F4F6', borderRadius: 14, paddingHorizontal: 14, fontFamily: Font.body, fontSize: 15, color: INK }} />
                 </View>
               </View>
