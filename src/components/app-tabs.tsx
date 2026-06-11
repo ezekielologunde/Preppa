@@ -4,6 +4,7 @@ import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Font } from '@/constants/fonts';
+import { feedback } from '@/lib/feedback';
 import { useFeatureFlags } from '@/lib/queries/feature-flags';
 import { Palette, Shadow, TouchTarget } from '@/constants/theme';
 
@@ -53,7 +54,7 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
         return (
           <Pressable
             key={tab.name}
-            onPress={() => navigation.navigate(tab.name)}
+            onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
             accessibilityRole="button"
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}

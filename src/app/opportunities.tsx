@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
@@ -134,7 +135,7 @@ export default function OpportunitiesScreen() {
         ) : !approved ? (
           <Gate title="Approval pending" body="Once your prepper application is approved, customer requests will appear here for you to bid on." />
         ) : isLoading ? (
-          <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+          <ListSkeleton count={4} />
         ) : !requests?.length ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
             <Inbox size={28} color={Palette.textMuted} />
