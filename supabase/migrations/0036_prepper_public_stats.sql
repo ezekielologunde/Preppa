@@ -1,0 +1,4 @@
+-- 0036 — Public prepper trust stats. SECURITY DEFINER aggregate-only function
+-- (completed orders, unique/repeat customers, completion rate, member-since) so
+-- customer-facing prepper profiles can show trust signals without exposing any
+-- order rows/PII. Granted to anon + authenticated. Canonical body in the DB.

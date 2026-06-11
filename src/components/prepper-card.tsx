@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import { BadgeCheck, Star } from 'lucide-react-native';
 import { Text, View } from 'react-native';
 
@@ -11,8 +12,9 @@ const ORANGE = '#f15f22';
 
 /** "Top preppers near you" card — chef hero, rating, tags, starting price. */
 export function PrepperCard({ prepper }: { prepper: TopPrepper }) {
+  const router = useRouter();
   return (
-    <PressableScale style={{ width: 210 }} accessibilityRole="button" accessibilityLabel={`${prepper.name}, ${prepper.rating.toFixed(1)} stars`}>
+    <PressableScale onPress={() => router.push(`/prepper?id=${prepper.id}`)} style={{ width: 210 }} accessibilityRole="button" accessibilityLabel={`${prepper.name}, ${prepper.rating.toFixed(1)} stars — view kitchen`}>
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 2 }}>
         <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
           {prepper.image ? <Image source={prepper.image} style={{ flex: 1 }} contentFit="cover" transition={250} /> : null}

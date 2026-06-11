@@ -132,7 +132,7 @@ export default function MealScreen() {
 
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <PressableScale
-                  onPress={() => meal.prepperId && router.push(`/explore`)}
+                  onPress={() => meal.prepperId && router.push(`/prepper?id=${meal.prepperId}`)}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#374151' }}>by {meal.prepper}</Text>
                   {meal.prepperVerified ? <BadgeCheck size={16} color={ORANGE} fill={ORANGE} stroke="#fff" /> : null}
