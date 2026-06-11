@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { AlertTriangle, Check, ChevronLeft, Lock, Receipt, RotateCcw, Star, X } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -312,20 +313,21 @@ export default function OrdersScreen() {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
-            {orders.map((o) => (
-              <OrderCard
-                key={o.id}
-                order={o}
-                needsPayment={paymentsOn && o.status === 'pending' && o.paymentStatus !== 'succeeded' && o.paymentStatus !== 'refunded'}
-                paying={payingId === o.id}
-                onPay={() => payOrder(o.id)}
-                cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
-                onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
-                onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
-                onReorder={() => reorder(o)}
-                onReport={() => { setReportReason(''); setReportErr(null); setReportModal(o); }}
-                reordering={reorderingId === o.id}
-              />
+            {orders.map((o, i) => (
+              <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 50 }}>
+                <OrderCard
+                  order={o}
+                  needsPayment={paymentsOn && o.status === 'pending' && o.paymentStatus !== 'succeeded' && o.paymentStatus !== 'refunded'}
+                  paying={payingId === o.id}
+                  onPay={() => payOrder(o.id)}
+                  cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
+                  onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
+                  onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
+                  onReorder={() => reorder(o)}
+                  onReport={() => { setReportReason(''); setReportErr(null); setReportModal(o); }}
+                  reordering={reorderingId === o.id}
+                />
+              </MotiView>
             ))}
           </ScrollView>
         )}
