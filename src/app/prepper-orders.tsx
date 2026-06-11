@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, QrCode, ShoppingBag, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -111,8 +111,10 @@ export default function PrepperOrdersScreen() {
   const { user } = useAuth();
   const { data: prepper } = useMyPrepperApplication(user?.id);
   const prepperId = prepper?.id;
-  const { data: orders, isLoading } = usePrepperOrders(prepperId);
+  const { data: orders, isLoading, refetch } = usePrepperOrders(prepperId);
   useOrdersRealtime('prepper_id', prepperId);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
   const advance = useAdvanceOrder();
   const cancel = useCancelOrder();
   const refund = useRefundOrder();
@@ -178,7 +180,7 @@ export default function PrepperOrdersScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New orders from customers will appear here in real time.</Text>
           </MotiView>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
             {orders.map((o, i) => (
               <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 60 }}>
                 <OrderCard

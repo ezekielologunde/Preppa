@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, DollarSign, Receipt, TrendingUp, Wallet } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -60,7 +61,9 @@ function EarningRow({ item }: { item: EarningsRecent }) {
 
 export default function EarningsScreen() {
   const router = useRouter();
-  const { data, isLoading } = useMyEarnings();
+  const { data, isLoading, refetch } = useMyEarnings();
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
@@ -86,7 +89,7 @@ export default function EarningsScreen() {
             </PressableScale>
           </View>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 48 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 48 }}>
             {/* Hero: net earnings */}
             <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
             <View style={{ backgroundColor: CARD, borderRadius: 22, padding: 22, gap: 6 }}>

@@ -3,7 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Bell, Bike, CalendarCheck, ChefHat, ChevronLeft, CircleCheck, CircleX, Heart, MessageCircle, MessageSquareQuote, Package, Star, UtensilsCrossed } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -157,10 +157,16 @@ export default function MessagesScreen() {
   const { user } = useAuth();
   const { tab: tabParam } = useLocalSearchParams<{ tab?: string }>();
   const [tab, setTab] = useState<'updates' | 'messages'>(tabParam === 'messages' ? 'messages' : 'updates');
-  const { data: conversations, isLoading: convLoading } = useConversations(user?.id);
-  const { data: orders, isLoading: ordersLoading } = useMyOrders(user?.id);
-  const { data: notifications } = useNotifications(user?.id);
+  const { data: conversations, isLoading: convLoading, refetch: refetchConv } = useConversations(user?.id);
+  const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useMyOrders(user?.id);
+  const { data: notifications, refetch: refetchNotifs } = useNotifications(user?.id);
   const markRead = useMarkNotificationsRead(user?.id);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() {
+    setRefreshing(true);
+    await Promise.all([refetchConv(), refetchOrders(), refetchNotifs()]);
+    setRefreshing(false);
+  }
 
   // Opening the inbox clears the unread notification badge.
   const hasUnread = (notifications ?? []).some((n) => !n.read);
@@ -215,7 +221,7 @@ export default function MessagesScreen() {
               ) : !orders?.length && !notifications?.length ? (
                 <Empty Icon={Bell} title="No updates yet" sub="Order updates, new bids, reviews and renewals will show up here." />
               ) : (
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
+                <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
                   {(notifications ?? []).map((n, i) => (
                     <MotiView key={n.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 35 }}>
                       <NotificationItemRow n={n} onPress={() => routeNotification(n)} />
@@ -233,7 +239,7 @@ export default function MessagesScreen() {
             ) : !conversations?.length ? (
               <Empty Icon={MessageCircle} title="No messages yet" sub="Message a prepper from a meal or experience to start a conversation." />
             ) : (
-              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
+              <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
                 {conversations.map((c, i) => (
                   <MotiView key={c.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 40 }}>
                     <ConversationRow c={c} onPress={() => router.push(`/chat?id=${c.id}&name=${encodeURIComponent(c.otherName)}`)} />
