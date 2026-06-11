@@ -376,7 +376,7 @@ function ActionItem({ Icon, label, color, onPress }: { Icon: LucideIcon; label: 
       <View style={{ width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: color === '#fff' ? '#3f4451' : color + '66', alignItems: 'center', justifyContent: 'center' }}>
         <Icon size={18} color={color} />
       </View>
-      <Text style={{ fontFamily: Font.medium, fontSize: 10, color: '#9ca3af' }} numberOfLines={1}>{label}</Text>
+      <Text style={{ fontFamily: Font.medium, fontSize: 10, color: Palette.textMuted }} numberOfLines={1}>{label}</Text>
     </PressableScale>
   );
 }

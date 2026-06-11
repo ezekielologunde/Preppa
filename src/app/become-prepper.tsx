@@ -126,7 +126,7 @@ export default function BecomePrepperScreen() {
 
   // --- Application form ---
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <View style={{ flex: 1, backgroundColor: Palette.surface }}>
       <SafeAreaView style={{ flex: 1 }}>
         {Header}
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">

@@ -61,20 +61,20 @@ function OrderCard({
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }} numberOfLines={1}>{order.customer}</Text>
-          <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9ca3af', marginTop: 1 }}>
+          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, marginTop: 1 }}>
             {order.items.reduce((s, i) => s + i.quantity, 0)} item{order.items.length === 1 ? '' : 's'} · {money(order.total)}
           </Text>
         </View>
         <View style={{ paddingHorizontal: 11, height: 26, borderRadius: 999, backgroundColor: done ? '#252a34' : ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: done ? '#9ca3af' : ORANGE }}>{STATUS_LABEL[order.status]}</Text>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: done ? Palette.textMuted : ORANGE }}>{STATUS_LABEL[order.status]}</Text>
         </View>
       </View>
 
       <View style={{ gap: 6 }}>
         {order.items.map((it) => (
           <View key={it.id} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13.5, color: '#d1d5db' }} numberOfLines={1}>{it.quantity}× {it.title}</Text>
-            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#9ca3af', fontVariant: ['tabular-nums'] }}>{money(it.total)}</Text>
+            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13.5, color: Palette.divider }} numberOfLines={1}>{it.quantity}× {it.title}</Text>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{money(it.total)}</Text>
           </View>
         ))}
       </View>
@@ -82,14 +82,14 @@ function OrderCard({
       {/* Fulfillment */}
       <View style={{ backgroundColor: '#1d2129', borderRadius: 12, padding: 10, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: ORANGE, textTransform: 'capitalize' }}>{order.fulfillment === 'meetup' ? 'Meet up' : order.fulfillment}</Text>
-        {order.fulfillmentNote ? <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: '#d1d5db' }} numberOfLines={2}>· {order.fulfillmentNote}</Text> : null}
+        {order.fulfillmentNote ? <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: Palette.divider }} numberOfLines={2}>· {order.fulfillmentNote}</Text> : null}
       </View>
 
       {step ? (
         <View style={{ flexDirection: 'row', gap: 10 }}>
           {canCancel ? (
             <PressableScale onPress={onCancel} disabled={busy} accessibilityRole="button" accessibilityLabel="Decline order" style={{ height: 46, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.5 : 1 }}>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#9ca3af' }}>Decline</Text>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.textMuted }}>Decline</Text>
             </PressableScale>
           ) : null}
           <PressableScale onPress={() => (needsHandoff ? onVerify() : onAdvance(step.next))} disabled={busy} accessibilityRole="button" accessibilityLabel={needsHandoff ? 'Verify handoff and complete' : step.cta} style={{ flex: 1, height: 46, borderRadius: 14, backgroundColor: ORANGE, flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.6 : 1 }}>
@@ -165,7 +165,7 @@ export default function PrepperOrdersScreen() {
         {!prepperId ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <ShoppingBag size={28} color="#5b6170" />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>This is your kitchen&apos;s order queue. Approved preppers see incoming orders here.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>This is your kitchen&apos;s order queue. Approved preppers see incoming orders here.</Text>
           </View>
         ) : isLoading ? (
           <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
@@ -175,7 +175,7 @@ export default function PrepperOrdersScreen() {
               <ShoppingBag size={28} color="#5b6170" />
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No orders yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: '#9ca3af', textAlign: 'center' }}>New orders from customers will appear here in real time.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New orders from customers will appear here in real time.</Text>
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
@@ -202,14 +202,14 @@ export default function PrepperOrdersScreen() {
               <X size={24} color="#fca5a5" strokeWidth={2.6} />
             </View>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.4 }}>Decline this order?</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: '#9ca3af', lineHeight: 19 }}>
+            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textMuted, lineHeight: 19 }}>
               {declineOrder ? `${declineOrder.customer}'s order (${money(declineOrder.total)}) will be cancelled and the customer refunded automatically.` : ''}
             </Text>
-            <PressableScale onPress={() => declineOrder && doDecline(declineOrder)} accessibilityRole="button" accessibilityLabel="Yes, decline the order" style={{ height: 50, borderRadius: 14, backgroundColor: '#ef4444', alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => declineOrder && doDecline(declineOrder)} accessibilityRole="button" accessibilityLabel="Yes, decline the order" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Yes, decline</Text>
             </PressableScale>
             <PressableScale onPress={() => setDeclineOrder(null)} accessibilityRole="button" accessibilityLabel="Keep the order" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#9ca3af' }}>Keep the order</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textMuted }}>Keep the order</Text>
             </PressableScale>
           </Pressable>
         </Pressable>
@@ -224,11 +224,11 @@ export default function PrepperOrdersScreen() {
                 <QrCode size={22} color={ORANGE} />
               </View>
               <PressableScale onPress={() => setVerifyOrder(null)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: '#252a34', alignItems: 'center', justifyContent: 'center' }}>
-                <X size={17} color="#9ca3af" />
+                <X size={17} color={Palette.textMuted} />
               </PressableScale>
             </View>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.4 }}>Verify the handoff</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: '#9ca3af', lineHeight: 19 }}>
+            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textMuted, lineHeight: 19 }}>
               Ask {verifyOrder?.customer ?? 'the customer'} for their 3-digit code, or scan their QR with your camera.
             </Text>
             <TextInput

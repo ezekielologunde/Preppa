@@ -42,7 +42,7 @@ function RequestCard({ req, prepperId }: { req: OpenRequest; prepperId: string }
   }
 
   return (
-    <View style={{ backgroundColor: '#fff', borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
+    <View style={{ backgroundColor: Palette.surface, borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, flex: 1 }}>{req.title}</Text>
         <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
