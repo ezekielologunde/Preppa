@@ -232,8 +232,10 @@ export function useVerifyHandoffToken() {
 export function useReportDispute() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (v: { orderId: string; reason: string }) => {
-      const { error } = await supabase.from('order_disputes').insert({ order_id: v.orderId, reason: v.reason });
+    mutationFn: async (v: { orderId: string; reason: string; reporterId: string }) => {
+      const { error } = await supabase
+        .from('order_disputes')
+        .insert({ order_id: v.orderId, reporter_id: v.reporterId, reason: v.reason });
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['orders'] }),

@@ -271,39 +271,39 @@ export default function CartScreen() {
 
               {/* In-home prep option */}
               <PressableScale
-                onPress={() => { feedback.tap(); setMethod(‘in_home’); setErr(null); }}
+                onPress={() => { feedback.tap(); setMethod('in_home'); setErr(null); }}
                 accessibilityRole="button"
-                accessibilityState={{ selected: method === ‘in_home’ }}
+                accessibilityState={{ selected: method === 'in_home' }}
                 accessibilityLabel="Cooked in my kitchen — a prepper visits your home"
-                style={{ backgroundColor: method === ‘in_home’ ? ‘#11151C’ : ‘#fff’, borderWidth: 1.5, borderColor: method === ‘in_home’ ? ‘#11151C’ : Palette.border, borderRadius: Radius.md, paddingHorizontal: 16, paddingVertical: 14, flexDirection: ‘row’, alignItems: ‘center’, gap: 12 }}>
-                {method === ‘in_home’ ? (
-                  <View style={{ position: ‘absolute’, top: 10, right: 12, width: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: ‘center’, justifyContent: ‘center’ }}>
+                style={{ backgroundColor: method === 'in_home' ? '#11151C' : '#fff', borderWidth: 1.5, borderColor: method === 'in_home' ? '#11151C' : Palette.border, borderRadius: Radius.md, paddingHorizontal: 16, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                {method === 'in_home' ? (
+                  <View style={{ position: 'absolute', top: 10, right: 12, width: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                     <Check size={11} color="#fff" strokeWidth={3.5} />
                   </View>
                 ) : null}
-                <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: method === ‘in_home’ ? ORANGE : Palette.chip, alignItems: ‘center’, justifyContent: ‘center’ }}>
-                  <ChefHat size={22} color={method === ‘in_home’ ? ‘#fff’ : Palette.textSecondary} />
+                <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: method === 'in_home' ? ORANGE : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                  <ChefHat size={22} color={method === 'in_home' ? '#fff' : Palette.textSecondary} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: method === ‘in_home’ ? ‘#fff’ : INK }}>Cooked in my kitchen</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: method === ‘in_home’ ? ‘#adb5bd’ : Palette.textSecondary, marginTop: 2 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: method === 'in_home' ? '#fff' : INK }}>Cooked in my kitchen</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: method === 'in_home' ? '#adb5bd' : Palette.textSecondary, marginTop: 2 }}>
                     A prepper comes to your home and cooks fresh · Request a quote
                   </Text>
                 </View>
               </PressableScale>
 
               {/* Contextual detail */}
-              {method === ‘pickup’ ? (
-                <View style={{ backgroundColor: ‘#fff’, borderRadius: Radius.md, padding: 12, flexDirection: ‘row’, alignItems: ‘center’, gap: 8 }}>
+              {method === 'pickup' ? (
+                <View style={{ backgroundColor: '#fff', borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <Store size={16} color={ORANGE} />
-                  <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Pick up from {prepper}. They’ll share the spot when they confirm.</Text>
+                  <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Pick up from {prepper}. They&apos;ll share the spot when they confirm.</Text>
                 </View>
               ) : null}
-              {method === ‘in_home’ ? (
-                <View style={{ backgroundColor: Palette.canvas, borderRadius: Radius.md, padding: 12, flexDirection: ‘row’, alignItems: ‘flex-start’, gap: 8 }}>
+              {method === 'in_home' ? (
+                <View style={{ backgroundColor: Palette.canvas, borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
                   <ChefHat size={15} color={Palette.textMuted} style={{ marginTop: 1 }} />
                   <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>
-                    You’ll post a request and receive quotes from available preppers. Tapping below takes you to the request form.
+                    You&apos;ll post a request and receive quotes from available preppers. Tapping below takes you to the request form.
                   </Text>
                 </View>
               ) : null}

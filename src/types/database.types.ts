@@ -17,6 +17,14 @@ export type ExperienceKind = 'catering' | 'private_chef' | 'food_service' | 'cle
 export type ExperienceStatus = 'open' | 'booked' | 'completed' | 'cancelled';
 export type BidStatus = 'pending' | 'accepted' | 'declined' | 'withdrawn';
 
+export type PrepperBadgeKey =
+  | 'first_order' | '100_meals' | '1000_meals' | 'five_star'
+  | 'local_legend' | 'protein_king' | 'vegan_wizard' | 'heat_master' | 'family_fav';
+
+export type CustomerBadgeKey =
+  | 'first_order' | 'loyal_regular' | 'local_foodie'
+  | 'family_provider' | 'macro_hunter' | 'early_supporter' | 'surprise_explorer';
+
 /** Row shape returned by the admin_prepper_earnings() RPC. */
 export type PrepperEarningsRow = {
   prepper_id: string;
@@ -55,7 +63,6 @@ export type AdminDisputeRow = {
   admin_note: string | null;
   created_at: string;
   reporter_name: string | null;
-  reporter_email: string | null;
   order_total: number;
   order_status: string;
   prepper_name: string;
@@ -138,9 +145,9 @@ export interface Database {
         Relationships: [];
       };
       meals: {
-        Row: { id: string; prepper_id: string; category_id: number | null; title: string; description: string | null; base_price: number; prep_time_min: number | null; status: MealStatus } & Timestamps & { updated_at: string };
-        Insert: { prepper_id: string; title: string; base_price: number; category_id?: number | null; description?: string | null; prep_time_min?: number | null; status?: MealStatus };
-        Update: Partial<{ title: string; description: string | null; base_price: number; category_id: number | null; prep_time_min: number | null; status: MealStatus }>;
+        Row: { id: string; prepper_id: string; category_id: number | null; title: string; description: string | null; base_price: number; prep_time_min: number | null; status: MealStatus; is_limited: boolean; limited_qty: number | null; drops_at: string | null; expires_at: string | null } & Timestamps & { updated_at: string };
+        Insert: { prepper_id: string; title: string; base_price: number; category_id?: number | null; description?: string | null; prep_time_min?: number | null; status?: MealStatus; is_limited?: boolean; limited_qty?: number | null; drops_at?: string | null; expires_at?: string | null };
+        Update: Partial<{ title: string; description: string | null; base_price: number; category_id: number | null; prep_time_min: number | null; status: MealStatus; is_limited: boolean; limited_qty: number | null; drops_at: string | null; expires_at: string | null }>;
         Relationships: [];
       };
       meal_images: {
@@ -271,6 +278,8 @@ export interface Database {
       admin_verify_prepper: { Args: { p_prepper: string; p_verified: boolean }; Returns: undefined };
       admin_resolve_dispute: { Args: { p_dispute: string; p_resolution: string; p_note?: string | null }; Returns: undefined };
       admin_list_disputes: { Args: { p_status?: string }; Returns: AdminDisputeRow[] };
+      prepper_badges: { Args: { p_prepper: string }; Returns: PrepperBadgeKey[] };
+      customer_badges: { Args: { p_user: string }; Returns: CustomerBadgeKey[] };
       accept_experience_bid: { Args: { p_bid: string }; Returns: undefined };
       start_conversation: { Args: { p_other: string }; Returns: string };
       mark_conversation_read: { Args: { p_conversation: string }; Returns: undefined };

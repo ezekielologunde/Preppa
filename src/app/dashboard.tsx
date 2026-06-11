@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
   Bell,
   Boxes,
@@ -25,13 +26,14 @@ import { Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Polyline } from 'react-native-svg';
 
+import { PrepperBadgeShelf } from '@/components/badge-shelf';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
 import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
 import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
-import { useMyPrepperApplication, useToggleAvailability } from '@/lib/queries/preppers';
+import { useMyPrepperApplication, usePrepperBadges, useToggleAvailability } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -131,6 +133,7 @@ export default function DashboardScreen() {
   const desktop = useBreakpoint() === 'desktop';
   const { user } = useAuth();
   const { data: prepper } = useMyPrepperApplication(user?.id);
+  const { data: prepperBadges } = usePrepperBadges(prepper?.id);
   const { data: orders } = usePrepperOrders(prepper?.id);
   const { data: reviews } = usePrepperReviews(prepper?.id);
   const advance = useAdvanceOrder();
@@ -214,6 +217,13 @@ export default function DashboardScreen() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingVertical: 20 }}>{cards}</ScrollView>
             );
           })()}
+
+          {/* Badges earned */}
+          {prepperBadges && prepperBadges.length > 0 ? (
+            <View style={{ paddingHorizontal: 20, marginBottom: 4 }}>
+              <PrepperBadgeShelf badges={prepperBadges} />
+            </View>
+          ) : null}
 
           {/* Desktop: operations on the left, performance on the right */}
           <View style={desktop ? { flexDirection: 'row', alignItems: 'flex-start' } : undefined}>

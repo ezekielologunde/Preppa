@@ -182,7 +182,7 @@ export default function OrdersScreen() {
     if (reason.length > 1000) { setReportErr('Keep it under 1000 characters.'); return; }
     setReportErr(null);
     reportDispute.mutate(
-      { orderId: reportModal!.id, reason },
+      { orderId: reportModal!.id, reason, reporterId: user!.id },
       {
         onSuccess: () => { feedback.success(); setReportModal(null); setReportReason(''); },
         onError: (e) => { feedback.error(); setReportErr(e instanceof Error ? e.message : 'Could not submit. Try again.'); },

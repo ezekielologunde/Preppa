@@ -27,7 +27,7 @@ const STATUS_STYLE: Record<MealStatus, { label: string; color: string }> = {
   archived: { label: 'archived', color: '#6b7280' },
 };
 
-const EMPTY: MealDraft = { title: '', description: '', base_price: 0, prep_time_min: null, category_id: null, imageUrl: '' };
+const EMPTY: MealDraft = { title: '', description: '', base_price: 0, prep_time_min: null, category_id: null, imageUrl: '', is_limited: false };
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -249,6 +249,22 @@ export default function MealEditorScreen() {
                   )}
                 </View>
               </Field>
+              {/* Limited drop toggle */}
+              <PressableScale
+                onPress={() => setDraft((d) => d && { ...d, is_limited: !d.is_limited })}
+                accessibilityRole="switch"
+                accessibilityState={{ checked: !!draft?.is_limited }}
+                accessibilityLabel="Mark as limited drop"
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#1d2129', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 13 }}>
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>Limited drop</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#6b7280' }}>Show a &quot;limited drop&quot; badge — builds scarcity & hype</Text>
+                </View>
+                <View style={{ width: 44, height: 26, borderRadius: 13, backgroundColor: draft?.is_limited ? ORANGE : '#374151', alignItems: 'center', justifyContent: 'center', padding: 3, marginLeft: 12 }}>
+                  <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: '#fff', alignSelf: draft?.is_limited ? 'flex-end' : 'flex-start' }} />
+                </View>
+              </PressableScale>
+
               {formErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5' }}>{formErr}</Text> : null}
               <PressableScale onPress={submit} disabled={save.isPending} accessibilityRole="button" accessibilityLabel="Save meal" style={{ height: 52, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: save.isPending ? 0.7 : 1 }}>
                 {save.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>{draft?.id ? 'Save changes' : 'Create meal'}</Text>}

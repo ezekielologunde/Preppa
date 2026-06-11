@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import type { Meal } from '@/components/meal-card';
 import { supabase } from '@/lib/supabase';
-import type { PrepperStatus } from '@/types/database.types';
+import type { CustomerBadgeKey, PrepperBadgeKey, PrepperStatus } from '@/types/database.types';
 
 export type TopPrepper = {
   id: string;
@@ -324,6 +324,32 @@ export function useApplyAsPrepper() {
       if (error) throw error;
     },
     onSuccess: (_d, v) => qc.invalidateQueries({ queryKey: ['prepper', 'mine', v.userId] }),
+  });
+}
+
+/** Computed achievement badges for a prepper profile. */
+export function usePrepperBadges(prepperId?: string | null) {
+  return useQuery({
+    queryKey: ['badges', 'prepper', prepperId ?? 'none'],
+    enabled: !!prepperId,
+    queryFn: async (): Promise<PrepperBadgeKey[]> => {
+      const { data, error } = await supabase.rpc('prepper_badges', { p_prepper: prepperId! });
+      if (error) throw error;
+      return (data as PrepperBadgeKey[]) ?? [];
+    },
+  });
+}
+
+/** Computed achievement badges for a customer. */
+export function useCustomerBadges(userId?: string | null) {
+  return useQuery({
+    queryKey: ['badges', 'customer', userId ?? 'none'],
+    enabled: !!userId,
+    queryFn: async (): Promise<CustomerBadgeKey[]> => {
+      const { data, error } = await supabase.rpc('customer_badges', { p_user: userId! });
+      if (error) throw error;
+      return (data as CustomerBadgeKey[]) ?? [];
+    },
   });
 }
 

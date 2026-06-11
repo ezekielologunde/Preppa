@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { PrepperBadgeShelf } from '@/components/badge-shelf';
 import { MealCard } from '@/components/meal-card';
 import { SubscribePlanSheet } from '@/components/subscribe-sheet';
 import { Avatar } from '@/components/ui/avatar';
@@ -15,7 +16,7 @@ import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
 import { useKitchenPlans, useMySubscriptions, type MealPlan } from '@/lib/queries/meal-plans';
-import { useIsFollowing, usePrepperProfile, useToggleFollow, type PrepperStats } from '@/lib/queries/preppers';
+import { useIsFollowing, usePrepperBadges, usePrepperProfile, useToggleFollow, type PrepperStats } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -62,6 +63,7 @@ export default function PrepperScreen() {
   const { data: following } = useIsFollowing(id, user?.id);
   const toggleFollow = useToggleFollow(id ?? '', user?.id);
   const { data: plans } = useKitchenPlans(id);
+  const { data: badges } = usePrepperBadges(id);
   const { data: mySubs } = useMySubscriptions(user?.id);
   const cardW = gridCardWidth(useContentWidth());
   const [sheetPlan, setSheetPlan] = useState<MealPlan | null>(null);
@@ -142,6 +144,13 @@ export default function PrepperScreen() {
             <TrustStat key={t.label} value={t.value} label={t.label} color={t.color} />
           ))}
         </View>
+
+        {/* Achievement badges */}
+        {badges && badges.length > 0 ? (
+          <View style={{ marginHorizontal: 16, marginTop: 14 }}>
+            <PrepperBadgeShelf badges={badges} />
+          </View>
+        ) : null}
 
         {/* Verified-kitchen trust line */}
         {p?.verified ? (

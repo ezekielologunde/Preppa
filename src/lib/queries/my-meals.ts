@@ -41,6 +41,8 @@ export type MealDraft = {
   prep_time_min: number | null;
   category_id: number | null;
   imageUrl: string;
+  is_limited?: boolean;
+  expires_at?: string | null;
 };
 
 /** Create or update a meal (and its primary photo). New meals start as drafts. */
@@ -55,6 +57,8 @@ export function useSaveMeal(prepperId?: string | null) {
         base_price: v.base_price,
         prep_time_min: v.prep_time_min,
         category_id: v.category_id,
+        is_limited: v.is_limited ?? false,
+        expires_at: v.expires_at ?? null,
       };
       let mealId = v.id;
       if (mealId) {

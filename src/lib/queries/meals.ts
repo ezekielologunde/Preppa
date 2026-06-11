@@ -10,6 +10,7 @@ type MealRow = {
   base_price: number;
   prep_time_min: number | null;
   created_at: string | null;
+  is_limited: boolean;
   prepper: {
     display_name: string;
     verified: boolean;
@@ -20,7 +21,7 @@ type MealRow = {
 };
 
 const SELECT =
-  'id,title,base_price,prep_time_min,created_at,' +
+  'id,title,base_price,prep_time_min,created_at,is_limited,' +
   'prepper:prepper_profiles(display_name,verified,rating:prepper_rating_summary(average_rating,total_reviews)),' +
   'images:meal_images(url),' +
   'category:meal_categories(key)';
@@ -30,10 +31,12 @@ const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000;
 // One badge per card, mockup-style. Priority: social proof > diet > freshness
 // (everything is "new" in a young catalog — popular/diet badges say more).
 function deriveBadge(row: MealRow, rating?: { average_rating: number; total_reviews: number }): Meal['badge'] {
+  if (row.is_limited) return { label: 'limited drop', color: '#8b5cf6' };
   if ((rating?.average_rating ?? 0) >= 4.85 && (rating?.total_reviews ?? 0) >= 90) return { label: 'popular', color: '#f15f22' };
   const cat = one(row.category as never) as { key: string } | undefined;
   if (cat?.key === 'healthy') return { label: 'healthy', color: '#16a34a' };
   if (cat?.key === 'vegan') return { label: 'vegan', color: '#8b5cf6' };
+  if (cat?.key === 'breakfast') return { label: 'breakfast', color: '#f59e0b' };
   const created = row.created_at ? new Date(row.created_at).getTime() : 0;
   if (created && Date.now() - created < TWO_WEEKS) return { label: 'new', color: '#22c55e' };
   return undefined;
@@ -217,6 +220,56 @@ export function useMeal(id?: string) {
         images,
         nutrition: nutrition ?? null,
       };
+    },
+  });
+}
+
+/** Active limited drops — published meals where is_limited=true, not yet expired. */
+export function useLimitedDrops(limit = 10) {
+  return useQuery({
+    queryKey: ['meals', 'limited-drops', limit],
+    queryFn: async (): Promise<Meal[]> => {
+      const now = new Date().toISOString();
+      const { data, error } = await supabase
+        .from('meals')
+        .select(SELECT)
+        .eq('status', 'published')
+        .eq('is_limited', true)
+        .or(`expires_at.is.null,expires_at.gt.${now}`)
+        .or(`drops_at.is.null,drops_at.lte.${now}`)
+        .limit(limit);
+      if (error) throw error;
+      return ((data ?? []) as unknown as MealRow[]).map(mapMeal);
+    },
+  });
+}
+
+export type SurpriseFilters = {
+  maxPrice?: number;
+  tags?: string[];
+  categoryKey?: string | null;
+};
+
+/** Random published meal(s) matching the given budget + taste filters. */
+export function useSurpriseMeals(filters: SurpriseFilters, enabled = true) {
+  return useQuery({
+    queryKey: ['meals', 'surprise', filters.maxPrice, filters.tags?.join(','), filters.categoryKey],
+    enabled,
+    queryFn: async (): Promise<Meal[]> => {
+      let q = supabase.from('meals').select(SELECT).eq('status', 'published');
+      if (filters.maxPrice) q = q.lte('base_price', filters.maxPrice);
+      if (filters.categoryKey) {
+        const sel = SELECT.replace('category:meal_categories(key)', 'category:meal_categories!inner(key)');
+        q = supabase.from('meals').select(sel).eq('status', 'published').eq('category.key', filters.categoryKey);
+        if (filters.maxPrice) q = q.lte('base_price', filters.maxPrice);
+      }
+      const { data, error } = await q.limit(50);
+      if (error) throw error;
+      const pool = ((data ?? []) as unknown as MealRow[]).map(mapMeal);
+      if (!pool.length) return [];
+      // Client-side shuffle + pick 3 for the surprise reveal
+      const shuffled = pool.sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, Math.min(3, shuffled.length));
     },
   });
 }

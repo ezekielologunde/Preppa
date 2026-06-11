@@ -31,7 +31,7 @@ import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { cuisines, exploreCategories } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
-import { useFeaturedMeals } from '@/lib/queries/meals';
+import { useFeaturedMeals, useLimitedDrops } from '@/lib/queries/meals';
 import { useKitchenTags, useTopPreppers } from '@/lib/queries/preppers';
 
 const ORANGE = Palette.brand;
@@ -68,6 +68,7 @@ export default function ExploreScreen() {
   const { data: preppers, isLoading: preppersLoading } = useTopPreppers();
   const { data: kitchenTags } = useKitchenTags();
   const { data: meals, isLoading: mealsLoading } = useFeaturedMeals();
+  const { data: drops } = useLimitedDrops(6);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F7F7F8' }}>
@@ -177,6 +178,16 @@ export default function ExploreScreen() {
             </ScrollView>
           )}
 
+          {/* Limited drops — only shown when active drops exist */}
+          {drops && drops.length > 0 ? (
+            <>
+              <SectionHeader title="limited drops" />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+                {drops.map((m) => <MealCard key={m.id} meal={m} />)}
+              </ScrollView>
+            </>
+          ) : null}
+
           {/* Popular (live) */}
           <SectionHeader title="popular right now" onSeeAll={() => router.push('/category?key=all&label=popular')} />
           {mealsLoading ? (
@@ -189,11 +200,7 @@ export default function ExploreScreen() {
 
           {/* Can't decide — flat brand-tint accent */}
           <Pressable
-            onPress={() => {
-              const pool = meals ?? [];
-              const pick = pool[Math.floor(Math.random() * pool.length)];
-              if (pick) router.push(`/meal?id=${pick.id}`);
-            }}
+            onPress={() => router.push('/surprise')}
             accessibilityRole="button"
             accessibilityLabel="Surprise me with a meal"
             style={{ marginHorizontal: 20 }}>
