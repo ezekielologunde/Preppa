@@ -30,6 +30,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Polyline } from 'react-native-svg';
 
 import { PrepperBadgeShelf } from '@/components/badge-shelf';
+import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
@@ -170,7 +171,11 @@ export default function DashboardScreen() {
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
             <PressableScale onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile'))} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-              <Image source="https://images.unsplash.com/photo-1583394293214-28a5b0f5a5b8?auto=format&fit=crop&w=120&q=60" style={{ width: 46, height: 46, borderRadius: 23 }} contentFit="cover" />
+              <Avatar
+                name={prepper?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? 'chef'}
+                url={user?.user_metadata?.avatar_url as string | undefined}
+                size={46}
+              />
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef 👋</Text>
@@ -197,7 +202,7 @@ export default function DashboardScreen() {
             <PressableScale onPress={() => router.push('/search')} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <Search size={19} color="#fff" />
             </PressableScale>
-            <PressableScale accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => router.push('/prepper-orders')} accessibilityRole="button" accessibilityLabel="New orders" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={19} color="#fff" />
               {newCount > 0 ? (
                 <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
