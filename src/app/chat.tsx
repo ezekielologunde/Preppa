@@ -111,7 +111,7 @@ export default function ChatScreen() {
           ) : (
             <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 8, flexGrow: 1, justifyContent: (messages?.length ?? 0) ? 'flex-end' : 'center' }}>
               {!messages?.length ? (
-                <View style={{ alignItems: 'center', gap: 10 }}>
+                <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ alignItems: 'center', gap: 10 }}>
                   <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
                     <MessageCircle size={28} color={Palette.textMuted} />
                   </View>
@@ -119,7 +119,7 @@ export default function ChatScreen() {
                   <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center', maxWidth: 260, lineHeight: 19 }}>
                     No messages yet — send the first one below.
                   </Text>
-                </View>
+                </MotiView>
               ) : (
                 messages.map((m, i) => {
                   const prev = messages[i - 1];

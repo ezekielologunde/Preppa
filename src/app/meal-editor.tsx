@@ -187,7 +187,7 @@ export default function MealEditorScreen() {
         ) : isLoading ? (
           <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
         ) : !meals?.length ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <UtensilsCrossed size={28} color="#5b6170" />
             </View>
@@ -196,14 +196,16 @@ export default function MealEditorScreen() {
             <PressableScale onPress={openCreate} accessibilityRole="button" accessibilityLabel="Add your first meal" style={{ marginTop: 4, paddingHorizontal: 20, height: 48, borderRadius: 13, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Add your first meal</Text>
             </PressableScale>
-          </View>
+          </MotiView>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 10, paddingBottom: 40 }}>
             <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textMuted, marginBottom: 4 }}>
               {meals.filter((m) => m.status === 'published').length} live · {meals.length} total
             </Text>
-            {meals.map((m) => (
-              <MealRow key={m.id} meal={m} busy={setStatus.isPending} onEdit={() => openEdit(m)} onSetStatus={(s) => setStatus.mutate({ id: m.id, status: s })} />
+            {meals.map((m, i) => (
+              <MotiView key={m.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 50 }}>
+                <MealRow meal={m} busy={setStatus.isPending} onEdit={() => openEdit(m)} onSetStatus={(s) => setStatus.mutate({ id: m.id, status: s })} />
+              </MotiView>
             ))}
           </ScrollView>
         )}

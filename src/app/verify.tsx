@@ -56,16 +56,24 @@ export default function VerifyScreen() {
           </>
         ) : !user ? (
           <>
-            <View style={{ width: 72, height: 72, borderRadius: 22, backgroundColor: ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
-              <QrCode size={32} color={ORANGE} />
-            </View>
-            <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff', textAlign: 'center' }}>Sign in to verify</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 300, lineHeight: 20 }}>
-              Only the order&apos;s kitchen can confirm a handoff. Sign in to your prepper account to continue.
-            </Text>
-            <PressableScale onPress={() => router.replace(`/auth?mode=signin`)} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
-            </PressableScale>
+            <MotiView from={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 360, bounce: 0.15 }}>
+              <View style={{ width: 72, height: 72, borderRadius: 22, backgroundColor: ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
+                <QrCode size={32} color={ORANGE} />
+              </View>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff', textAlign: 'center' }}>Sign in to verify</Text>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 300, lineHeight: 20 }}>
+                Only the order&apos;s kitchen can confirm a handoff. Sign in to your prepper account to continue.
+              </Text>
+            </MotiView>
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
+              <PressableScale onPress={() => router.replace(`/auth?mode=signin`)} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
+              </PressableScale>
+            </MotiView>
           </>
         ) : (
           <>

@@ -55,16 +55,24 @@ export default function AdminScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: Admin.bg }}>
         <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 }}>
-          <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Admin.card, alignItems: 'center', justifyContent: 'center' }}>
-            <Lock size={28} color={Admin.textDim} />
-          </View>
-          <Text style={{ fontFamily: Font.display, fontSize: 22, color: Admin.text }}>Admin only</Text>
-          <Text style={{ fontFamily: Font.body, fontSize: 14, color: Admin.textDim, textAlign: 'center', lineHeight: 20 }}>
-            This area is restricted to platform administrators. Ask an existing admin to grant you access.
-          </Text>
-          <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ marginTop: 8, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: Admin.brand, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Back to app</Text>
-          </PressableScale>
+          <MotiView from={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 360, bounce: 0.15 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Admin.card, alignItems: 'center', justifyContent: 'center' }}>
+              <Lock size={28} color={Admin.textDim} />
+            </View>
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 22, color: Admin.text }}>Admin only</Text>
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Admin.textDim, textAlign: 'center', lineHeight: 20 }}>
+              This area is restricted to platform administrators. Ask an existing admin to grant you access.
+            </Text>
+          </MotiView>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
+            <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ marginTop: 8, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: Admin.brand, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Back to app</Text>
+            </PressableScale>
+          </MotiView>
         </SafeAreaView>
       </View>
     );
