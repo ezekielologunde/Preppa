@@ -1,10 +1,12 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, Check, ChevronLeft, MapPin, MessageCircle, Repeat, ShieldCheck, ShoppingBag, Star, UserPlus } from 'lucide-react-native';
+import { BadgeCheck, CalendarCheck, Check, ChevronLeft, MapPin, MessageCircle, RefreshCw, Repeat, ShieldCheck, ShoppingBag, Star, UserPlus, Users } from 'lucide-react-native';
+import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MealCard } from '@/components/meal-card';
+import { SubscribePlanSheet } from '@/components/subscribe-sheet';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton, Skeleton } from '@/components/ui/skeleton';
@@ -12,6 +14,7 @@ import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
+import { useKitchenPlans, useMySubscriptions, type MealPlan } from '@/lib/queries/meal-plans';
 import { useIsFollowing, usePrepperProfile, useToggleFollow, type PrepperStats } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
@@ -58,11 +61,20 @@ export default function PrepperScreen() {
   const { data: reviews } = usePrepperReviews(id, 6);
   const { data: following } = useIsFollowing(id, user?.id);
   const toggleFollow = useToggleFollow(id ?? '', user?.id);
+  const { data: plans } = useKitchenPlans(id);
+  const { data: mySubs } = useMySubscriptions(user?.id);
   const cardW = gridCardWidth(useContentWidth());
+  const [sheetPlan, setSheetPlan] = useState<MealPlan | null>(null);
+  const subscribedNames = new Set((mySubs ?? []).filter((s) => s.status !== 'cancelled').map((s) => s.plan_name));
   const onToggleFollow = () => {
     if (!user?.id) { router.push('/auth'); return; }
     feedback.tap();
     toggleFollow.mutate(!!following);
+  };
+  const onSubscribe = (plan: MealPlan) => {
+    if (!user?.id) { router.push('/auth?mode=signup'); return; }
+    feedback.tap();
+    setSheetPlan(plan);
   };
 
   return (
@@ -153,6 +165,56 @@ export default function PrepperScreen() {
           </View>
         ) : null}
 
+        {/* Subscription plans — the kitchen's recurring storefront (creator/Patreon) */}
+        {plans && plans.length > 0 ? (
+          <View style={{ marginTop: 26 }}>
+            <View style={{ marginHorizontal: 20, marginBottom: 12 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4 }}>subscribe & save</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 2 }}>
+                Meals from {p?.name.split(' ')[0]} on repeat — pause or skip anytime.
+              </Text>
+            </View>
+            <View style={{ marginHorizontal: 16, gap: 10 }}>
+              {plans.map((plan) => {
+                const subscribed = subscribedNames.has(plan.name);
+                return (
+                  <View key={plan.id} style={{ backgroundColor: '#fff', borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
+                    <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                      <RefreshCw size={20} color={ORANGE} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{plan.name}</Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 3 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <CalendarCheck size={12} color={Palette.textMuted} />
+                          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>{plan.meals_per_cycle} meals</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <Users size={12} color={Palette.textMuted} />
+                          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>serves {plan.serves}</Text>
+                        </View>
+                      </View>
+                      <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: INK, marginTop: 4 }}>
+                        <Text style={{ fontFamily: Font.display, fontSize: 17, color: ORANGE }}>${plan.price.toLocaleString('en-US')}</Text>
+                        <Text style={{ color: Palette.textSecondary }}>{` /${plan.frequency}`}</Text>
+                      </Text>
+                    </View>
+                    <PressableScale
+                      onPress={() => onSubscribe(plan)}
+                      disabled={subscribed}
+                      accessibilityRole="button"
+                      accessibilityLabel={subscribed ? `Subscribed to ${plan.name}` : `Subscribe to ${plan.name}`}
+                      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 40, paddingHorizontal: 16, borderRadius: 12, backgroundColor: subscribed ? Palette.success : ORANGE }}>
+                      {subscribed ? <Check size={15} color="#fff" strokeWidth={3} /> : null}
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{subscribed ? 'Subscribed' : 'Subscribe'}</Text>
+                    </PressableScale>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
+
         {/* Their menu */}
         <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, marginHorizontal: 20, marginTop: 26, marginBottom: 14 }}>
           {p ? `${p.name.split(' ')[0]}'s menu` : 'menu'}
@@ -192,6 +254,9 @@ export default function PrepperScreen() {
           </>
         ) : null}
       </ScrollView>
+
+      {/* Subscribe sheet — servings + delivery schedule (shared with /meal-plans) */}
+      {user ? <SubscribePlanSheet plan={sheetPlan} userId={user.id} onClose={() => setSheetPlan(null)} /> : null}
     </View>
   );
 }

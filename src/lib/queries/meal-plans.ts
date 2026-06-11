@@ -18,6 +18,13 @@ export type MealPlan = {
 
 type Row = MealPlan & { prepper_profiles?: { display_name: string } | { display_name: string }[] | null };
 
+const PLAN_SELECT = 'id,prepper_id,name,description,frequency,price,meals_per_cycle,serves,image_url,tags,prepper_profiles(display_name)';
+
+function mapPlan(r: Row): MealPlan {
+  const pp = Array.isArray(r.prepper_profiles) ? r.prepper_profiles[0] : r.prepper_profiles;
+  return { ...r, prepper: pp?.display_name ?? 'prepper' };
+}
+
 /** Active meal plans for the browse catalog (live; empty until plans exist). */
 export function useMealPlans() {
   return useQuery({
@@ -25,14 +32,29 @@ export function useMealPlans() {
     queryFn: async (): Promise<MealPlan[]> => {
       const { data, error } = await supabase
         .from('meal_plans')
-        .select('id,prepper_id,name,description,frequency,price,meals_per_cycle,serves,image_url,tags,prepper_profiles(display_name)')
+        .select(PLAN_SELECT)
         .eq('active', true)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return ((data ?? []) as unknown as Row[]).map((r) => {
-        const pp = Array.isArray(r.prepper_profiles) ? r.prepper_profiles[0] : r.prepper_profiles;
-        return { ...r, prepper: pp?.display_name ?? 'prepper' };
-      });
+      return ((data ?? []) as unknown as Row[]).map(mapPlan);
+    },
+  });
+}
+
+/** A single kitchen's active subscription plans (for its storefront profile). */
+export function useKitchenPlans(prepperId?: string | null) {
+  return useQuery({
+    queryKey: ['meal-plans', 'kitchen', prepperId ?? 'none'],
+    enabled: !!prepperId,
+    queryFn: async (): Promise<MealPlan[]> => {
+      const { data, error } = await supabase
+        .from('meal_plans')
+        .select(PLAN_SELECT)
+        .eq('prepper_id', prepperId!)
+        .eq('active', true)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return ((data ?? []) as unknown as Row[]).map(mapPlan);
     },
   });
 }

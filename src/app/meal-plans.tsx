@@ -1,36 +1,26 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { CalendarCheck, Check, ChefHat, ChevronLeft, Minus, Plus, RefreshCw, Users, X } from 'lucide-react-native';
+import { CalendarCheck, Check, ChefHat, ChevronLeft, RefreshCw, Users } from 'lucide-react-native';
 import { useState } from 'react';
-import { ActivityIndicator, Modal, Platform, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { SubscribePlanSheet } from '@/components/subscribe-sheet';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { featuredMealPlans, type MealPlanCard } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import {
-  nextDeliveryDate,
   useMealPlans,
   useMySubscriptions,
   useSkipDelivery,
-  useSubscribeToPlan,
   useUpdateSubscription,
   type DeliveryDay,
   type MealPlan,
 } from '@/lib/queries/meal-plans';
 import { useAuth } from '@/providers/auth-provider';
 
-const DAYS: { key: DeliveryDay; label: string }[] = [
-  { key: 'mon', label: 'Mon' },
-  { key: 'tue', label: 'Tue' },
-  { key: 'wed', label: 'Wed' },
-  { key: 'thu', label: 'Thu' },
-  { key: 'fri', label: 'Fri' },
-  { key: 'sat', label: 'Sat' },
-  { key: 'sun', label: 'Sun' },
-];
 const DAY_LABEL: Record<DeliveryDay, string> = { mon: 'Mondays', tue: 'Tuesdays', wed: 'Wednesdays', thu: 'Thursdays', fri: 'Fridays', sat: 'Saturdays', sun: 'Sundays' };
 
 const ORANGE = Palette.brand;
@@ -97,14 +87,11 @@ export default function MealPlansScreen() {
   const { user } = useAuth();
   const { data: livePlans, isLoading } = useMealPlans();
   const { data: subs } = useMySubscriptions(user?.id);
-  const subscribe = useSubscribeToPlan();
   const updateSub = useUpdateSubscription(user?.id);
   const skipDelivery = useSkipDelivery(user?.id);
 
-  // Subscribe sheet state — servings + delivery-day schedule for the chosen plan.
+  // Subscribe sheet — the chosen plan (null = closed).
   const [sheetPlan, setSheetPlan] = useState<MealPlan | null>(null);
-  const [qty, setQty] = useState(1);
-  const [day, setDay] = useState<DeliveryDay>('mon');
 
   function goBack() {
     if (router.canGoBack()) router.back();
@@ -113,23 +100,7 @@ export default function MealPlansScreen() {
 
   function onSubscribe(plan: MealPlan) {
     if (!user) return router.push('/auth?mode=signup');
-    setQty(1);
-    setDay('mon');
     setSheetPlan(plan);
-  }
-
-  function confirmSubscribe() {
-    if (!user || !sheetPlan) return;
-    subscribe.mutate(
-      { userId: user.id, planId: sheetPlan.id, prepperId: sheetPlan.prepper_id, planName: sheetPlan.name, frequency: sheetPlan.frequency, qty, deliveryDay: day },
-      {
-        onSuccess: () => {
-          feedback.success();
-          setSheetPlan(null);
-        },
-        onError: () => feedback.error(),
-      },
-    );
   }
 
   const subscribedPlanNames = new Set((subs ?? []).filter((s) => s.status !== 'cancelled').map((s) => s.plan_name));
@@ -212,7 +183,7 @@ export default function MealPlansScreen() {
           ) : livePlans && livePlans.length > 0 ? (
             <View style={{ paddingHorizontal: 20, gap: 14 }}>
               {livePlans.map((p) => (
-                <LivePlanCard key={p.id} plan={p} busy={subscribe.isPending} subscribed={subscribedPlanNames.has(p.name)} onSubscribe={() => onSubscribe(p)} />
+                <LivePlanCard key={p.id} plan={p} busy={false} subscribed={subscribedPlanNames.has(p.name)} onSubscribe={() => onSubscribe(p)} />
               ))}
             </View>
           ) : (
@@ -232,76 +203,8 @@ export default function MealPlansScreen() {
         </ScrollView>
       </SafeAreaView>
 
-      {/* Subscribe sheet — servings + delivery-day schedule */}
-      <Modal visible={!!sheetPlan} transparent animationType="slide" onRequestClose={() => setSheetPlan(null)}>
-        <Pressable onPress={() => setSheetPlan(null)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.5)', justifyContent: 'flex-end' }}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: '#fff', borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: 22, paddingBottom: 34, gap: 16, alignSelf: 'center', width: '100%', maxWidth: 480 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 21, color: INK, letterSpacing: -0.4 }}>{sheetPlan?.name}</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 2 }}>
-                  by {sheetPlan?.prepper} · {sheetPlan?.meals_per_cycle} meals / {sheetPlan?.frequency}
-                </Text>
-              </View>
-              <PressableScale onPress={() => setSheetPlan(null)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
-                <X size={18} color={INK} />
-              </PressableScale>
-            </View>
-
-            {/* Servings */}
-            <View style={{ gap: 8 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>Servings of each meal</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-                <PressableScale onPress={() => setQty((q) => Math.max(1, q - 1))} accessibilityRole="button" accessibilityLabel="Fewer servings" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
-                  <Minus size={17} color={INK} />
-                </PressableScale>
-                <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, minWidth: 32, textAlign: 'center', fontVariant: ['tabular-nums'] }}>{qty}</Text>
-                <PressableScale onPress={() => setQty((q) => Math.min(6, q + 1))} accessibilityRole="button" accessibilityLabel="More servings" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-                  <Plus size={17} color="#fff" />
-                </PressableScale>
-                <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary }}>
-                  {qty === 1 ? 'Just for you' : `Feeds ${qty} people per meal`}
-                </Text>
-              </View>
-            </View>
-
-            {/* Delivery day */}
-            <View style={{ gap: 8 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>Delivery day</Text>
-              <View style={{ flexDirection: 'row', gap: 6 }}>
-                {DAYS.map((d) => {
-                  const on = day === d.key;
-                  return (
-                    <PressableScale key={d.key} onPress={() => setDay(d.key)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={d.label}
-                      style={{ flex: 1, height: 40, borderRadius: 12, backgroundColor: on ? ORANGE : Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: on ? '#fff' : INK }}>{d.label}</Text>
-                    </PressableScale>
-                  );
-                })}
-              </View>
-              <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary }}>
-                First delivery {nextDeliveryDate(day).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })} · renews {sheetPlan?.frequency}
-              </Text>
-            </View>
-
-            {/* Confirm */}
-            <PressableScale
-              onPress={confirmSubscribe}
-              disabled={subscribe.isPending}
-              accessibilityRole="button"
-              accessibilityLabel="Start plan"
-              style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: subscribe.isPending ? 0.7 : 1 }}>
-              {subscribe.isPending ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
-                  Start plan · {money((sheetPlan?.price ?? 0) * qty)}/{sheetPlan?.frequency}
-                </Text>
-              )}
-            </PressableScale>
-          </Pressable>
-        </Pressable>
-      </Modal>
+      {/* Subscribe sheet — servings + delivery-day schedule (shared component) */}
+      {user ? <SubscribePlanSheet plan={sheetPlan} userId={user.id} onClose={() => setSheetPlan(null)} /> : null}
     </View>
   );
 }
