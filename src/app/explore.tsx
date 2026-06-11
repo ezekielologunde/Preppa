@@ -5,6 +5,8 @@ import {
   Coffee,
   Compass,
   Cookie,
+  Flame,
+  Heart,
   LayoutGrid,
   Leaf,
   MapPin,
@@ -15,6 +17,7 @@ import {
   Sparkles,
   Sprout,
   UtensilsCrossed,
+  Zap,
   type LucideIcon,
 } from 'lucide-react-native';
 import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
@@ -38,6 +41,14 @@ const MUTED = Palette.textMuted;
 const ICONS: Record<string, LucideIcon> = {
   LayoutGrid, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Leaf, Sprout, MoreHorizontal,
 };
+
+const GOALS: { label: string; tag: string; Icon: LucideIcon; color: string }[] = [
+  { label: 'Bulk Up',     tag: 'High-Protein',      Icon: Zap,    color: '#F59E0B' },
+  { label: 'Cut & Lean',  tag: 'Low-Calorie',        Icon: Flame,  color: '#EF4444' },
+  { label: 'Keto',        tag: 'Keto',               Icon: Leaf,   color: '#8B5CF6' },
+  { label: 'Plant-Based', tag: 'Vegan-Friendly',     Icon: Sprout, color: '#22C55E' },
+  { label: 'Diabetic',    tag: 'Diabetic-Friendly',  Icon: Heart,  color: '#3B82F6' },
+];
 
 function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
   return (
@@ -135,6 +146,26 @@ export default function ExploreScreen() {
               </ScrollView>
             </>
           ) : null}
+
+          {/* Fitness goals — nutrition-focused kitchen discovery */}
+          <View style={{ marginBottom: 10 }}>
+            <SectionHeader title="shop by goal" onSeeAll={() => router.push('/kitchens')} />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              {GOALS.map((g) => (
+                <PressableScale
+                  key={g.tag}
+                  onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(g.tag)}`)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${g.label} meal prep kitchens`}
+                  style={{ alignItems: 'center', gap: 8, width: 68 }}>
+                  <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: g.color + '18', alignItems: 'center', justifyContent: 'center' }}>
+                    <g.Icon size={26} color={g.color} />
+                  </View>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK, textAlign: 'center' }}>{g.label}</Text>
+                </PressableScale>
+              ))}
+            </ScrollView>
+          </View>
 
           {/* Top kitchens — reputation-ranked (live) */}
           <SectionHeader title="top kitchens this week" />
