@@ -86,11 +86,11 @@ function MealRow({ meal, busy, onEdit, onSetStatus }: { meal: MyMeal; busy: bool
         </View>
       </View>
       <View style={{ gap: 6, alignItems: 'flex-end' }}>
-        <PressableScale onPress={onEdit} accessibilityRole="button" accessibilityLabel={`Edit ${meal.title}`} hitSlop={6} style={{ paddingHorizontal: 12, height: 32, borderRadius: 10, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center' }}>
+        <PressableScale onPress={() => { feedback.tap(); onEdit(); }} accessibilityRole="button" accessibilityLabel={`Edit ${meal.title}`} hitSlop={6} style={{ paddingHorizontal: 12, height: 32, borderRadius: 10, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.divider }}>Edit</Text>
         </PressableScale>
         <PressableScale
-          onPress={() => onSetStatus(isLive ? 'paused' : 'published')}
+          onPress={() => { feedback.tap(); onSetStatus(isLive ? 'paused' : 'published'); }}
           disabled={busy}
           accessibilityRole="button"
           accessibilityLabel={isLive ? `Pause ${meal.title}` : `Publish ${meal.title}`}
@@ -169,11 +169,11 @@ export default function MealEditorScreen() {
     <View style={{ flex: 1, backgroundColor: BG }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8 }}>
-          <PressableScale onPress={() => (router.canGoBack() ? router.back() : router.replace('/dashboard'))} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+          <PressableScale onPress={() => { feedback.tap(); try { router.back(); } catch { router.replace('/dashboard'); } }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color="#fff" />
           </PressableScale>
           <Text style={{ flex: 1, fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>my menu</Text>
-          <PressableScale onPress={openCreate} accessibilityRole="button" accessibilityLabel="Add a new meal" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, height: 40, borderRadius: 13, backgroundColor: ORANGE }}>
+          <PressableScale onPress={() => { feedback.tap(); openCreate(); }} accessibilityRole="button" accessibilityLabel="Add a new meal" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, height: 40, borderRadius: 13, backgroundColor: ORANGE }}>
             <Plus size={17} color="#fff" strokeWidth={2.6} />
             <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>New meal</Text>
           </PressableScale>
@@ -193,7 +193,7 @@ export default function MealEditorScreen() {
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Your menu is empty</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 280 }}>Add your first meal and publish it — customers see live meals instantly.</Text>
-            <PressableScale onPress={openCreate} accessibilityRole="button" accessibilityLabel="Add your first meal" style={{ marginTop: 4, paddingHorizontal: 20, height: 48, borderRadius: 13, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); openCreate(); }} accessibilityRole="button" accessibilityLabel="Add your first meal" style={{ marginTop: 4, paddingHorizontal: 20, height: 48, borderRadius: 13, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Add your first meal</Text>
             </PressableScale>
           </MotiView>
@@ -237,7 +237,7 @@ export default function MealEditorScreen() {
                   {(categories ?? []).map((c) => {
                     const sel = draft?.category_id === c.id;
                     return (
-                      <PressableScale key={c.id} onPress={() => setDraft((d) => d && { ...d, category_id: sel ? null : c.id })} accessibilityRole="button" accessibilityLabel={`Category ${c.name}`} accessibilityState={{ selected: sel }} style={{ paddingHorizontal: 13, height: 34, borderRadius: 999, backgroundColor: sel ? ORANGE : '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
+                      <PressableScale key={c.id} onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, category_id: sel ? null : c.id }); }} accessibilityRole="button" accessibilityLabel={`Category ${c.name}`} accessibilityState={{ selected: sel }} style={{ paddingHorizontal: 13, height: 34, borderRadius: 999, backgroundColor: sel ? ORANGE : '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: sel ? '#fff' : '#9ca3af' }}>{c.name}</Text>
                       </PressableScale>
                     );
@@ -257,7 +257,7 @@ export default function MealEditorScreen() {
                     </View>
                   )}
                   {uploadSupported ? (
-                    <PressableScale onPress={pickPhoto} disabled={uploading} accessibilityRole="button" accessibilityLabel="Upload a photo" style={{ flex: 1, height: 48, borderRadius: 12, borderWidth: 1, borderColor: '#3f4451', flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', opacity: uploading ? 0.6 : 1 }}>
+                    <PressableScale onPress={() => { feedback.tap(); pickPhoto(); }} disabled={uploading} accessibilityRole="button" accessibilityLabel="Upload a photo" style={{ flex: 1, height: 48, borderRadius: 12, borderWidth: 1, borderColor: '#3f4451', flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', opacity: uploading ? 0.6 : 1 }}>
                       {uploading ? <ActivityIndicator color="#fff" /> : <Upload size={17} color={Palette.divider} />}
                       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.divider }}>{uploading ? 'Uploading…' : draft?.imageUrl ? 'Change photo' : 'Upload photo'}</Text>
                     </PressableScale>
@@ -323,7 +323,7 @@ export default function MealEditorScreen() {
               ) : null}
 
               {formErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5' }}>{formErr}</Text> : null}
-              <PressableScale onPress={submit} disabled={save.isPending} accessibilityRole="button" accessibilityLabel="Save meal" style={{ height: 52, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: save.isPending ? 0.7 : 1 }}>
+              <PressableScale onPress={() => { feedback.tap(); submit(); }} disabled={save.isPending} accessibilityRole="button" accessibilityLabel="Save meal" style={{ height: 52, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: save.isPending ? 0.7 : 1 }}>
                 {save.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>{draft?.id ? 'Save changes' : 'Create meal'}</Text>}
               </PressableScale>
               {!draft?.id ? <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, textAlign: 'center' }}>New meals start as drafts — publish when you&apos;re ready.</Text> : null}

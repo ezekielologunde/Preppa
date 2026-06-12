@@ -20,6 +20,7 @@ import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius, Shadow, Spacing, Type } from '@/constants/theme';
+import { feedback } from '@/lib/feedback';
 import { useAddresses, useDeleteAddress, useSetDefaultAddress, useUpsertAddress } from '@/lib/queries/addresses';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -67,7 +68,7 @@ function AddressCard({
           </Text>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <PressableScale
-              onPress={onCancelDelete}
+              onPress={() => { feedback.tap(); onCancelDelete(); }}
               accessibilityRole="button"
               accessibilityLabel="Cancel delete"
               style={{
@@ -84,7 +85,7 @@ function AddressCard({
               </Text>
             </PressableScale>
             <PressableScale
-              onPress={onConfirmDelete}
+              onPress={() => { feedback.tap(); onConfirmDelete(); }}
               accessibilityRole="button"
               accessibilityLabel="Confirm delete address"
               style={{
@@ -104,7 +105,7 @@ function AddressCard({
         </View>
       ) : (
         <PressableScale
-          onPress={address.isDefault ? undefined : onSetDefault}
+          onPress={address.isDefault ? undefined : () => { feedback.tap(); onSetDefault(); }}
           accessibilityRole="button"
           accessibilityLabel={`${address.label} address${address.isDefault ? ', default' : ', tap to set as default'}`}
           style={{
@@ -173,7 +174,7 @@ function AddressCard({
           {/* Actions */}
           <View style={{ flexDirection: 'row', gap: 4, flexShrink: 0 }}>
             <PressableScale
-              onPress={onEdit}
+              onPress={() => { feedback.tap(); onEdit(); }}
               accessibilityRole="button"
               accessibilityLabel={`Edit ${address.label} address`}
               style={{
@@ -187,7 +188,7 @@ function AddressCard({
               <Pencil size={16} color={Palette.textSecondary} />
             </PressableScale>
             <PressableScale
-              onPress={onDelete}
+              onPress={() => { feedback.tap(); onDelete(); }}
               accessibilityRole="button"
               accessibilityLabel={`Delete ${address.label} address`}
               style={{
@@ -260,7 +261,7 @@ export default function AddressesScreen() {
             gap: Spacing.two,
           }}>
           <PressableScale
-            onPress={() => router.back()}
+            onPress={() => { feedback.tap(); router.back(); }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{
@@ -284,7 +285,7 @@ export default function AddressesScreen() {
             addresses
           </Text>
           <PressableScale
-            onPress={openAdd}
+            onPress={() => { feedback.tap(); openAdd(); }}
             accessibilityRole="button"
             accessibilityLabel="Add new address"
             style={{
@@ -343,7 +344,7 @@ export default function AddressesScreen() {
               save your delivery spots so checkout is a breeze.
             </Text>
             <PressableScale
-              onPress={openAdd}
+              onPress={() => { feedback.tap(); openAdd(); }}
               accessibilityRole="button"
               accessibilityLabel="Add your first address"
               style={{

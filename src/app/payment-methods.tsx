@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { Lock, Plus, Trash2, X } from 'lucide-react-native';
+import { feedback } from '@/lib/feedback';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
@@ -69,7 +70,7 @@ function PaymentCard({
           </Text>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <PressableScale
-              onPress={onCancelDelete}
+              onPress={() => { feedback.tap(); onCancelDelete(); }}
               accessibilityRole="button"
               accessibilityLabel="Cancel remove card"
               style={{
@@ -86,7 +87,7 @@ function PaymentCard({
               </Text>
             </PressableScale>
             <PressableScale
-              onPress={onConfirmDelete}
+              onPress={() => { feedback.tap(); onConfirmDelete(); }}
               accessibilityRole="button"
               accessibilityLabel="Confirm remove card"
               style={{
@@ -110,7 +111,7 @@ function PaymentCard({
         </View>
       ) : (
         <PressableScale
-          onPress={card.isDefault ? undefined : onSetDefault}
+          onPress={card.isDefault ? undefined : () => { feedback.tap(); onSetDefault(); }}
           accessibilityRole="button"
           accessibilityLabel={`${brand.label} card ending ${card.last4}${card.isDefault ? ', default' : ', tap to set as default'}`}
           style={{
@@ -182,7 +183,7 @@ function PaymentCard({
 
           {/* Delete */}
           <PressableScale
-            onPress={onDelete}
+            onPress={() => { feedback.tap(); onDelete(); }}
             accessibilityRole="button"
             accessibilityLabel={`Remove ${brand.label} card ending ${card.last4}`}
             style={{
@@ -238,7 +239,7 @@ export default function PaymentMethodsScreen() {
             gap: Spacing.two,
           }}>
           <PressableScale
-            onPress={() => router.back()}
+            onPress={() => { feedback.tap(); router.back(); }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{
@@ -297,7 +298,7 @@ export default function PaymentMethodsScreen() {
               animate={{ opacity: 1, translateY: 0 }}
               transition={{ type: 'timing', duration: 280, delay: cards.length * 40 }}>
               <PressableScale
-                onPress={() => setSheetVisible(true)}
+                onPress={() => { feedback.tap(); setSheetVisible(true); }}
                 accessibilityRole="button"
                 accessibilityLabel="Add new payment card"
                 style={{
