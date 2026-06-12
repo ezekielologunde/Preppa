@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -28,32 +28,33 @@ export type Meal = {
   badge?: { label: string; color: string };
 };
 
-/** Crossfading gallery that advances while hovered (web) — a living preview. */
+/** Crossfading gallery — auto-cycles on native, hover-driven on web. */
 function CardGallery({ images, hovered, height }: { images: string[]; hovered: boolean; height: number }) {
   const [cycle, setCycle] = useState(0);
+  const isNative = Platform.OS !== 'web';
+  const active = isNative ? images.length > 1 : hovered;
 
-  // Each new hover restarts the tour from the hero shot (render-time adjustment).
   const [prevHovered, setPrevHovered] = useState(hovered);
-  if (hovered !== prevHovered) {
+  if (!isNative && hovered !== prevHovered) {
     setPrevHovered(hovered);
     if (hovered) setCycle(0);
   }
 
   useEffect(() => {
-    if (!hovered || images.length <= 1) return;
-    const timer = setInterval(() => setCycle((i) => i + 1), 1100);
+    if (!active || images.length <= 1) return;
+    const interval = isNative ? 2400 : 1100;
+    const timer = setInterval(() => setCycle((i) => i + 1), interval);
     return () => clearInterval(timer);
-  }, [hovered, images.length]);
+  }, [active, images.length, isNative]);
 
-  // Shown frame derives from hover state — no reset effect needed on unhover.
-  const idx = hovered && images.length > 1 ? cycle % images.length : 0;
+  const idx = active && images.length > 1 ? cycle % images.length : 0;
 
   return (
     <View style={{ height, backgroundColor: '#FCE9DD', overflow: 'hidden' }}>
       {images.map((src, i) => (
         <MotiView
           key={src + i}
-          animate={{ opacity: i === idx ? 1 : 0, scale: hovered && i === idx ? 1.06 : 1 }}
+          animate={{ opacity: i === idx ? 1 : 0, scale: !isNative && hovered && i === idx ? 1.06 : 1 }}
           transition={{ opacity: { type: 'timing', duration: 450 }, scale: { type: 'timing', duration: 1100 } }}
           style={{ ...StyleSheetAbsolute }}>
           <Image source={imgUrl(src, 700)} style={{ flex: 1 }} contentFit="cover" transition={150} />
