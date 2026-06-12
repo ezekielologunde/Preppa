@@ -52,8 +52,9 @@ const PURPLE = '#a78bfa';
 const YELLOW = '#fbbf24';
 const PINK = '#f472b6';
 const BLUE = '#60a5fa';
-const CARD = Palette.prepperCard;
-const BG = Palette.prepperBg;
+const CARD = Palette.surface;
+const BG = Palette.canvas;
+const INK = Palette.ink;
 const MUTED = Palette.textMuted;
 
 const money = (n: number) => (n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${Math.round(n)}`);
@@ -87,7 +88,7 @@ function Ring({ pct, color, size = 96, stroke = 9 }: { pct: number; color: strin
   const center = size / 2;
   return (
     <Svg width={size} height={size}>
-      <Circle cx={center} cy={center} r={r} stroke="#252a34" strokeWidth={stroke} fill="none" />
+      <Circle cx={center} cy={center} r={r} stroke={Palette.border} strokeWidth={stroke} fill="none" />
       <Circle
         cx={center}
         cy={center}
@@ -114,7 +115,7 @@ function StatCard({ Icon, value, label, trend, color, spark, onPress }: { Icon: 
         <Text style={{ fontFamily: Font.semibold, fontSize: 12, color }}>{trend}</Text>
       </View>
       <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: MUTED }}>{label}</Text>
-      <Text style={{ fontFamily: Font.display, fontSize: 26, color: '#fff', letterSpacing: -0.6 }}>{value}</Text>
+      <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>{value}</Text>
       <Sparkline color={color} data={spark} />
     </PressableScale>
   );
@@ -186,7 +187,7 @@ export default function DashboardScreen() {
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef 👋</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 27, color: '#fff', letterSpacing: -0.8 }}>my kitchen</Text>
+                <Text style={{ fontFamily: Font.display, fontSize: 27, color: INK, letterSpacing: -0.8 }}>my kitchen</Text>
                 <Flame size={20} color={ORANGE} fill={ORANGE} />
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
@@ -200,17 +201,17 @@ export default function DashboardScreen() {
                   accessibilityRole="switch"
                   accessibilityState={{ checked: isOpen }}
                   accessibilityLabel={isOpen ? 'Kitchen is open — tap to close' : 'Kitchen is closed — tap to open'}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isOpen ? GREEN + '22' : '#252a34', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isOpen ? GREEN + '22' : Palette.chip, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                   <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isOpen ? GREEN : MUTED }} />
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : MUTED }}>{isOpen ? 'Open' : 'Closed'}</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : Palette.textSecondary }}>{isOpen ? 'Open' : 'Closed'}</Text>
                 </PressableScale>
               </View>
             </View>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/search'); }} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
-              <Search size={19} color="#fff" />
+            <PressableScale onPress={() => { feedback.tap(); router.push('/search'); }} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center', ...Shadow.card }}>
+              <Search size={19} color={INK} />
             </PressableScale>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="New orders" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
-              <Bell size={19} color="#fff" />
+            <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="New orders" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center', ...Shadow.card }}>
+              <Bell size={19} color={INK} />
               {newCount > 0 ? (
                 <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{newCount}</Text>
@@ -255,7 +256,7 @@ export default function DashboardScreen() {
                   <Crown size={19} color={ORANGE} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>Go Pro — unlock more</Text>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>Go Pro — unlock more</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, marginTop: 1 }}>Boosts, analytics, livestream & AI tools · $29/mo</Text>
                 </View>
                 <ChevronRight size={16} color={ORANGE} />
@@ -276,7 +277,7 @@ export default function DashboardScreen() {
           {/* Next order */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 160 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, marginBottom: 12 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>next order</Text>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5 }}>next order</Text>
             {next ? (
               <View style={{ backgroundColor: ORANGE + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: ORANGE }}>{next.status === 'pending' ? 'new' : next.status}</Text>
@@ -290,21 +291,21 @@ export default function DashboardScreen() {
                 {next.items[0]?.image ? (
                   <Image source={next.items[0].image} style={{ width: 76, height: 76, borderRadius: 18 }} contentFit="cover" />
                 ) : (
-                  <View style={{ width: 76, height: 76, borderRadius: 18, backgroundColor: '#252a34', alignItems: 'center', justifyContent: 'center' }}>
+                  <View style={{ width: 76, height: 76, borderRadius: 18, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
                     <UtensilsCrossed size={26} color={MUTED} />
                   </View>
                 )}
                 <View style={{ flex: 1, gap: 3 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }} numberOfLines={1}>{next.customer}</Text>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }} numberOfLines={1}>{next.customer}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }} numberOfLines={1}>
                     {next.items[0]?.title ?? 'order'}{next.items.length > 1 ? ` +${next.items.length - 1}` : ''}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: next.paymentStatus === 'paid' ? GREEN + '24' : '#252a34', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: next.paymentStatus === 'paid' ? GREEN + '24' : Palette.chip, borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
                       {next.paymentStatus === 'paid' ? <Check size={11} color={GREEN} strokeWidth={2.5} /> : null}
                       <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: next.paymentStatus === 'paid' ? GREEN : MUTED }}>{next.paymentStatus === 'paid' ? 'paid' : 'unpaid'}</Text>
                     </View>
-                    <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#fff', fontVariant: ['tabular-nums'] }}>${next.total.toFixed(2)}</Text>
+                    <Text style={{ fontFamily: Font.display, fontSize: 16, color: INK, fontVariant: ['tabular-nums'] }}>${next.total.toFixed(2)}</Text>
                   </View>
                 </View>
               </View>
@@ -321,7 +322,7 @@ export default function DashboardScreen() {
             </View>
           ) : (
             <View style={{ marginHorizontal: 20, backgroundColor: CARD, borderRadius: 22, padding: 24, alignItems: 'center', gap: 8 }}>
-              <ShoppingBag size={26} color="#5b6170" />
+              <ShoppingBag size={26} color={Palette.textSecondary} />
               <Text style={{ fontFamily: Font.body, fontSize: 14, color: MUTED, textAlign: 'center' }}>No active orders right now. New orders land here instantly.</Text>
             </View>
           )}
@@ -331,7 +332,7 @@ export default function DashboardScreen() {
           {/* Today at a glance */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 240 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 26, marginBottom: 14 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>at a glance</Text>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5 }}>at a glance</Text>
             <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="View all orders">
               <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>view all</Text>
             </PressableScale>
@@ -353,11 +354,11 @@ export default function DashboardScreen() {
           <View style={desktop ? { flex: 2 } : undefined}>
           <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: desktop ? 0 : 22 }}>
             <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 12 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: '#fff' }}>today&apos;s goal</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: INK }}>today&apos;s goal</Text>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Ring pct={goalPct} color={ORANGE} />
                 <View style={{ position: 'absolute', alignItems: 'center' }}>
-                  <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff' }}>{goalPct}%</Text>
+                  <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK }}>{goalPct}%</Text>
                 </View>
               </View>
               <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, textAlign: 'center' }}>{money(revenue)} of $2k goal</Text>
@@ -388,19 +389,19 @@ export default function DashboardScreen() {
 
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
         <View style={[{ position: 'absolute', left: 16, right: 16, bottom: 78, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
-          <ActionItem Icon={UtensilsCrossed} label="add meal" color="#fff" onPress={() => router.push('/meal-editor')} />
+          <ActionItem Icon={UtensilsCrossed} label="add meal" color={Palette.inkSoft} onPress={() => router.push('/meal-editor')} />
           <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/post-video')} />
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => { feedback.tap(); router.push('/meal-editor'); }}>
             <View style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginTop: -26, backgroundColor: ORANGE, ...Shadow.floating, shadowColor: ORANGE, shadowOpacity: 0.45 }}>
               <Plus size={28} color="#fff" />
             </View>
           </PressableScale>
-          <ActionItem Icon={Gift} label="new drop" color="#fff" onPress={() => router.push('/meal-editor')} />
+          <ActionItem Icon={Gift} label="new drop" color={Palette.inkSoft} onPress={() => router.push('/meal-editor')} />
           <ActionItem Icon={Briefcase} label="opportunity" color={ORANGE} onPress={() => router.push('/opportunities')} />
         </View>
 
         {/* Prepper tab nav (dark) */}
-        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: '#15181f', paddingTop: 10, paddingBottom: 22, borderTopLeftRadius: 24, borderTopRightRadius: 24 }}>
+        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: 22, borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
           <NavTab Icon={Home} label="home" onPress={() => router.push('/')} />
           <NavTab Icon={ShoppingBag} label="orders" badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
           <NavTab Icon={ChefHat} label="kitchen" active />
@@ -415,7 +416,7 @@ export default function DashboardScreen() {
 function ActionItem({ Icon, label, color, onPress }: { Icon: LucideIcon; label: string; color: string; onPress?: () => void }) {
   return (
     <PressableScale onPress={onPress ? () => { feedback.tap(); onPress(); } : undefined} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 5, width: 58 }}>
-      <View style={{ width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: color === '#fff' ? '#3f4451' : color + '66', alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: color === Palette.inkSoft ? Palette.border : color + '66', alignItems: 'center', justifyContent: 'center' }}>
         <Icon size={18} color={color} />
       </View>
       <Text style={{ fontFamily: Font.medium, fontSize: 10, color: Palette.textMuted }} numberOfLines={1}>{label}</Text>

@@ -17,7 +17,7 @@ import { AppProviders } from '@/providers/app-providers';
 const ONBOARDED_KEY = 'preppa.onboarded.v1';
 
 // Screens that are dark by design — inverting them would make them light.
-const DARK_BY_DESIGN = ['/dashboard', '/prepper-orders', '/earnings', '/admin'];
+const DARK_BY_DESIGN = ['/prepper-orders', '/earnings', '/admin'];
 
 /**
  * Responsive frame for web. Each route class gets an intentional width

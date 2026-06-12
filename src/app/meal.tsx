@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, Check, ChevronLeft, Clock, Maximize2, MessageCircle, Share2, ShoppingBag, Star, X, Zap } from 'lucide-react-native';
+import { BadgeCheck, Check, ChevronLeft, ChevronRight, Clock, Maximize2, MessageCircle, Share2, ShoppingBag, Star, X, Zap } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { MotiView } from 'moti';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Share, Text, View } from 'react-native';
@@ -53,6 +53,8 @@ export default function MealScreen() {
   const [added, setAdded] = useState(false);
   const [switchPrompt, setSwitchPrompt] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState(0);
+  const [heroIdx, setHeroIdx] = useState(0);
   const [allReviews, setAllReviews] = useState(false);
 
   useEffect(() => {
@@ -125,10 +127,23 @@ export default function MealScreen() {
         <View style={{ height: 320, backgroundColor: '#FCE9DD' }}>
           {isLoading ? (
             <Skeleton width="100%" height={320} radius={0} />
-          ) : meal?.images[0] ? (
-            <Pressable onPress={() => { feedback.tap(); setLightboxOpen(true); }} accessibilityRole="button" accessibilityLabel="View full-screen photo" style={{ flex: 1 }}>
-              <Image source={imgUrl(meal.images[0], 1000)} style={{ flex: 1 }} contentFit="cover" transition={250} />
-            </Pressable>
+          ) : meal?.images.length ? (
+            <>
+              <Pressable onPress={() => { feedback.tap(); setLightboxIdx(heroIdx); setLightboxOpen(true); }} accessibilityRole="button" accessibilityLabel="View full-screen photo" style={{ flex: 1 }}>
+                <Image source={imgUrl(meal.images[heroIdx], 1000)} style={{ flex: 1 }} contentFit="cover" transition={250} />
+              </Pressable>
+              {meal.images.length > 1 ? (
+                <>
+                  <Pressable onPress={() => setHeroIdx(i => Math.max(0, i - 1))} style={{ position: 'absolute', left: 0, top: 60, bottom: 60, width: '33%' }} accessibilityLabel="Previous photo" />
+                  <Pressable onPress={() => setHeroIdx(i => Math.min(meal.images.length - 1, i + 1))} style={{ position: 'absolute', right: 0, top: 60, bottom: 60, width: '33%' }} accessibilityLabel="Next photo" />
+                  <View style={{ position: 'absolute', bottom: 12, alignSelf: 'center', flexDirection: 'row', gap: 5 }} pointerEvents="none">
+                    {meal.images.map((_, i) => (
+                      <View key={i} style={{ width: i === heroIdx ? 14 : 5, height: 5, borderRadius: 3, backgroundColor: i === heroIdx ? '#fff' : 'rgba(255,255,255,0.6)' }} />
+                    ))}
+                  </View>
+                </>
+              ) : null}
+            </>
           ) : null}
           <SafeAreaView edges={['top']} style={{ position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8 }}>
             <PressableScale onPress={() => { feedback.tap(); try { router.back(); } catch { router.replace('/'); } }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
@@ -138,8 +153,8 @@ export default function MealScreen() {
               <PressableScale onPress={handleShare} accessibilityRole="button" accessibilityLabel="Share this meal" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
                 <Share2 size={17} color={INK} />
               </PressableScale>
-              {meal?.images[0] ? (
-                <PressableScale onPress={() => { feedback.tap(); setLightboxOpen(true); }} accessibilityRole="button" accessibilityLabel="View full-screen photo" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
+              {meal?.images.length ? (
+                <PressableScale onPress={() => { feedback.tap(); setLightboxIdx(heroIdx); setLightboxOpen(true); }} accessibilityRole="button" accessibilityLabel="View full-screen photo" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
                   <Maximize2 size={17} color={INK} />
                 </PressableScale>
               ) : null}
@@ -323,12 +338,13 @@ export default function MealScreen() {
         </View>
       ) : null}
 
-      {/* Fullscreen image lightbox */}
+      {/* Fullscreen image lightbox — shows all gallery images with prev/next navigation */}
       <Modal visible={lightboxOpen} transparent animationType="fade" onRequestClose={() => setLightboxOpen(false)}>
         <View style={{ flex: 1, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
-          {meal?.images[0] ? (
-            <Image source={imgUrl(meal.images[0], 1400)} style={{ width: '100%', height: '80%' }} contentFit="contain" />
+          {meal?.images[lightboxIdx] ? (
+            <Image source={imgUrl(meal.images[lightboxIdx], 1400)} style={{ width: '100%', height: '80%' }} contentFit="contain" />
           ) : null}
+          {/* Close */}
           <PressableScale
             onPress={() => { feedback.tap(); setLightboxOpen(false); }}
             accessibilityRole="button"
@@ -336,8 +352,32 @@ export default function MealScreen() {
             style={{ position: 'absolute', top: 60, right: 20, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>
             <X size={22} color="#fff" />
           </PressableScale>
+          {/* Prev/next navigation */}
+          {(meal?.images.length ?? 0) > 1 ? (
+            <View style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 }} pointerEvents="box-none">
+              {lightboxIdx > 0 ? (
+                <PressableScale onPress={() => setLightboxIdx(i => i - 1)} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChevronLeft size={22} color="#fff" />
+                </PressableScale>
+              ) : <View style={{ width: 44 }} />}
+              {lightboxIdx < (meal?.images.length ?? 1) - 1 ? (
+                <PressableScale onPress={() => setLightboxIdx(i => i + 1)} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChevronRight size={22} color="#fff" />
+                </PressableScale>
+              ) : <View style={{ width: 44 }} />}
+            </View>
+          ) : null}
+          {/* Dots */}
+          {(meal?.images.length ?? 0) > 1 ? (
+            <View style={{ position: 'absolute', bottom: 100, alignSelf: 'center', flexDirection: 'row', gap: 6 }}>
+              {meal?.images.map((_, i) => (
+                <View key={i} style={{ width: i === lightboxIdx ? 16 : 6, height: 6, borderRadius: 3, backgroundColor: i === lightboxIdx ? '#fff' : 'rgba(255,255,255,0.4)' }} />
+              ))}
+            </View>
+          ) : null}
+          {/* Caption */}
           {meal?.title ? (
-            <View style={{ position: 'absolute', bottom: 60, left: 24, right: 24 }}>
+            <View style={{ position: 'absolute', bottom: 56, left: 24, right: 24 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', textAlign: 'center', letterSpacing: -0.4 }}>{meal.title}</Text>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginTop: 4 }}>by {meal.prepper}</Text>
             </View>
