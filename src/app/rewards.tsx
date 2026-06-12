@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Check, ChevronLeft, Gift, Lock, Sparkles, Star } from 'lucide-react-native';
+import { Bike, Check, ChevronLeft, Crown, Gift, Lock, MessageSquare, ShoppingBag, Sparkles, Star, Tag, UserPlus } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
@@ -126,6 +126,68 @@ export default function RewardsScreen() {
                 <TierCard tier={t} reached={r.lifetimeSpend >= t.min} current={t.key === r.tier.key} />
               </MotiView>
             ))}
+
+            {/* Redeemable perks */}
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 280 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, marginTop: 6, marginBottom: 12 }}>redeem points</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+              {([
+                { title: '20% off', desc: 'one order', pts: 2000, Icon: Tag, color: ORANGE },
+                { title: 'free delivery', desc: 'next order', pts: 1500, Icon: Bike, color: '#06b6d4' },
+                { title: 'mystery meal', desc: 'chef surprise', pts: 3000, Icon: Gift, color: '#8b5cf6' },
+                { title: 'month of Prep+', desc: 'premium access', pts: 8000, Icon: Crown, color: '#d97706' },
+              ] as const).map(({ title, desc, pts, Icon, color }) => {
+                const canRedeem = r.points >= pts;
+                return (
+                  <PressableScale key={title} onPress={() => feedback.tap()} accessibilityRole="button" accessibilityLabel={`Redeem ${pts} points for ${title}`}
+                    style={{ flexBasis: '47%', flexGrow: 1, backgroundColor: Palette.surface, borderRadius: 16, padding: 14, gap: 8, opacity: canRedeem ? 1 : 0.6, borderWidth: 1, borderColor: canRedeem ? color + '30' : Palette.border }}>
+                    <View style={{ width: 36, height: 36, borderRadius: 11, backgroundColor: color + '18', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={17} color={color} />
+                    </View>
+                    <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>{title}</Text>
+                    <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>{desc}</Text>
+                    <View style={{ alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 4, borderRadius: 999, backgroundColor: canRedeem ? color + '18' : Palette.chip }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: canRedeem ? color : Palette.textMuted, fontVariant: ['tabular-nums'] }}>{pts.toLocaleString()} pts</Text>
+                    </View>
+                  </PressableScale>
+                );
+              })}
+            </View>
+            </MotiView>
+
+            {/* Ways to earn more */}
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 340 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, marginTop: 8 }}>earn more points</Text>
+            <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', marginTop: 12 }}>
+              {([
+                { label: 'place an order', pts: '10 pts per $1', Icon: ShoppingBag },
+                { label: 'write a review', pts: '25 pts', Icon: MessageSquare },
+                { label: 'refer a friend', pts: '500 pts', Icon: UserPlus },
+                { label: 'first order bonus', pts: '100 pts', Icon: Sparkles },
+              ] as const).map(({ label, pts, Icon }, i) => (
+                <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 13, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.divider }}>
+                  <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon size={15} color={ORANGE} />
+                  </View>
+                  <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 14, color: INK }}>{label}</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>{pts}</Text>
+                </View>
+              ))}
+            </View>
+            </MotiView>
+
+            {/* Refer CTA */}
+            <PressableScale onPress={() => { feedback.tap(); router.push('/referral'); }} accessibilityRole="button" accessibilityLabel="Refer friends to earn 500 points each"
+              style={{ backgroundColor: Palette.ink, borderRadius: Radius.lg, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+              <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: ORANGE + '22', alignItems: 'center', justifyContent: 'center' }}>
+                <UserPlus size={20} color={ORANGE} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>refer a friend</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>Earn 500 points for every friend who orders</Text>
+              </View>
+              <Sparkles size={18} color={ORANGE} />
+            </PressableScale>
 
             <PressableScale onPress={() => { feedback.tap(); router.push('/'); }} accessibilityRole="button" accessibilityLabel="Browse meals to earn points" style={{ height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4 }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Order to earn points</Text>
