@@ -55,6 +55,10 @@ const ICONS: Record<string, LucideIcon> = {
   LayoutGrid, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Leaf, Sprout, MoreHorizontal,
 };
 
+const TRENDING = [
+  'Nigerian Stew', 'Jerk Chicken', 'High-Protein', 'Vegan', 'Meal Prep', 'Keto',
+];
+
 const GOALS: { label: string; tag: string; Icon: LucideIcon; color: string }[] = [
   { label: 'Bulk Up',     tag: 'High-Protein',      Icon: Zap,    color: '#F59E0B' },
   { label: 'Cut & Lean',  tag: 'Low-Calorie',        Icon: Flame,  color: '#EF4444' },
@@ -130,6 +134,22 @@ export default function ExploreScreen() {
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
             <Scan size={20} color={ORANGE} />
           </PressableScale>
+
+          {/* Trending chips — quick-tap discovery below the search bar */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingTop: 10, paddingBottom: 2 }}>
+            {TRENDING.map((term, i) => (
+              <MotiView key={term} from={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 14, stiffness: 200, delay: i * 40 }}>
+                <PressableScale
+                  onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(term)}`); }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Search for ${term}`}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 34, paddingHorizontal: 13, borderRadius: 999, backgroundColor: Palette.surface, borderWidth: 1, borderColor: Palette.border }}>
+                  <Search size={11} color={Palette.textMuted} />
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.inkSoft }}>{term}</Text>
+                </PressableScale>
+              </MotiView>
+            ))}
+          </ScrollView>
 
           {/* Error banner — shown when primary data queries fail */}
           {(preppersError || mealsError) && !preppersLoading && !mealsLoading ? (
