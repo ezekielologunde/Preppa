@@ -125,7 +125,7 @@ export default function EditProfileScreen() {
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14, backgroundColor: Palette.ink, gap: 12 }}>
-          <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back"
+          <PressableScale onPress={() => { feedback.tap(); router.back(); }} accessibilityRole="button" accessibilityLabel="Go back"
             style={{ width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }}>
             <ArrowLeft size={22} color="#fff" />
           </PressableScale>
@@ -146,7 +146,7 @@ export default function EditProfileScreen() {
               style={{ alignItems: 'center', marginBottom: 28 }}>
               <View style={{ width: 92, height: 92, borderRadius: 46, borderWidth: 3, borderColor: Palette.brand, padding: 3 }}>
                 <Avatar name={displayName} url={avatarUrl} size={80} />
-                <PressableScale onPress={handlePickAvatar} accessibilityRole="button" accessibilityLabel="Change photo"
+                <PressableScale onPress={() => { feedback.tap(); handlePickAvatar(); }} accessibilityRole="button" accessibilityLabel="Change photo"
                   style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderRadius: 15, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Palette.canvas }}>
                   <Camera size={14} color="#fff" />
                 </PressableScale>

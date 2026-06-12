@@ -217,7 +217,7 @@ function DeleteModal({ visible, onCancel, onConfirm }: { visible: boolean; onCan
             style={{ marginTop: 16, paddingVertical: 15, borderRadius: 16, backgroundColor: Palette.danger, alignItems: 'center' }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.surface }}>Yes, delete my account</Text>
           </PressableScale>
-          <PressableScale onPress={onCancel} accessibilityRole="button" accessibilityLabel="Cancel"
+          <PressableScale onPress={() => { feedback.tap(); onCancel(); }} accessibilityRole="button" accessibilityLabel="Cancel"
             style={{ paddingVertical: 15, borderRadius: 16, backgroundColor: Palette.chip, alignItems: 'center' }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink }}>Cancel</Text>
           </PressableScale>
@@ -270,7 +270,7 @@ export default function SettingsScreen() {
     flash(`${label} — coming soon`);
   };
 
-  const go = (route: string) => router.push(route as never);
+  const go = (route: string) => { feedback.tap(); router.push(route as never); };
 
   const handleDeleteConfirm = () => {
     setDeleteVisible(false);
@@ -295,7 +295,7 @@ export default function SettingsScreen() {
             gap: 12,
           }}>
           <PressableScale
-            onPress={() => router.back()}
+            onPress={() => { feedback.tap(); router.back(); }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{
