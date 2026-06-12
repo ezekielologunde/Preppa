@@ -37,7 +37,7 @@ export function StatusBadge({
   type: 'green' | 'orange' | 'gray';
 }) {
   const colors = {
-    green: { bg: '#DCFCE7', fg: Palette.success },
+    green: { bg: Palette.success + '1A', fg: Palette.success },
     orange: { bg: Palette.brandTint, fg: Palette.brandPressed },
     gray: { bg: Palette.chip, fg: Palette.textSecondary },
   };

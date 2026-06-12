@@ -24,9 +24,9 @@ const COLORS: Record<AlertType, string> = {
   rush_hour: Palette.brand,
   holiday: '#8b5cf6',
   weekly_digest: '#6d28d9',
-  seasonal: '#16a34a',
+  seasonal: Palette.success,
   milestone: '#0891b2',
-  new_prepper: '#16a34a',
+  new_prepper: Palette.success,
 };
 
 export function MarketingBanner() {
