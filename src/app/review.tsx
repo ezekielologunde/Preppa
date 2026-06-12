@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Check, ChevronLeft, Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -14,6 +14,15 @@ import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
+
+const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
+const QUICK_PHRASES: Record<number, string[]> = {
+  1: ['Arrived late', 'Wrong order', 'Not as described'],
+  2: ['Below expectations', 'Portion was small', 'Needs improvement'],
+  3: ['Pretty good', 'As expected', 'Would try again'],
+  4: ['Really enjoyed it', 'Fresh and tasty', 'Good portions'],
+  5: ['Absolutely delicious!', 'Perfect portions', 'Will order again!', 'Exceeded expectations'],
+};
 
 export default function ReviewScreen() {
   const router = useRouter();
@@ -43,7 +52,7 @@ export default function ReviewScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: Palette.surface }}>
         <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 }}>
-          <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 400, bounce: 0.25 }}>
+          <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 12, stiffness: 180 }}>
             <View style={{ width: 76, height: 76, borderRadius: 24, backgroundColor: Palette.success + '1F', alignItems: 'center', justifyContent: 'center' }}>
               <Check size={36} color={Palette.success} strokeWidth={3} />
             </View>
@@ -83,16 +92,37 @@ export default function ReviewScreen() {
             </Text>
           </MotiView>
 
-          {/* Star picker */}
+          {/* Star picker + rating label */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 120 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
-              {[1, 2, 3, 4, 5].map((n) => (
-                <PressableScale key={n} onPress={() => { feedback.tap(); setRating(n); }} accessibilityRole="button" accessibilityLabel={`${n} star${n > 1 ? 's' : ''}`} style={{ padding: 4 }}>
-                  <Star size={40} color={n <= rating ? Palette.amber : Palette.border} fill={n <= rating ? Palette.amber : 'transparent'} />
-                </PressableScale>
-              ))}
+            <View style={{ alignItems: 'center', gap: 8 }}>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <PressableScale key={n} onPress={() => { feedback.tap(); setRating(n); }} accessibilityRole="button" accessibilityLabel={`${n} star${n > 1 ? 's' : ''}`} style={{ padding: 4 }}>
+                    <Star size={40} color={n <= rating ? Palette.amber : Palette.border} fill={n <= rating ? Palette.amber : 'transparent'} />
+                  </PressableScale>
+                ))}
+              </View>
+              {rating > 0 ? (
+                <MotiView from={{ opacity: 0, translateY: 4 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 180 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.amber }}>{RATING_LABELS[rating]}</Text>
+                </MotiView>
+              ) : null}
             </View>
           </MotiView>
+
+          {/* Quick-phrase chips */}
+          {rating > 0 && !body ? (
+            <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 2 }}>
+                {(QUICK_PHRASES[rating] ?? []).map((phrase) => (
+                  <PressableScale key={phrase} onPress={() => { feedback.tap(); setBody(phrase); }} accessibilityRole="button" accessibilityLabel={phrase}
+                    style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
+                    <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{phrase}</Text>
+                  </PressableScale>
+                ))}
+              </ScrollView>
+            </MotiView>
+          ) : null}
 
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 180 }}>
             <TextInput
