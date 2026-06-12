@@ -38,51 +38,54 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
         left: 0,
         right: 0,
         bottom: 0,
-        flexDirection: 'row',
         backgroundColor: Palette.surface,
         paddingTop: showLabels ? 8 : 6,
         paddingBottom: Math.max(insets.bottom, showLabels ? 12 : 10),
-        borderTopLeftRadius: 26,
-        borderTopRightRadius: 26,
+        borderTopLeftRadius: showLabels ? 0 : 26,
+        borderTopRightRadius: showLabels ? 0 : 26,
+        borderTopWidth: showLabels ? 1 : 0,
+        borderTopColor: Palette.border,
         ...Shadow.navBar,
       }}>
-      {visibleTabs.map((tab) => {
-        const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
-        const focused = routeIndex >= 0 && state.index === routeIndex;
-        const color = focused ? Palette.brand : Palette.textSecondary;
+      <View style={{ flexDirection: 'row', maxWidth: showLabels ? 560 : undefined, alignSelf: showLabels ? 'center' : undefined, width: '100%' }}>
+        {visibleTabs.map((tab) => {
+          const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
+          const focused = routeIndex >= 0 && state.index === routeIndex;
+          const color = focused ? Palette.brand : Palette.textSecondary;
 
-        return (
-          <PressableScale
-            key={tab.name}
-            onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
-            accessibilityRole="button"
-            accessibilityState={{ selected: focused }}
-            accessibilityLabel={tab.label}
-            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: TouchTarget, gap: showLabels ? 3 : 0, paddingTop: showLabels ? 4 : 0 }}>
+          return (
+            <PressableScale
+              key={tab.name}
+              onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: focused }}
+              accessibilityLabel={tab.label}
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: TouchTarget, gap: showLabels ? 4 : 0, paddingTop: showLabels ? 2 : 0 }}>
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', width: showLabels ? 52 : 44, height: showLabels ? 32 : 44 }}>
-              <MotiView
-                animate={{ opacity: focused ? 1 : 0, scale: focused ? 1 : 0.5 }}
-                transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                style={{
-                  position: 'absolute',
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: showLabels ? 16 : 22,
-                  backgroundColor: Palette.brandTint,
-                }}
-              />
-              <tab.Icon size={22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
-            </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center', width: showLabels ? 56 : 44, height: showLabels ? 34 : 44 }}>
+                <MotiView
+                  animate={{ opacity: focused ? 1 : 0, scale: focused ? 1 : 0.5 }}
+                  transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: showLabels ? 12 : 22,
+                    backgroundColor: Palette.brandTint,
+                  }}
+                />
+                <tab.Icon size={showLabels ? 20 : 22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
+              </View>
 
-            {showLabels && (
-              <Text style={{ fontFamily: focused ? Font.semibold : Font.medium, fontSize: 11, color, letterSpacing: focused ? 0 : 0.1 }}>
-                {tab.label}
-              </Text>
-            )}
-          </PressableScale>
-        );
-      })}
+              {showLabels && (
+                <Text style={{ fontFamily: focused ? Font.semibold : Font.medium, fontSize: 12, color, letterSpacing: focused ? 0 : 0.1 }}>
+                  {tab.label}
+                </Text>
+              )}
+            </PressableScale>
+          );
+        })}
+      </View>
     </View>
   );
 }
