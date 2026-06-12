@@ -168,27 +168,26 @@ export default function HomeScreen() {
             </PressableScale>
           </View>
 
-          {/* Location — right-aligned pill */}
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, marginTop: 4 }}>
-            <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 8 }}>
-              <MapPin size={14} color={ORANGE} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{location.split(',')[0]}</Text>
-              <ChevronDown size={14} color={Palette.textSecondary} />
-            </PressableScale>
-          </View>
           </MotiView>
 
-          {/* Search */}
+          {/* Search + location */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
-          <PressableScale
-            onPress={() => { feedback.tap(); router.push('/search'); }}
-            accessibilityRole="search"
-            accessibilityLabel="Search meals, cuisines, or preppers"
-            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 8, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 48, gap: 10 }}>
-            <Search size={20} color={MUTED} />
-            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>Search meals, cuisines, or preppers…</Text>
-            <SlidersHorizontal size={20} color={ORANGE} />
-          </PressableScale>
+          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 8, gap: 8, alignItems: 'center' }}>
+            <PressableScale
+              onPress={() => { feedback.tap(); router.push('/search'); }}
+              accessibilityRole="search"
+              accessibilityLabel="Search meals, cuisines, or preppers"
+              style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 46, gap: 10 }}>
+              <Search size={19} color={MUTED} />
+              <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 14.5, color: MUTED }}>Search meals, cuisines…</Text>
+              <SlidersHorizontal size={18} color={ORANGE} />
+            </PressableScale>
+            <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 14, paddingHorizontal: 11, height: 46 }}>
+              <MapPin size={13} color={ORANGE} />
+              <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.inkSoft }}>{location.split(',')[0]}</Text>
+              <ChevronDown size={12} color={Palette.textSecondary} />
+            </PressableScale>
+          </View>
           </MotiView>
 
           {/* Rush hour / specials entry — only when rush is active, replaces MarketingBanner for that moment */}
@@ -245,9 +244,9 @@ export default function HomeScreen() {
               const onPress = () => { feedback.tap(); c.key === 'more' ? router.push('/explore') : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`); };
               return (
                 <MotiView key={c.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 100 + i * 35 }}>
-                  <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 62 }}>
-                    <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={24} color={c.color} />
+                  <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 6, width: 58 }}>
+                    <View style={{ width: 52, height: 52, borderRadius: 18, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={22} color={c.color} />
                     </View>
                     <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.inkSoft }}>{c.label}</Text>
                   </PressableScale>
@@ -256,7 +255,7 @@ export default function HomeScreen() {
             });
             return bp !== 'mobile'
               ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
-              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 14 }}>{items}</ScrollView>;
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 10 }}>{items}</ScrollView>;
           })()}
 
           {/* Primary products — compact list card so nothing wraps */}
