@@ -40,7 +40,7 @@ const SORTS: { key: SortKey; label: string }[] = [
 function Chip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
     <PressableScale
-      onPress={onPress}
+      onPress={() => { feedback.tap(); onPress(); }}
       accessibilityRole="button"
       accessibilityLabel={`Filter: ${label}`}
       accessibilityState={{ selected }}

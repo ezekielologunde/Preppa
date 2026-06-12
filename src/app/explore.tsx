@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import {
+  AlertCircle,
   CakeSlice,
   Check,
   ChevronDown,
@@ -77,9 +78,9 @@ const CITIES = [
 
 export default function ExploreScreen() {
   const router = useRouter();
-  const { data: preppers, isLoading: preppersLoading, refetch: refetchPreppers } = useTopPreppers();
+  const { data: preppers, isLoading: preppersLoading, isError: preppersError, refetch: refetchPreppers } = useTopPreppers();
   const { data: kitchenTags, refetch: refetchTags } = useKitchenTags();
-  const { data: meals, isLoading: mealsLoading, refetch: refetchMeals } = useFeaturedMeals();
+  const { data: meals, isLoading: mealsLoading, isError: mealsError, refetch: refetchMeals } = useFeaturedMeals();
   const { data: drops, refetch: refetchDrops } = useLimitedDrops(6);
   const [refreshing, setRefreshing] = useState(false);
   const [location, setLocation] = useState('New York, NY');
@@ -121,6 +122,14 @@ export default function ExploreScreen() {
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
             <Scan size={20} color={ORANGE} />
           </PressableScale>
+
+          {/* Error banner — shown when primary data queries fail */}
+          {(preppersError || mealsError) && !preppersLoading && !mealsLoading ? (
+            <PressableScale onPress={handleRefresh} accessibilityRole="button" accessibilityLabel="Data failed to load. Tap to retry." style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginTop: 12, backgroundColor: '#FEF2F2', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11 }}>
+              <AlertCircle size={18} color="#b91c1c" />
+              <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13.5, color: '#b91c1c' }}>Couldn't load meals. Tap to retry.</Text>
+            </PressableScale>
+          ) : null}
 
           {/* Categories — horizontal scroll on phone, wrapping grid on tablet+ */}
           {(() => {

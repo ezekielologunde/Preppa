@@ -3,6 +3,7 @@ import { MotiView } from 'moti';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
+  AlertCircle,
   Bell,
   Bike,
   CalendarCheck,
@@ -93,7 +94,7 @@ export default function HomeScreen() {
   const rawFirst = (user?.user_metadata?.full_name as string | undefined)?.trim().split(/\s+/)[0];
   const firstName = rawFirst ? rawFirst.toLowerCase() : null;
   // Live meals from Supabase (RLS-scoped); fall back to mock if the query is empty.
-  const { data: liveMeals, isLoading: mealsLoading, refetch: refetchMeals } = useFeaturedMeals();
+  const { data: liveMeals, isLoading: mealsLoading, isError: mealsError, refetch: refetchMeals } = useFeaturedMeals();
   const { data: followingFeed, refetch: refetchFeed } = useFollowingFeed(user?.id);
   const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
   const { data: flags } = useFeatureFlags();
@@ -186,6 +187,14 @@ export default function HomeScreen() {
             <SlidersHorizontal size={20} color={ORANGE} />
           </PressableScale>
           </MotiView>
+
+          {/* Error banner — shown when primary data fails */}
+          {mealsError && !mealsLoading ? (
+            <PressableScale onPress={handleRefresh} accessibilityRole="button" accessibilityLabel="Data failed to load. Tap to retry." style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginTop: 12, backgroundColor: '#FEF2F2', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11 }}>
+              <AlertCircle size={18} color="#b91c1c" />
+              <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13.5, color: '#b91c1c' }}>Couldn't load meals. Tap to retry.</Text>
+            </PressableScale>
+          ) : null}
 
           {/* Active order tracker — always-findable live status */}
           {activeOrder ? (
