@@ -103,6 +103,11 @@ export default function RootLayout() {
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="change-email" options={{ presentation: 'transparentModal', animation: 'slide_from_bottom' }} />
             <Stack.Screen name="change-password" options={{ presentation: 'transparentModal', animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="review" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="referral" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="notification-settings" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="dietary-preferences" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="boost" options={{ presentation: 'modal' }} />
           </Stack>
           {ready && !onboarded && (
             <Onboarding onGetStarted={() => goToAuth('signup')} onSignIn={() => goToAuth('signin')} />
