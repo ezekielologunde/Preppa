@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Clock, Flame, Gift, Leaf, Sparkles, Star, Sun } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Clock, Flame, Gift, Leaf, Sparkles, Star, Sun, Zap } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -134,6 +134,19 @@ export default function SpecialsScreen() {
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120, gap: 28 }}>
+          {/* Emergency food CTA */}
+          <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push('/emergency-food'); }} accessibilityRole="button" accessibilityLabel="Emergency food mode"
+            style={{ marginHorizontal: 20, backgroundColor: '#7f1d1d', borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Zap size={17} color="#fca5a5" />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>need food urgently?</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 1 }}>Notify nearby preppers instantly</Text>
+            </View>
+            <ChevronRight size={15} color="rgba(255,255,255,0.5)" />
+          </PressableScale>
+          </MotiView>
+
           {/* Rush hour */}
           <RushHourCard />
 
