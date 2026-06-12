@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, MessageSquare, RefreshCw, Share2, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
@@ -322,6 +323,15 @@ export default function PrepperScreen() {
                     </View>
                   </View>
                   {r.body ? <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{r.body}</Text> : null}
+                  {r.photos?.length > 0 ? (
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingTop: 2 }}>
+                      {r.photos.map((ph, pi) => (
+                        <View key={pi} style={{ width: 64, height: 64, borderRadius: 10, overflow: 'hidden', backgroundColor: Palette.canvas }}>
+                          <Image source={ph} style={{ flex: 1 }} contentFit="cover" transition={200} />
+                        </View>
+                      ))}
+                    </ScrollView>
+                  ) : null}
                 </View>
                 </MotiView>
               ))}
