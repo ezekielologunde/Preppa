@@ -113,7 +113,7 @@ export default function HolidaySpecialsScreen() {
               <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: 'rgba(255,255,255,0.9)', lineHeight: 20, marginBottom: 12 }}>{todayEvent.description}</Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
                 {todayEvent.dishes.slice(0, 4).map((d) => (
-                  <View key={d} style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
+                  <View key={d} style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                     <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: '#fff' }}>{d}</Text>
                   </View>
                 ))}
@@ -154,7 +154,7 @@ export default function HolidaySpecialsScreen() {
                     <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>{culture} · {date}</Text>
                   </View>
                   <View style={{ gap: 4, alignItems: 'flex-end' }}>
-                    <View style={{ backgroundColor: urge.color + '18', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 4 }}>
+                    <View style={{ backgroundColor: urge.color + '18', borderRadius: Radius.pill, paddingHorizontal: 8, paddingVertical: 4 }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: urge.color }}>{urge.label}</Text>
                     </View>
                     <Text style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted }}>in {daysAway}d</Text>
@@ -163,12 +163,12 @@ export default function HolidaySpecialsScreen() {
                 <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{description}</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                   {dishes.slice(0, 3).map((d) => (
-                    <View key={d} style={{ backgroundColor: color + '14', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4 }}>
+                    <View key={d} style={{ backgroundColor: color + '14', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 4 }}>
                       <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: color }}>{d}</Text>
                     </View>
                   ))}
                   {dishes.length > 3 ? (
-                    <View style={{ backgroundColor: Palette.border, borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4 }}>
+                    <View style={{ backgroundColor: Palette.border, borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 4 }}>
                       <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.textMuted }}>+{dishes.length - 3} more</Text>
                     </View>
                   ) : null}

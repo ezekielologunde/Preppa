@@ -161,7 +161,7 @@ export default function ChatScreen() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4, gap: 8 }}>
                 {QUICK_REPLIES[ctx.order.status].map((reply) => (
                   <PressableScale key={reply} onPress={() => { feedback.tap(); setText(reply); }} accessibilityRole="button" accessibilityLabel={reply}
-                    style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.chip }}>
+                    style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.chip }}>
                     <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{reply}</Text>
                   </PressableScale>
                 ))}

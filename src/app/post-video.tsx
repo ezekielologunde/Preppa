@@ -161,7 +161,7 @@ export default function PostVideoScreen() {
                 const on = tags.includes(t);
                 return (
                   <PressableScale key={t} onPress={() => toggleTag(t)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={t}
-                    style={{ paddingHorizontal: 13, height: 34, borderRadius: 999, backgroundColor: on ? ORANGE + '24' : CARD, borderWidth: 1, borderColor: on ? ORANGE : '#2d3240', alignItems: 'center', justifyContent: 'center' }}>
+                    style={{ paddingHorizontal: 13, height: 34, borderRadius: Radius.pill, backgroundColor: on ? ORANGE + '24' : CARD, borderWidth: 1, borderColor: on ? ORANGE : '#2d3240', alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: on ? ORANGE : MUTED }}>{t}</Text>
                   </PressableScale>
                 );

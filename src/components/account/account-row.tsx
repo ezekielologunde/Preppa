@@ -2,7 +2,7 @@ import { Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 
 export function SectionLabel({ label }: { label: string }) {
   return (
@@ -47,7 +47,7 @@ export function StatusBadge({
       style={{
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 999,
+        borderRadius: Radius.pill,
         backgroundColor: c.bg,
       }}>
       <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: c.fg }}>

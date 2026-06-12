@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { toggleFavorite, useFavorite } from '@/lib/favorites';
 import { useFeed, type FeedItem } from '@/lib/queries/feed';
@@ -126,7 +126,7 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
             </View>
           ) : null}
           {item.isPost ? (
-            <View style={{ marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.16)' }}>
+            <View style={{ marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.pill, backgroundColor: 'rgba(255,255,255,0.16)' }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 11, color: '#fff' }}>post</Text>
             </View>
           ) : null}

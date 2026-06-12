@@ -11,7 +11,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { feedback } from '@/lib/feedback';
 import { CardSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { useMealsByCategory } from '@/lib/queries/meals';
 
 const ORANGE = Palette.brand;
@@ -65,7 +65,7 @@ export default function CategoryScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               fresh {title} meals from local preppas are coming soon
             </Text>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} style={{ marginTop: 8, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 20, paddingVertical: 12 }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} style={{ marginTop: 8, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 20, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>browse all meals</Text>
             </PressableScale>
           </MotiView>

@@ -39,7 +39,7 @@ import { CustomerBadgeShelf } from '@/components/badge-shelf';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { useFavoritesCount } from '@/lib/favorites';
 import { useRecentlyViewedCount } from '@/lib/recently-viewed';
 import { useRewards } from '@/lib/queries/rewards';
@@ -74,7 +74,7 @@ const STATIC_HUB: { label: string; sub: string; Icon: LucideIcon; accent?: boole
 
 function SmallBadge({ Icon, label, color }: { Icon: LucideIcon; label: string; color: string }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 7 }}>
       <Icon size={14} color={color} />
       <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.inkSoft }}>{label}</Text>
     </View>
@@ -229,12 +229,12 @@ export default function ProfileScreen() {
 
             {/* Role badge */}
             {isApprovedPrepper ? (
-              <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 }}>
+              <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>
                 <BadgeCheck size={12} color={Palette.brand} />
                 <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.brand }}>prepper</Text>
               </View>
             ) : isAdmin ? (
-              <View style={{ marginTop: 6, backgroundColor: '#EDE9FE', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 }}>
+              <View style={{ marginTop: 6, backgroundColor: '#EDE9FE', borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 4 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#7C3AED' }}>admin</Text>
               </View>
             ) : null}
@@ -378,7 +378,7 @@ export default function ProfileScreen() {
                       <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink }} numberOfLines={1}>{s.plan_name}</Text>
                       {s.prepper?.display_name ? <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>by {s.prepper.display_name}</Text> : null}
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                        <View style={{ paddingHorizontal: 9, height: 22, borderRadius: 999, backgroundColor: badge.bg, alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ paddingHorizontal: 9, height: 22, borderRadius: Radius.pill, backgroundColor: badge.bg, alignItems: 'center', justifyContent: 'center' }}>
                           <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: badge.fg, textTransform: 'capitalize' }}>{s.status}</Text>
                         </View>
                         <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, textTransform: 'capitalize' }}>

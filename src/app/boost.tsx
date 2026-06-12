@@ -166,7 +166,7 @@ export default function BoostScreen() {
             {DURATIONS.map(({ label, price, tag }, i) => (
               <PressableScale key={label} onPress={() => { feedback.tap(); setDuration(i); }} accessibilityRole="button" accessibilityLabel={`${label} for $${price}`}
                 style={{ flex: 1, backgroundColor: duration === i ? ORANGE : Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4, borderWidth: duration === i ? 0 : 1, borderColor: Palette.border }}>
-                {tag ? <View style={{ position: 'absolute', top: -6, right: -6, backgroundColor: duration === i ? '#fff' : ORANGE, borderRadius: 999, paddingHorizontal: 6, paddingVertical: 2 }}><Text style={{ fontFamily: Font.semibold, fontSize: 9, color: duration === i ? ORANGE : '#fff' }}>{tag}</Text></View> : null}
+                {tag ? <View style={{ position: 'absolute', top: -6, right: -6, backgroundColor: duration === i ? '#fff' : ORANGE, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 2 }}><Text style={{ fontFamily: Font.semibold, fontSize: 9, color: duration === i ? ORANGE : '#fff' }}>{tag}</Text></View> : null}
                 <Text style={{ fontFamily: Font.heading, fontSize: 17, color: duration === i ? '#fff' : INK }}>${price}</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: duration === i ? 'rgba(255,255,255,0.85)' : Palette.textSecondary }}>{label}</Text>
               </PressableScale>

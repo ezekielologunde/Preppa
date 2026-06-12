@@ -13,7 +13,7 @@ import { PrepperCard } from '@/components/prepper-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
 import { useMealSearch } from '@/lib/queries/meals';
 import { usePrepperSearch } from '@/lib/queries/preppers';
@@ -52,7 +52,7 @@ function Chip({ label, selected, onPress }: { label: string; selected: boolean; 
       style={{
         paddingHorizontal: 14,
         height: 36,
-        borderRadius: 999,
+        borderRadius: Radius.pill,
         backgroundColor: selected ? INK : Palette.surface,
         borderWidth: 1.5,
         borderColor: selected ? 'transparent' : Palette.border,
@@ -157,7 +157,7 @@ export default function SearchScreen() {
             onPress={() => { feedback.tap(); setSortOpen(true); }}
             accessibilityRole="button"
             accessibilityLabel={`Sort: ${SORTS.find(s => s.key === sortKey)?.label ?? 'Relevance'}`}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, height: 36, borderRadius: 999, backgroundColor: sortKey !== 'default' ? INK : Palette.surface }}>
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, height: 36, borderRadius: Radius.pill, backgroundColor: sortKey !== 'default' ? INK : Palette.surface }}>
             <ArrowUpDown size={14} color={sortKey !== 'default' ? '#fff' : Palette.inkSoft} />
             <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: sortKey !== 'default' ? '#fff' : Palette.inkSoft }}>sort</Text>
           </PressableScale>
@@ -188,7 +188,7 @@ export default function SearchScreen() {
             {suggestions.length > 0 ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 4 }}>
                 {suggestions.map((s) => (
-                  <PressableScale key={s} onPress={() => { feedback.tap(); setText(s); }} accessibilityRole="button" accessibilityLabel={`Search for ${s}`} style={{ paddingHorizontal: 14, height: 34, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+                  <PressableScale key={s} onPress={() => { feedback.tap(); setText(s); }} accessibilityRole="button" accessibilityLabel={`Search for ${s}`} style={{ paddingHorizontal: 14, height: 34, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{s}</Text>
                   </PressableScale>
                 ))}

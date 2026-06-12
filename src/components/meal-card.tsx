@@ -9,7 +9,7 @@ import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { imgUrl } from '@/lib/img';
-import { Palette, Shadow } from '@/constants/theme';
+import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 
 export type Meal = {
@@ -97,7 +97,7 @@ export function MealCard({ meal, width = 200, variant = 'normal' }: { meal: Meal
         <View style={{ position: 'relative' }}>
           <CardGallery images={images} hovered={hovered} height={imgHeight} />
           {meal.badge ? (
-            <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 4, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: '#fff', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 4, flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: meal.badge.color, marginRight: 5 }} />
               <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: Palette.ink }}>{meal.badge.label}</Text>
             </View>

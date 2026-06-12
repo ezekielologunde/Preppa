@@ -117,7 +117,7 @@ export default function ExploreScreen() {
               onPress={() => { feedback.tap(); setLocationOpen(true); }}
               accessibilityRole="button"
               accessibilityLabel={`Delivery location: ${location}. Tap to change.`}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9 }}>
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 9 }}>
               <MapPin size={14} color={ORANGE} />
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }} numberOfLines={1}>{location.split(',')[0]}</Text>
               <ChevronDown size={14} color={Palette.textSecondary} />
@@ -143,7 +143,7 @@ export default function ExploreScreen() {
                   onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(term)}`); }}
                   accessibilityRole="button"
                   accessibilityLabel={`Search for ${term}`}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 34, paddingHorizontal: 13, borderRadius: 999, backgroundColor: Palette.surface, borderWidth: 1, borderColor: Palette.border }}>
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 34, paddingHorizontal: 13, borderRadius: Radius.pill, backgroundColor: Palette.surface, borderWidth: 1, borderColor: Palette.border }}>
                   <Search size={11} color={Palette.textMuted} />
                   <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.inkSoft }}>{term}</Text>
                 </PressableScale>
@@ -194,7 +194,7 @@ export default function ExploreScreen() {
               {bp !== 'mobile' ? (
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 8, paddingBottom: 26 }}>
                   {kitchenTags.map((t) => (
-                    <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
+                    <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
                       <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
                     </PressableScale>
@@ -203,7 +203,7 @@ export default function ExploreScreen() {
               ) : (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 26 }}>
                   {kitchenTags.map((t) => (
-                    <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
+                    <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
                       <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
                     </PressableScale>

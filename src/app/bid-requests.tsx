@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useMealRequests, usePlaceBid, usePostMealRequest, type MealRequest } from '@/lib/queries/bid-requests';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
@@ -28,7 +28,7 @@ function RequestCard({ r, isPrepper, onBid }: { r: Request; isPrepper: boolean; 
           <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 3, lineHeight: 19 }}>{r.description}</Text>
         </View>
         {r.bid_count > 0 ? (
-          <View style={{ backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
+          <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
             <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>{r.bid_count} bid{r.bid_count === 1 ? '' : 's'}</Text>
           </View>
         ) : null}

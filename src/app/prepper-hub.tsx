@@ -86,7 +86,7 @@ export default function PrepperHubScreen() {
                 <Clock size={17} color={ORANGE} />
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>next rush: {nextRush.window.label}</Text>
                 <View style={{ flex: 1 }} />
-                <View style={{ backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
+                <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>in ~{nextRush.inMins}m</Text>
                 </View>
               </View>
@@ -132,7 +132,7 @@ export default function PrepperHubScreen() {
                   <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{label}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>{note}</Text>
                 </View>
-                <View style={{ backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}>
+                <View style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: ORANGE }}>{trend}</Text>
                 </View>
               </View>

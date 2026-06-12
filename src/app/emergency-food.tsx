@@ -112,7 +112,7 @@ export default function EmergencyFoodScreen() {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {CUISINE_QUICK.map((c) => (
               <PressableScale key={c} onPress={() => { feedback.tap(); setCuisine(c); }} accessibilityRole="button" accessibilityLabel={`${c} cuisine`}
-                style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: 999, backgroundColor: cuisine === c ? ORANGE : Palette.surface, borderWidth: cuisine === c ? 0 : 1, borderColor: Palette.border }}>
+                style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: cuisine === c ? ORANGE : Palette.surface, borderWidth: cuisine === c ? 0 : 1, borderColor: Palette.border }}>
                 <Text style={{ fontFamily: Font.medium, fontSize: 13, color: cuisine === c ? '#fff' : INK }}>{c}</Text>
               </PressableScale>
             ))}

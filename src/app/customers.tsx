@@ -9,7 +9,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { usePrepperOrders } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
@@ -104,7 +104,7 @@ export default function CustomersScreen() {
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: '#fff' }} numberOfLines={1}>{c.name}</Text>
                     {c.orders >= 2 ? (
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: Palette.success + '22', borderRadius: 999, paddingHorizontal: 8, height: 20 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: Palette.success + '22', borderRadius: Radius.pill, paddingHorizontal: 8, height: 20 }}>
                         <Repeat size={10} color={Palette.success} />
                         <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: Palette.success }}>repeat</Text>
                       </View>

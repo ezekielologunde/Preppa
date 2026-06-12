@@ -237,7 +237,7 @@ export default function MealEditorScreen() {
                   {(categories ?? []).map((c) => {
                     const sel = draft?.category_id === c.id;
                     return (
-                      <PressableScale key={c.id} onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, category_id: sel ? null : c.id }); }} accessibilityRole="button" accessibilityLabel={`Category ${c.name}`} accessibilityState={{ selected: sel }} style={{ paddingHorizontal: 13, height: 34, borderRadius: 999, backgroundColor: sel ? ORANGE : '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
+                      <PressableScale key={c.id} onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, category_id: sel ? null : c.id }); }} accessibilityRole="button" accessibilityLabel={`Category ${c.name}`} accessibilityState={{ selected: sel }} style={{ paddingHorizontal: 13, height: 34, borderRadius: Radius.pill, backgroundColor: sel ? ORANGE : '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: sel ? '#fff' : Palette.textMuted }}>{c.name}</Text>
                       </PressableScale>
                     );

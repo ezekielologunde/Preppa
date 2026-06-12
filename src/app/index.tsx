@@ -171,7 +171,7 @@ export default function HomeScreen() {
 
           {/* Location — right-aligned pill */}
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, marginTop: 10 }}>
-            <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 }}>
+            <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 8 }}>
               <MapPin size={14} color={ORANGE} />
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{location.split(',')[0]}</Text>
               <ChevronDown size={14} color={Palette.textSecondary} />
@@ -355,7 +355,7 @@ export default function HomeScreen() {
                   <Sparkles size={14} color="#fff" />
                 </View>
                 <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff', flex: 1 }}>Preppa AI · picked for you</Text>
-                <PressableScale onPress={() => { feedback.tap(); setAiIdx((i) => i + 1); }} accessibilityRole="button" accessibilityLabel="Suggest another meal" hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, height: 30, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.12)' }}>
+                <PressableScale onPress={() => { feedback.tap(); setAiIdx((i) => i + 1); }} accessibilityRole="button" accessibilityLabel="Suggest another meal" hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, height: 30, borderRadius: Radius.pill, backgroundColor: 'rgba(255,255,255,0.12)' }}>
                   <RefreshCw size={13} color="#fff" />
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>shuffle</Text>
                 </PressableScale>
@@ -386,7 +386,7 @@ export default function HomeScreen() {
                 {rewards.nextTier ? `${rewards.tier.name} · $${rewards.toNext.toFixed(0)} to ${rewards.nextTier.name}` : `${rewards.tier.name} member · top tier 🎉`}
               </Text>
             </View>
-            <View style={{ backgroundColor: INK, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <View style={{ backgroundColor: INK, borderRadius: Radius.pill, paddingHorizontal: 14, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>view rewards</Text>
               <ChevronRight size={13} color="#fff" />
             </View>
@@ -414,7 +414,7 @@ export default function HomeScreen() {
                     ${lastDone.total.toFixed(2)} · delivered {new Date(lastDone.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 14, paddingVertical: 9 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>order again</Text>
                   <ChevronRight size={13} color="rgba(255,255,255,0.8)" />
                 </View>

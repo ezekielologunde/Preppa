@@ -154,7 +154,7 @@ export default function CuisineExplorerScreen() {
                   <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{c.story}</Text>
                   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                     {c.dishes.map((d) => (
-                      <View key={d} style={{ backgroundColor: c.color + '14', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}>
+                      <View key={d} style={{ backgroundColor: c.color + '14', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
                         <Text style={{ fontFamily: Font.medium, fontSize: 12, color: c.color }}>{d}</Text>
                       </View>
                     ))}

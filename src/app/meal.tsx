@@ -10,7 +10,7 @@ import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { imgUrl } from '@/lib/img';
 import { recordMealView } from '@/lib/recently-viewed';
@@ -173,7 +173,7 @@ export default function MealScreen() {
                   from={{ opacity: 0, translateY: -4 }}
                   animate={{ opacity: 1, translateY: 0 }}
                   transition={{ type: 'timing', duration: 240 }}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: '#f5f3ff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 }}>
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: '#f5f3ff', borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 6 }}>
                   <Zap size={13} color="#8b5cf6" fill="#8b5cf6" />
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#8b5cf6' }}>
                     limited drop{dropTimeLeft(meal.expiresAt) ? ` · ${dropTimeLeft(meal.expiresAt)}` : ''}
@@ -239,7 +239,7 @@ export default function MealScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 }}>pairs well with</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {['Fresh lemonade', 'Ginger beer', 'Hibiscus punch', 'Sparkling water'].map((d) => (
-                    <View key={d} style={{ paddingHorizontal: 13, paddingVertical: 8, borderRadius: 999, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
+                    <View key={d} style={{ paddingHorizontal: 13, paddingVertical: 8, borderRadius: Radius.pill, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
                       <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>🥤 {d}</Text>
                     </View>
                   ))}
@@ -287,7 +287,7 @@ export default function MealScreen() {
               animate={{ opacity: 1, translateY: 0, scale: 1 }}
               transition={{ type: 'spring', damping: 15, stiffness: 240 }}
               pointerEvents="box-none"
-              style={{ position: 'absolute', top: -54, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 9, backgroundColor: INK, borderRadius: 999, paddingLeft: 8, paddingRight: 14, height: 44, shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 14, shadowOffset: { width: 0, height: 6 } }}>
+              style={{ position: 'absolute', top: -54, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 9, backgroundColor: INK, borderRadius: Radius.pill, paddingLeft: 8, paddingRight: 14, height: 44, shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 14, shadowOffset: { width: 0, height: 6 } }}>
               <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: Palette.success, alignItems: 'center', justifyContent: 'center' }}>
                 <Check size={15} color="#fff" strokeWidth={3} />
               </View>

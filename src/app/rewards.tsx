@@ -146,7 +146,7 @@ export default function RewardsScreen() {
                     </View>
                     <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>{title}</Text>
                     <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>{desc}</Text>
-                    <View style={{ alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 4, borderRadius: 999, backgroundColor: canRedeem ? color + '18' : Palette.chip }}>
+                    <View style={{ alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 4, borderRadius: Radius.pill, backgroundColor: canRedeem ? color + '18' : Palette.chip }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: canRedeem ? color : Palette.textMuted, fontVariant: ['tabular-nums'] }}>{pts.toLocaleString()} pts</Text>
                     </View>
                   </PressableScale>

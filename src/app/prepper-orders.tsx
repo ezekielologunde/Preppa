@@ -9,7 +9,7 @@ import { ListSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { useRefundOrder } from '@/lib/queries/cart';
 import { useAdvanceOrder, useCancelOrder, useOrdersRealtime, usePrepperOrders, useVerifyHandoff, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
@@ -66,7 +66,7 @@ function OrderCard({
             {order.items.reduce((s, i) => s + i.quantity, 0)} item{order.items.length === 1 ? '' : 's'} · {money(order.total)}
           </Text>
         </View>
-        <View style={{ paddingHorizontal: 11, height: 26, borderRadius: 999, backgroundColor: done ? '#252a34' : ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ paddingHorizontal: 11, height: 26, borderRadius: Radius.pill, backgroundColor: done ? '#252a34' : ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: done ? Palette.textMuted : ORANGE }}>{STATUS_LABEL[order.status]}</Text>
         </View>
       </View>

@@ -42,7 +42,7 @@ function ChipGroup({
             {label}
           </Text>
           {selected.length > 0 ? (
-            <View style={{ paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: Palette.brandTint }}>
+            <View style={{ paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.pill, backgroundColor: Palette.brandTint }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: ORANGE }}>{selected.length}</Text>
             </View>
           ) : null}

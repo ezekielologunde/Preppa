@@ -140,7 +140,7 @@ export default function GroceryConciergeScreen() {
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3 }}>
                       <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{kit.name}</Text>
-                      <View style={{ backgroundColor: (TAG_COLORS[kit.tag] ?? ORANGE) + '1A', borderRadius: 999, paddingHorizontal: 7, paddingVertical: 2 }}>
+                      <View style={{ backgroundColor: (TAG_COLORS[kit.tag] ?? ORANGE) + '1A', borderRadius: Radius.pill, paddingHorizontal: 7, paddingVertical: 2 }}>
                         <Text style={{ fontFamily: Font.medium, fontSize: 10, color: TAG_COLORS[kit.tag] ?? ORANGE }}>{kit.tag}</Text>
                       </View>
                     </View>
@@ -157,7 +157,7 @@ export default function GroceryConciergeScreen() {
                     <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.textMuted }}>included ingredients</Text>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                       {kit.ingredients.map((ing) => (
-                        <View key={ing} style={{ backgroundColor: kit.color + '14', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}>
+                        <View key={ing} style={{ backgroundColor: kit.color + '14', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
                           <Text style={{ fontFamily: Font.medium, fontSize: 12, color: kit.color }}>{ing}</Text>
                         </View>
                       ))}

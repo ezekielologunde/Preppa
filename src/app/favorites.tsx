@@ -80,7 +80,7 @@ export default function FavoritesScreen() {
             return (
               <PressableScale key={t} onPress={() => { feedback.tap(); setTab(t); }} accessibilityRole="tab" accessibilityState={{ selected: on }}
                 accessibilityLabel={`${t} tab, ${count} items`}
-                style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 36, borderRadius: 999, backgroundColor: on ? Palette.brand : 'transparent' }}>
+                style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, height: 36, borderRadius: Radius.pill, backgroundColor: on ? Palette.brand : 'transparent' }}>
                 {t === 'meals' ? <Heart size={14} color={on ? '#fff' : Palette.textSecondary} fill={on ? '#fff' : 'transparent'} /> : <Users size={14} color={on ? '#fff' : Palette.textSecondary} />}
                 <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: on ? '#fff' : Palette.inkSoft }}>
                   {t} {count > 0 ? `(${count})` : ''}
@@ -104,7 +104,7 @@ export default function FavoritesScreen() {
               onPress={() => { feedback.tap(); router.push('/explore'); }}
               accessibilityRole="button"
               accessibilityLabel="Browse meals"
-              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 24, paddingVertical: 12 }}>
+              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 24, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>browse meals</Text>
             </PressableScale>
           </MotiView>
@@ -127,7 +127,7 @@ export default function FavoritesScreen() {
               Follow a kitchen on the prepper page to keep it here.
             </Text>
             <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} accessibilityRole="button" accessibilityLabel="Discover kitchens"
-              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 24, paddingVertical: 12 }}>
+              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 24, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>discover kitchens</Text>
             </PressableScale>
           </MotiView>

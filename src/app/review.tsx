@@ -116,7 +116,7 @@ export default function ReviewScreen() {
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 2 }}>
                 {(QUICK_PHRASES[rating] ?? []).map((phrase) => (
                   <PressableScale key={phrase} onPress={() => { feedback.tap(); setBody(phrase); }} accessibilityRole="button" accessibilityLabel={phrase}
-                    style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
+                    style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: Radius.pill, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
                     <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{phrase}</Text>
                   </PressableScale>
                 ))}

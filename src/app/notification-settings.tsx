@@ -55,11 +55,11 @@ export default function NotificationSettingsScreen() {
           </View>
           <View style={{ flexDirection: 'row', gap: 6 }}>
             <PressableScale onPress={enableAll} accessibilityRole="button" accessibilityLabel="Enable all notifications"
-              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: activeCount === CATEGORIES.length ? Palette.chip : Palette.brandTint }}>
+              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: activeCount === CATEGORIES.length ? Palette.chip : Palette.brandTint }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === CATEGORIES.length ? Palette.textMuted : ORANGE }}>all on</Text>
             </PressableScale>
             <PressableScale onPress={disableAll} accessibilityRole="button" accessibilityLabel="Disable all notifications"
-              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: activeCount === 0 ? Palette.chip : Palette.surface }}>
+              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: activeCount === 0 ? Palette.chip : Palette.surface }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === 0 ? Palette.textMuted : Palette.textSecondary }}>all off</Text>
             </PressableScale>
           </View>

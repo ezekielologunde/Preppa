@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PrepperCard } from '@/components/prepper-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useFollowedPreppers } from '@/lib/queries/preppers';
 import { useAuth } from '@/providers/auth-provider';
@@ -59,7 +59,7 @@ export default function FollowingScreen() {
               onPress={() => { feedback.tap(); router.push('/explore'); }}
               accessibilityRole="button"
               accessibilityLabel="Discover kitchens"
-              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 24, paddingVertical: 12 }}>
+              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 24, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>discover kitchens</Text>
             </PressableScale>
           </MotiView>

@@ -1,0 +1,1166 @@
+Draft some Dynamically improve  this Functionality and include rush hour like Notification thats marketing based maybe everyday or weekly and holidays specials and provide specific insight to help preppers and the Users also
+generate a modern splash screen for preppa all lower case mobile
+Edit
+Design a. my kitchen dashboard fancy and modern gen z  gen alpha way
+mobile iphone screen
+Edit
+Design Customer dash board with nav bar of homepage, explore,feeds, experiences and profilee
+Edit
+generate profile page of customer
+Edit
+Generate Experiences Tab for screen for customer
+Edit
+Edit
+Generate feeds tab
+
+Yes. At this stage, what PREPPA needs is not more feature ideas. It needs a Product Requirements Document (PRD) + UX Blueprint + Marketplace Architecture Specification that developers, designers, Claude Code, AI agents, and future investors can all work from.
+
+This document should become the "source of truth" for the entire company.
+
+A complete PREPPA prototype document should contain:
+
+1. Executive Vision
+Problem Statement
+Market Opportunity
+Why PREPPA Exists
+Target Customers
+Target Preppers
+Revenue Strategy
+Competitive Advantage
+2. User Types
+Customer
+
+Can:
+
+Browse meals
+Order meals
+Subscribe to meal plans
+Book experiences
+Message preppers
+Review orders
+
+Cannot:
+
+Receive payouts
+Create meal listings
+Accept orders
+Prepper
+
+Can:
+
+Create meals
+Receive orders
+Create experiences
+Bid on requests
+Receive payouts
+Livestream
+
+Requires approval.
+
+Admin
+
+Can:
+
+Moderate
+Approve preppers
+Manage disputes
+Manage payouts
+View analytics
+3. Customer App
+Splash Screen
+Onboarding
+Sign Up
+Sign In
+Home
+Explore
+Feed
+Experiences
+Profile
+4. Prepper App
+Kitchen Dashboard
+Orders
+Meals
+Opportunities
+Revenue
+Subscribers
+Customers
+Messages
+Profile
+5. Meal Marketplace
+Categories
+Healthy
+High Protein
+Family Meals
+Vegan
+Keto
+Bulk Prep
+Breakfast
+Lunch
+Dinner
+Desserts
+Meal Cards
+Multiple photos
+Videos
+Reviews
+Ratings
+Tags
+Delivery options
+6. Meal Plan System
+
+Weekly
+
+Monthly
+
+Family
+
+Corporate
+
+Custom
+
+Features:
+
+Skip week
+Pause plan
+Resume
+Swap meals
+Dietary preferences
+AI recommendations
+7. Prep Experiences Marketplace
+
+This is one of PREPPA's strongest differentiators.
+
+Customer posts request.
+
+Examples:
+
+Private Chef
+Cook At My House
+Catering
+Family Event
+Cooking Class
+Content Collaboration
+Kitchen Reset
+Grocery Shopping
+Holiday Meals
+
+Preppers bid.
+
+Customer chooses.
+
+8. Livestream Marketplace
+
+TikTok-style.
+
+Preppers:
+
+Go live
+Showcase meals
+Accept tips
+Promote experiences
+Sell meal plans
+
+Customers:
+
+Watch
+Comment
+Follow
+Purchase
+9. Rewards System
+
+Customer Rewards
+
+First order
+Repeat orders
+Referrals
+Reviews
+
+Prepper Rewards
+
+Fast response
+Completion rate
+High ratings
+Subscriber growth
+
+Badges:
+
+Rising Prepper
+Local Favorite
+Meal Master
+Elite Prepper
+Community Hero
+10. AI Layer
+Customer AI
+Meal recommendations
+Prepper recommendations
+Meal plan generation
+Prepper AI
+Pricing recommendations
+Menu generation
+Revenue insights
+Customer analytics
+Admin AI
+Fraud detection
+Dispute analysis
+Growth analytics
+11. Payment Architecture
+
+Stripe
+
+Apple Pay
+
+Google Pay
+
+Klarna
+
+Cash
+
+Escrow
+
+Deposits
+
+Subscriptions
+
+Refunds
+
+Prepper payouts
+
+12. Messaging System
+
+Order Chats
+
+Experience Chats
+
+Image Uploads
+
+Read Receipts
+
+Notifications
+
+Push Messages
+
+13. Admin Dashboard
+
+Users
+
+Preppers
+
+Orders
+
+Experiences
+
+Subscriptions
+
+Payments
+
+Reviews
+
+Reports
+
+Analytics
+
+Moderation
+
+14. Database Architecture
+
+Users
+
+Roles
+
+Profiles
+
+Meals
+
+Meal Images
+
+Orders
+
+Payments
+
+Reviews
+
+Experiences
+
+Bids
+
+Messages
+
+Subscriptions
+
+Notifications
+
+Rewards
+
+Livestreams
+
+Analytics
+
+15. Security
+
+Authentication
+
+Authorization
+
+RLS Policies
+
+Input Validation
+
+Rate Limiting
+
+Prompt Injection Protection
+
+Data Encryption
+
+Fraud Monitoring
+
+16. Design System
+
+Colors
+
+Typography
+
+Spacing
+
+Cards
+
+Buttons
+
+Navigation
+
+Dark Mode
+
+Tablet
+
+Desktop
+
+Mobile
+
+17. Launch Roadmap
+MVP
+
+Meal ordering
+
+Prepper approval
+
+Messaging
+
+Payments
+
+Reviews
+
+Meal plans
+
+Phase 2
+
+Experiences
+
+Bidding
+
+Livestreams
+
+Rewards
+
+Phase 3
+
+AI
+
+Advanced analytics
+
+Corporate marketplace
+
+International expansion
+
+18. Investor Section
+
+TAM
+
+SAM
+
+SOM
+
+Revenue Model
+
+Growth Strategy
+
+Competitive Landscape
+
+Unit Economics
+
+Marketplace Flywheel
+
+My recommendation is to build a 50-100 page PREPPA Master Specification Document before writing more code. It will save months of rework because every future feature, screen, API, database table, and AI workflow will be mapped to a single blueprint instead of being invented as you go. Humans call this "planning." Software projects usually discover it around month eight, right after they've rewritten everything twice.
+
+more Screenshopt and ipad screenshot too
+
+Since image generation is currently unavailable, I can help you define the full screen inventory that should exist for both iPhone and iPad/Desktop versions of PREPPA. Frankly, most startups discover halfway through development that they only designed 15 screens and actually needed 150. Software is a creative way to turn "one screen" into a family of 12 related screens.
+
+Customer App Screens
+Authentication
+Mobile
+Splash Screen
+Welcome Screen
+Onboarding 1
+Onboarding 2
+Onboarding 3
+Sign Up
+Sign In
+Forgot Password
+Verify Email
+Verify Phone
+iPad
+Split-screen onboarding
+Large authentication layout
+Home
+Mobile Home
+Top Bar
+Greeting
+
+Search
+
+Meal Plans Banner
+
+Featured Preppers
+
+Popular Meals
+
+Experiences
+
+Live Streams
+
+Recommended For You
+
+Bottom Nav
+iPad Home
+Left:
+Navigation
+
+Center:
+Feed
+
+Right:
+Upcoming Orders
+Rewards
+Recommendations
+Explore
+Mobile
+Search
+Categories
+Filters
+Trending
+New Preppers
+Local Favorites
+iPad
+Left Filters
+
+Center Results
+
+Right Preview Panel
+
+Similar to Airbnb desktop.
+
+Feed
+
+TikTok-style.
+
+Mobile
+Live Streams
+Videos
+Recipes
+Prepper Content
+iPad
+Video Feed
+
+Comments Panel
+
+Suggested Creators
+Experiences
+Mobile
+Featured Experiences
+Private Chef
+Catering
+Cooking Classes
+Family Events
+Content Creation
+iPad
+Categories
+
+Map
+
+Experience Cards
+
+Booking Panel
+Experience Detail
+Mobile
+
+Hero Image
+
+About
+
+Reviews
+
+Packages
+
+Book Button
+
+iPad
+
+Gallery Left
+
+Details Right
+
+Booking Widget
+
+Meal Detail
+Mobile
+
+Multiple Images
+
+Video
+
+Description
+
+Reviews
+
+Prepper Info
+
+Add to Cart
+
+iPad
+Gallery
+
+Meal Info
+
+Prepper Profile
+
+Reviews
+Cart
+Mobile
+
+Items
+
+Promo Code
+
+Delivery
+
+Checkout
+
+iPad
+
+Side summary panel.
+
+Checkout
+Mobile
+
+Address
+
+Payment
+
+Review Order
+
+iPad
+
+Multi-column checkout.
+
+Orders
+Mobile
+
+Active
+
+Past
+
+Upcoming
+
+iPad
+
+Master-detail layout.
+
+Messages
+Mobile
+
+Conversation List
+
+Chat Screen
+
+iPad
+Conversations
+
+Chat Window
+
+Customer Details
+
+Like iMessage.
+
+Rewards
+Mobile
+
+Points
+
+Badges
+
+Challenges
+
+iPad
+
+Dashboard view.
+
+Customer Profile
+Mobile
+
+Avatar
+
+Points
+
+Orders
+
+Meal Plans
+
+Addresses
+
+Payment Methods
+
+Favorites
+
+Settings
+
+iPad
+Profile Sidebar
+
+Main Content
+
+Stats Panel
+Prepper Screens
+Kitchen Dashboard
+Mobile
+
+Today's Revenue
+
+Orders
+
+Subscribers
+
+Tasks
+
+iPad
+Revenue Charts
+
+Orders
+
+Messages
+
+Tasks
+
+This should feel like Shopify.
+
+Orders
+Mobile
+
+Order Queue
+
+iPad
+
+Kanban Board:
+
+New
+
+Accepted
+
+Cooking
+
+Ready
+
+Completed
+Meal Management
+Mobile
+
+Create Meal
+
+Edit Meal
+
+Photos
+
+Videos
+
+iPad
+
+Grid management system.
+
+Opportunities Marketplace
+Mobile
+
+Available Requests
+
+Bid Button
+
+iPad
+Request List
+
+Request Details
+
+Bid Panel
+Revenue Center
+Mobile
+
+Charts
+
+Sales
+
+Payouts
+
+iPad
+
+Advanced analytics.
+
+Subscribers
+Mobile
+
+Subscriber List
+
+iPad
+
+CRM-style customer dashboard.
+
+Customer CRM
+Mobile
+
+Customer Cards
+
+iPad
+Customer List
+
+Customer Detail
+
+Revenue History
+Livestream Studio
+Mobile
+
+Camera
+
+Comments
+
+Products
+
+iPad
+Stream Preview
+
+Comments
+
+Pinned Products
+
+Analytics
+Admin Dashboard
+Desktop/iPad
+
+Not mobile-first.
+
+Modules:
+
+Users
+Preppers
+Orders
+Payments
+Experiences
+Reports
+Analytics
+Support
+Moderation
+Screens Still Missing
+
+Most founders forget these:
+
+Disputes
+Refund Center
+Notifications Center
+Saved Meals
+Favorite Preppers
+Referral Program
+Become a Prepper
+Prepper Verification
+Tax Forms
+Banking Setup
+Payout Setup
+Subscription Management
+Promo Codes
+Coupons
+Gift Orders
+Group Orders
+QR Verification
+Event Bidding
+Catering Proposal Builder
+AI Meal Planner
+AI Chef Assistant
+Community Forums
+Prepper Leaderboards
+Achievement Badges
+Seasonal Campaign Pages
+
+When fully mapped out, PREPPA is probably a 120-180 screen platform across Mobile, Tablet, Desktop, Customer, Prepper, and Admin experiences. That's why defining the information architecture now is far more valuable than polishing another button.
+
+claude prompt: profile section needs serious redesign sysstem , settings walk through proper data handling  spin agents to handle each features and improvement accsibility
+
+Continue autonomous PREPPA optimization.
+
+The Profile, Settings, Account Management, Accessibility, and User Data Management systems require a complete redesign and architecture review.
+
+This is now a high-priority initiative.
+
+Act as:
+
+Principal UX Architect
+Senior Product Designer
+Accessibility Specialist
+Security Engineer
+Data Architect
+Mobile UX Expert
+Customer Experience Lead
+Prepper Experience Lead
+
+Spin up specialized agents and work in parallel.
+
+The current Profile and Settings experience feels overloaded, inconsistent, and lacks clear information architecture.
+
+Users should never feel lost.
+
+Users should always know:
+
+who they are
+what account they are using
+what role they have
+what subscriptions they have
+what information is editable
+what actions are available
+
+The goal is to create a world-class account experience.
+
+Redesign the entire profile system.
+
+Audit:
+
+profile layout
+profile hierarchy
+edit profile flow
+role switching
+prepper onboarding access
+rewards visibility
+meal plan visibility
+order visibility
+
+Simplify everything.
+
+Redesign settings from scratch.
+
+Group settings logically.
+
+Suggested structure:
+
+Account
+
+Privacy
+
+Notifications
+
+Payments
+
+Addresses
+
+Meal Preferences
+
+Dietary Preferences
+
+Accessibility
+
+Security
+
+Support
+
+About
+
+Legal
+
+Users should find settings in under 3 seconds.
+
+Audit every profile field.
+
+Validate:
+
+name
+email
+phone
+address
+payment methods
+dietary preferences
+allergies
+profile images
+
+Implement:
+
+validation
+sanitization
+normalization
+duplicate prevention
+
+Ensure clean data enters the system.
+
+Perform a complete accessibility audit.
+
+Review:
+
+color contrast
+touch target sizes
+screen reader support
+keyboard navigation
+focus states
+typography scaling
+reduced motion support
+
+Target WCAG 2.2 AA compliance.
+
+Accessibility should not be optional.
+
+Redesign customer profile around:
+
+My Orders
+
+Meal Plans
+
+Rewards
+
+Saved Meals
+
+Favorite Preppers
+
+Addresses
+
+Payments
+
+Notifications
+
+Settings
+
+Remove clutter.
+
+Focus on actions customers use most.
+
+Redesign prepper profile around:
+
+Business Information
+
+Kitchen Information
+
+Portfolio
+
+Certifications
+
+Availability
+
+Revenue
+
+Subscribers
+
+Reviews
+
+Service Areas
+
+Payouts
+
+The prepper profile should feel like a business hub.
+
+Review:
+
+Password Management
+
+2FA
+
+Biometric Login
+
+Session Management
+
+Device Management
+
+Privacy Controls
+
+Data Download
+
+Account Deletion
+
+Consent Management
+
+Ensure compliance and user trust.
+
+Audit:
+
+Saved Cards
+
+Default Card Selection
+
+Card Editing
+
+Card Deletion
+
+Address Management
+
+Default Address Selection
+
+Shipping Addresses
+
+Billing Addresses
+
+Implement robust validation and error handling.
+
+Review:
+
+Sign Up
+
+Sign In
+
+Forgot Password
+
+Verify Email
+
+Verify Phone
+
+Become a Prepper
+
+Role Switching
+
+Ensure seamless progression between customer and prepper experiences.
+
+Review profile and settings across:
+
+iPhone
+
+Android
+
+iPad
+
+Tablet
+
+Desktop
+
+Large Desktop
+
+Do not stretch mobile screens.
+
+Design purpose-built layouts for each device.
+
+Customer Profile:
+
+Profile Header
+
+Rewards
+
+Orders
+
+Meal Plans
+
+Favorites
+
+Payments
+
+Addresses
+
+Settings
+
+Support
+
+Prepper Profile:
+
+Business Header
+
+Revenue
+
+Orders
+
+Subscribers
+
+Reviews
+
+Portfolio
+
+Payouts
+
+Settings
+
+Support
+
+Implement validation rules.
+
+Examples:
+
+Name:
+Letters, spaces, apostrophes only
+
+Phone:
+Valid international format
+
+Address:
+Normalized format
+
+Postal Code:
+Country-specific validation
+
+Email:
+Verified format
+
+Prevent invalid data from entering the database.
+
+Replace generic errors.
+
+Provide:
+
+Clear messages
+
+Recovery actions
+
+Inline validation
+
+Helpful guidance
+
+No silent failures.
+
+Reduce clutter.
+
+Reduce clicks.
+
+Reduce confusion.
+
+Increase discoverability.
+
+Increase trust.
+
+Increase accessibility.
+
+Increase usability.
+
+Every screen should answer:
+
+What is this?
+
+What can I do here?
+
+What should I do next?
+
+Profile and Settings should feel:
+
+modern
+premium
+intuitive
+accessible
+secure
+easy to navigate
+
+Users should manage their account confidently without confusion, while maintaining strong data integrity, accessibility standards, and excellent user experience across all devices.
+
+One thing I'd add for PREPPA specifically: create a "Profile Health Score" for preppers.
+
+Example:
+
+Profile Photo ✓
+Kitchen Details ✓
+Service Area ✓
+Portfolio Photos ✓
+Banking Setup ✓
+Certifications ✓
+Availability ✓
+
+Profile Completion: 92%
+
+This drives better marketplace quality because preppers naturally complete missing information without admins chasing them. Humans love progress bars. It's one of civilization's stranger motivational hacks.

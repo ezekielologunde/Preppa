@@ -195,7 +195,7 @@ export default function PrepperScreen() {
             {p?.specialties.length ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {p.specialties.map((s) => (
-                  <View key={s} style={{ backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 13, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                  <View key={s} style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 13, height: 30, alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.brandPressed }}>{s}</Text>
                   </View>
                 ))}
@@ -205,7 +205,7 @@ export default function PrepperScreen() {
             {p?.certifications.length ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {p.certifications.map((c) => (
-                  <View key={c} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.success + '14', borderRadius: 999, paddingHorizontal: 11, height: 30 }}>
+                  <View key={c} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.success + '14', borderRadius: Radius.pill, paddingHorizontal: 11, height: 30 }}>
                     <Award size={12} color={Palette.success} />
                     <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#15803d' }}>{c}</Text>
                   </View>
@@ -216,13 +216,13 @@ export default function PrepperScreen() {
             {(p?.delivers || p?.pickup) ? (
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 {p?.delivers ? (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 11, height: 30, borderWidth: 1, borderColor: Palette.border }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 11, height: 30, borderWidth: 1, borderColor: Palette.border }}>
                     <Bike size={13} color={Palette.textSecondary} />
                     <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.textSecondary }}>Delivery</Text>
                   </View>
                 ) : null}
                 {p?.pickup ? (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 11, height: 30, borderWidth: 1, borderColor: Palette.border }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 11, height: 30, borderWidth: 1, borderColor: Palette.border }}>
                     <Store size={13} color={Palette.textSecondary} />
                     <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.textSecondary }}>Pickup</Text>
                   </View>

@@ -43,7 +43,7 @@ function Chip({ label, color, active, onPress }: { label: string; color: string;
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
       accessibilityLabel={label}
-      style={{ paddingHorizontal: 16, paddingVertical: 10, borderRadius: 999, backgroundColor: active ? color + '22' : Palette.surface, borderWidth: 1.5, borderColor: active ? color : Palette.border, ...Shadow.card }}>
+      style={{ paddingHorizontal: 16, paddingVertical: 10, borderRadius: Radius.pill, backgroundColor: active ? color + '22' : Palette.surface, borderWidth: 1.5, borderColor: active ? color : Palette.border, ...Shadow.card }}>
       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: active ? color : Palette.textSecondary }}>{label}</Text>
     </PressableScale>
   );

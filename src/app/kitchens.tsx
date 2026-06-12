@@ -9,7 +9,7 @@ import { PrepperCard } from '@/components/prepper-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useKitchensByTag, useKitchenTags } from '@/lib/queries/preppers';
 
@@ -22,7 +22,7 @@ function TagChip({ label, selected, onPress }: { label: string; selected: boolea
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={label}
-      style={{ paddingHorizontal: 15, height: 38, borderRadius: 999, backgroundColor: selected ? INK : Palette.surface, borderWidth: 1.5, borderColor: selected ? 'transparent' : Palette.border, alignItems: 'center', justifyContent: 'center' }}>
+      style={{ paddingHorizontal: 15, height: 38, borderRadius: Radius.pill, backgroundColor: selected ? INK : Palette.surface, borderWidth: 1.5, borderColor: selected ? 'transparent' : Palette.border, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
     </PressableScale>
   );

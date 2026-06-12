@@ -6,7 +6,7 @@ import { Text, View } from 'react-native';
 import { FavoriteButton } from '@/components/ui/favorite-button';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette, Shadow } from '@/constants/theme';
+import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { imgUrl } from '@/lib/img';
 import type { TopPrepper } from '@/lib/queries/preppers';
@@ -15,14 +15,14 @@ import type { TopPrepper } from '@/lib/queries/preppers';
 function RankBadge({ rank }: { rank: number }) {
   if (rank === 1) {
     return (
-      <View style={{ position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.ink, borderRadius: 999, paddingLeft: 8, paddingRight: 11, height: 28 }}>
+      <View style={{ position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: Palette.ink, borderRadius: Radius.pill, paddingLeft: 8, paddingRight: 11, height: 28 }}>
         <Trophy size={13} color="#FFD24A" fill="#FFD24A" />
         <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: '#fff', letterSpacing: 0.2 }}>Top rated</Text>
       </View>
     );
   }
   return (
-    <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: 'rgba(17,21,28,0.82)', borderRadius: 999, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ position: 'absolute', top: 10, left: 10, backgroundColor: 'rgba(17,21,28,0.82)', borderRadius: Radius.pill, width: 28, height: 28, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#fff', fontVariant: ['tabular-nums'] }}>#{rank}</Text>
     </View>
   );
@@ -57,7 +57,7 @@ export function PrepperCard({ prepper, showRank = false }: { prepper: TopPrepper
             <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>{prepper.tags.join(' · ')}</Text>
           ) : null}
           {prepper.from != null ? (
-            <View style={{ alignSelf: 'flex-start', backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 2 }}>
+            <View style={{ alignSelf: 'flex-start', backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4, marginTop: 2 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.brand, fontVariant: ['tabular-nums'] }}>from ${prepper.from.toFixed(0)}</Text>
             </View>
           ) : null}

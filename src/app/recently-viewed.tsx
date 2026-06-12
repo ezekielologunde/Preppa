@@ -8,7 +8,7 @@ import { MealCard } from '@/components/meal-card';
 import { CardSkeleton } from '@/components/ui/skeleton';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
 import { clearRecentlyViewed, useRecentlyViewedIds } from '@/lib/recently-viewed';
@@ -48,7 +48,7 @@ export default function RecentlyViewedScreen() {
             </Text>
           </View>
           {visible.length > 0 ? (
-            <PressableScale onPress={() => { feedback.tap(); clearRecentlyViewed(); }} accessibilityRole="button" accessibilityLabel="Clear history" style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: Palette.surface }}>
+            <PressableScale onPress={() => { feedback.tap(); clearRecentlyViewed(); }} accessibilityRole="button" accessibilityLabel="Clear history" style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: Palette.surface }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.textSecondary }}>clear</Text>
             </PressableScale>
           ) : null}
@@ -68,7 +68,7 @@ export default function RecentlyViewedScreen() {
               onPress={() => { feedback.tap(); router.push('/explore'); }}
               accessibilityRole="button"
               accessibilityLabel="Browse meals"
-              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 24, paddingVertical: 12 }}>
+              style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 24, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>browse meals</Text>
             </PressableScale>
           </MotiView>

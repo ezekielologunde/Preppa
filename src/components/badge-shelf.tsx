@@ -17,7 +17,7 @@ import { MotiView } from 'moti';
 import { ScrollView, Text } from 'react-native';
 
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import type { CustomerBadgeKey, PrepperBadgeKey } from '@/types/database.types';
 
 type BadgeMeta = { label: string; Icon: LucideIcon; color: string; bg: string; description: string };
@@ -53,7 +53,7 @@ function BadgePill({ meta, index }: { meta: BadgeMeta; index: number }) {
       transition={{ type: 'timing', duration: 240, delay: index * 40 }}
       accessibilityRole="text"
       accessibilityLabel={`${meta.label}: ${meta.description}`}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: meta.bg, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 6 }}>
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: meta.bg, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 6 }}>
       <Icon size={13} color={meta.color} />
       <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: meta.color }}>{meta.label}</Text>
     </MotiView>

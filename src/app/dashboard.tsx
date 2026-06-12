@@ -35,7 +35,7 @@ import { ProfileHealthCard } from '@/components/profile-health-card';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette, Shadow } from '@/constants/theme';
+import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
@@ -200,7 +200,7 @@ export default function DashboardScreen() {
                   accessibilityRole="switch"
                   accessibilityState={{ checked: isOpen }}
                   accessibilityLabel={isOpen ? 'Kitchen is open — tap to close' : 'Kitchen is closed — tap to open'}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isOpen ? GREEN + '22' : '#252a34', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 }}>
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isOpen ? GREEN + '22' : '#252a34', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                   <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isOpen ? GREEN : MUTED }} />
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : MUTED }}>{isOpen ? 'Open' : 'Closed'}</Text>
                 </PressableScale>
@@ -278,7 +278,7 @@ export default function DashboardScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, marginBottom: 12 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>next order</Text>
             {next ? (
-              <View style={{ backgroundColor: ORANGE + '26', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 }}>
+              <View style={{ backgroundColor: ORANGE + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: ORANGE }}>{next.status === 'pending' ? 'new' : next.status}</Text>
               </View>
             ) : null}
@@ -300,7 +300,7 @@ export default function DashboardScreen() {
                     {next.items[0]?.title ?? 'order'}{next.items.length > 1 ? ` +${next.items.length - 1}` : ''}
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: next.paymentStatus === 'paid' ? GREEN + '24' : '#252a34', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: next.paymentStatus === 'paid' ? GREEN + '24' : '#252a34', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
                       {next.paymentStatus === 'paid' ? <Check size={11} color={GREEN} strokeWidth={2.5} /> : null}
                       <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: next.paymentStatus === 'paid' ? GREEN : MUTED }}>{next.paymentStatus === 'paid' ? 'paid' : 'unpaid'}</Text>
                     </View>

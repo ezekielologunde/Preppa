@@ -95,7 +95,7 @@ export default function ExperiencesScreen() {
             <Image source="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=900&q=70" style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '52%', opacity: 0.55 }} contentFit="cover" transition={250} />
             <View style={{ position: 'absolute', left: 0, top: 0, bottom: 0, right: 0, backgroundColor: 'rgba(17,21,28,0.45)' }} />
             <View style={{ padding: 20, gap: 10 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: 'rgba(241,95,34,0.92)', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: 'rgba(241,95,34,0.92)', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <Crown size={13} color="#fff" />
                 <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#fff', letterSpacing: 0.3 }}>PREMIUM</Text>
               </View>
