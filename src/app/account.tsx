@@ -27,7 +27,7 @@ import { DownloadDataModal } from '@/components/account/download-data-modal';
 import { Divider, Row, SectionLabel, StatusBadge } from '@/components/account/account-row';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -349,7 +349,7 @@ export default function AccountScreen() {
             <SectionLabel label="danger zone" />
             <View
               style={{
-                backgroundColor: '#FEF2F2',
+                backgroundColor: Palette.danger + '0F',
                 borderRadius: 20,
                 overflow: 'hidden',
                 padding: 16,
@@ -358,7 +358,7 @@ export default function AccountScreen() {
                 style={{
                   fontFamily: Font.body,
                   fontSize: 13,
-                  color: '#991B1B',
+                  color: Palette.danger,
                   marginBottom: 14,
                   lineHeight: 19,
                 }}>
@@ -403,10 +403,7 @@ export default function AccountScreen() {
               borderRadius: 14,
               paddingHorizontal: 16,
               paddingVertical: 13,
-              shadowColor: '#000',
-              shadowOpacity: 0.18,
-              shadowRadius: 14,
-              shadowOffset: { width: 0, height: 6 },
+              ...Shadow.floating,
             }}>
             <Text
               style={{

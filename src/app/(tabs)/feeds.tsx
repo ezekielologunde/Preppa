@@ -121,7 +121,7 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
           </PressableScale>
           {!item.isPost && item.rating > 0 ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 2 }}>
-              <Star size={11} color="#fbbf24" fill="#fbbf24" />
+              <Star size={11} color={Palette.amber} fill={Palette.amber} />
               <Text style={{ fontFamily: Font.medium, fontSize: 12, color: 'rgba(255,255,255,0.82)' }}>{item.rating.toFixed(1)}</Text>
             </View>
           ) : null}
