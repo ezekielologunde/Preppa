@@ -155,7 +155,7 @@ export default function DashboardScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: BG }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 150 }}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 20 : 14, paddingBottom: 150 }}>
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
@@ -255,15 +255,16 @@ export default function DashboardScreen() {
 
           {/* Stat cards — KPI row on desktop, 2x2 grid on mobile */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 140 }}>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: MUTED, paddingHorizontal: 20, marginTop: 10, marginBottom: 2, letterSpacing: 0.8, textTransform: 'uppercase' }}>your stats</Text>
           {desktop ? (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, gap: 10 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
               <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
               <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} />
               <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} />
               <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} />
             </View>
           ) : (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, paddingTop: 14, paddingBottom: 6 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, paddingTop: 8, paddingBottom: 6 }}>
               <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} flex />
               <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} flex />
               <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} flex />
@@ -274,28 +275,31 @@ export default function DashboardScreen() {
 
           {/* Goal + this week */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 180 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginHorizontal: 20, marginTop: 14, marginBottom: 8, backgroundColor: CARD, borderRadius: 20, padding: 16 }}>
-            <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, flexShrink: 0 }}>
-              <Ring pct={goalPct} color={ORANGE} size={64} stroke={7} />
-              <View style={{ position: 'absolute', alignItems: 'center' }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 14, color: INK }}>{goalPct}%</Text>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: MUTED, paddingHorizontal: 20, marginTop: 10, marginBottom: 6, letterSpacing: 0.8, textTransform: 'uppercase' }}>today's progress</Text>
+          <View style={{ marginHorizontal: 20, marginBottom: 8, backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+              <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 68, height: 68, flexShrink: 0 }}>
+                <Ring pct={goalPct} color={ORANGE} size={68} stroke={7} />
+                <View style={{ position: 'absolute', alignItems: 'center' }}>
+                  <Text style={{ fontFamily: Font.display, fontSize: 14, color: INK }}>{goalPct}%</Text>
+                </View>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED }}>today's goal</Text>
+                <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, fontVariant: ['tabular-nums'] }}>{money(revenue)}</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: MUTED }}>of $2k</Text>
+              </View>
+              <View style={{ alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontFamily: Font.display, fontSize: 26, color: ORANGE, letterSpacing: -0.5, fontVariant: ['tabular-nums'] }}>{Math.min(list.length, 30)}</Text>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: MUTED }}>this week</Text>
               </View>
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED }}>today's goal</Text>
-              <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, fontVariant: ['tabular-nums'] }}>{money(revenue)}</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: MUTED }}>of $2k</Text>
-            </View>
-            <View style={{ alignItems: 'center', paddingLeft: 16, borderLeftWidth: 1, borderLeftColor: Palette.chip }}>
-              <Text style={{ fontFamily: Font.display, fontSize: 24, color: ORANGE, letterSpacing: -0.5, fontVariant: ['tabular-nums'] }}>{Math.min(list.length, 30)}</Text>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: MUTED, marginBottom: 6 }}>this week</Text>
-              <View style={{ flexDirection: 'row', gap: 3 }}>
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                  <View key={i} style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: i < 5 ? ORANGE + '22' : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: i < 5 ? ORANGE : MUTED }}>{d}</Text>
-                  </View>
-                ))}
-              </View>
+            <View style={{ flexDirection: 'row', gap: 6, paddingTop: 12, borderTopWidth: 1, borderTopColor: Palette.chip }}>
+              {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
+                <View key={i} style={{ flex: 1, height: 24, borderRadius: 6, backgroundColor: i < 5 ? ORANGE + '22' : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: i < 5 ? ORANGE : MUTED }}>{d}</Text>
+                </View>
+              ))}
             </View>
           </View>
           </MotiView>
