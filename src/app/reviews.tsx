@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { ChevronLeft, MessageSquare, Sparkles, Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
@@ -151,6 +152,15 @@ export default function ReviewsScreen() {
                   ) : (
                     <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textMuted, fontStyle: 'italic' }}>No written review</Text>
                   )}
+                  {r.photos?.length > 0 ? (
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingTop: 2 }}>
+                      {r.photos.map((ph, pi) => (
+                        <View key={pi} style={{ width: 64, height: 64, borderRadius: 10, overflow: 'hidden', backgroundColor: Palette.canvas }}>
+                          <Image source={ph} style={{ flex: 1 }} contentFit="cover" transition={200} />
+                        </View>
+                      ))}
+                    </ScrollView>
+                  ) : null}
                   <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textMuted }}>— {r.author}</Text>
                 </View>
                 </MotiView>

@@ -8,17 +8,17 @@ const BRAND = Palette.brand;
 const STATUS = Palette.success;
 
 export const recommendedMeals: Meal[] = [
-  { id: '1', title: 'Honey Garlic Salmon', prepper: "kelsi's kitchen", rating: 4.8, reviews: 128, price: 14.99, time: '30–40 min', image: img('photo-1467003909585-2f8a72700288'), badge: { label: 'popular', color: BRAND } },
-  { id: '2', title: 'Creamy Jerk Pasta', prepper: 'island bites', rating: 4.9, reviews: 96, price: 13.49, time: '25–35 min', image: img('photo-1473093295043-cdd812d0e601'), badge: { label: 'new', color: STATUS } },
-  { id: '3', title: 'Wellness Bowl', prepper: 'green plates', rating: 4.7, reviews: 52, price: 12.49, time: '20–30 min', image: img('photo-1512621776951-a57141f2eefd'), badge: { label: 'healthy', color: STATUS } },
-  { id: '4', title: 'Jerk Chicken Bowl', prepper: 'spice haus', rating: 4.9, reviews: 74, price: 13.99, time: '20–30 min', image: img('photo-1546069901-ba9599a7e63c'), badge: { label: 'trending', color: BRAND } },
+  { id: '1', title: 'Honey Garlic Salmon', prepper: "kelsi's kitchen", rating: 4.8, reviews: 128, price: 14.99, time: '30–40 min', image: img('photo-1467003909585-2f8a72700288'), images: [img('photo-1467003909585-2f8a72700288'), img('photo-1519708227418-c8fd9a32b7a2'), img('photo-1540189549336-e6e99c3679fe')], badge: { label: 'popular', color: BRAND } },
+  { id: '2', title: 'Creamy Jerk Pasta', prepper: 'island bites', rating: 4.9, reviews: 96, price: 13.49, time: '25–35 min', image: img('photo-1473093295043-cdd812d0e601'), images: [img('photo-1473093295043-cdd812d0e601'), img('photo-1563379926898-05f4575a45d8'), img('photo-1568901346375-23c9450c58cd')], badge: { label: 'new', color: STATUS } },
+  { id: '3', title: 'Wellness Bowl', prepper: 'green plates', rating: 4.7, reviews: 52, price: 12.49, time: '20–30 min', image: img('photo-1512621776951-a57141f2eefd'), images: [img('photo-1512621776951-a57141f2eefd'), img('photo-1546069901-ba9599a7e63c'), img('photo-1547592180-85f173990554')], badge: { label: 'healthy', color: STATUS } },
+  { id: '4', title: 'Jerk Chicken Bowl', prepper: 'spice haus', rating: 4.9, reviews: 74, price: 13.99, time: '20–30 min', image: img('photo-1546069901-ba9599a7e63c'), images: [img('photo-1546069901-ba9599a7e63c'), img('photo-1585937421612-70a008356fbe'), img('photo-1467003909585-2f8a72700288')], badge: { label: 'trending', color: BRAND } },
 ];
 
 export const popularMeals: Meal[] = [
-  { id: 'p1', title: 'Honey Garlic Salmon Bowl', prepper: 'chef kelsey', rating: 4.9, reviews: 128, price: 14.99, time: '30–40 min', image: img('photo-1467003909585-2f8a72700288'), badge: { label: 'trending', color: BRAND } },
-  { id: 'p2', title: 'Creamy Jerk Pasta', prepper: 'island bites', rating: 4.8, reviews: 96, price: 13.49, time: '25–35 min', image: img('photo-1473093295043-cdd812d0e601'), badge: { label: 'popular', color: BRAND } },
-  { id: 'p3', title: 'Jerk Chicken Bowl', prepper: 'spice haus', rating: 4.9, reviews: 74, price: 13.99, time: '20–30 min', image: img('photo-1546069901-ba9599a7e63c'), badge: { label: 'fast selling', color: BRAND } },
-  { id: 'p4', title: 'Vegan Buddha Bowl', prepper: 'green plates', rating: 4.7, reviews: 52, price: 12.49, time: '20–30 min', image: img('photo-1512621776951-a57141f2eefd'), badge: { label: 'new', color: STATUS } },
+  { id: 'p1', title: 'Honey Garlic Salmon Bowl', prepper: 'chef kelsey', rating: 4.9, reviews: 128, price: 14.99, time: '30–40 min', image: img('photo-1467003909585-2f8a72700288'), images: [img('photo-1467003909585-2f8a72700288'), img('photo-1519708227418-c8fd9a32b7a2'), img('photo-1512621776951-a57141f2eefd')], badge: { label: 'trending', color: BRAND } },
+  { id: 'p2', title: 'Creamy Jerk Pasta', prepper: 'island bites', rating: 4.8, reviews: 96, price: 13.49, time: '25–35 min', image: img('photo-1473093295043-cdd812d0e601'), images: [img('photo-1473093295043-cdd812d0e601'), img('photo-1563379926898-05f4575a45d8'), img('photo-1540189549336-e6e99c3679fe')], badge: { label: 'popular', color: BRAND } },
+  { id: 'p3', title: 'Jerk Chicken Bowl', prepper: 'spice haus', rating: 4.9, reviews: 74, price: 13.99, time: '20–30 min', image: img('photo-1546069901-ba9599a7e63c'), images: [img('photo-1546069901-ba9599a7e63c'), img('photo-1585937421612-70a008356fbe'), img('photo-1547592180-85f173990554')], badge: { label: 'fast selling', color: BRAND } },
+  { id: 'p4', title: 'Vegan Buddha Bowl', prepper: 'green plates', rating: 4.7, reviews: 52, price: 12.49, time: '20–30 min', image: img('photo-1512621776951-a57141f2eefd'), images: [img('photo-1512621776951-a57141f2eefd'), img('photo-1567620905732-2d1ec7ab7445'), img('photo-1565958011703-44f9829ba187')], badge: { label: 'new', color: STATUS } },
 ];
 
 export const orderAgain = { title: 'Jerk Chicken Bowl', prepper: 'spice haus', price: 13.99, date: 'may 8', image: img('photo-1546069901-ba9599a7e63c') };

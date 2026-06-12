@@ -276,6 +276,15 @@ export default function MealScreen() {
                         </View>
                       </View>
                       {rv.body ? <Text style={{ fontFamily: Font.body, fontSize: 13.5, lineHeight: 20, color: Palette.inkSoft }}>{rv.body}</Text> : null}
+                      {rv.photos?.length > 0 ? (
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingTop: 2 }}>
+                          {rv.photos.map((ph, pi) => (
+                            <View key={pi} style={{ width: 68, height: 68, borderRadius: 10, overflow: 'hidden', backgroundColor: Palette.canvas }}>
+                              <Image source={ph} style={{ flex: 1 }} contentFit="cover" transition={200} />
+                            </View>
+                          ))}
+                        </ScrollView>
+                      ) : null}
                     </MotiView>
                   ))}
                   {reviews.length > 4 ? (

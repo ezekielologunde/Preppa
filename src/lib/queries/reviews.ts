@@ -69,12 +69,14 @@ export type ReviewCard = {
   body: string | null;
   author: string;
   created_at: string;
+  photos: string[];
 };
 
 type ReviewRow = {
   id: string;
   rating: number;
   body: string | null;
+  photos: string[] | null;
   created_at: string;
   author: { display_name: string } | { display_name: string }[] | null;
 };
@@ -87,7 +89,7 @@ export function usePrepperReviews(prepperId?: string | null, limit = 20) {
     queryFn: async (): Promise<ReviewCard[]> => {
       const { data, error } = await supabase
         .from('reviews')
-        .select('id,rating,body,created_at,author:profiles(display_name:full_name)')
+        .select('id,rating,body,photos,created_at,author:profiles(display_name:full_name)')
         .eq('prepper_id', prepperId!)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -98,6 +100,7 @@ export function usePrepperReviews(prepperId?: string | null, limit = 20) {
         body: r.body,
         author: maskName(one(r.author)?.display_name) ?? 'a customer',
         created_at: r.created_at,
+        photos: r.photos ?? [],
       }));
     },
   });
