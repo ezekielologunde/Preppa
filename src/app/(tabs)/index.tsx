@@ -144,17 +144,17 @@ export default function HomeScreen() {
               onPress={() => { feedback.tap(); router.push('/profile'); }}
               accessibilityRole="button"
               accessibilityLabel="Your profile"
-              style={{ width: 52, height: 52, alignItems: 'center', justifyContent: 'center' }}>
+              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
               <MotiView
                 from={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'timing', duration: 1500, loop: true, repeatReverse: true }}>
-                <PreppaLogo size={48} glow />
+                <PreppaLogo size={40} glow />
               </MotiView>
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{greeting()}{firstName ? `, ${firstName}` : ''} 👋</Text>
-              <Text style={{ fontFamily: Font.display, fontSize: 16, color: INK, letterSpacing: -0.4, lineHeight: 20 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 14.5, color: INK, letterSpacing: -0.3, lineHeight: 18 }}>
                 what are you <Text style={{ color: ORANGE }}>craving?</Text>
               </Text>
             </View>
@@ -172,7 +172,7 @@ export default function HomeScreen() {
 
           {/* Search + location */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 8, gap: 8, alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 4, gap: 8, alignItems: 'center' }}>
             <PressableScale
               onPress={() => { feedback.tap(); router.push('/search'); }}
               accessibilityRole="search"
@@ -244,18 +244,18 @@ export default function HomeScreen() {
               const onPress = () => { feedback.tap(); c.key === 'more' ? router.push('/explore') : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`); };
               return (
                 <MotiView key={c.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 100 + i * 35 }}>
-                  <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 6, width: 58 }}>
-                    <View style={{ width: 52, height: 52, borderRadius: 18, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={22} color={c.color} />
+                  <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 5, width: 52 }}>
+                    <View style={{ width: 46, height: 46, borderRadius: 15, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={20} color={c.color} />
                     </View>
-                    <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.inkSoft }}>{c.label}</Text>
+                    <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.inkSoft }}>{c.label}</Text>
                   </PressableScale>
                 </MotiView>
               );
             });
             return bp !== 'mobile'
-              ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
-              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 10 }}>{items}</ScrollView>;
+              ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 12, paddingVertical: 16 }}>{items}</View>
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingVertical: 8 }}>{items}</ScrollView>;
           })()}
 
           {/* Primary products — compact list card so nothing wraps */}

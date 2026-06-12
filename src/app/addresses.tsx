@@ -261,7 +261,7 @@ export default function AddressesScreen() {
             gap: Spacing.two,
           }}>
           <PressableScale
-            onPress={() => { feedback.tap(); router.back(); }}
+            onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/profile'); } }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{
