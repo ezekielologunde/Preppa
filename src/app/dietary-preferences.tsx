@@ -19,6 +19,8 @@ const SPICE = ['None', 'Mild', 'Medium', 'Hot', 'Extra hot'] as const;
 
 type SpiceLevel = typeof SPICE[number];
 
+const ORANGE = Palette.brand;
+
 function ChipGroup({
   label,
   options,
@@ -35,9 +37,16 @@ function ChipGroup({
   return (
     <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay }}>
       <View style={{ marginBottom: 24 }}>
-        <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 12 }}>
-          {label}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+          <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary, textTransform: 'uppercase', letterSpacing: 0.8, flex: 1 }}>
+            {label}
+          </Text>
+          {selected.length > 0 ? (
+            <View style={{ paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: Palette.brandTint }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: ORANGE }}>{selected.length}</Text>
+            </View>
+          ) : null}
+        </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {options.map((opt) => {
             const active = selected.includes(opt);
