@@ -175,16 +175,16 @@ export default function ExperiencesScreen() {
           </PressableScale>
           </MotiView>
 
-          {/* Experience types */}
-          <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
+          {/* Experience types — 3-per-row wrap grid */}
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
             {experienceTypes.map((t) => {
               const Icon = TYPE_ICONS[t.icon] ?? UtensilsCrossed;
               return (
-                <PressableScale key={t.key} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${t.key}`); }} accessibilityRole="button" accessibilityLabel={t.label} style={{ flex: 1, alignItems: 'center', gap: 8, backgroundColor: Palette.surface, borderRadius: Radius.md, paddingVertical: 14 }}>
+                <PressableScale key={t.key} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${t.key}`); }} accessibilityRole="button" accessibilityLabel={t.label} style={{ flexBasis: '30%', flexGrow: 1, alignItems: 'center', gap: 8, backgroundColor: Palette.surface, borderRadius: Radius.md, paddingVertical: 14 }}>
                   <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={20} color={ORANGE} />
                   </View>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: INK, textAlign: 'center' }}>{t.label}</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: INK, textAlign: 'center' }} numberOfLines={2}>{t.label}</Text>
                 </PressableScale>
               );
             })}
