@@ -22,7 +22,7 @@ function TagChip({ label, selected, onPress }: { label: string; selected: boolea
       accessibilityRole="button"
       accessibilityState={{ selected }}
       accessibilityLabel={label}
-      style={{ paddingHorizontal: 15, height: 38, borderRadius: 999, backgroundColor: selected ? INK : '#fff', alignItems: 'center', justifyContent: 'center' }}>
+      style={{ paddingHorizontal: 15, height: 38, borderRadius: 999, backgroundColor: selected ? INK : Palette.surface, borderWidth: 1.5, borderColor: selected ? 'transparent' : Palette.border, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
     </PressableScale>
   );
