@@ -175,7 +175,7 @@ export default function ExploreScreen() {
               );
             });
             return bp !== 'mobile'
-              ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
+              ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 14 }}>{items}</View>
               : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 14 }}>{items}</ScrollView>;
           })()}
 

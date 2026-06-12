@@ -262,7 +262,7 @@ export default function ProfileScreen() {
 
           {/* Rewards / tier */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
-          <PressableScale onPress={() => { feedback.tap(); go('/rewards'); }} accessibilityRole="button" accessibilityLabel="View your rewards" style={{ marginHorizontal: 20, marginTop: 22 }}>
+          <PressableScale onPress={() => { feedback.tap(); go('/rewards'); }} accessibilityRole="button" accessibilityLabel="View your rewards" style={{ marginHorizontal: 20, marginTop: 16 }}>
             <LinearGradient colors={['#FFE9D6', '#FFDDBE']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ borderRadius: 22, padding: 18, flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: Font.body, fontSize: 13, color: '#7c5a42' }}>your balance</Text>
@@ -355,8 +355,8 @@ export default function ProfileScreen() {
           </MotiView>
 
           {/* Meal plans & subscriptions */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 22, color: Palette.ink, letterSpacing: -0.5 }}>meal plans &amp; subscriptions</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 22, marginBottom: 10 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 18, color: Palette.ink, letterSpacing: -0.4 }}>meal plans &amp; subscriptions</Text>
             <PressableScale onPress={() => { feedback.tap(); go('/meal-plans'); }} accessibilityRole="button" accessibilityLabel="View all meal plans">
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.brand }}>view all</Text>
             </PressableScale>
@@ -407,7 +407,7 @@ export default function ProfileScreen() {
 
           {/* Hub */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 200 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 22, color: Palette.ink, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>your hub</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 18, color: Palette.ink, letterSpacing: -0.4, paddingHorizontal: 20, marginTop: 22, marginBottom: 10 }}>your hub</Text>
           <HubGrid hub={hub} dark={dark} onHub={onHub} />
           </MotiView>
 
