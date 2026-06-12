@@ -203,7 +203,7 @@ export default function ExperiencesScreen() {
                   <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>{s.title}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }}>{s.body}</Text>
                 </View>
-                <Text style={{ fontFamily: Font.display, fontSize: 18, color: '#E5E7EB' }}>{i + 1}</Text>
+                <Text style={{ fontFamily: Font.display, fontSize: 18, color: Palette.border }}>{i + 1}</Text>
               </View>
               </MotiView>
             ))}

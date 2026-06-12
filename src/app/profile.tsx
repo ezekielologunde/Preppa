@@ -306,7 +306,7 @@ export default function ProfileScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.surface }}>my kitchen</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9AA1AD', marginTop: 1 }}>meals, orders, earnings & go live</Text>
               </View>
-              <ChevronRight size={18} color="#6B7280" />
+              <ChevronRight size={18} color={Palette.textSecondary} />
             </PressableScale>
           ) : null}
 
@@ -325,7 +325,7 @@ export default function ProfileScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.surface }}>admin console</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9AA1AD', marginTop: 1 }}>approvals, orders, earnings & features</Text>
               </View>
-              <ChevronRight size={18} color="#6B7280" />
+              <ChevronRight size={18} color={Palette.textSecondary} />
             </PressableScale>
           ) : null}
 
@@ -425,7 +425,7 @@ export default function ProfileScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.surface }}>become a prepper</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#9AA1AD', marginTop: 1 }}>start earning with your cooking</Text>
               </View>
-              <ChevronRight size={18} color="#6B7280" />
+              <ChevronRight size={18} color={Palette.textSecondary} />
             </PressableScale>
           ) : isPendingPrepper ? (
             <View style={{ marginHorizontal: 20, marginTop: 10, backgroundColor: Palette.amber + '1A', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>

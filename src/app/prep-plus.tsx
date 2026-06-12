@@ -27,10 +27,10 @@ const YEARLY_SAVING = Math.round(100 - (YEARLY / (MONTHLY * 12)) * 100);
 type Benefit = { Icon: LucideIcon; label: string; sub: string; color: string };
 const BENEFITS: Benefit[] = [
   { Icon: Ticket, label: 'Reduced fees', sub: 'Save on every order placed through the app', color: ORANGE },
-  { Icon: Star, label: 'Exclusive meals', sub: 'First access to limited drops before anyone else', color: '#f59e0b' },
+  { Icon: Star, label: 'Exclusive meals', sub: 'First access to limited drops before anyone else', color: Palette.amber },
   { Icon: Gift, label: 'Surprise discounts', sub: 'Random perks and credits each week', color: '#ec4899' },
   { Icon: Zap, label: 'Early access', sub: 'New preppers and drops the moment they go live', color: '#8b5cf6' },
-  { Icon: Crown, label: 'Loyalty multiplier', sub: '2× points earned on every single order', color: '#f59e0b' },
+  { Icon: Crown, label: 'Loyalty multiplier', sub: '2× points earned on every single order', color: Palette.amber },
   { Icon: Truck, label: 'Delivery credits', sub: '$5 credit toward delivery each billing cycle', color: Palette.success },
   { Icon: Tv2, label: 'Premium livestreams', sub: 'Q&A access and exclusive chef sessions', color: '#60a5fa' },
   { Icon: Bell, label: 'Priority support', sub: 'Jump the queue — real humans, fast responses', color: ORANGE },

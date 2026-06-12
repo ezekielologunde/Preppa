@@ -6,6 +6,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Font } from '@/constants/fonts';
+import { Palette } from '@/constants/theme';
 import { PreppaLogo } from './preppa-logo';
 
 type Props = {
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.25)',
   },
   avatars: { flexDirection: 'row' },
-  avatar: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: '#F15F22' },
+  avatar: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: Palette.brand },
   avatarOverlap: { marginLeft: -9 },
   pillText: { fontFamily: FONT.body, color: '#fff', fontSize: 14 },
   cta: {

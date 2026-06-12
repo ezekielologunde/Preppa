@@ -20,8 +20,8 @@ const CATEGORIES: Category[] = [
   { id: 'weekly', label: 'weekly digest', desc: 'Sunday summary: top kitchens, trending cuisines, and your week', Icon: Sparkles, color: '#8b5cf6', defaultOn: true },
   { id: 'holiday', label: 'holiday & cultural specials', desc: 'Limited meals for upcoming holidays and cultural celebrations', Icon: Gift, color: ORANGE, defaultOn: true },
   { id: 'seasonal', label: 'seasonal drops', desc: 'Harvest specials, ingredient kits, and food events near you', Icon: Leaf, color: '#ca8a04', defaultOn: true },
-  { id: 'rewards', label: 'rewards milestones', desc: 'When you unlock perks or approach your next reward tier', Icon: Crown, color: '#f59e0b', defaultOn: true },
-  { id: 'new_prepper', label: 'new local preppers', desc: 'When a verified prepper near you joins the platform', Icon: Star, color: '#16a34a', defaultOn: false },
+  { id: 'rewards', label: 'rewards milestones', desc: 'When you unlock perks or approach your next reward tier', Icon: Crown, color: Palette.amber, defaultOn: true },
+  { id: 'new_prepper', label: 'new local preppers', desc: 'When a verified prepper near you joins the platform', Icon: Star, color: Palette.success, defaultOn: false },
   { id: 'promo', label: 'promotions & deals', desc: 'Flash sales, loyalty vouchers, and prepper discount codes', Icon: Tag, color: '#0891b2', defaultOn: false },
   { id: 'boost', label: 'listing performance', desc: 'Prepper-only: impressions and orders from your active boosts', Icon: Zap, color: '#d97706', defaultOn: false },
 ];

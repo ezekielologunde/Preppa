@@ -13,11 +13,11 @@ export const Admin = {
   border: 'rgba(255,255,255,0.08)',
   text: '#F4F5F7',
   textDim: '#9AA1AD',
-  textMuted: '#6B7280',
+  textMuted: Palette.textSecondary,
   brand: Palette.brand,
   success: Palette.success,
-  danger: '#EF4444',
-  warn: '#F59E0B',
+  danger: Palette.danger,
+  warn: Palette.amber,
 } as const;
 
 export const money = (n: number | null | undefined) =>
@@ -52,18 +52,18 @@ export function StatCard({ label, value, sub, Icon, tone = 'brand' }: { label: s
 }
 
 const PILL_TONES: Record<string, { bg: string; fg: string }> = {
-  pending: { bg: '#F59E0B22', fg: '#F59E0B' },
-  approved: { bg: '#16A34A22', fg: '#22C55E' },
-  rejected: { bg: '#EF444422', fg: '#F87171' },
-  suspended: { bg: '#6B728022', fg: '#9CA3AF' },
-  active: { bg: '#16A34A22', fg: '#22C55E' },
-  completed: { bg: '#16A34A22', fg: '#22C55E' },
-  confirmed: { bg: '#F15F2222', fg: '#F15F22' },
-  preparing: { bg: '#F15F2222', fg: '#F15F22' },
-  ready: { bg: '#F15F2222', fg: '#F15F22' },
-  out_for_delivery: { bg: '#F15F2222', fg: '#F15F22' },
-  cancelled: { bg: '#EF444422', fg: '#F87171' },
-  deleted: { bg: '#EF444422', fg: '#F87171' },
+  pending: { bg: Palette.amber + '22', fg: Palette.amber },
+  approved: { bg: Palette.success + '22', fg: '#22C55E' },
+  rejected: { bg: Palette.danger + '22', fg: '#F87171' },
+  suspended: { bg: Palette.textSecondary + '22', fg: Palette.textMuted },
+  active: { bg: Palette.success + '22', fg: '#22C55E' },
+  completed: { bg: Palette.success + '22', fg: '#22C55E' },
+  confirmed: { bg: Palette.brand + '22', fg: Palette.brand },
+  preparing: { bg: Palette.brand + '22', fg: Palette.brand },
+  ready: { bg: Palette.brand + '22', fg: Palette.brand },
+  out_for_delivery: { bg: Palette.brand + '22', fg: Palette.brand },
+  cancelled: { bg: Palette.danger + '22', fg: '#F87171' },
+  deleted: { bg: Palette.danger + '22', fg: '#F87171' },
 };
 
 export function Pill({ label }: { label: string }) {

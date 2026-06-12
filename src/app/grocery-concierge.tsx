@@ -65,7 +65,7 @@ const TAG_COLORS: Record<string, string> = {
   'family hit': Palette.success,
   comfort: ORANGE,
   artisan: '#8b5cf6',
-  healthy: '#16a34a',
+  healthy: Palette.success,
 };
 
 export default function GroceryConciergeScreen() {

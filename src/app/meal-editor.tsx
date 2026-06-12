@@ -25,7 +25,7 @@ const STATUS_STYLE: Record<MealStatus, { label: string; color: string }> = {
   published: { label: 'live', color: Palette.success },
   draft: { label: 'draft', color: Palette.textMuted },
   paused: { label: 'paused', color: Palette.amber },
-  archived: { label: 'archived', color: '#6b7280' },
+  archived: { label: 'archived', color: Palette.textSecondary },
 };
 
 const EMPTY: MealDraft = { title: '', description: '', base_price: 0, prep_time_min: null, category_id: null, imageUrl: '', is_limited: false };
@@ -96,7 +96,7 @@ function MealRow({ meal, busy, onEdit, onSetStatus }: { meal: MyMeal; busy: bool
           accessibilityLabel={isLive ? `Pause ${meal.title}` : `Publish ${meal.title}`}
           hitSlop={6}
           style={{ paddingHorizontal: 12, height: 32, borderRadius: 10, backgroundColor: isLive ? '#252a34' : ORANGE, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.6 : 1 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: isLive ? '#9ca3af' : '#fff' }}>{isLive ? 'Pause' : 'Publish'}</Text>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: isLive ? Palette.textMuted : '#fff' }}>{isLive ? 'Pause' : 'Publish'}</Text>
         </PressableScale>
       </View>
     </View>
@@ -238,7 +238,7 @@ export default function MealEditorScreen() {
                     const sel = draft?.category_id === c.id;
                     return (
                       <PressableScale key={c.id} onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, category_id: sel ? null : c.id }); }} accessibilityRole="button" accessibilityLabel={`Category ${c.name}`} accessibilityState={{ selected: sel }} style={{ paddingHorizontal: 13, height: 34, borderRadius: 999, backgroundColor: sel ? ORANGE : '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: sel ? '#fff' : '#9ca3af' }}>{c.name}</Text>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: sel ? '#fff' : Palette.textMuted }}>{c.name}</Text>
                       </PressableScale>
                     );
                   })}
@@ -314,7 +314,7 @@ export default function MealEditorScreen() {
                           accessibilityState={{ selected: on }}
                           accessibilityLabel={`Drop ends: ${d.label}`}
                           style={{ flex: 1, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: on ? ORANGE + '26' : '#1d2129', borderWidth: 1.5, borderColor: on ? ORANGE : 'transparent' }}>
-                          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: on ? ORANGE : '#9ca3af' }}>{d.label}</Text>
+                          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: on ? ORANGE : Palette.textMuted }}>{d.label}</Text>
                         </PressableScale>
                       );
                     })}
