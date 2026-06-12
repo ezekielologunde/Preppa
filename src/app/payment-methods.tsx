@@ -55,7 +55,7 @@ function PaymentCard({
       {pendingDelete ? (
         <View
           style={{
-            backgroundColor: '#FEF2F2',
+            backgroundColor: Palette.danger + '14',
             borderRadius: Radius.md,
             padding: Spacing.three,
             flexDirection: 'row',
@@ -190,7 +190,7 @@ function PaymentCard({
               width: 44,
               height: 44,
               borderRadius: 14,
-              backgroundColor: '#FEF2F2',
+              backgroundColor: Palette.danger + '14',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
