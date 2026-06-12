@@ -155,23 +155,23 @@ export default function EditProfileScreen() {
             </MotiView>
 
             {/* Fields */}
-            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 60 }}
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 40 }}
               style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 20, padding: 16, gap: 16 }}>
 
-              <ProfileField label="full name" icon={<User size={14} color={Palette.textSecondary} />} error={errors.full_name} delay={120}>
+              <ProfileField label="full name" icon={<User size={14} color={Palette.textSecondary} />} error={errors.full_name} delay={80}>
                 <TextInput value={fields.full_name} onChangeText={(v) => set('full_name', v)} onBlur={() => onBlur('full_name')}
                   placeholder="Your full name" placeholderTextColor={Palette.textMuted} accessibilityLabel="Full name"
                   style={inputStyle(!!errors.full_name)} />
               </ProfileField>
 
-              <ProfileField label="username" error={errors.username} delay={180}
+              <ProfileField label="username" error={errors.username} delay={120}
                 hint={fields.username.length >= 3 && !errors.username ? `preppa.live/@${fields.username.toLowerCase()}` : undefined}>
                 <TextInput value={fields.username} onChangeText={(v) => set('username', v.toLowerCase())} onBlur={() => onBlur('username')}
                   placeholder="your_handle" placeholderTextColor={Palette.textMuted} autoCapitalize="none" autoCorrect={false}
                   accessibilityLabel="Username" style={inputStyle(!!errors.username)} />
               </ProfileField>
 
-              <ProfileField label="bio" error={errors.bio} delay={240}
+              <ProfileField label="bio" error={errors.bio} delay={160}
                 hint={`${fields.bio.length}/160`}>
                 <TextInput value={fields.bio} onChangeText={(v) => set('bio', v)} onBlur={() => onBlur('bio')}
                   placeholder="Tell people a little about yourself…" placeholderTextColor={Palette.textMuted}
@@ -179,13 +179,13 @@ export default function EditProfileScreen() {
                   style={{ ...inputStyle(!!errors.bio), minHeight: 88, textAlignVertical: 'top' }} />
               </ProfileField>
 
-              <ProfileField label="location" icon={<MapPin size={14} color={Palette.textSecondary} />} delay={300}>
+              <ProfileField label="location" icon={<MapPin size={14} color={Palette.textSecondary} />} delay={200}>
                 <TextInput value={fields.location} onChangeText={(v) => set('location', v.slice(0, 80))}
                   placeholder="City, State" placeholderTextColor={Palette.textMuted} accessibilityLabel="Location"
                   style={inputStyle()} />
               </ProfileField>
 
-              <ProfileField label="website (optional)" icon={<Globe size={14} color={Palette.textSecondary} />} error={errors.website} delay={360}>
+              <ProfileField label="website (optional)" icon={<Globe size={14} color={Palette.textSecondary} />} error={errors.website} delay={240}>
                 <TextInput value={fields.website} onChangeText={(v) => set('website', v)} onBlur={() => onBlur('website')}
                   placeholder="https://yoursite.com" placeholderTextColor={Palette.textMuted}
                   autoCapitalize="none" autoCorrect={false} keyboardType="url" accessibilityLabel="Website URL"
@@ -194,7 +194,7 @@ export default function EditProfileScreen() {
             </MotiView>
 
             {/* Save */}
-            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 420 }}
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300, delay: 280 }}
               style={{ marginHorizontal: 20, marginTop: 24 }}>
               <PressableScale onPress={handleSave} disabled={!hasChanges || hasErrors || saving}
                 accessibilityRole="button" accessibilityLabel="Save profile changes" accessibilityState={{ disabled: !hasChanges || hasErrors || saving }}
