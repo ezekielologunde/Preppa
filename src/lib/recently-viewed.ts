@@ -59,3 +59,13 @@ function countSnapshot(): number {
 export function useRecentlyViewedCount(): number {
   return useSyncExternalStore(subscribe, countSnapshot);
 }
+
+let idsSnapshot: string[] | null = null;
+function idsSnap(): string[] {
+  if (idsSnapshot !== ids) idsSnapshot = ids;
+  return idsSnapshot;
+}
+
+export function useRecentlyViewedIds(): string[] {
+  return useSyncExternalStore(subscribe, idsSnap);
+}
