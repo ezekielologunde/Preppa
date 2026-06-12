@@ -270,7 +270,7 @@ export default function MealPlansScreen() {
           )}
 
           {/* Featured showcase (illustrative) */}
-          <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 28, marginBottom: 12 }}>featured plans</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, paddingHorizontal: 20, marginTop: 20, marginBottom: 10 }}>featured plans</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
             {featuredMealPlans.map((p) => <FeaturedCard key={p.id} plan={p} />)}
           </ScrollView>

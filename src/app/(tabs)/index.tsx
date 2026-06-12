@@ -331,7 +331,7 @@ export default function HomeScreen() {
           {/* Recommended — personalized, dynamic mix of a big hero + carousel */}
           <SectionHeader title="recommended for you" onSeeAll={() => { feedback.tap(); router.push('/category?key=all&label=recommended'); }} />
           {mealsLoading ? (
-            <View style={{ paddingBottom: 26 }}>
+            <View style={{ paddingBottom: 20 }}>
               <CardRowSkeleton count={3} />
             </View>
           ) : bp !== 'mobile' ? (

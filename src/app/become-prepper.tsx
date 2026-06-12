@@ -257,7 +257,7 @@ export default function BecomePrepperScreen() {
 
           {/* Identity verification */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 120 }}>
-            <View style={{ marginTop: 28 }}>
+            <View style={{ marginTop: 22 }}>
               <SectionHeader icon={<ShieldCheck size={14} color={ORANGE} />} title="Identity verification" />
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 6, marginBottom: 4, lineHeight: 18 }}>
                 A photo of your driver's licence, passport, or state ID. Kept private — only our review team can see it.
@@ -270,7 +270,7 @@ export default function BecomePrepperScreen() {
 
           {/* Food safety */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
-            <View style={{ marginTop: 28 }}>
+            <View style={{ marginTop: 22 }}>
               <SectionHeader icon={<ShieldCheck size={14} color={ORANGE} />} title="Food safety certification" />
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 6, marginBottom: 12, lineHeight: 18 }}>
                 Upload your food handler's permit or food safety certificate. Don't have one yet? Get certified through one of these providers:

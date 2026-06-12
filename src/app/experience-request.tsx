@@ -116,7 +116,7 @@ export default function ExperienceRequestScreen() {
           </MotiView>
 
           {/* My requests */}
-          <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, marginTop: 32, marginBottom: 12 }}>my requests</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, marginTop: 22, marginBottom: 10 }}>my requests</Text>
           {isLoading ? (
             <ActivityIndicator color={ORANGE} style={{ marginTop: 12 }} />
           ) : !requests?.length ? (
