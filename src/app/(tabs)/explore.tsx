@@ -15,8 +15,8 @@ import {
   MapPin,
   MoreHorizontal,
   Salad,
-  Scan,
   Search,
+  SlidersHorizontal,
   ShoppingBag,
   Sparkles,
   Sprout,
@@ -132,7 +132,7 @@ export default function ExploreScreen() {
             style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 8, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 46, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
-            <Scan size={20} color={ORANGE} />
+            <SlidersHorizontal size={19} color={ORANGE} />
           </PressableScale>
 
           {/* Trending chips — quick-tap discovery below the search bar */}

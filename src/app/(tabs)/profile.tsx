@@ -85,32 +85,36 @@ type HubItem = { label: string; sub: string; Icon: LucideIcon; accent?: boolean;
 
 function HubGrid({ hub, dark, onHub }: { hub: HubItem[]; dark: boolean; onHub: (h: HubItem) => void }) {
   return (
-    <View style={{ marginHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-      {hub.map((h) => (
+    <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 20 }}>
+      {hub.map((h, i) => (
         <PressableScale
           key={h.label}
           onPress={() => onHub(h)}
           accessibilityRole="button"
           accessibilityLabel={`${h.label}, ${h.sub}`}
-          style={{ flexGrow: 1, flexBasis: '46%', backgroundColor: Palette.surface, borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 11 }}>
-          <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: h.accent ? Palette.brandTint : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.chip }}>
+          <View style={{ width: 36, height: 36, borderRadius: 11, backgroundColor: h.accent ? Palette.brandTint : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
             <h.Icon size={17} color={h.accent ? Palette.brand : Palette.textSecondary} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 13.5, color: h.accent ? Palette.brand : Palette.ink }}>{h.label}</Text>
-            <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, marginTop: 1 }}>{h.sub}</Text>
+            <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 14, color: h.accent ? Palette.brand : Palette.ink }}>{h.label}</Text>
+            <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11.5, color: Palette.textMuted, marginTop: 1 }}>{h.sub}</Text>
           </View>
           <ChevronRight size={15} color={Palette.textSecondary} />
         </PressableScale>
       ))}
-      <PressableScale onPress={() => { feedback.tap(); toggleDarkMode(); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
-        style={{ flexGrow: 1, flexBasis: '46%', backgroundColor: Palette.surface, borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 11 }}>
-        <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+      <PressableScale
+        onPress={() => { feedback.tap(); toggleDarkMode(); }}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: dark }}
+        accessibilityLabel="Dark mode"
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 14, borderTopWidth: 1, borderTopColor: Palette.chip }}>
+        <View style={{ width: 36, height: 36, borderRadius: 11, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
           <Moon size={17} color={Palette.textSecondary} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 13.5, color: Palette.ink }}>dark mode</Text>
-          <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, marginTop: 1 }}>{dark ? 'on' : 'off'}</Text>
+          <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 14, color: Palette.ink }}>dark mode</Text>
+          <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11.5, color: Palette.textMuted, marginTop: 1 }}>{dark ? 'on' : 'off'}</Text>
         </View>
         <MotiView
           animate={{ backgroundColor: dark ? Palette.brand : Palette.border }}
