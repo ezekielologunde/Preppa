@@ -56,7 +56,7 @@ export default function AdminScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: Admin.bg }}>
         <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 }}>
-          <MotiView from={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 360, bounce: 0.15 }}>
+          <MotiView from={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 18, stiffness: 220 }}>
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Admin.card, alignItems: 'center', justifyContent: 'center' }}>
               <Lock size={28} color={Admin.textDim} />
             </View>

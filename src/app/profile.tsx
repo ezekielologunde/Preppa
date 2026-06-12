@@ -57,7 +57,7 @@ const quickLinks = [
   { label: 'saved', sub: '0 items', Icon: Bookmark, color: Palette.amber, bg: Palette.amber + '1A' },
   { label: 'recently viewed', sub: '0 meals', Icon: Clock, color: Palette.success, bg: Palette.success + '1A' },
   { label: 'following', sub: '0 preppers', Icon: Users, color: '#8b5cf6', bg: '#EDE9FE' },
-  { label: 'referrals', sub: 'invite', Icon: Ticket, color: Palette.amber, bg: '#FEF3C7' },
+  { label: 'referrals', sub: 'invite', Icon: Ticket, color: Palette.amber, bg: Palette.amber + '1A' },
 ];
 
 const STATIC_HUB: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
@@ -365,7 +365,7 @@ export default function ProfileScreen() {
             <View style={{ marginHorizontal: 20, gap: 10 }}>
               {subs.map((s) => {
                 const active = s.status === 'active';
-                const badge = active ? { bg: '#DCFCE7', fg: '#15803d' } : s.status === 'paused' ? { bg: '#FEF3C7', fg: '#b45309' } : { bg: Palette.chip, fg: Palette.textSecondary };
+                const badge = active ? { bg: Palette.success + '1A', fg: '#15803d' } : s.status === 'paused' ? { bg: Palette.amber + '1A', fg: '#b45309' } : { bg: Palette.chip, fg: Palette.textSecondary };
                 const next = s.next_billing_at ? new Date(s.next_billing_at) : null;
                 const nextLabel = next && !isNaN(next.getTime()) ? next.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : null;
                 return (
@@ -428,7 +428,7 @@ export default function ProfileScreen() {
               <ChevronRight size={18} color="#6B7280" />
             </PressableScale>
           ) : isPendingPrepper ? (
-            <View style={{ marginHorizontal: 20, marginTop: 10, backgroundColor: '#FEF3C7', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <View style={{ marginHorizontal: 20, marginTop: 10, backgroundColor: Palette.amber + '1A', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: 'rgba(245,158,11,0.15)', alignItems: 'center', justifyContent: 'center' }}>
                 <Clock size={20} color={Palette.amber} />
               </View>

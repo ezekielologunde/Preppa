@@ -57,7 +57,7 @@ export default function RecentlyViewedScreen() {
         {visible.length === 0 ? (
           <MotiView from={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'timing', duration: 260 }}
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
-            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: '#DCFCE7', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.success + '1A', alignItems: 'center', justifyContent: 'center' }}>
               <Clock size={28} color={Palette.success} />
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 17, color: INK }}>no meals browsed yet</Text>
