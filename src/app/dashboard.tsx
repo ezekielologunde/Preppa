@@ -44,11 +44,10 @@ import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
 
 const ORANGE = Palette.brand;
-const GREEN = '#34d399';
+const GREEN = Palette.success;
 const PURPLE = '#a78bfa';
-const YELLOW = '#fbbf24';
+const YELLOW = Palette.amber;
 const PINK = '#f472b6';
-const BLUE = '#60a5fa';
 const CARD = Palette.surface;
 const BG = Palette.canvas;
 const INK = Palette.ink;
