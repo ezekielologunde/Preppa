@@ -2,14 +2,13 @@ import '@/global.css';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, ThemeProvider, usePathname, useRouter } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider, usePathname, useRouter } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, useColorScheme, useWindowDimensions, View } from 'react-native';
 
 import { maxWidthFor } from '@/lib/layout';
 import { useDarkMode } from '@/lib/theme-mode';
 
-import AppTabs from '@/components/app-tabs';
 import { LoadingSplash } from '@/components/loading-splash';
 import { Onboarding } from '@/components/onboarding';
 import { fontAssets } from '@/constants/fonts';
@@ -101,8 +100,7 @@ export default function RootLayout() {
     <AppProviders>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <ResponsiveFrame>
-          {/* Navigator always mounted so routing stays valid; overlays sit on top. */}
-          <AppTabs />
+          <Stack screenOptions={{ headerShown: false }} />
           {ready && !onboarded && (
             <Onboarding onGetStarted={() => goToAuth('signup')} onSignIn={() => goToAuth('signin')} />
           )}
