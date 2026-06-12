@@ -127,9 +127,7 @@ export default function ExploreScreen() {
             const items = exploreCategories.map((c, i) => {
               const Icon = ICONS[c.icon] ?? MoreHorizontal;
               const active = i === 0;
-              const onPress = () => c.key === 'more'
-                ? router.push('/category?key=all&label=all meals')
-                : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
+              const onPress = () => { feedback.tap(); if (c.key === 'more') router.push('/category?key=all&label=all meals'); else router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`); };
               return (
                 <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 62 }}>
                   <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: active ? Palette.brandTint : Palette.surface, alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
@@ -249,8 +247,8 @@ export default function ExploreScreen() {
           )}
 
           {/* Can't decide — flat brand-tint accent */}
-          <Pressable
-            onPress={() => router.push('/surprise')}
+          <PressableScale
+            onPress={() => { feedback.tap(); router.push('/surprise'); }}
             accessibilityRole="button"
             accessibilityLabel="Surprise me with a meal"
             style={{ marginHorizontal: 20 }}>
@@ -267,7 +265,7 @@ export default function ExploreScreen() {
                 <Sparkles size={13} color={ORANGE} />
               </View>
             </View>
-          </Pressable>
+          </PressableScale>
         </ScrollView>
       </SafeAreaView>
 
