@@ -39,9 +39,9 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { cuisines, exploreCategories } from '@/constants/mock';
-import { Palette, Radius, Shadow } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { useFeaturedMeals, useLimitedDrops } from '@/lib/queries/meals';
-import { useKitchenTags, useTopPreppers } from '@/lib/queries/preppers';
+import { useTopPreppers } from '@/lib/queries/preppers';
 import { usePersonalizedMeals } from '@/lib/queries/recommend';
 import { useBreakpoint, usePagePadding } from '@/lib/layout';
 import { useRankedPreppers } from '@/lib/match';
@@ -89,7 +89,6 @@ export default function ExploreScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data: preppers, isLoading: preppersLoading, isError: preppersError, refetch: refetchPreppers } = useTopPreppers();
-  const { data: kitchenTags, refetch: refetchTags } = useKitchenTags();
   const { data: meals, isLoading: mealsLoading, isError: mealsError, refetch: refetchMeals } = useFeaturedMeals();
   const { data: drops, refetch: refetchDrops } = useLimitedDrops(6);
   const forYou = usePersonalizedMeals(meals ?? [], user?.id).slice(0, 6);
@@ -99,7 +98,7 @@ export default function ExploreScreen() {
   const [locationOpen, setLocationOpen] = useState(false);
   const bp = useBreakpoint();
   const pad = usePagePadding();
-  async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPreppers(), refetchTags(), refetchMeals(), refetchDrops()]); setRefreshing(false); }
+  async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPreppers(), refetchMeals(), refetchDrops()]); setRefreshing(false); }
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -186,32 +185,6 @@ export default function ExploreScreen() {
               <CuisineCard key={c.id} cuisine={c} onPress={() => router.push(`/search?q=${encodeURIComponent(c.name)}`)} />
             ))}
           </ScrollView>
-
-          {/* Find your kind of kitchen — identity/diet/cuisine discovery */}
-          {kitchenTags && kitchenTags.length > 0 ? (
-            <>
-              <SectionHeader title="find your kind of kitchen" onSeeAll={() => router.push('/kitchens')} />
-              {bp !== 'mobile' ? (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 8, paddingBottom: 20 }}>
-                  {kitchenTags.map((t) => (
-                    <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
-                      <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
-                    </PressableScale>
-                  ))}
-                </View>
-              ) : (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 20 }}>
-                  {kitchenTags.map((t) => (
-                    <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
-                      <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
-                    </PressableScale>
-                  ))}
-                </ScrollView>
-              )}
-            </>
-          ) : null}
 
           {/* Fitness goals — nutrition-focused kitchen discovery */}
           <View style={{ marginBottom: 10 }}>
