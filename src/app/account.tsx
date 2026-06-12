@@ -204,11 +204,9 @@ export default function AccountScreen() {
                     setBiometric(v);
                     feedback.tap();
                   }}
-                  trackColor={{
-                    false: Palette.border,
-                    true: Palette.brand,
-                  }}
+                  trackColor={{ false: Palette.border, true: Palette.brand }}
                   thumbColor="#fff"
+                  ios_backgroundColor={Palette.border}
                   accessibilityRole="switch"
                   accessibilityLabel="Biometric login"
                   accessibilityState={{ checked: biometric }}
