@@ -119,7 +119,7 @@ export default function MealScreen() {
             </Pressable>
           ) : null}
           <SafeAreaView edges={['top']} style={{ position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8 }}>
-            <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.back(); }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft size={22} color={INK} />
             </PressableScale>
             <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -129,7 +129,7 @@ export default function MealScreen() {
                 </PressableScale>
               ) : null}
               {cart && cart.count > 0 ? (
-                <PressableScale onPress={() => router.push('/cart')} accessibilityRole="button" accessibilityLabel={`Cart, ${cart.count} items`} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
+                <PressableScale onPress={() => { feedback.tap(); router.push('/cart'); }} accessibilityRole="button" accessibilityLabel={`Cart, ${cart.count} items`} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
                   <ShoppingBag size={19} color={INK} />
                   <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
                     <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{cart.count}</Text>
@@ -170,7 +170,7 @@ export default function MealScreen() {
 
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <PressableScale
-                  onPress={() => meal.prepperId && router.push(`/prepper?id=${meal.prepperId}`)}
+                  onPress={() => { if (meal.prepperId) { feedback.tap(); router.push(`/prepper?id=${meal.prepperId}`); } }}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.inkSoft }}>by {meal.prepper}</Text>
                   {meal.prepperVerified ? <BadgeCheck size={16} color={ORANGE} fill={ORANGE} stroke="#fff" /> : null}
@@ -258,7 +258,7 @@ export default function MealScreen() {
                 <Check size={15} color="#fff" strokeWidth={3} />
               </View>
               <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>Added to cart</Text>
-              <Pressable onPress={() => router.push('/cart')} hitSlop={8} accessibilityRole="button" accessibilityLabel="View cart">
+              <Pressable onPress={() => { feedback.tap(); router.push('/cart'); }} hitSlop={8} accessibilityRole="button" accessibilityLabel="View cart">
                 <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: ORANGE }}>View →</Text>
               </Pressable>
             </MotiView>
@@ -323,7 +323,7 @@ export default function MealScreen() {
               Your cart has items from {cartPrepperName}. Each order is from one kitchen, so adding {meal?.prepper} will clear your current cart.
             </Text>
             <View style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>
-              <PressableScale onPress={() => setSwitchPrompt(false)} accessibilityRole="button" accessibilityLabel="Keep current cart" style={{ flex: 1, height: 50, borderRadius: 14, borderWidth: 1, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center' }}>
+              <PressableScale onPress={() => { feedback.tap(); setSwitchPrompt(false); }} accessibilityRole="button" accessibilityLabel="Keep current cart" style={{ flex: 1, height: 50, borderRadius: 14, borderWidth: 1, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Keep cart</Text>
               </PressableScale>
               <PressableScale onPress={() => doAdd(true)} disabled={addToCart.isPending} accessibilityRole="button" accessibilityLabel="Start a new cart" style={{ flex: 1, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: addToCart.isPending ? 0.7 : 1 }}>

@@ -34,6 +34,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Shadow } from '@/constants/theme';
+import { feedback } from '@/lib/feedback';
 import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
 import { usePrepperMembership } from '@/lib/queries/memberships';
@@ -119,7 +120,7 @@ function StatCard({ Icon, value, label, trend, color, spark }: { Icon: LucideIco
 
 function QuickAction({ Icon, label, color, badge, onPress }: { Icon: LucideIcon; label: string; color: string; badge?: number; onPress?: () => void }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 8, width: 72 }}>
+    <PressableScale onPress={onPress ? () => { feedback.tap(); onPress(); } : undefined} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 8, width: 72 }}>
       <View style={{ width: 58, height: 58, borderRadius: 29, borderWidth: 1.5, borderColor: color + '4D', backgroundColor: color + '14', alignItems: 'center', justifyContent: 'center' }}>
         <Icon size={23} color={color} />
         {badge ? (
@@ -172,7 +173,7 @@ export default function DashboardScreen() {
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
-            <PressableScale onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile'))} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { try { router.back(); } catch { router.replace('/profile'); } }} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Avatar
                 name={prepper?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? 'chef'}
                 url={user?.user_metadata?.avatar_url as string | undefined}
@@ -188,6 +189,7 @@ export default function DashboardScreen() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
                 <PressableScale
                   onPress={() => {
+                    feedback.tap();
                     const next = !isOpen;
                     setAccepting(next);
                     toggleAvailability.mutate(next, { onError: () => setAccepting(!next) });
@@ -201,10 +203,10 @@ export default function DashboardScreen() {
                 </PressableScale>
               </View>
             </View>
-            <PressableScale onPress={() => router.push('/search')} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/search'); }} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <Search size={19} color="#fff" />
             </PressableScale>
-            <PressableScale onPress={() => router.push('/prepper-orders')} accessibilityRole="button" accessibilityLabel="New orders" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="New orders" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={19} color="#fff" />
               {newCount > 0 ? (
                 <View style={{ position: 'absolute', top: -2, right: -2, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
@@ -244,7 +246,7 @@ export default function DashboardScreen() {
           {/* Pro upgrade nudge — shown only on free tier */}
           {!isPro ? (
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 160 }}>
-              <PressableScale onPress={() => router.push('/prepper-premium')} accessibilityRole="button" accessibilityLabel="Upgrade to Prepper Pro"
+              <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-premium'); }} accessibilityRole="button" accessibilityLabel="Upgrade to Prepper Pro"
                 style={{ marginHorizontal: 20, marginBottom: 16, backgroundColor: ORANGE + '15', borderRadius: 18, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: ORANGE + '30' }}>
                 <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: ORANGE + '22', alignItems: 'center', justifyContent: 'center' }}>
                   <Crown size={19} color={ORANGE} />
@@ -297,7 +299,7 @@ export default function DashboardScreen() {
               </View>
               {step ? (
                 <PressableScale
-                  onPress={() => advance.mutate({ orderId: next.id, next: step.next })}
+                  onPress={() => { feedback.tap(); advance.mutate({ orderId: next.id, next: step.next }); }}
                   disabled={advance.isPending}
                   accessibilityRole="button"
                   accessibilityLabel={step.cta}
@@ -319,7 +321,7 @@ export default function DashboardScreen() {
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 240 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 26, marginBottom: 14 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.5 }}>at a glance</Text>
-            <PressableScale onPress={() => router.push('/prepper-orders')} accessibilityRole="button" accessibilityLabel="View all orders">
+            <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="View all orders">
               <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>view all</Text>
             </PressableScale>
           </View>
@@ -401,7 +403,7 @@ export default function DashboardScreen() {
 
 function ActionItem({ Icon, label, color, onPress }: { Icon: LucideIcon; label: string; color: string; onPress?: () => void }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 5, width: 58 }}>
+    <PressableScale onPress={onPress ? () => { feedback.tap(); onPress(); } : undefined} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 5, width: 58 }}>
       <View style={{ width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: color === '#fff' ? '#3f4451' : color + '66', alignItems: 'center', justifyContent: 'center' }}>
         <Icon size={18} color={color} />
       </View>
@@ -413,7 +415,7 @@ function ActionItem({ Icon, label, color, onPress }: { Icon: LucideIcon; label: 
 function NavTab({ Icon, label, active, badge, onPress }: { Icon: LucideIcon; label: string; active?: boolean; badge?: number; onPress?: () => void }) {
   const color = active ? ORANGE : Palette.textSecondary;
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: !!active }} accessibilityLabel={label} style={{ alignItems: 'center', gap: 3 }}>
+    <PressableScale onPress={onPress ? () => { feedback.tap(); onPress(); } : undefined} accessibilityRole="button" accessibilityState={{ selected: !!active }} accessibilityLabel={label} style={{ alignItems: 'center', gap: 3 }}>
       <View>
         <Icon size={22} color={color} strokeWidth={active ? 2.4 : 2} />
         {badge ? (
