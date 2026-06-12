@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { BadgeCheck, Bookmark, Clapperboard, Heart, Play, Share2, Star } from 'lucide-react-native';
+import { BadgeCheck, Clapperboard, Heart, Play, Share2, Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
@@ -31,21 +31,28 @@ const TAB_BAR = 88;
 function ActionBtn({
   icon: Icon,
   label,
+  caption,
   active,
   color = '#fff',
   onPress,
 }: {
   icon: typeof Heart;
   label: string;
+  caption?: string;
   active?: boolean;
   color?: string;
   onPress: () => void;
 }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center' }}>
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 5 }}>
       <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(0,0,0,0.38)', alignItems: 'center', justifyContent: 'center' }}>
         <Icon size={21} color={active ? '#ef4444' : color} fill={active ? '#ef4444' : 'transparent'} />
       </View>
+      {caption ? (
+        <Text style={{ fontFamily: Font.medium, fontSize: 11, color: 'rgba(255,255,255,0.88)', textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}>
+          {caption}
+        </Text>
+      ) : null}
     </PressableScale>
   );
 }
@@ -68,6 +75,7 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
   }
 
   function handleSave() {
+    feedback.tap();
     toggleFavorite(`meal:${item.id}`);
   }
 
@@ -99,8 +107,8 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
 
       {/* Side action panel */}
       <View style={{ position: 'absolute', right: 14, bottom: bottomInset + TAB_BAR + 56, gap: 18, alignItems: 'center' }}>
-        <ActionBtn icon={Heart} label={isSaved ? 'Unsave' : 'Save meal'} active={isSaved} onPress={handleSave} />
-        <ActionBtn icon={Share2} label="Share" onPress={handleShare} />
+        <ActionBtn icon={Heart} label={isSaved ? 'Unsave' : 'Save meal'} caption={isSaved ? 'saved' : 'save'} active={isSaved} onPress={handleSave} />
+        <ActionBtn icon={Share2} label="Share" caption="share" onPress={handleShare} />
       </View>
 
       {/* Bottom content — right edge reserved for side panel */}
