@@ -77,8 +77,8 @@ const ICONS: Record<string, LucideIcon> = {
 
 function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 14 }}>
-      <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5 }}>{title}</Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 10 }}>
+      <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4 }}>{title}</Text>
       {onSeeAll ? (
         <PressableScale onPress={onSeeAll} accessibilityRole="button" accessibilityLabel={`See all ${title}`}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>see all</Text>
@@ -154,7 +154,7 @@ export default function HomeScreen() {
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{greeting()}{firstName ? `, ${firstName}` : ''} 👋</Text>
-              <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, lineHeight: 24 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, lineHeight: 22 }}>
                 what are you <Text style={{ color: ORANGE }}>craving?</Text>
               </Text>
             </View>
@@ -169,7 +169,7 @@ export default function HomeScreen() {
           </View>
 
           {/* Location — right-aligned pill */}
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, marginTop: 6 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, marginTop: 4 }}>
             <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 8 }}>
               <MapPin size={14} color={ORANGE} />
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{location.split(',')[0]}</Text>
@@ -184,7 +184,7 @@ export default function HomeScreen() {
             onPress={() => { feedback.tap(); router.push('/search'); }}
             accessibilityRole="search"
             accessibilityLabel="Search meals, cuisines, or preppers"
-            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 10, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 52, gap: 10 }}>
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 8, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 48, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>Search meals, cuisines, or preppers…</Text>
             <SlidersHorizontal size={20} color={ORANGE} />
@@ -256,12 +256,12 @@ export default function HomeScreen() {
             });
             return bp !== 'mobile'
               ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
-              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>{items}</ScrollView>;
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 14 }}>{items}</ScrollView>;
           })()}
 
           {/* Primary products — compact list card so nothing wraps */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }}>
-          <View style={{ marginHorizontal: 20, marginBottom: 26, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden' }}>
+          <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden' }}>
             {showPlans ? (
               <>
               <PressableScale onPress={() => { feedback.tap(); router.push('/meal-plans'); }} accessibilityRole="button" accessibilityLabel="Meal plans"
@@ -313,7 +313,7 @@ export default function HomeScreen() {
             <>
               <SectionHeader title="from kitchens you follow" />
               {bp !== 'mobile' ? (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 26 }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 20 }}>
                   {followingFeed.map((m, i) => (
                     <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 30 }}>
                       <MealCard meal={m} width={gridCardWidth(contentWidth, pad)} />
@@ -321,7 +321,7 @@ export default function HomeScreen() {
                   ))}
                 </View>
               ) : (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
                   {followingFeed.map((m) => (<MealCard key={m.id} meal={m} />))}
                 </ScrollView>
               )}
@@ -335,7 +335,7 @@ export default function HomeScreen() {
               <CardRowSkeleton count={3} />
             </View>
           ) : bp !== 'mobile' ? (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 26 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 20 }}>
               {ranked.map((s, i) => (
                 <MotiView key={s.meal.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 28 }}>
                   <MealCard meal={s.meal} width={gridCardWidth(contentWidth, pad)} />
@@ -343,23 +343,16 @@ export default function HomeScreen() {
               ))}
             </View>
           ) : (
-            <>
-              {aiPick ? (
-                <View style={{ paddingHorizontal: 20, marginBottom: 14 }}>
-                  <MealCard meal={aiPick.meal} variant="big" width={contentWidth - 40} />
-                </View>
-              ) : null}
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-                {(aiPick ? ranked.slice(1) : ranked).map((s) => (
-                  <MealCard key={s.meal.id} meal={s.meal} />
-                ))}
-              </ScrollView>
-            </>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
+              {ranked.map((s) => (
+                <MealCard key={s.meal.id} meal={s.meal} />
+              ))}
+            </ScrollView>
           )}
 
           {/* Preppa AI — a personalized pick that learns from your taste */}
           {aiPick ? (
-            <View style={{ marginHorizontal: 20, marginBottom: 26, backgroundColor: INK, borderRadius: Radius.lg, padding: 18, gap: 12, overflow: 'hidden' }}>
+            <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: INK, borderRadius: Radius.lg, padding: 16, gap: 10, overflow: 'hidden' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <View style={{ width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: ORANGE }}>
                   <Sparkles size={14} color="#fff" />
@@ -384,7 +377,7 @@ export default function HomeScreen() {
 
           {/* Points banner — real points from completed orders */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
-          <PressableScale onPress={() => { feedback.tap(); router.push('/rewards'); }} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 28, backgroundColor: '#E7F6EC', borderRadius: 20, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push('/rewards'); }} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: '#E7F6EC', borderRadius: 16, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#22c55e', alignItems: 'center', justifyContent: 'center' }}>
               <Gift size={20} color="#fff" />
             </View>
