@@ -397,7 +397,11 @@ export default function HomeScreen() {
           {lastDone ? (
             <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
               <SectionHeader title="order again" />
-              <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 20, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <PressableScale
+                onPress={() => { feedback.tap(); lastDone.firstMealId && router.push(`/meal?id=${lastDone.firstMealId}`); }}
+                accessibilityRole="button"
+                accessibilityLabel="Order again"
+                style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 20, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 {lastDone.items[0]?.image ? (
                   <Image source={lastDone.items[0].image} style={{ width: 60, height: 60, borderRadius: 14 }} contentFit="cover" />
                 ) : (
@@ -410,14 +414,11 @@ export default function HomeScreen() {
                     ${lastDone.total.toFixed(2)} · delivered {new Date(lastDone.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </Text>
                 </View>
-                <PressableScale
-                  onPress={() => { feedback.tap(); lastDone.firstMealId && router.push(`/meal?id=${lastDone.firstMealId}`); }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Order again"
-                  style={{ backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 9 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>order again</Text>
-                </PressableScale>
-              </View>
+                  <ChevronRight size={13} color="rgba(255,255,255,0.8)" />
+                </View>
+              </PressableScale>
             </MotiView>
           ) : null}
         </ScrollView>
