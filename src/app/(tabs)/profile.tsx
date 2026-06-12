@@ -208,12 +208,13 @@ export default function ProfileScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 130 }}>
           {/* Top actions */}
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', paddingHorizontal: 20, gap: 10 }}>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/settings'); }} accessibilityRole="button" accessibilityLabel="Settings" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-              <Settings size={19} color={Palette.ink} />
-            </PressableScale>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 10 }}>
+            <Text style={{ flex: 1, fontFamily: Font.display, fontSize: 26, color: Palette.ink, letterSpacing: -0.6 }}>me</Text>
             <PressableScale onPress={() => { feedback.tap(); go('/notifications'); }} accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={19} color={Palette.ink} />
+            </PressableScale>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/settings'); }} accessibilityRole="button" accessibilityLabel="Settings" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+              <Settings size={19} color={Palette.ink} />
             </PressableScale>
           </View>
 
