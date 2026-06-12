@@ -349,7 +349,7 @@ export default function HomeScreen() {
 
           {/* Preppa AI — a personalized pick that learns from your taste */}
           {aiPick ? (
-            <View style={{ marginHorizontal: 20, marginBottom: 26, backgroundColor: '#11151C', borderRadius: Radius.lg, padding: 18, gap: 12, overflow: 'hidden' }}>
+            <View style={{ marginHorizontal: 20, marginBottom: 26, backgroundColor: INK, borderRadius: Radius.lg, padding: 18, gap: 12, overflow: 'hidden' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <View style={{ width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: ORANGE }}>
                   <Sparkles size={14} color="#fff" />
