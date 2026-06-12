@@ -183,6 +183,7 @@ export default function OrdersScreen() {
     const reason = reportReason.trim();
     if (reason.length < 5) { setReportErr('Please describe the issue (at least 5 characters).'); return; }
     if (reason.length > 1000) { setReportErr('Keep it under 1000 characters.'); return; }
+    feedback.tap();
     setReportErr(null);
     reportDispute.mutate(
       { orderId: reportModal!.id, reason, reporterId: user!.id },
@@ -205,6 +206,7 @@ export default function OrdersScreen() {
   const [reorderingId, setReorderingId] = useState<string | null>(null);
   async function reorder(o: OrderSummary) {
     if (!user) return;
+    feedback.tap();
     setActionErr(null);
     setReorderingId(o.id);
     try {
@@ -243,6 +245,7 @@ export default function OrdersScreen() {
   // Finish paying an order whose checkout was canceled/declined (the order is
   // saved but unpaid). Web pays in-app via the embedded sheet.
   async function payOrder(orderId: string) {
+    feedback.tap();
     setActionErr(null);
     setPayingId(orderId);
     try {
@@ -266,8 +269,8 @@ export default function OrdersScreen() {
   }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/profile');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/profile'); }
   }
 
   return (
@@ -281,13 +284,13 @@ export default function OrdersScreen() {
         </View>
 
         {showPaid ? (
-          <PressableScale onPress={() => setShowPaid(false)} accessibilityRole="button" accessibilityLabel="Dismiss" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '55', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <PressableScale onPress={() => { feedback.tap(); setShowPaid(false); }} accessibilityRole="button" accessibilityLabel="Dismiss" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '55', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Check size={16} color={Palette.success} strokeWidth={3} />
             <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#15803d', flex: 1 }}>Payment received — your order is in. The prepper will confirm shortly.</Text>
           </PressableScale>
         ) : null}
         {actionErr ? (
-          <PressableScale onPress={() => setActionErr(null)} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
+          <PressableScale onPress={() => { feedback.tap(); setActionErr(null); }} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
             <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#b91c1c' }}>{actionErr} (tap to dismiss)</Text>
           </PressableScale>
         ) : null}
@@ -296,7 +299,7 @@ export default function OrdersScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Receipt size={28} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to see your orders.</Text>
-            <PressableScale onPress={() => router.push('/auth?mode=signin')} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>
@@ -309,7 +312,7 @@ export default function OrdersScreen() {
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>No orders yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>When you place an order it&apos;ll show up here.</Text>
-            <PressableScale onPress={() => router.replace('/explore')} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
             </PressableScale>
           </View>
@@ -324,9 +327,9 @@ export default function OrdersScreen() {
                   onPay={() => payOrder(o.id)}
                   cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
                   onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
-                  onReview={() => router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`)}
+                  onReview={() => { feedback.tap(); router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`); }}
                   onReorder={() => reorder(o)}
-                  onReport={() => { setReportReason(''); setReportErr(null); setReportModal(o); }}
+                  onReport={() => { feedback.tap(); setReportReason(''); setReportErr(null); setReportModal(o); }}
                   reordering={reorderingId === o.id}
                 />
               </MotiView>
@@ -368,7 +371,7 @@ export default function OrdersScreen() {
               style={{ height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: reportDispute.isPending ? 0.7 : 1 }}>
               {reportDispute.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Submit report</Text>}
             </PressableScale>
-            <PressableScale onPress={() => setReportModal(null)} accessibilityRole="button" accessibilityLabel="Cancel" style={{ height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); setReportModal(null); }} accessibilityRole="button" accessibilityLabel="Cancel" style={{ height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary }}>Cancel</Text>
             </PressableScale>
           </Pressable>
@@ -387,10 +390,10 @@ export default function OrdersScreen() {
               {confirmCancel ? `Your order from ${confirmCancel.prepper} (${money(confirmCancel.total)}) will be cancelled.` : ''}
               {confirmCancel?.paymentStatus === 'succeeded' ? ' You’ll be refunded automatically.' : ''}
             </Text>
-            <PressableScale onPress={() => confirmCancel && doCancel(confirmCancel)} accessibilityRole="button" accessibilityLabel="Yes, cancel the order" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); if (confirmCancel) doCancel(confirmCancel); }} accessibilityRole="button" accessibilityLabel="Yes, cancel the order" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Yes, cancel order</Text>
             </PressableScale>
-            <PressableScale onPress={() => setConfirmCancel(null)} accessibilityRole="button" accessibilityLabel="Keep the order" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); setConfirmCancel(null); }} accessibilityRole="button" accessibilityLabel="Keep the order" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary }}>Keep my order</Text>
             </PressableScale>
           </Pressable>

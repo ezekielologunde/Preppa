@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MealCard } from '@/components/meal-card';
 import { gridCardWidth, useContentWidth } from '@/lib/layout';
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { feedback } from '@/lib/feedback';
 import { CardSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
@@ -30,7 +31,7 @@ export default function CategoryScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 6 }}>
-          <PressableScale onPress={() => router.back()} accessibilityLabel="Back" style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' }}>
+          <PressableScale onPress={() => { feedback.tap(); try { router.back(); } catch { router.replace('/explore'); } }} accessibilityLabel="Back" style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={24} color={INK} />
           </PressableScale>
           <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>{title}</Text>
@@ -64,7 +65,7 @@ export default function CategoryScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               fresh {title} meals from local preppas are coming soon
             </Text>
-            <PressableScale onPress={() => router.push('/explore')} style={{ marginTop: 8, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 20, paddingVertical: 12 }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} style={{ marginTop: 8, backgroundColor: ORANGE, borderRadius: 999, paddingHorizontal: 20, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>browse all meals</Text>
             </PressableScale>
           </MotiView>

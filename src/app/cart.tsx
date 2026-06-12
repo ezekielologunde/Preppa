@@ -67,13 +67,14 @@ export default function CartScreen() {
   const mixed = kitchens.length > 1;
 
   function keepOnly(keepKey: string) {
+    feedback.tap();
     const drop = (cart?.items ?? []).filter((it) => (it.prepperId ?? it.prepper) !== keepKey).map((it) => it.id);
     removeItems.mutate(drop);
   }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/'); }
   }
 
   async function startPayment(orderId: string) {
@@ -102,6 +103,7 @@ export default function CartScreen() {
     if (method === 'in_home') { feedback.tap(); router.push('/experience-request?kind=private_chef'); return; }
     if (method === 'delivery' && note.trim().length < 5) { feedback.warning(); return setErr('Add a delivery address.'); }
     if (method === 'meetup' && note.trim().length < 3) { feedback.warning(); return setErr('Where should you meet?'); }
+    feedback.tap();
     setErr(null);
     placeOrder.mutate(
       { userId: user.id, fulfillment: method, note: note.trim() || null, tip },
@@ -154,12 +156,12 @@ export default function CartScreen() {
             </Text>
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
-            <PressableScale onPress={() => router.replace('/orders')} accessibilityRole="button" accessibilityLabel="Track your order" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.replace('/orders'); }} accessibilityRole="button" accessibilityLabel="Track your order" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Track your order</Text>
             </PressableScale>
           </MotiView>
           <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 240, delay: 280 }}>
-            <PressableScale onPress={() => router.replace('/')} accessibilityRole="button" accessibilityLabel="Back to home" style={{ paddingHorizontal: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.replace('/'); }} accessibilityRole="button" accessibilityLabel="Back to home" style={{ paddingHorizontal: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Back to home</Text>
             </PressableScale>
           </MotiView>
@@ -182,7 +184,7 @@ export default function CartScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <ShoppingBag size={28} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to start an order.</Text>
-            <PressableScale onPress={() => router.push('/auth?mode=signin')} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>
@@ -197,17 +199,17 @@ export default function CartScreen() {
               <>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Payment canceled</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 300 }}>Your order is saved. You can finish paying for it any time in your orders.</Text>
-                <PressableScale onPress={() => router.replace('/orders')} accessibilityRole="button" accessibilityLabel="Go to orders" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <PressableScale onPress={() => { feedback.tap(); router.replace('/orders'); }} accessibilityRole="button" accessibilityLabel="Go to orders" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Go to orders</Text>
                 </PressableScale>
-                <PressableScale onPress={() => router.replace('/explore')} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ paddingHorizontal: 22, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+                <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ paddingHorizontal: 22, height: 44, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Browse meals</Text>
                 </PressableScale>
               </>
             ) : (
               <>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Your cart is empty</Text>
-                <PressableScale onPress={() => router.replace('/explore')} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
                 </PressableScale>
               </>
@@ -242,11 +244,11 @@ export default function CartScreen() {
                   {/* Qty stepper */}
                   <View style={{ alignItems: 'center', gap: 8 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Palette.canvas, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 4 }}>
-                      <PressableScale onPress={() => updateItem.mutate({ itemId: it.id, quantity: it.quantity - 1 })} accessibilityRole="button" accessibilityLabel="Decrease quantity" hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+                      <PressableScale onPress={() => { feedback.tap(); updateItem.mutate({ itemId: it.id, quantity: it.quantity - 1 }); }} accessibilityRole="button" accessibilityLabel="Decrease quantity" hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
                         {it.quantity <= 1 ? <Trash2 size={14} color="#ef4444" /> : <Minus size={14} color={INK} />}
                       </PressableScale>
                       <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, minWidth: 18, textAlign: 'center', fontVariant: ['tabular-nums'] }}>{it.quantity}</Text>
-                      <PressableScale onPress={() => updateItem.mutate({ itemId: it.id, quantity: it.quantity + 1 })} accessibilityRole="button" accessibilityLabel="Increase quantity" hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                      <PressableScale onPress={() => { feedback.tap(); updateItem.mutate({ itemId: it.id, quantity: it.quantity + 1 }); }} accessibilityRole="button" accessibilityLabel="Increase quantity" hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                         <Plus size={14} color="#fff" />
                       </PressableScale>
                     </View>
