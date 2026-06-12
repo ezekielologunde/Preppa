@@ -72,6 +72,13 @@ export function useBreakpoint(): 'mobile' | 'tablet' | 'desktop' {
   return width >= BP.desktop ? 'desktop' : width >= BP.tablet ? 'tablet' : 'mobile';
 }
 
+/** Responsive horizontal page padding: 20 (phone) / 28 (tablet) / 36 (desktop). */
+export function usePagePadding(): number {
+  const { width } = useWindowDimensions();
+  if (Platform.OS !== 'web') return 20;
+  return width >= BP.desktop ? 36 : width >= BP.tablet ? 28 : 20;
+}
+
 /** Meal-grid columns for a content width (2 phone / 3 tablet / 4 desktop). */
 export const gridColumns = (contentWidth: number): number =>
   contentWidth >= 1000 ? 4 : contentWidth >= 700 ? 3 : 2;

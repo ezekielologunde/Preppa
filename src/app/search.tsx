@@ -6,6 +6,7 @@ import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-nativ
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { feedback } from '@/lib/feedback';
+import { useBreakpoint } from '@/lib/layout';
 
 import { MealCard } from '@/components/meal-card';
 import { PrepperCard } from '@/components/prepper-card';
@@ -62,6 +63,7 @@ export default function SearchScreen() {
   const CARD_W = gridCardWidth(useContentWidth());
   const { q } = useLocalSearchParams<{ q?: string }>();
   const initial = (q || '').toString();
+  const bp = useBreakpoint();
   const [text, setText] = useState(initial);
   const [debounced, setDebounced] = useState(initial);
   const [categoryId, setCategoryId] = useState<number | null>(null);
@@ -213,7 +215,7 @@ export default function SearchScreen() {
       {/* Sort overlay */}
       <Modal visible={sortOpen} transparent animationType="slide" onRequestClose={() => setSortOpen(false)}>
         <Pressable onPress={() => setSortOpen(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.55)', justifyContent: 'flex-end' }}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 44 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 44, ...(bp !== 'mobile' ? { maxWidth: 480, alignSelf: 'center', width: '100%' } : {}) }}>
             <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Palette.border, alignSelf: 'center', marginTop: 12, marginBottom: 6 }} />
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingVertical: 14 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.4 }}>sort by</Text>

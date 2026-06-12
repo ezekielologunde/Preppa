@@ -41,7 +41,7 @@ import { useMyOrders } from '@/lib/queries/orders';
 import { useNotifications } from '@/lib/queries/notifications';
 import { useRewards } from '@/lib/queries/rewards';
 import { usePersonalizedMeals } from '@/lib/queries/recommend';
-import { useContentWidth } from '@/lib/layout';
+import { gridCardWidth, useBreakpoint, useContentWidth, usePagePadding } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
@@ -101,6 +101,8 @@ export default function HomeScreen() {
   const rewards = useRewards(user?.id);
   // Preppa AI: rank meals from real signals (time of day, favorites, history).
   const contentWidth = useContentWidth();
+  const bp = useBreakpoint();
+  const pad = usePagePadding();
   const ranked = usePersonalizedMeals(meals, user?.id);
   const [aiIdx, setAiIdx] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -200,23 +202,26 @@ export default function HomeScreen() {
             </MotiView>
           ) : null}
 
-          {/* Categories */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>
-            {categories.map((c, i) => {
+          {/* Categories — horizontal scroll on phone, wrapping chip grid on tablet+ */}
+          {(() => {
+            const items = categories.map((c, i) => {
               const Icon = ICONS[c.icon] ?? MoreHorizontal;
               const onPress = () => { feedback.tap(); c.key === 'more' ? router.push('/explore') : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`); };
               return (
                 <MotiView key={c.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 100 + i * 35 }}>
-                <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 58 }}>
-                  <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon size={24} color={c.color} />
-                  </View>
-                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.inkSoft }}>{c.label}</Text>
-                </PressableScale>
+                  <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 62 }}>
+                    <View style={{ width: 58, height: 58, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={24} color={c.color} />
+                    </View>
+                    <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.inkSoft }}>{c.label}</Text>
+                  </PressableScale>
                 </MotiView>
               );
-            })}
-          </ScrollView>
+            });
+            return bp !== 'mobile'
+              ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>{items}</ScrollView>;
+          })()}
 
           {/* Primary products — Meal Plans + Experiences + Requests */}
           <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12, marginBottom: 26 }}>
@@ -260,11 +265,19 @@ export default function HomeScreen() {
           {followingFeed && followingFeed.length > 0 ? (
             <>
               <SectionHeader title="from kitchens you follow" />
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-                {followingFeed.map((m) => (
-                  <MealCard key={m.id} meal={m} />
-                ))}
-              </ScrollView>
+              {bp !== 'mobile' ? (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 26 }}>
+                  {followingFeed.map((m, i) => (
+                    <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 30 }}>
+                      <MealCard meal={m} width={gridCardWidth(contentWidth, pad)} />
+                    </MotiView>
+                  ))}
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+                  {followingFeed.map((m) => (<MealCard key={m.id} meal={m} />))}
+                </ScrollView>
+              )}
             </>
           ) : null}
 
@@ -273,6 +286,14 @@ export default function HomeScreen() {
           {mealsLoading ? (
             <View style={{ paddingBottom: 26 }}>
               <CardRowSkeleton count={3} />
+            </View>
+          ) : bp !== 'mobile' ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 26 }}>
+              {ranked.map((s, i) => (
+                <MotiView key={s.meal.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 28 }}>
+                  <MealCard meal={s.meal} width={gridCardWidth(contentWidth, pad)} />
+                </MotiView>
+              ))}
             </View>
           ) : (
             <>

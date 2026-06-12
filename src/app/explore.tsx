@@ -39,6 +39,7 @@ import { cuisines, exploreCategories } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { useFeaturedMeals, useLimitedDrops } from '@/lib/queries/meals';
 import { useKitchenTags, useTopPreppers } from '@/lib/queries/preppers';
+import { useBreakpoint, usePagePadding } from '@/lib/layout';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -83,6 +84,8 @@ export default function ExploreScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [location, setLocation] = useState('New York, NY');
   const [locationOpen, setLocationOpen] = useState(false);
+  const bp = useBreakpoint();
+  const pad = usePagePadding();
   async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPreppers(), refetchTags(), refetchMeals(), refetchDrops()]); setRefreshing(false); }
 
   return (
@@ -119,25 +122,27 @@ export default function ExploreScreen() {
             <Scan size={20} color={ORANGE} />
           </PressableScale>
 
-          {/* Categories */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 20 }}>
-            {exploreCategories.map((c, i) => {
+          {/* Categories — horizontal scroll on phone, wrapping grid on tablet+ */}
+          {(() => {
+            const items = exploreCategories.map((c, i) => {
               const Icon = ICONS[c.icon] ?? MoreHorizontal;
               const active = i === 0;
-              const onPress = () =>
-                c.key === 'more'
-                  ? router.push('/category?key=all&label=all meals')
-                  : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
+              const onPress = () => c.key === 'more'
+                ? router.push('/category?key=all&label=all meals')
+                : router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`);
               return (
-                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 60 }}>
+                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 62 }}>
                   <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: active ? Palette.brandTint : Palette.surface, alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
                     <Icon size={24} color={c.color} />
                   </View>
                   <Text style={{ fontFamily: active ? Font.semibold : Font.medium, fontSize: 12, color: active ? ORANGE : Palette.inkSoft }}>{c.label}</Text>
                 </PressableScale>
               );
-            })}
-          </ScrollView>
+            });
+            return bp !== 'mobile'
+              ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 20 }}>{items}</ScrollView>;
+          })()}
 
           {/* Cuisines */}
           <SectionHeader title="cuisines" />
@@ -151,40 +156,54 @@ export default function ExploreScreen() {
           {kitchenTags && kitchenTags.length > 0 ? (
             <>
               <SectionHeader title="find your kind of kitchen" onSeeAll={() => router.push('/kitchens')} />
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 26 }}>
-                {kitchenTags.map((t) => (
-                  <PressableScale
-                    key={t.tag}
-                    onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`)}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${t.tag} kitchens`}
-                    style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
-                    <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
-                  </PressableScale>
-                ))}
-              </ScrollView>
+              {bp !== 'mobile' ? (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 8, paddingBottom: 26 }}>
+                  {kitchenTags.map((t) => (
+                    <PressableScale key={t.tag} onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`)} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
+                      <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
+                    </PressableScale>
+                  ))}
+                </View>
+              ) : (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 26 }}>
+                  {kitchenTags.map((t) => (
+                    <PressableScale key={t.tag} onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`)} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: 999, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
+                      <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>{t.count}</Text>
+                    </PressableScale>
+                  ))}
+                </ScrollView>
+              )}
             </>
           ) : null}
 
           {/* Fitness goals — nutrition-focused kitchen discovery */}
           <View style={{ marginBottom: 10 }}>
             <SectionHeader title="shop by goal" onSeeAll={() => router.push('/kitchens')} />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
-              {GOALS.map((g) => (
-                <PressableScale
-                  key={g.tag}
-                  onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(g.tag)}`)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${g.label} meal prep kitchens`}
-                  style={{ alignItems: 'center', gap: 8, width: 68 }}>
-                  <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: g.color + '18', alignItems: 'center', justifyContent: 'center' }}>
-                    <g.Icon size={26} color={g.color} />
-                  </View>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK, textAlign: 'center' }}>{g.label}</Text>
-                </PressableScale>
-              ))}
-            </ScrollView>
+            {bp !== 'mobile' ? (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingBottom: 26 }}>
+                {GOALS.map((g) => (
+                  <PressableScale key={g.tag} onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(g.tag)}`)} accessibilityRole="button" accessibilityLabel={`${g.label} meal prep kitchens`} style={{ alignItems: 'center', gap: 8, width: 68 }}>
+                    <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: g.color + '18', alignItems: 'center', justifyContent: 'center' }}>
+                      <g.Icon size={26} color={g.color} />
+                    </View>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK, textAlign: 'center' }}>{g.label}</Text>
+                  </PressableScale>
+                ))}
+              </View>
+            ) : (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+                {GOALS.map((g) => (
+                  <PressableScale key={g.tag} onPress={() => router.push(`/kitchens?tag=${encodeURIComponent(g.tag)}`)} accessibilityRole="button" accessibilityLabel={`${g.label} meal prep kitchens`} style={{ alignItems: 'center', gap: 8, width: 68 }}>
+                    <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: g.color + '18', alignItems: 'center', justifyContent: 'center' }}>
+                      <g.Icon size={26} color={g.color} />
+                    </View>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK, textAlign: 'center' }}>{g.label}</Text>
+                  </PressableScale>
+                ))}
+              </ScrollView>
+            )}
           </View>
 
           {/* Top kitchens — reputation-ranked (live) */}
@@ -255,7 +274,7 @@ export default function ExploreScreen() {
       {/* Location picker overlay */}
       <Modal visible={locationOpen} transparent animationType="slide" onRequestClose={() => setLocationOpen(false)}>
         <Pressable onPress={() => setLocationOpen(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.55)', justifyContent: 'flex-end' }}>
-          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 40 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 40, ...(bp !== 'mobile' ? { maxWidth: 540, alignSelf: 'center', width: '100%' } : {}) }}>
             <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Palette.border, alignSelf: 'center', marginTop: 12, marginBottom: 6 }} />
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingVertical: 14 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.4 }}>your location</Text>
