@@ -38,6 +38,9 @@ export default function NotificationSettingsScreen() {
   function toggle(id: string) { feedback.tap(); setPrefs((p) => ({ ...p, [id]: !p[id] })); }
 
   const activeCount = Object.values(prefs).filter(Boolean).length;
+  const allIds = CATEGORIES.map((c) => c.id);
+  function enableAll() { feedback.tap(); setPrefs(Object.fromEntries(allIds.map((id) => [id, true]))); }
+  function disableAll() { feedback.tap(); setPrefs(Object.fromEntries(allIds.map((id) => [id, false]))); }
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -47,8 +50,18 @@ export default function NotificationSettingsScreen() {
             <ChevronLeft size={22} color={INK} />
           </PressableScale>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>notification preferences</Text>
+            <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>notifications</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }}>{activeCount} of {CATEGORIES.length} active</Text>
+          </View>
+          <View style={{ flexDirection: 'row', gap: 6 }}>
+            <PressableScale onPress={enableAll} accessibilityRole="button" accessibilityLabel="Enable all notifications"
+              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: activeCount === CATEGORIES.length ? Palette.chip : Palette.brandTint }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === CATEGORIES.length ? Palette.textMuted : ORANGE }}>all on</Text>
+            </PressableScale>
+            <PressableScale onPress={disableAll} accessibilityRole="button" accessibilityLabel="Disable all notifications"
+              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: 999, backgroundColor: activeCount === 0 ? Palette.chip : Palette.surface }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === 0 ? Palette.textMuted : Palette.textSecondary }}>all off</Text>
+            </PressableScale>
           </View>
         </View>
 
@@ -79,6 +92,7 @@ export default function NotificationSettingsScreen() {
                   onValueChange={() => toggle(id)}
                   trackColor={{ false: Palette.border, true: ORANGE }}
                   thumbColor="#fff"
+                  ios_backgroundColor={Palette.border}
                   accessibilityLabel={`Toggle ${label}`}
                 />
               </View>
