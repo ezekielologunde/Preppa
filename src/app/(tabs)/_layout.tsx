@@ -14,8 +14,8 @@ const TABS = [
   { name: 'index',       label: 'home',        Icon: House },
   { name: 'explore',     label: 'explore',     Icon: Compass },
   { name: 'feeds',       label: 'live',        Icon: Video, flag: 'live_feeds' },
-  { name: 'experiences', label: 'experiences', Icon: Ticket, flag: 'experiences' },
-  { name: 'profile',     label: 'profile',     Icon: User },
+  { name: 'experiences', label: 'events',  Icon: Ticket, flag: 'experiences' },
+  { name: 'profile',     label: 'me',      Icon: User },
 ] as const;
 
 type TabBarProps = {
