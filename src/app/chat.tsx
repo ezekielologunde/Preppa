@@ -63,8 +63,7 @@ export default function ChatScreen() {
   }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/messages');
+    try { router.back(); } catch { router.replace('/messages'); }
   }
 
   return (
@@ -86,7 +85,7 @@ export default function ChatScreen() {
         {/* Shared-order context — the conversation's order details, always in view */}
         {ctx?.order ? (
           <PressableScale
-            onPress={() => router.push(ctx.order!.iAmPrepper ? '/prepper-orders' : '/orders')}
+            onPress={() => { feedback.tap(); router.push(ctx.order!.iAmPrepper ? '/prepper-orders' : '/orders'); }}
             accessibilityRole="button"
             accessibilityLabel={`Order ${ctx.order.status}, $${ctx.order.total.toFixed(2)}`}
             style={{ marginHorizontal: 16, marginTop: 10, backgroundColor: Palette.brandTint, borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
