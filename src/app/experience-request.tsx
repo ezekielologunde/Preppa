@@ -19,7 +19,7 @@ const INK = Palette.ink;
 const KINDS = experienceTypes.map((t) => ({ key: t.key as ExperienceKind, label: t.label }));
 const money = (n: number | null) => (n == null ? '—' : `$${n.toLocaleString('en-US')}`);
 
-const inputStyle = { height: 50, borderRadius: 14, backgroundColor: Palette.canvas, paddingHorizontal: 14, fontSize: 15, fontFamily: Font.body, color: INK } as const;
+const inputStyle = { height: 50, borderRadius: 14, backgroundColor: Palette.canvas, paddingHorizontal: 14, fontSize: 15, fontFamily: Font.body, color: INK, borderWidth: 1, borderColor: Palette.border } as const;
 
 export default function ExperienceRequestScreen() {
   const router = useRouter();

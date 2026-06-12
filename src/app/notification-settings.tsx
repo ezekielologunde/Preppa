@@ -1,13 +1,14 @@
 import { useRouter } from 'expo-router';
 import { Bell, ChevronLeft, Crown, Flame, Gift, Leaf, Sparkles, Star, Tag, Zap } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Palette, Radius } from '@/constants/theme';
 
 const ORANGE = Palette.brand;
@@ -28,19 +29,44 @@ const CATEGORIES: Category[] = [
 
 const MARKETING_NOTE = "Rush hour and holiday alerts fire at most once per window, so you never get spammed. We'll always respect your quiet hours (10 pm – 7 am).";
 
+const STORAGE_KEY = 'notification_prefs';
+const DEFAULTS = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.defaultOn]));
+
 export default function NotificationSettingsScreen() {
   const router = useRouter();
-  const [prefs, setPrefs] = useState<Record<string, boolean>>(
-    Object.fromEntries(CATEGORIES.map((c) => [c.id, c.defaultOn]))
-  );
+  const [prefs, setPrefs] = useState<Record<string, boolean>>(DEFAULTS);
+
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY).then((raw) => {
+      if (!raw) return;
+      try { setPrefs((p) => ({ ...p, ...JSON.parse(raw) })); } catch {}
+    });
+  }, []);
 
   function goBack() { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/settings'); } }
-  function toggle(id: string) { feedback.tap(); setPrefs((p) => ({ ...p, [id]: !p[id] })); }
+  function toggle(id: string) {
+    feedback.tap();
+    setPrefs((p) => {
+      const next = { ...p, [id]: !p[id] };
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }
 
   const activeCount = Object.values(prefs).filter(Boolean).length;
   const allIds = CATEGORIES.map((c) => c.id);
-  function enableAll() { feedback.tap(); setPrefs(Object.fromEntries(allIds.map((id) => [id, true]))); }
-  function disableAll() { feedback.tap(); setPrefs(Object.fromEntries(allIds.map((id) => [id, false]))); }
+  function enableAll() {
+    feedback.tap();
+    const next = Object.fromEntries(allIds.map((id) => [id, true]));
+    setPrefs(next);
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  }
+  function disableAll() {
+    feedback.tap();
+    const next = Object.fromEntries(allIds.map((id) => [id, false]));
+    setPrefs(next);
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
