@@ -39,7 +39,7 @@ const WEEKLY_INSIGHTS = [
 
 const ACTIONS = [
   { label: 'add a rush-hour special', desc: 'Attract more orders during peak windows', Icon: Flame, color: ORANGE, route: '/specials' },
-  { label: 'update your menu', desc: 'Keep listings fresh — remove sold-out items', Icon: Package, color: '#06b6d4', route: '/menu' },
+  { label: 'update your menu', desc: 'Keep listings fresh — remove sold-out items', Icon: Package, color: '#06b6d4', route: '/meal-editor' },
   { label: 'reply to reviews', desc: 'Responding boosts your ranking score', Icon: MessageSquare, color: '#8b5cf6', route: '/reviews' },
   { label: 'boost your listing', desc: 'Appear at the top of search during rush', Icon: Zap, color: '#d97706', route: '/boost' },
 ];
