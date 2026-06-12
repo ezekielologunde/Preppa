@@ -302,7 +302,7 @@ export default function SettingsScreen() {
             gap: 12,
           }}>
           <PressableScale
-            onPress={() => { feedback.tap(); router.back(); }}
+            onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/profile'); } }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{

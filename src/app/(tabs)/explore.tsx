@@ -153,9 +153,9 @@ export default function ExploreScreen() {
 
           {/* Error banner — shown when primary data queries fail */}
           {(preppersError || mealsError) && !preppersLoading && !mealsLoading ? (
-            <PressableScale onPress={handleRefresh} accessibilityRole="button" accessibilityLabel="Data failed to load. Tap to retry." style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginTop: 12, backgroundColor: '#FEF2F2', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11 }}>
-              <AlertCircle size={18} color="#b91c1c" />
-              <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13.5, color: '#b91c1c' }}>Couldn't load meals. Tap to retry.</Text>
+            <PressableScale onPress={handleRefresh} accessibilityRole="button" accessibilityLabel="Data failed to load. Tap to retry." style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginTop: 12, backgroundColor: Palette.danger + '14', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11 }}>
+              <AlertCircle size={18} color={Palette.danger} />
+              <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13.5, color: Palette.danger }}>Couldn't load meals. Tap to retry.</Text>
             </PressableScale>
           ) : null}
 

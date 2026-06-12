@@ -39,7 +39,7 @@ import { CustomerBadgeShelf } from '@/components/badge-shelf';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette, Radius } from '@/constants/theme';
+import { Palette, Radius, Shadow } from '@/constants/theme';
 import { useFavoritesCount } from '@/lib/favorites';
 import { useRecentlyViewedCount } from '@/lib/recently-viewed';
 import { useRewards } from '@/lib/queries/rewards';
@@ -369,7 +369,7 @@ export default function ProfileScreen() {
             <View style={{ marginHorizontal: 20, gap: 10 }}>
               {subs.map((s) => {
                 const active = s.status === 'active';
-                const badge = active ? { bg: Palette.success + '1A', fg: '#15803d' } : s.status === 'paused' ? { bg: Palette.amber + '1A', fg: '#b45309' } : { bg: Palette.chip, fg: Palette.textSecondary };
+                const badge = active ? { bg: Palette.success + '1A', fg: Palette.success } : s.status === 'paused' ? { bg: Palette.amber + '1A', fg: Palette.amber } : { bg: Palette.chip, fg: Palette.textSecondary };
                 const next = s.next_billing_at ? new Date(s.next_billing_at) : null;
                 const nextLabel = next && !isNaN(next.getTime()) ? next.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : null;
                 return (
@@ -438,7 +438,7 @@ export default function ProfileScreen() {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink }}>application pending</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#92400E', marginTop: 1 }}>we'll notify you within 48h</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.amber, marginTop: 1 }}>we'll notify you within 48h</Text>
               </View>
             </View>
           ) : null}
@@ -459,7 +459,7 @@ export default function ProfileScreen() {
             from={{ opacity: 0, translateY: 14 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 200 }}
-            style={{ position: 'absolute', left: 20, right: 20, bottom: 24, backgroundColor: Palette.ink, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13, shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 14, shadowOffset: { width: 0, height: 6 } }}>
+            style={{ position: 'absolute', left: 20, right: 20, bottom: 24, backgroundColor: Palette.ink, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13, ...Shadow.floating }}>
             <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.surface, textAlign: 'center' }}>{toast}</Text>
           </MotiView>
         ) : null}
