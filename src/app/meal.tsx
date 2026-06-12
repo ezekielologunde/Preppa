@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { BadgeCheck, Check, ChevronLeft, Clock, MessageCircle, ShoppingBag, Star, Zap } from 'lucide-react-native';
+import { BadgeCheck, Check, ChevronLeft, Clock, Maximize2, MessageCircle, ShoppingBag, Star, X, Zap } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { MotiView } from 'moti';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from 'react-native';
@@ -52,6 +52,7 @@ export default function MealScreen() {
   const { data: meal, isLoading, isError } = useMeal(id);
   const [added, setAdded] = useState(false);
   const [switchPrompt, setSwitchPrompt] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     if (meal?.id) recordMealView(meal.id);
@@ -113,13 +114,20 @@ export default function MealScreen() {
           {isLoading ? (
             <Skeleton width="100%" height={320} radius={0} />
           ) : meal?.images[0] ? (
-            <Image source={imgUrl(meal.images[0], 1000)} style={{ flex: 1 }} contentFit="cover" transition={250} />
+            <Pressable onPress={() => { feedback.tap(); setLightboxOpen(true); }} accessibilityRole="button" accessibilityLabel="View full-screen photo" style={{ flex: 1 }}>
+              <Image source={imgUrl(meal.images[0], 1000)} style={{ flex: 1 }} contentFit="cover" transition={250} />
+            </Pressable>
           ) : null}
           <SafeAreaView edges={['top']} style={{ position: 'absolute', top: 0, left: 0, right: 0, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 8 }}>
             <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft size={22} color={INK} />
             </PressableScale>
             <View style={{ flexDirection: 'row', gap: 10 }}>
+              {meal?.images[0] ? (
+                <PressableScale onPress={() => { feedback.tap(); setLightboxOpen(true); }} accessibilityRole="button" accessibilityLabel="View full-screen photo" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
+                  <Maximize2 size={17} color={INK} />
+                </PressableScale>
+              ) : null}
               {cart && cart.count > 0 ? (
                 <PressableScale onPress={() => router.push('/cart')} accessibilityRole="button" accessibilityLabel={`Cart, ${cart.count} items`} style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
                   <ShoppingBag size={19} color={INK} />
@@ -280,6 +288,28 @@ export default function MealScreen() {
           <ActivityIndicator color={ORANGE} />
         </View>
       ) : null}
+
+      {/* Fullscreen image lightbox */}
+      <Modal visible={lightboxOpen} transparent animationType="fade" onRequestClose={() => setLightboxOpen(false)}>
+        <View style={{ flex: 1, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
+          {meal?.images[0] ? (
+            <Image source={imgUrl(meal.images[0], 1400)} style={{ width: '100%', height: '80%' }} contentFit="contain" />
+          ) : null}
+          <PressableScale
+            onPress={() => setLightboxOpen(false)}
+            accessibilityRole="button"
+            accessibilityLabel="Close photo"
+            style={{ position: 'absolute', top: 60, right: 20, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' }}>
+            <X size={22} color="#fff" />
+          </PressableScale>
+          {meal?.title ? (
+            <View style={{ position: 'absolute', bottom: 60, left: 24, right: 24 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', textAlign: 'center', letterSpacing: -0.4 }}>{meal.title}</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.7)', textAlign: 'center', marginTop: 4 }}>by {meal.prepper}</Text>
+            </View>
+          ) : null}
+        </View>
+      </Modal>
 
       {/* Switching kitchens — one prepper per cart */}
       <Modal visible={switchPrompt} transparent animationType="fade" onRequestClose={() => setSwitchPrompt(false)}>

@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import {
   CakeSlice,
+  Check,
   ChevronDown,
   Coffee,
   Compass,
@@ -17,13 +18,16 @@ import {
   Sparkles,
   Sprout,
   UtensilsCrossed,
+  X,
   Zap,
   type LucideIcon,
 } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { feedback } from '@/lib/feedback';
 
 import { CuisineCard } from '@/components/cuisine-card';
 import { MealCard } from '@/components/meal-card';
@@ -65,6 +69,11 @@ function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => vo
   );
 }
 
+const CITIES = [
+  'New York, NY', 'Los Angeles, CA', 'Chicago, IL', 'Houston, TX',
+  'Atlanta, GA', 'Washington, DC', 'Miami, FL', 'London, UK', 'Lagos, NG',
+];
+
 export default function ExploreScreen() {
   const router = useRouter();
   const { data: preppers, isLoading: preppersLoading, refetch: refetchPreppers } = useTopPreppers();
@@ -72,6 +81,8 @@ export default function ExploreScreen() {
   const { data: meals, isLoading: mealsLoading, refetch: refetchMeals } = useFeaturedMeals();
   const { data: drops, refetch: refetchDrops } = useLimitedDrops(6);
   const [refreshing, setRefreshing] = useState(false);
+  const [location, setLocation] = useState('New York, NY');
+  const [locationOpen, setLocationOpen] = useState(false);
   async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPreppers(), refetchTags(), refetchMeals(), refetchDrops()]); setRefreshing(false); }
 
   return (
@@ -86,11 +97,15 @@ export default function ExploreScreen() {
                 amazing meals from <Text style={{ fontFamily: Font.semibold, color: ORANGE }}>local preppers</Text>
               </Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9 }}>
+            <PressableScale
+              onPress={() => { feedback.tap(); setLocationOpen(true); }}
+              accessibilityRole="button"
+              accessibilityLabel={`Delivery location: ${location}. Tap to change.`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 9 }}>
               <MapPin size={14} color={ORANGE} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>New York, NY</Text>
+              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }} numberOfLines={1}>{location.split(',')[0]}</Text>
               <ChevronDown size={14} color={Palette.textSecondary} />
-            </View>
+            </PressableScale>
           </View>
 
           {/* Search */}
@@ -236,6 +251,35 @@ export default function ExploreScreen() {
           </Pressable>
         </ScrollView>
       </SafeAreaView>
+
+      {/* Location picker overlay */}
+      <Modal visible={locationOpen} transparent animationType="slide" onRequestClose={() => setLocationOpen(false)}>
+        <Pressable onPress={() => setLocationOpen(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.55)', justifyContent: 'flex-end' }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 40 }}>
+            <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Palette.border, alignSelf: 'center', marginTop: 12, marginBottom: 6 }} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingVertical: 14 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.4 }}>your location</Text>
+              <PressableScale onPress={() => setLocationOpen(false)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                <X size={18} color={Palette.textSecondary} />
+              </PressableScale>
+            </View>
+            {CITIES.map((city, i) => (
+              <PressableScale
+                key={city}
+                onPress={() => { feedback.tap(); setLocation(city); setLocationOpen(false); }}
+                accessibilityRole="button"
+                accessibilityLabel={`Set location to ${city}`}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 22, paddingVertical: 15, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.divider }}>
+                <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: location === city ? Palette.brandTint : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                  <MapPin size={16} color={location === city ? ORANGE : Palette.textMuted} />
+                </View>
+                <Text style={{ flex: 1, fontFamily: location === city ? Font.semibold : Font.medium, fontSize: 15, color: location === city ? ORANGE : INK }}>{city}</Text>
+                {location === city ? <Check size={18} color={ORANGE} /> : null}
+              </PressableScale>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

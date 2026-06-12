@@ -1,9 +1,11 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, Search, X } from 'lucide-react-native';
+import { ArrowUpDown, Check, ChevronLeft, Search, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { feedback } from '@/lib/feedback';
 
 import { MealCard } from '@/components/meal-card';
 import { PrepperCard } from '@/components/prepper-card';
@@ -25,6 +27,14 @@ const PRICES = [
   { key: 'over15', label: '$15+', min: 15, max: null },
 ] as const;
 type PriceKey = (typeof PRICES)[number]['key'] | null;
+
+type SortKey = 'default' | 'price-asc' | 'price-desc' | 'top-rated';
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: 'default', label: 'Relevance' },
+  { key: 'price-asc', label: 'Price: low to high' },
+  { key: 'price-desc', label: 'Price: high to low' },
+  { key: 'top-rated', label: 'Top rated' },
+];
 
 function Chip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
@@ -56,6 +66,8 @@ export default function SearchScreen() {
   const [debounced, setDebounced] = useState(initial);
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [priceKey, setPriceKey] = useState<PriceKey>(null);
+  const [sortKey, setSortKey] = useState<SortKey>('default');
+  const [sortOpen, setSortOpen] = useState(false);
 
   const { data: categories } = useMealCategories();
   const price = PRICES.find((p) => p.key === priceKey);
@@ -71,8 +83,15 @@ export default function SearchScreen() {
     return () => clearTimeout(t);
   }, [text]);
 
-  const hasFilters = categoryId !== null || priceKey !== null;
+  const hasFilters = categoryId !== null || priceKey !== null || sortKey !== 'default';
   const active = debounced.trim().length >= 2 || hasFilters;
+
+  const sortedResults = results ? [...results].sort((a, b) => {
+    if (sortKey === 'price-asc') return a.price - b.price;
+    if (sortKey === 'price-desc') return b.price - a.price;
+    if (sortKey === 'top-rated') return b.rating - a.rating;
+    return 0;
+  }) : results;
   const loading = active && (isLoading || isFetching);
 
   return (
@@ -111,6 +130,15 @@ export default function SearchScreen() {
           {PRICES.map((p) => (
             <Chip key={p.key} label={p.label} selected={priceKey === p.key} onPress={() => setPriceKey(priceKey === p.key ? null : p.key)} />
           ))}
+          <View style={{ width: 1, height: 22, backgroundColor: Palette.divider, marginHorizontal: 2 }} />
+          <PressableScale
+            onPress={() => { feedback.tap(); setSortOpen(true); }}
+            accessibilityRole="button"
+            accessibilityLabel={`Sort: ${SORTS.find(s => s.key === sortKey)?.label ?? 'Relevance'}`}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, height: 36, borderRadius: 999, backgroundColor: sortKey !== 'default' ? INK : Palette.surface }}>
+            <ArrowUpDown size={14} color={sortKey !== 'default' ? '#fff' : Palette.inkSoft} />
+            <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: sortKey !== 'default' ? '#fff' : Palette.inkSoft }}>sort</Text>
+          </PressableScale>
         </ScrollView>
 
         {/* Results */}
@@ -128,7 +156,7 @@ export default function SearchScreen() {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, padding: 20 }}>
             {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} width={CARD_W} />)}
           </View>
-        ) : (results && results.length > 0) || (preppers && preppers.length > 0) ? (
+        ) : (sortedResults && sortedResults.length > 0) || (preppers && preppers.length > 0) ? (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
             {preppers && preppers.length > 0 ? (
               <MotiView
@@ -146,7 +174,7 @@ export default function SearchScreen() {
                 </ScrollView>
               </MotiView>
             ) : null}
-            {results && results.length > 0 ? (
+            {sortedResults && sortedResults.length > 0 ? (
               <MotiView
                 from={{ opacity: 0, translateY: 8 }}
                 animate={{ opacity: 1, translateY: 0 }}
@@ -154,7 +182,7 @@ export default function SearchScreen() {
                 style={{ padding: 20, paddingTop: 16 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginBottom: 12 }}>meals</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-                  {results.map((m, i) => (
+                  {sortedResults.map((m, i) => (
                     <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 28 }}>
                       <MealCard meal={m} width={CARD_W} />
                     </MotiView>
@@ -174,13 +202,40 @@ export default function SearchScreen() {
               {hasFilters ? 'try removing a filter, or search something else' : 'try a meal, cuisine, or kitchen — like "bowl" or "Kelsey"'}
             </Text>
             {hasFilters ? (
-              <PressableScale onPress={() => { setCategoryId(null); setPriceKey(null); }} accessibilityRole="button" accessibilityLabel="Clear all filters" style={{ marginTop: 6, paddingHorizontal: 18, height: 42, borderRadius: 12, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+              <PressableScale onPress={() => { setCategoryId(null); setPriceKey(null); setSortKey('default'); }} accessibilityRole="button" accessibilityLabel="Clear all filters" style={{ marginTop: 6, paddingHorizontal: 18, height: 42, borderRadius: 12, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>clear filters</Text>
               </PressableScale>
             ) : null}
           </MotiView>
         )}
       </SafeAreaView>
+
+      {/* Sort overlay */}
+      <Modal visible={sortOpen} transparent animationType="slide" onRequestClose={() => setSortOpen(false)}>
+        <Pressable onPress={() => setSortOpen(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.55)', justifyContent: 'flex-end' }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 44 }}>
+            <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Palette.border, alignSelf: 'center', marginTop: 12, marginBottom: 6 }} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingVertical: 14 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.4 }}>sort by</Text>
+              <PressableScale onPress={() => setSortOpen(false)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                <X size={18} color={Palette.textSecondary} />
+              </PressableScale>
+            </View>
+            {SORTS.map((s, i) => (
+              <PressableScale
+                key={s.key}
+                onPress={() => { feedback.tap(); setSortKey(s.key); setSortOpen(false); }}
+                accessibilityRole="button"
+                accessibilityLabel={`Sort by ${s.label}`}
+                accessibilityState={{ selected: sortKey === s.key }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 22, paddingVertical: 16, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.divider }}>
+                <Text style={{ flex: 1, fontFamily: sortKey === s.key ? Font.semibold : Font.medium, fontSize: 15, color: sortKey === s.key ? ORANGE : INK }}>{s.label}</Text>
+                {sortKey === s.key ? <Check size={18} color={ORANGE} /> : null}
+              </PressableScale>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
