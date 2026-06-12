@@ -1,108 +1,210 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { BadgeCheck, Clapperboard, Play, Star } from 'lucide-react-native';
+import { BadgeCheck, Bookmark, Clapperboard, Heart, Play, Share2, Star } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ActivityIndicator, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { useState } from 'react';
+import {
+  ActivityIndicator,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  Share,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { toggleFavorite, useFavorite } from '@/lib/favorites';
 import { useFeed, type FeedItem } from '@/lib/queries/feed';
 
 const ORANGE = Palette.brand;
-const TAB_BAR = 88; // customer bottom nav overlays the feed
+const TAB_BAR = 88;
 
-function PostCard({ item, height, bottomInset }: { item: FeedItem; height: number; bottomInset: number }) {
-  const router = useRouter();
-  const source = item.thumbnail ?? item.image;
+// ─── Side action button ───────────────────────────────────────────────────────
+
+function ActionBtn({
+  icon: Icon,
+  label,
+  active,
+  color = '#fff',
+  onPress,
+}: {
+  icon: typeof Heart;
+  label: string;
+  active?: boolean;
+  color?: string;
+  onPress: () => void;
+}) {
   return (
-    <View style={{ height, width: '100%', backgroundColor: '#000' }}>
-      {source ? <Image source={source} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} contentFit="cover" transition={200} /> : null}
-      <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.15)', 'rgba(0,0,0,0.78)']} locations={[0, 0.5, 1]}
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0 }} />
-      {item.videoUrl ? (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }} pointerEvents="none">
-          <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }}>
-            <Play size={28} color="#fff" fill="#fff" />
-          </View>
-        </View>
-      ) : null}
-      <View style={{ position: 'absolute', left: 20, right: 20, bottom: bottomInset + TAB_BAR + 16, gap: 10 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: 'rgba(255,255,255,0.92)' }}>{item.prepper}</Text>
-          {item.verified ? <BadgeCheck size={15} color="#fff" fill={ORANGE} stroke="#fff" /> : null}
-          <View style={{ marginLeft: 'auto', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.18)' }}>
-            <Text style={{ fontFamily: Font.medium, fontSize: 12, color: '#fff' }}>post</Text>
-          </View>
-        </View>
-        {item.title ? <Text style={{ fontFamily: Font.body, fontSize: 16, color: 'rgba(255,255,255,0.9)', lineHeight: 23 }} numberOfLines={3}>{item.title}</Text> : null}
-        <PressableScale onPress={() => { feedback.tap(); router.push('/profile'); }} accessibilityRole="button" accessibilityLabel={`View ${item.prepper}'s profile`}
-          style={{ alignSelf: 'flex-start', height: 44, paddingHorizontal: 20, borderRadius: 14, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.5)', alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>View profile</Text>
-        </PressableScale>
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center' }}>
+      <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(0,0,0,0.38)', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={21} color={active ? '#ef4444' : color} fill={active ? '#ef4444' : 'transparent'} />
       </View>
-    </View>
+    </PressableScale>
   );
 }
 
+// ─── Unified feed card ────────────────────────────────────────────────────────
+
 function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: number; bottomInset: number }) {
   const router = useRouter();
+  const isSaved = useFavorite(`meal:${item.id}`);
   const source = item.thumbnail ?? item.image;
+
+  async function handleShare() {
+    feedback.tap();
+    try {
+      const msg = item.isPost
+        ? `${item.prepper} on Preppa: "${item.title}"`
+        : `Try "${item.title}" by ${item.prepper} — $${item.price.toFixed(2)} on Preppa`;
+      await Share.share({ message: msg });
+    } catch {}
+  }
+
+  function handleSave() {
+    toggleFavorite(`meal:${item.id}`);
+  }
+
+  function goToPrepper() {
+    feedback.tap();
+    if (item.prepper_id) router.push(`/prepper?id=${item.prepper_id}`);
+  }
+
   return (
     <View style={{ height, width: '100%', backgroundColor: '#000' }}>
-      {source ? <Image source={source} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} contentFit="cover" transition={200} /> : null}
-      {/* Scrim for text legibility (functional contrast, not decoration) */}
+      {source ? (
+        <Image source={source} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} contentFit="cover" transition={200} />
+      ) : null}
+
+      {/* Scrim — ensures legible text over any image */}
       <LinearGradient
-        colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.15)', 'rgba(0,0,0,0.85)']}
-        locations={[0, 0.55, 1]}
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 0, top: 0 }}
+        colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.08)', 'rgba(0,0,0,0.84)']}
+        locations={[0, 0.42, 1]}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       />
 
       {item.videoUrl ? (
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }} pointerEvents="none">
-          <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(0,0,0,0.42)', alignItems: 'center', justifyContent: 'center' }}>
             <Play size={28} color="#fff" fill="#fff" />
           </View>
         </View>
       ) : null}
 
-      {/* Content */}
-      <View style={{ position: 'absolute', left: 20, right: 20, bottom: bottomInset + TAB_BAR + 16, gap: 10 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: 'rgba(255,255,255,0.92)' }}>{item.prepper}</Text>
-          {item.verified ? <BadgeCheck size={15} color="#fff" fill={ORANGE} stroke="#fff" /> : null}
-          {item.rating > 0 ? (
+      {/* Side action panel */}
+      <View style={{ position: 'absolute', right: 14, bottom: bottomInset + TAB_BAR + 56, gap: 18, alignItems: 'center' }}>
+        <ActionBtn icon={Heart} label={isSaved ? 'Unsave' : 'Save meal'} active={isSaved} onPress={handleSave} />
+        <ActionBtn icon={Share2} label="Share" onPress={handleShare} />
+      </View>
+
+      {/* Bottom content — right edge reserved for side panel */}
+      <View style={{ position: 'absolute', left: 16, right: 80, bottom: bottomInset + TAB_BAR + 16, gap: 9 }}>
+        {/* Prepper row */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <PressableScale onPress={goToPrepper} accessibilityRole="button" accessibilityLabel={`View ${item.prepper}'s kitchen`} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: 'rgba(255,255,255,0.95)' }}>{item.prepper}</Text>
+            {item.verified ? <BadgeCheck size={14} color="#fff" fill={ORANGE} stroke="#fff" /> : null}
+          </PressableScale>
+          {!item.isPost && item.rating > 0 ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, marginLeft: 2 }}>
-              <Star size={12} color="#fbbf24" fill="#fbbf24" />
-              <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: 'rgba(255,255,255,0.85)' }}>{item.rating.toFixed(1)}</Text>
+              <Star size={11} color="#fbbf24" fill="#fbbf24" />
+              <Text style={{ fontFamily: Font.medium, fontSize: 12, color: 'rgba(255,255,255,0.82)' }}>{item.rating.toFixed(1)}</Text>
+            </View>
+          ) : null}
+          {item.isPost ? (
+            <View style={{ marginLeft: 'auto', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.16)' }}>
+              <Text style={{ fontFamily: Font.medium, fontSize: 11, color: '#fff' }}>post</Text>
             </View>
           ) : null}
         </View>
-        <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.6, lineHeight: 32 }} numberOfLines={2}>{item.title}</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 2 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff', fontVariant: ['tabular-nums'] }}>${item.price.toFixed(2)}</Text>
+
+        {/* Title */}
+        {item.title ? (
+          <Text
+            numberOfLines={3}
+            style={{
+              fontFamily: item.isPost ? Font.body : Font.display,
+              fontSize: item.isPost ? 15 : 26,
+              color: '#fff',
+              letterSpacing: item.isPost ? 0 : -0.5,
+              lineHeight: item.isPost ? 22 : 30,
+            }}>
+            {item.title}
+          </Text>
+        ) : null}
+
+        {/* CTA row */}
+        {item.isPost ? (
           <PressableScale
-            onPress={() => { feedback.tap(); router.push(`/meal?id=${item.id}`); }}
+            onPress={goToPrepper}
             accessibilityRole="button"
-            accessibilityLabel={`Order ${item.title}`}
-            style={{ flex: 1, height: 50, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Order now</Text>
+            accessibilityLabel={`View ${item.prepper}'s kitchen`}
+            style={{ alignSelf: 'flex-start', height: 42, paddingHorizontal: 18, borderRadius: 12, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.45)', alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>View kitchen</Text>
           </PressableScale>
-        </View>
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 22, color: '#fff', fontVariant: ['tabular-nums'] }}>
+              ${item.price.toFixed(2)}
+            </Text>
+            <PressableScale
+              onPress={() => { feedback.tap(); router.push(`/meal?id=${item.id}`); }}
+              accessibilityRole="button"
+              accessibilityLabel={`Order ${item.title}`}
+              style={{ flex: 1, height: 50, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Order now</Text>
+            </PressableScale>
+          </View>
+        )}
       </View>
     </View>
   );
 }
+
+// ─── Scroll position dots ─────────────────────────────────────────────────────
+
+function PositionDots({ total, current }: { total: number; current: number }) {
+  const MAX = 7;
+  const shown = Math.min(total, MAX);
+  return (
+    <View style={{ position: 'absolute', top: 60, right: 14, gap: 4, alignItems: 'center' }}>
+      {Array.from({ length: shown }, (_, i) => {
+        const active = i === Math.min(current, MAX - 1);
+        return (
+          <View
+            key={i}
+            style={{
+              width: active ? 4 : 3,
+              height: active ? 18 : 8,
+              borderRadius: 2,
+              backgroundColor: active ? '#fff' : 'rgba(255,255,255,0.28)',
+            }}
+          />
+        );
+      })}
+    </View>
+  );
+}
+
+// ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function FeedsScreen() {
   const router = useRouter();
   const { data: items, isLoading } = useFeed();
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const pageHeight = height;
+  const [page, setPage] = useState(0);
+
+  function onScroll(e: NativeSyntheticEvent<NativeScrollEvent>) {
+    const p = Math.round(e.nativeEvent.contentOffset.y / height);
+    setPage(p);
+  }
 
   if (isLoading) {
     return (
@@ -115,24 +217,27 @@ export default function FeedsScreen() {
   if (!items?.length) {
     return (
       <View style={{ flex: 1, backgroundColor: '#0B0B0D', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 32 }}>
-        <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 400, bounce: 0.2 }}>
-        <View style={{ width: 88, height: 88, borderRadius: 28, backgroundColor: 'rgba(241,95,34,0.16)', alignItems: 'center', justifyContent: 'center' }}>
-          <Clapperboard size={40} color={ORANGE} />
-        </View>
+        <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 14, stiffness: 180 }}>
+          <View style={{ width: 88, height: 88, borderRadius: 28, backgroundColor: 'rgba(241,95,34,0.16)', alignItems: 'center', justifyContent: 'center' }}>
+            <Clapperboard size={40} color={ORANGE} />
+          </View>
         </MotiView>
         <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 120 }}>
-        <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.6 }}>feeds</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.6 }}>feeds</Text>
         </MotiView>
         <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
-        <Text style={{ fontFamily: Font.body, fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: 290, lineHeight: 22 }}>
-          Meal drops from the preppers you follow will appear here. Check back when kitchens go live.
-        </Text>
+          <Text style={{ fontFamily: Font.body, fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: 290, lineHeight: 22 }}>
+            Meal drops from the kitchens you follow will appear here.
+          </Text>
         </MotiView>
         <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 280 }}>
-        <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} accessibilityRole="button" accessibilityLabel="Discover kitchens to follow"
-          style={{ marginTop: 8, paddingHorizontal: 24, height: 50, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>discover kitchens</Text>
-        </PressableScale>
+          <PressableScale
+            onPress={() => { feedback.tap(); router.push('/explore'); }}
+            accessibilityRole="button"
+            accessibilityLabel="Discover kitchens to follow"
+            style={{ marginTop: 8, paddingHorizontal: 24, height: 50, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>discover kitchens</Text>
+          </PressableScale>
         </MotiView>
       </View>
     );
@@ -144,14 +249,15 @@ export default function FeedsScreen() {
         pagingEnabled
         showsVerticalScrollIndicator={false}
         decelerationRate="fast"
-        snapToInterval={pageHeight}
-        snapToAlignment="start">
-        {items.map((item) =>
-          item.isPost
-            ? <PostCard key={item.id} item={item} height={pageHeight} bottomInset={insets.bottom} />
-            : <FeedCard key={item.id} item={item} height={pageHeight} bottomInset={insets.bottom} />
-        )}
+        snapToInterval={height}
+        snapToAlignment="start"
+        onScroll={onScroll}
+        scrollEventThrottle={height / 2}>
+        {items.map((item) => (
+          <FeedCard key={item.id} item={item} height={height} bottomInset={insets.bottom} />
+        ))}
       </ScrollView>
+      <PositionDots total={items.length} current={page} />
     </View>
   );
 }

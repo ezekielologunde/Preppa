@@ -59,6 +59,17 @@ function relativeTime(iso: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+function dateGroup(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diff / 86_400_000);
+  if (days === 0) return 'Today';
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return 'This week';
+  return 'Earlier';
+}
+
+const GROUP_ORDER = ['Today', 'Yesterday', 'This week', 'Earlier'];
+
 function NotifRow({ n, onPress }: { n: AppNotification; onPress: () => void }) {
   const Icon = ICON_MAP[n.type] ?? Bell;
   const color = COLOR_MAP[n.type] ?? Palette.brand;
@@ -155,6 +166,13 @@ export default function NotificationsScreen() {
   }
 
   const unread = (notifs ?? []).filter((n) => !n.read).length;
+
+  const grouped = (notifs ?? []).reduce<Record<string, AppNotification[]>>((acc, n) => {
+    const g = dateGroup(n.created_at);
+    (acc[g] ??= []).push(n);
+    return acc;
+  }, {});
+  const groupKeys = GROUP_ORDER.filter((g) => grouped[g]?.length);
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -290,25 +308,36 @@ export default function NotificationsScreen() {
                 colors={[Palette.brand]}
               />
             }>
-            {notifs.map((n, i) => (
-              <MotiView
-                key={n.id}
-                from={{ opacity: 0, translateY: 6 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: 'timing', duration: 220, delay: Math.min(i * 30, 240) }}>
-                <NotifRow n={n} onPress={() => handlePress(n)} />
-                {i < notifs.length - 1 ? (
-                  <View
-                    style={{
-                      height: 1,
-                      backgroundColor: Palette.border,
-                      marginLeft: 78,
-                    }}
-                  />
-                ) : null}
-              </MotiView>
+            {groupKeys.map((group) => (
+              <View key={group}>
+                <MotiView
+                  from={{ opacity: 0, translateX: -6 }}
+                  animate={{ opacity: 1, translateX: 0 }}
+                  transition={{ type: 'timing', duration: 200 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.7, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 6 }}>
+                    {group}
+                  </Text>
+                </MotiView>
+                <View style={{ backgroundColor: Palette.surface, marginHorizontal: 16, borderRadius: 16, overflow: 'hidden' }}>
+                  {(grouped[group] ?? []).map((n, i) => {
+                    const groupList = grouped[group] ?? [];
+                    return (
+                      <MotiView
+                        key={n.id}
+                        from={{ opacity: 0, translateY: 5 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ type: 'timing', duration: 220, delay: Math.min(i * 28, 200) }}>
+                        <NotifRow n={n} onPress={() => handlePress(n)} />
+                        {i < groupList.length - 1 ? (
+                          <View style={{ height: 1, backgroundColor: Palette.border, marginLeft: 74 }} />
+                        ) : null}
+                      </MotiView>
+                    );
+                  })}
+                </View>
+              </View>
             ))}
-            <View style={{ height: 40 }} />
+            <View style={{ height: 48 }} />
           </ScrollView>
         )}
       </SafeAreaView>

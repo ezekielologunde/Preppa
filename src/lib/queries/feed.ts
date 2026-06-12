@@ -7,6 +7,7 @@ export type FeedItem = {
   title: string;
   price: number;
   prepper: string;
+  prepper_id?: string;
   verified: boolean;
   rating: number;
   reviews: number;
@@ -25,8 +26,8 @@ type Row = {
   base_price: number;
   description: string | null;
   prepper:
-    | { display_name: string; verified: boolean; rating: { average_rating: number; total_reviews: number } | { average_rating: number; total_reviews: number }[] | null }
-    | { display_name: string; verified: boolean; rating: unknown }[]
+    | { id: string; display_name: string; verified: boolean; rating: { average_rating: number; total_reviews: number } | { average_rating: number; total_reviews: number }[] | null }
+    | { id: string; display_name: string; verified: boolean; rating: unknown }[]
     | null;
   images: { url: string }[] | null;
   videos: { video_url: string; thumbnail_url: string | null }[] | null;
@@ -34,13 +35,13 @@ type Row = {
 
 const SELECT =
   'id,title,base_price,created_at,' +
-  'prepper:prepper_profiles(display_name,verified,rating:prepper_rating_summary(average_rating,total_reviews)),' +
+  'prepper:prepper_profiles(id,display_name,verified,rating:prepper_rating_summary(average_rating,total_reviews)),' +
   'images:meal_images(url),' +
   'videos:meal_videos(video_url,thumbnail_url)';
 
 const POST_SELECT =
   'id,caption,thumbnail_url,video_url,tags,created_at,' +
-  'prepper:prepper_profiles(display_name,verified)';
+  'prepper:prepper_profiles(id,display_name,verified)';
 
 type PostRow = {
   id: string;
@@ -49,7 +50,7 @@ type PostRow = {
   video_url: string | null;
   tags: string[];
   created_at: string;
-  prepper: { display_name: string; verified: boolean } | { display_name: string; verified: boolean }[] | null;
+  prepper: { id: string; display_name: string; verified: boolean } | { id: string; display_name: string; verified: boolean }[] | null;
 };
 
 /**
@@ -78,7 +79,7 @@ export function useFeed(limit = 30) {
 
       const mealItems = ((mealsRes.data ?? []) as unknown as Row[])
         .map((r): FeedItem => {
-          const prepper = one(r.prepper as never) as { display_name?: string; verified?: boolean; rating?: unknown } | undefined;
+          const prepper = one(r.prepper as never) as { id?: string; display_name?: string; verified?: boolean; rating?: unknown } | undefined;
           const rating = one(prepper?.rating as never) as { average_rating: number; total_reviews: number } | undefined;
           const video = one(r.videos);
           return {
@@ -86,6 +87,7 @@ export function useFeed(limit = 30) {
             title: r.title,
             price: r.base_price,
             prepper: prepper?.display_name ?? 'preppa',
+            prepper_id: prepper?.id,
             verified: !!prepper?.verified,
             rating: rating?.average_rating ?? 0,
             reviews: rating?.total_reviews ?? 0,
@@ -100,12 +102,13 @@ export function useFeed(limit = 30) {
       const postItems: FeedItem[] = ((postsRes.data ?? []) as unknown as PostRow[])
         .filter((p) => p.thumbnail_url || p.video_url)
         .map((p): FeedItem => {
-          const prepper = one(p.prepper as never) as { display_name: string; verified: boolean } | undefined;
+          const prepper = one(p.prepper as never) as { id?: string; display_name: string; verified: boolean } | undefined;
           return {
             id: `post:${p.id}`,
             title: p.caption ?? '',
             price: 0,
             prepper: prepper?.display_name ?? 'preppa',
+            prepper_id: prepper?.id,
             verified: !!prepper?.verified,
             rating: 0,
             reviews: 0,
