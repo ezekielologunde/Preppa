@@ -340,7 +340,7 @@ export default function DashboardScreen() {
             <QuickAction Icon={Boxes} label="inventory" color={BLUE} onPress={() => router.push('/meal-editor')} />
             <QuickAction Icon={DollarSign} label="earnings" color={GREEN} onPress={() => router.push('/earnings')} />
             <QuickAction Icon={Users} label="customers" color={PURPLE} onPress={() => router.push('/customers')} />
-            <QuickAction Icon={TrendingUp} label="insights" color={BLUE} onPress={() => router.push('/earnings')} />
+            <QuickAction Icon={TrendingUp} label="insights" color={BLUE} onPress={() => router.push('/prepper-hub')} />
             <QuickAction Icon={Briefcase} label="requests" color={PINK} onPress={() => router.push('/bid-requests')} />
           </ScrollView>
           </MotiView>
