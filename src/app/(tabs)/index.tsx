@@ -139,18 +139,13 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 12 : 0, paddingBottom: 130 }}>
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
             <PressableScale
               onPress={() => { feedback.tap(); router.push('/profile'); }}
               accessibilityRole="button"
               accessibilityLabel="Your profile"
               style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
-              <MotiView
-                from={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'timing', duration: 1500, loop: true, repeatReverse: true }}>
-                <PreppaLogo size={40} glow />
-              </MotiView>
+              <PreppaLogo size={40} glow />
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{greeting()}{firstName ? `, ${firstName}` : ''}</Text>
@@ -172,7 +167,7 @@ export default function HomeScreen() {
 
           {/* Search + location */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 4, gap: 8, alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 10, gap: 8, alignItems: 'center' }}>
             <PressableScale
               onPress={() => { feedback.tap(); router.push('/search'); }}
               accessibilityRole="search"
