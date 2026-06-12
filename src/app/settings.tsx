@@ -351,7 +351,7 @@ export default function SettingsScreen() {
           </Section>
 
           {/* NOTIFICATIONS */}
-          <Section title="notifications" delay={60}>
+          <Section title="notifications" delay={40}>
             <Row Icon={Bell} label="notification preferences" right={{ type: 'chevron' }} onPress={() => go('/notification-settings')} />
             <Row Icon={Bell} label="push notifications" right={{ type: 'toggle', value: pushEnabled, onToggle: () => setPushEnabled((v) => !v) }} onPress={() => setPushEnabled((v) => !v)} />
             <Row Icon={Mail} label="email digest" right={{ type: 'toggle', value: emailDigest, onToggle: () => setEmailDigest((v) => !v) }} onPress={() => setEmailDigest((v) => !v)} />
@@ -363,7 +363,7 @@ export default function SettingsScreen() {
           </Section>
 
           {/* PRIVACY */}
-          <Section title="privacy" delay={120}>
+          <Section title="privacy" delay={80}>
             <Row Icon={Eye} label="profile visibility" right={{ type: 'chip', label: 'Public' }} onPress={() => soon('Profile visibility')} />
             <Row Icon={User} label="activity status" right={{ type: 'toggle', value: activityStatus, onToggle: () => setActivityStatus((v) => !v) }} onPress={() => setActivityStatus((v) => !v)} />
             <Row Icon={TrendingUp} label="data & analytics" right={{ type: 'toggle', value: dataAnalytics, onToggle: () => setDataAnalytics((v) => !v) }} onPress={() => setDataAnalytics((v) => !v)} />
@@ -371,20 +371,20 @@ export default function SettingsScreen() {
           </Section>
 
           {/* PAYMENTS */}
-          <Section title="payments" delay={180}>
+          <Section title="payments" delay={120}>
             <Row Icon={CreditCard} label="saved cards" right={{ type: 'chevron' }} onPress={() => go('/payment-methods')} />
             <Row Icon={Wallet} label="default payment" right={{ type: 'chip', label: 'Visa ••4242' }} onPress={() => go('/payment-methods')} />
             <Row Icon={Smartphone} label="apple pay / google pay" right={{ type: 'toggle', value: applePay, onToggle: () => setApplePay((v) => !v) }} onPress={() => setApplePay((v) => !v)} isLast />
           </Section>
 
           {/* ADDRESSES */}
-          <Section title="addresses" delay={240}>
+          <Section title="addresses" delay={160}>
             <Row Icon={MapPin} label="manage addresses" right={{ type: 'chevron' }} onPress={() => go('/addresses')} />
             <Row Icon={MapPin} label="default address" right={{ type: 'chip', label: 'Home · 123 Main St' }} onPress={() => go('/addresses')} isLast />
           </Section>
 
           {/* MEAL PREFERENCES */}
-          <Section title="meal preferences" delay={300}>
+          <Section title="meal preferences" delay={200}>
             <Row Icon={Salad} label="dietary restrictions" right={{ type: 'chevron' }} onPress={() => go('/dietary-preferences')} />
             <Row Icon={Globe} label="cuisine preferences" right={{ type: 'chevron' }} onPress={() => go('/dietary-preferences')} />
             <Row Icon={Zap} label="spice tolerance" right={{ type: 'chip', label: 'Medium' }} onPress={() => go('/dietary-preferences')} />
@@ -392,7 +392,7 @@ export default function SettingsScreen() {
           </Section>
 
           {/* ACCESSIBILITY */}
-          <Section title="accessibility" delay={360}>
+          <Section title="accessibility" delay={240}>
             <Row Icon={Info} label="text size" right={{ type: 'chip', label: 'System default' }} onPress={() => Linking.openSettings().catch(() => soon('Text size'))} />
             <Row Icon={Eye} label="reduce motion" right={{ type: 'toggle', value: reduceMotion, onToggle: () => setReduceMotion((v) => !v) }} onPress={() => setReduceMotion((v) => !v)} />
             <Row Icon={Eye} label="high contrast" right={{ type: 'toggle', value: highContrast, onToggle: () => setHighContrast((v) => !v) }} onPress={() => setHighContrast((v) => !v)} />
@@ -400,14 +400,14 @@ export default function SettingsScreen() {
           </Section>
 
           {/* SECURITY */}
-          <Section title="security" delay={420}>
+          <Section title="security" delay={280}>
             <Row Icon={Shield} label="two-factor authentication" right={{ type: 'chip', label: 'Off' }} onPress={() => soon('Two-factor authentication')} />
             <Row Icon={Smartphone} label="active sessions" right={{ type: 'chip', label: '1 device' }} onPress={() => soon('Active sessions')} />
             <Row Icon={Fingerprint} label="biometric login" right={{ type: 'toggle', value: biometric, onToggle: () => setBiometric((v) => !v) }} onPress={() => setBiometric((v) => !v)} isLast />
           </Section>
 
           {/* SUPPORT */}
-          <Section title="support" delay={480}>
+          <Section title="support" delay={320}>
             <Row Icon={HelpCircle} label="help center" right={{ type: 'chevron' }} onPress={() => Linking.openURL('mailto:support@preppa.live?subject=Preppa%20support').catch(() => soon('Help center'))} />
             <Row Icon={AlertTriangle} label="report a problem" right={{ type: 'chevron' }} onPress={() => Linking.openURL('mailto:support@preppa.live?subject=Report%20a%20Problem').catch(() => soon('Report a problem'))} />
             <Row Icon={Star} label="rate the app" right={{ type: 'chevron' }} onPress={() => soon('Rate the app')} />
@@ -415,7 +415,7 @@ export default function SettingsScreen() {
           </Section>
 
           {/* ABOUT */}
-          <Section title="about" delay={540}>
+          <Section title="about" delay={360}>
             <Row Icon={Info} label="app version" right={{ type: 'value', label: '1.0.0' }} onPress={() => {}} />
             <Row Icon={ShieldCheck} label="terms of service" right={{ type: 'chevron' }} onPress={() => Linking.openURL('https://preppa.live/terms').catch(() => {})} />
             <Row Icon={Lock} label="privacy policy" right={{ type: 'chevron' }} onPress={() => Linking.openURL('https://preppa.live/privacy').catch(() => {})} />
