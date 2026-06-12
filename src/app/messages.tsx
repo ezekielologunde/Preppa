@@ -55,7 +55,7 @@ function notify(o: OrderSummary): { Icon: LucideIcon; color: string; bg: string;
 
 function ConversationRow({ c, onPress }: { c: Conversation; onPress: () => void }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`Chat with ${c.otherName}`}
+    <PressableScale onPress={() => { feedback.tap(); onPress(); }} accessibilityRole="button" accessibilityLabel={`Chat with ${c.otherName}`}
       style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 12 }}>
       {c.otherAvatar ? (
         <Image source={c.otherAvatar} style={{ width: 52, height: 52, borderRadius: 26 }} contentFit="cover" />
@@ -81,7 +81,7 @@ function ConversationRow({ c, onPress }: { c: Conversation; onPress: () => void 
 function NotificationRow({ o, onPress }: { o: OrderSummary; onPress: () => void }) {
   const n = notify(o);
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={n.title}
+    <PressableScale onPress={() => { feedback.tap(); onPress(); }} accessibilityRole="button" accessibilityLabel={n.title}
       style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 12 }}>
       <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: n.bg, alignItems: 'center', justifyContent: 'center' }}>
         <n.Icon size={21} color={n.color} />
@@ -111,7 +111,7 @@ const NOTIF_STYLE: Record<AppNotification['type'], { Icon: LucideIcon; color: st
 function NotificationItemRow({ n, onPress }: { n: AppNotification; onPress: () => void }) {
   const s = NOTIF_STYLE[n.type] ?? NOTIF_STYLE.order;
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={n.title}
+    <PressableScale onPress={() => { feedback.tap(); onPress(); }} accessibilityRole="button" accessibilityLabel={n.title}
       style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingVertical: 12, backgroundColor: n.read ? 'transparent' : Palette.brandTint + '40' }}>
       <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: s.bg, alignItems: 'center', justifyContent: 'center' }}>
         <s.Icon size={20} color={s.color} />
@@ -178,6 +178,7 @@ export default function MessagesScreen() {
   }, [tab, hasUnread]);
 
   function routeNotification(n: AppNotification) {
+    feedback.tap();
     if (n.type === 'order' && n.data?.request_id) return router.push('/experience-request');
     if (n.type === 'review') return router.push('/dashboard');
     if (n.type === 'follow') return router.push('/dashboard');
@@ -185,8 +186,7 @@ export default function MessagesScreen() {
   }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/');
+    try { router.back(); } catch { router.replace('/'); }
   }
 
   const unreadCount = (conversations ?? []).filter((c) => c.unread).length;
@@ -205,7 +205,7 @@ export default function MessagesScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Bell size={28} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to see your updates and messages.</Text>
-            <PressableScale onPress={() => router.push('/auth?mode=signin')} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>
