@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { ArrowLeft, Camera, Check, Globe, MapPin, User } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useCallback, useState, type ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/ui/avatar';
@@ -199,7 +199,14 @@ export default function EditProfileScreen() {
               <PressableScale onPress={handleSave} disabled={!hasChanges || hasErrors || saving}
                 accessibilityRole="button" accessibilityLabel="Save profile changes" accessibilityState={{ disabled: !hasChanges || hasErrors || saving }}
                 style={{ height: 52, borderRadius: 16, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', opacity: !hasChanges || hasErrors || saving ? 0.5 : 1 }}>
-                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{saving ? 'saving…' : 'save changes'}</Text>
+                {saving ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <ActivityIndicator size="small" color="#fff" />
+                    <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>saving…</Text>
+                  </View>
+                ) : (
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>save changes</Text>
+                )}
               </PressableScale>
             </MotiView>
           </ScrollView>
