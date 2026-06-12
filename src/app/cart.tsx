@@ -142,7 +142,7 @@ export default function CartScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: Palette.surface }}>
         <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 }}>
-          <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 400, bounce: 0.25 }}>
+          <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 10, stiffness: 150 }}>
             <View style={{ width: 76, height: 76, borderRadius: 24, backgroundColor: Palette.success + '1F', alignItems: 'center', justifyContent: 'center' }}>
               <Check size={36} color={Palette.success} strokeWidth={3} />
             </View>
@@ -232,6 +232,19 @@ export default function CartScreen() {
                   </View>
                 </View>
               ) : null}
+              {/* Kitchen header — single-kitchen cart */}
+              {!mixed ? (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 12 }}>
+                  <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                    <ChefHat size={18} color={ORANGE} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.textSecondary }}>ordering from</Text>
+                    <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{prepper}</Text>
+                  </View>
+                </View>
+              ) : null}
+
               {cart.items.map((it, i) => (
                 <MotiView key={it.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 50 }}>
                 <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
