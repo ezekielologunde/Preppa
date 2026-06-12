@@ -54,8 +54,8 @@ import { useAuth } from '@/providers/auth-provider';
 
 const quickLinks = [
   { label: 'favorites', sub: '0 meals', Icon: Heart, color: Palette.danger, bg: Palette.danger + '1A' },
-  { label: 'saved', sub: '0 items', Icon: Bookmark, color: Palette.amber, bg: Palette.amber + '1A' },
-  { label: 'recently viewed', sub: '0 meals', Icon: Clock, color: Palette.success, bg: Palette.success + '1A' },
+  { label: 'saved', sub: '0 items', Icon: Bookmark, color: '#3B82F6', bg: '#EFF6FF' },
+  { label: 'history', sub: '0 meals', Icon: Clock, color: Palette.success, bg: Palette.success + '1A' },
   { label: 'following', sub: '0 preppers', Icon: Users, color: '#8b5cf6', bg: '#EDE9FE' },
   { label: 'referrals', sub: 'invite', Icon: Ticket, color: Palette.amber, bg: Palette.amber + '1A' },
 ];
@@ -185,7 +185,7 @@ export default function ProfileScreen() {
   const onQuick = (label: string) => {
     if (label === 'favorites') { feedback.tap(); return go('/favorites'); }
     if (label === 'saved') { feedback.tap(); return go('/favorites'); }
-    if (label === 'recently viewed') { feedback.tap(); return go('/recently-viewed'); }
+    if (label === 'history') { feedback.tap(); return go('/recently-viewed'); }
     if (label === 'following') { feedback.tap(); return go('/following'); }
     if (label === 'referrals') { feedback.tap(); return go('/referral'); }
     return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
@@ -342,7 +342,7 @@ export default function ProfileScreen() {
                 <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: q.bg, alignItems: 'center', justifyContent: 'center' }}>
                   <q.Icon size={19} color={q.color} />
                 </View>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: Palette.inkSoft }}>{q.label}</Text>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: Palette.inkSoft }} numberOfLines={1}>{q.label}</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 10, color: Palette.textMuted }}>
                   {q.label === 'favorites'
                     ? `${favMeals} meal${favMeals === 1 ? '' : 's'}`

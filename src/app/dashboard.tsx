@@ -274,7 +274,7 @@ export default function DashboardScreen() {
 
           {/* Goal + this week */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 180 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginHorizontal: 20, marginTop: 4, marginBottom: 4, backgroundColor: CARD, borderRadius: 20, padding: 16 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginHorizontal: 20, marginTop: 14, marginBottom: 8, backgroundColor: CARD, borderRadius: 20, padding: 16 }}>
             <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, flexShrink: 0 }}>
               <Ring pct={goalPct} color={ORANGE} size={64} stroke={7} />
               <View style={{ position: 'absolute', alignItems: 'center' }}>
@@ -302,7 +302,7 @@ export default function DashboardScreen() {
 
           {/* Badges earned */}
           {prepperBadges && prepperBadges.length > 0 ? (
-            <View style={{ paddingHorizontal: 20, marginBottom: 4 }}>
+            <View style={{ paddingHorizontal: 20, marginBottom: 8 }}>
               <PrepperBadgeShelf badges={prepperBadges} />
             </View>
           ) : null}
