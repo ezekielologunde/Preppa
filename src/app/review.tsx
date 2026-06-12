@@ -1,8 +1,11 @@
+import { decode } from 'base64-arraybuffer';
+import * as FileSystem from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Check, ChevronLeft, Star } from 'lucide-react-native';
+import { Camera, Check, ChevronLeft, Star, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -10,7 +13,22 @@ import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useSubmitReview } from '@/lib/queries/reviews';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/auth-provider';
+
+type PhotoItem = { localUri: string; publicUrl: string | null; uploading: boolean };
+
+async function uploadReviewPhoto(localUri: string, userId: string): Promise<string> {
+  const ext = (localUri.split('.').pop() ?? 'jpg').toLowerCase().replace('jpeg', 'jpg');
+  const path = `${userId}/reviews/${Date.now()}.${ext}`;
+  const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: FileSystem.EncodingType.Base64 });
+  const { data, error } = await supabase.storage
+    .from('meal-images')
+    .upload(path, decode(base64), { contentType: `image/${ext === 'jpg' ? 'jpeg' : ext}`, upsert: false });
+  if (error) throw error;
+  const { data: { publicUrl } } = supabase.storage.from('meal-images').getPublicUrl(data.path);
+  return publicUrl;
+}
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -31,8 +49,24 @@ export default function ReviewScreen() {
   const submit = useSubmitReview();
   const [rating, setRating] = useState(0);
   const [body, setBody] = useState('');
+  const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+
+  async function pickPhoto() {
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8, allowsMultipleSelection: false });
+    if (result.canceled || !result.assets[0] || !user) return;
+    const uri = result.assets[0].uri;
+    let idx = 0;
+    setPhotos((prev) => { idx = prev.length; return [...prev, { localUri: uri, publicUrl: null, uploading: true }]; });
+    try {
+      const url = await uploadReviewPhoto(uri, user.id);
+      setPhotos((prev) => prev.map((p, i) => i === idx ? { ...p, publicUrl: url, uploading: false } : p));
+    } catch {
+      setPhotos((prev) => prev.filter((_, i) => i !== idx));
+      setErr('Photo upload failed. Try again.');
+    }
+  }
 
   function goBack() {
     feedback.tap();
@@ -41,9 +75,11 @@ export default function ReviewScreen() {
 
   function send() {
     if (!user || !orderId || !prepperId || rating < 1) return;
+    if (photos.some((p) => p.uploading)) return setErr('Please wait for photos to finish uploading.');
     setErr(null);
+    const photoUrls = photos.filter((p) => p.publicUrl).map((p) => p.publicUrl!);
     submit.mutate(
-      { orderId, authorId: user.id, prepperId, mealId: mealId || null, rating, body },
+      { orderId, authorId: user.id, prepperId, mealId: mealId || null, rating, body, photos: photoUrls },
       { onSuccess: () => setDone(true), onError: (e) => setErr(e instanceof Error ? e.message : 'Could not submit review.') },
     );
   }
@@ -133,6 +169,36 @@ export default function ReviewScreen() {
               multiline
               style={{ minHeight: 120, borderRadius: Radius.md, backgroundColor: Palette.canvas, padding: 16, fontFamily: Font.body, fontSize: 15, color: INK, textAlignVertical: 'top' }}
             />
+          </MotiView>
+
+          {/* Photo attachments */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 220 }}>
+            <View style={{ gap: 8 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary }}>Add photos (optional)</Text>
+              <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
+                {photos.map((p, idx) => (
+                  <View key={idx} style={{ width: 80, height: 80, borderRadius: 12, overflow: 'hidden', backgroundColor: Palette.canvas }}>
+                    <Image source={{ uri: p.localUri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                    {p.uploading && (
+                      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator color="#fff" size="small" />
+                      </View>
+                    )}
+                    <PressableScale onPress={() => { feedback.tap(); setPhotos((prev) => prev.filter((_, i) => i !== idx)); }}
+                      style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: 10, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }}>
+                      <X size={11} color="#fff" />
+                    </PressableScale>
+                  </View>
+                ))}
+                {photos.length < 3 && (
+                  <PressableScale onPress={() => { feedback.tap(); void pickPhoto(); }}
+                    style={{ width: 80, height: 80, borderRadius: 12, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', backgroundColor: Palette.canvas, gap: 4 }}>
+                    <Camera size={18} color={Palette.textSecondary} />
+                    <Text style={{ fontFamily: Font.medium, fontSize: 10, color: Palette.textSecondary }}>Add photo</Text>
+                  </PressableScale>
+                )}
+              </View>
+            </View>
           </MotiView>
 
           {err ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.danger, textAlign: 'center' }}>{err}</Text> : null}

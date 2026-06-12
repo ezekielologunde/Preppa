@@ -107,7 +107,7 @@ export function usePrepperReviews(prepperId?: string | null, limit = 20) {
 export function useSubmitReview() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (v: { orderId: string; authorId: string; prepperId: string; mealId: string | null; rating: number; body: string }) => {
+    mutationFn: async (v: { orderId: string; authorId: string; prepperId: string; mealId: string | null; rating: number; body: string; photos?: string[] }) => {
       const { error } = await supabase.from('reviews').insert({
         order_id: v.orderId,
         author_id: v.authorId,
@@ -115,6 +115,7 @@ export function useSubmitReview() {
         meal_id: v.mealId,
         rating: v.rating,
         body: v.body.trim() || null,
+        photos: v.photos?.length ? v.photos : [],
       });
       if (error) throw error;
     },
