@@ -38,7 +38,7 @@ const BOOST_PLANS: BoostPlan[] = [
     name: 'rush hour priority',
     desc: 'Pinned to the top of the specials feed during lunch and dinner rush',
     Icon: Flame,
-    color: '#dc2626',
+    color: Palette.danger,
     perks: ['Rush hour specials placement', 'Push notification to local buyers', 'Live-now indicator on your listing'],
     impressions: '600–1,000 views',
   },

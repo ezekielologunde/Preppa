@@ -60,9 +60,9 @@ const KITS: MealKit[] = [
 ];
 
 const TAG_COLORS: Record<string, string> = {
-  bestseller: '#f59e0b',
+  bestseller: Palette.amber,
   quick: '#06b6d4',
-  'family hit': '#22c55e',
+  'family hit': Palette.success,
   comfort: ORANGE,
   artisan: '#8b5cf6',
   healthy: '#16a34a',
@@ -97,7 +97,7 @@ export default function GroceryConciergeScreen() {
 
           {/* Value prop banner */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
-          <View style={{ backgroundColor: '#11151C', borderRadius: Radius.lg, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+          <View style={{ backgroundColor: INK, borderRadius: Radius.lg, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
             <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: ORANGE + '22', alignItems: 'center', justifyContent: 'center' }}>
               <Leaf size={20} color={ORANGE} />
             </View>
