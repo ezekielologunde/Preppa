@@ -123,7 +123,7 @@ export default function BidRequestsScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 6, gap: 12 }}>
-          <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Back"
+          <PressableScale onPress={() => { feedback.tap(); router.back(); }} accessibilityRole="button" accessibilityLabel="Back"
             style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={24} color={INK} />
           </PressableScale>
@@ -190,7 +190,7 @@ export default function BidRequestsScreen() {
             <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, flex: 1 }} numberOfLines={1}>{bidTarget?.title}</Text>
-                <PressableScale onPress={() => setBidTarget(null)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
+                <PressableScale onPress={() => { feedback.tap(); setBidTarget(null); }} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
                   <X size={18} color={Palette.inkSoft} />
                 </PressableScale>
               </View>

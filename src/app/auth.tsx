@@ -174,7 +174,7 @@ export default function AuthScreen() {
         style={{ position: 'absolute', top: -120, alignSelf: 'center', width: 420, height: 420, borderRadius: 210, experimental_backgroundImage: 'radial-gradient(circle, rgba(241,95,34,0.16), transparent 70%)' }}
       />
       <SafeAreaView style={{ flex: 1, paddingHorizontal: 24 }}>
-        <Pressable onPress={() => router.replace('/')} style={{ alignSelf: 'flex-end', paddingVertical: 12 }}>
+        <Pressable onPress={() => { feedback.tap(); router.replace('/'); }} style={{ alignSelf: 'flex-end', paddingVertical: 12 }}>
           <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textMuted }}>continue as guest →</Text>
         </Pressable>
 
@@ -307,7 +307,7 @@ export default function AuthScreen() {
               {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{intent === 'recovery' ? 'Reset & sign in' : 'Verify & continue'}</Text>}
             </PressableScale>
             <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 18, marginTop: 8 }}>
-              <Pressable onPress={() => { setStep('form'); setCode(''); setMsg(null); }}>
+              <Pressable onPress={() => { feedback.tap(); setStep('form'); setCode(''); setMsg(null); }}>
                 <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>← back</Text>
               </Pressable>
               <Pressable onPress={resend} disabled={busy}>
@@ -318,7 +318,7 @@ export default function AuthScreen() {
         )}
 
         {step === 'form' ? (
-          <Pressable onPress={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setMsg(null); }} style={{ alignItems: 'center', marginTop: 18 }}>
+          <Pressable onPress={() => { feedback.tap(); setMode(mode === 'signin' ? 'signup' : 'signin'); setMsg(null); }} style={{ alignItems: 'center', marginTop: 18 }}>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary }}>
               {mode === 'signin' ? 'New here? ' : 'Already a member? '}
               <Text style={{ fontFamily: Font.heading, color: ORANGE }}>{mode === 'signin' ? 'Create account' : 'Sign in'}</Text>
