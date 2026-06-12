@@ -100,7 +100,7 @@ function HubGrid({ hub, dark, onHub }: { hub: HubItem[]; dark: boolean; onHub: (
           <ChevronRight size={15} color={Palette.divider} />
         </PressableScale>
       ))}
-      <PressableScale onPress={toggleDarkMode} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
+      <PressableScale onPress={() => { feedback.tap(); toggleDarkMode(); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
         style={{ flexGrow: 1, flexBasis: '46%', backgroundColor: Palette.surface, borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 11 }}>
         <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
           <Moon size={17} color={Palette.textSecondary} />
@@ -176,15 +176,16 @@ export default function ProfileScreen() {
   const go = (route: string) => router.push(route as never);
 
   const onQuick = (label: string) => {
-    if (label === 'recently viewed') return go('/explore');
-    if (label === 'following') return go('/explore');
+    if (label === 'recently viewed') { feedback.tap(); return go('/explore'); }
+    if (label === 'following') { feedback.tap(); return go('/explore'); }
     return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
   };
   const onHub = (h: HubItem) => {
-    if (h.accent) return go('/dashboard');
-    if (h.route) return go(h.route);
-    if (h.label === 'notifications') return go('/messages');
+    if (h.accent) { feedback.tap(); return go('/dashboard'); }
+    if (h.route) { feedback.tap(); return go(h.route); }
+    if (h.label === 'notifications') { feedback.tap(); return go('/messages'); }
     if (h.label === 'help center') {
+      feedback.tap();
       Linking.openURL('mailto:support@preppa.live?subject=Preppa%20support').catch(() => soon('Help center'));
       return;
     }
