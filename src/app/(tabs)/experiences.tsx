@@ -78,8 +78,8 @@ export default function ExperiencesScreen() {
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ paddingHorizontal: 20 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 32, color: INK, letterSpacing: -1 }}>experiences</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 2 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>experiences</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>
               private chefs, catering, classes & tastings near you
             </Text>
           </View>

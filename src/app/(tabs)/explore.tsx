@@ -108,8 +108,8 @@ export default function ExploreScreen() {
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.display, fontSize: 32, color: INK, letterSpacing: -1 }}>explore</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 2 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.6 }}>explore</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>
                 amazing meals from <Text style={{ fontFamily: Font.semibold, color: ORANGE }}>local preppers</Text>
               </Text>
             </View>
@@ -129,7 +129,7 @@ export default function ExploreScreen() {
             onPress={() => { feedback.tap(); router.push('/search'); }}
             accessibilityRole="search"
             accessibilityLabel="Search meals, cuisines, or preppers"
-            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 12, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 48, gap: 10 }}>
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 8, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 46, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
             <Scan size={20} color={ORANGE} />
@@ -166,9 +166,9 @@ export default function ExploreScreen() {
               const active = i === 0;
               const onPress = () => { feedback.tap(); if (c.key === 'more') router.push('/category?key=all&label=all meals'); else router.push(`/category?key=${c.key}&label=${encodeURIComponent(c.label)}`); };
               return (
-                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 8, width: 62 }}>
-                  <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: active ? Palette.brandTint : Palette.surface, alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
-                    <Icon size={24} color={c.color} />
+                <PressableScale key={c.key} onPress={onPress} accessibilityRole="button" accessibilityLabel={`${c.label} meals`} style={{ alignItems: 'center', gap: 6, width: 58 }}>
+                  <View style={{ width: 52, height: 52, borderRadius: 18, backgroundColor: active ? Palette.brandTint : Palette.surface, alignItems: 'center', justifyContent: 'center', borderWidth: active ? 1 : 0, borderColor: '#F8C9B0' }}>
+                    <Icon size={22} color={c.color} />
                   </View>
                   <Text style={{ fontFamily: active ? Font.semibold : Font.medium, fontSize: 12, color: active ? ORANGE : Palette.inkSoft }}>{c.label}</Text>
                 </PressableScale>
@@ -176,7 +176,7 @@ export default function ExploreScreen() {
             });
             return bp !== 'mobile'
               ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 14 }}>{items}</View>
-              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 14 }}>{items}</ScrollView>;
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 10 }}>{items}</ScrollView>;
           })()}
 
           {/* Cuisines */}
