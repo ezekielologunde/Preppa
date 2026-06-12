@@ -71,9 +71,9 @@ export default function BecomePrepperScreen() {
   // --- Lifecycle states for an existing application ---
   if (application) {
     const map = {
-      pending: { Icon: Clock, tint: '#F59E0B', title: 'Application under review', body: "Thanks for applying! Our team is reviewing your kitchen. We'll notify you once you're approved — usually within 1–2 days.", cta: null },
+      pending: { Icon: Clock, tint: Palette.amber, title: 'Application under review', body: "Thanks for applying! Our team is reviewing your kitchen. We'll notify you once you're approved — usually within 1–2 days.", cta: null },
       approved: { Icon: Sparkles, tint: Palette.success, title: "You're approved!", body: 'Welcome to Preppa. Your kitchen is live — start adding meals and taking orders.', cta: { label: 'Open my kitchen', onPress: () => router.replace('/dashboard') } },
-      rejected: { Icon: ShieldX, tint: '#EF4444', title: 'Application not approved', body: application.rejection_note || 'Your application was not approved at this time. Reach out to support for details.', cta: null },
+      rejected: { Icon: ShieldX, tint: Palette.danger, title: 'Application not approved', body: application.rejection_note || 'Your application was not approved at this time. Reach out to support for details.', cta: null },
       suspended: { Icon: ShieldX, tint: '#6B7280', title: 'Kitchen paused', body: 'Your prepper account is currently paused. Contact support to reactivate.', cta: null },
     }[application.status];
     return (
@@ -81,7 +81,7 @@ export default function BecomePrepperScreen() {
         <SafeAreaView style={{ flex: 1 }}>
           {Header}
           <Centered>
-            <MotiView from={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 380, bounce: 0.2 }}>
+            <MotiView from={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 18, stiffness: 200 }}>
               <View style={{ width: 72, height: 72, borderRadius: 22, backgroundColor: map.tint + '1F', alignItems: 'center', justifyContent: 'center' }}>
                 <map.Icon size={32} color={map.tint} />
               </View>
@@ -112,7 +112,7 @@ export default function BecomePrepperScreen() {
         <SafeAreaView style={{ flex: 1 }}>
           {Header}
           <Centered>
-            <MotiView from={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 360, bounce: 0.15 }}>
+            <MotiView from={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 20, stiffness: 220 }}>
               <View style={{ width: 72, height: 72, borderRadius: 22, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
                 <Clock size={30} color={Palette.textMuted} />
               </View>
@@ -168,7 +168,7 @@ export default function BecomePrepperScreen() {
                 const on = picked.includes(s);
                 return (
                   <PressableScale key={s} onPress={() => { feedback.tap(); toggle(s); }} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={s}
-                    style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : '#F4F4F6', borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
+                    style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : Palette.chip, borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
                     <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{s}</Text>
                   </PressableScale>
                 );
