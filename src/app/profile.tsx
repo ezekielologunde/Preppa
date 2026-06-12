@@ -239,10 +239,12 @@ export default function ProfileScreen() {
             ) : null}
 
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, marginTop: 6 }}>{bio}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}>
+            <PressableScale onPress={() => { feedback.tap(); go('/addresses'); }} accessibilityRole="button" accessibilityLabel="Manage your addresses" style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}>
               <MapPin size={13} color={Palette.textMuted} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>New York, NY</Text>
-            </View>
+              <Text style={{ fontFamily: Font.medium, fontSize: 13, color: addresses?.[0]?.city ? Palette.textSecondary : Palette.brand }}>
+                {addresses?.[0]?.city ?? 'add your location'}
+              </Text>
+            </PressableScale>
             {earnedBadges?.length ? (
               <View style={{ marginTop: 14, maxWidth: '100%' }}>
                 <CustomerBadgeShelf badges={earnedBadges} />
