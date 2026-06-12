@@ -7,6 +7,7 @@ import {
   Camera,
   ChefHat,
   ChevronRight,
+  BadgeCheck,
   Clock,
   Compass,
   CreditCard,
@@ -186,7 +187,6 @@ export default function ProfileScreen() {
     return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
   };
   const onHub = (h: HubItem) => {
-    if (h.accent) { feedback.tap(); return go('/dashboard'); }
     if (h.route) { feedback.tap(); return go(h.route); }
     if (h.label === 'notifications') { feedback.tap(); return go('/notifications'); }
     if (h.label === 'help center') {
@@ -229,8 +229,9 @@ export default function ProfileScreen() {
 
             {/* Role badge */}
             {isApprovedPrepper ? (
-              <View style={{ marginTop: 6, backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.brand }}>prepper ✓</Text>
+              <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.brandTint, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 }}>
+                <BadgeCheck size={12} color={Palette.brand} />
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.brand }}>prepper</Text>
               </View>
             ) : isAdmin ? (
               <View style={{ marginTop: 6, backgroundColor: '#EDE9FE', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 }}>
