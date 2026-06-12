@@ -26,6 +26,15 @@ function timeLabel(iso: string): string {
 
 const TIME_GAP_MS = 20 * 60 * 1000;
 
+const QUICK_REPLIES: Record<string, string[]> = {
+  pending:          ['When will it be ready?', 'Can you confirm?', 'Thank you!'],
+  confirmed:        ['How long to prepare?', 'Can I change anything?', 'Thanks!'],
+  preparing:        ['How much longer?', "Can't wait!", 'Thank you!'],
+  ready:            ["I'm on my way!", 'Can I pick it up now?', 'Amazing!'],
+  out_for_delivery: ["I'm home!", 'How far away?', 'Thank you!'],
+  completed:        ['It was delicious!', 'Thank you so much!', "Loved it!"],
+};
+
 export default function ChatScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -146,6 +155,20 @@ export default function ChatScreen() {
             </ScrollView>
           )}
 
+          {/* Quick replies */}
+          {!text.trim() && ctx?.order?.status && QUICK_REPLIES[ctx.order.status] ? (
+            <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12, paddingTop: 8, paddingBottom: 4, gap: 8 }}>
+                {QUICK_REPLIES[ctx.order.status].map((reply) => (
+                  <PressableScale key={reply} onPress={() => { feedback.tap(); setText(reply); }} accessibilityRole="button" accessibilityLabel={reply}
+                    style={{ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.chip }}>
+                    <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>{reply}</Text>
+                  </PressableScale>
+                ))}
+              </ScrollView>
+            </MotiView>
+          ) : null}
+
           {/* Composer */}
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10, paddingHorizontal: 12, paddingVertical: 8, borderTopWidth: 1, borderTopColor: Palette.chip }}>
             <TextInput
@@ -158,7 +181,7 @@ export default function ChatScreen() {
             />
             <PressableScale onPress={submit} disabled={!text.trim() || send.isPending} accessibilityRole="button" accessibilityLabel="Send message"
               style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: text.trim() ? ORANGE : '#E5E7EB', alignItems: 'center', justifyContent: 'center' }}>
-              <Send size={19} color="#fff" />
+              {send.isPending ? <ActivityIndicator size="small" color="#fff" /> : <Send size={19} color="#fff" />}
             </PressableScale>
           </View>
         </KeyboardAvoidingView>
