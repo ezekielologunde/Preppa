@@ -117,7 +117,7 @@ export default function PrepperScreen() {
               )}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.5 }}>{p?.name ?? '…'}</Text>
-                {p?.verified ? <BadgeCheck size={20} color={ORANGE} fill={ORANGE} stroke="#11151C" /> : null}
+                {p?.verified ? <BadgeCheck size={20} color={ORANGE} fill={ORANGE} stroke={INK} /> : null}
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 {p?.city ? (

@@ -41,13 +41,13 @@ function notify(o: OrderSummary): { Icon: LucideIcon; color: string; bg: string;
   const item = o.items[0]?.title ?? 'your order';
   const by = o.prepper;
   const map: Partial<Record<OrderStatus, { Icon: LucideIcon; color: string; bg: string; title: string }>> = {
-    pending: { Icon: Package, color: '#f59e0b', bg: '#FEF3C7', title: 'Order placed' },
-    confirmed: { Icon: CircleCheck, color: '#16a34a', bg: '#DCFCE7', title: `${by} accepted your order` },
+    pending: { Icon: Package, color: Palette.amber, bg: Palette.amber + '1A', title: 'Order placed' },
+    confirmed: { Icon: CircleCheck, color: Palette.success, bg: Palette.success + '1A', title: `${by} accepted your order` },
     preparing: { Icon: ChefHat, color: ORANGE, bg: Palette.brandTint, title: 'Your food is being prepared' },
     ready: { Icon: UtensilsCrossed, color: ORANGE, bg: Palette.brandTint, title: 'Your order is ready' },
     out_for_delivery: { Icon: Bike, color: '#8b5cf6', bg: '#EDE9FE', title: 'Your order is on the way' },
-    completed: { Icon: Star, color: '#f59e0b', bg: '#FEF3C7', title: 'Delivered — leave a review' },
-    cancelled: { Icon: CircleX, color: '#ef4444', bg: '#FEE2E2', title: 'Order cancelled & refunded' },
+    completed: { Icon: Star, color: Palette.amber, bg: Palette.amber + '1A', title: 'Delivered — leave a review' },
+    cancelled: { Icon: CircleX, color: Palette.danger, bg: Palette.danger + '1A', title: 'Order cancelled & refunded' },
   };
   const m = map[o.status] ?? map.pending!;
   return { ...m, sub: `${item} · by ${by}` };
@@ -99,13 +99,13 @@ function NotificationRow({ o, onPress }: { o: OrderSummary; onPress: () => void 
 
 const NOTIF_STYLE: Record<AppNotification['type'], { Icon: LucideIcon; color: string; bg: string }> = {
   order: { Icon: MessageSquareQuote, color: ORANGE, bg: Palette.brandTint },
-  payment: { Icon: Package, color: '#16a34a', bg: '#DCFCE7' },
+  payment: { Icon: Package, color: Palette.success, bg: Palette.success + '1A' },
   chat: { Icon: MessageCircle, color: '#8b5cf6', bg: '#EDE9FE' },
-  follow: { Icon: Heart, color: '#ef4444', bg: '#FEE2E2' },
-  review: { Icon: Star, color: '#f59e0b', bg: '#FEF3C7' },
+  follow: { Icon: Heart, color: Palette.danger, bg: Palette.danger + '1A' },
+  review: { Icon: Star, color: Palette.amber, bg: Palette.amber + '1A' },
   promotion: { Icon: CalendarCheck, color: ORANGE, bg: Palette.brandTint },
   drop: { Icon: Package, color: ORANGE, bg: Palette.brandTint },
-  live: { Icon: Bell, color: '#ef4444', bg: '#FEE2E2' },
+  live: { Icon: Bell, color: Palette.danger, bg: Palette.danger + '1A' },
 };
 
 function NotificationItemRow({ n, onPress }: { n: AppNotification; onPress: () => void }) {

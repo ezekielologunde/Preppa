@@ -74,13 +74,13 @@ export default function ChangeEmailScreen() {
           <ScrollView contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 130 }}>
             {done ? (
               <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
-              <View style={{ backgroundColor: '#DCFCE7', borderRadius: Radius.lg, padding: 20, alignItems: 'center', gap: 10 }}>
-                <Mail size={28} color='#16a34a' />
+              <View style={{ backgroundColor: Palette.success + '1A', borderRadius: Radius.lg, padding: 20, alignItems: 'center', gap: 10 }}>
+                <Mail size={28} color={Palette.success} />
                 <Text style={{ fontFamily: Font.heading, fontSize: 17, color: '#14532d', textAlign: 'center' }}>Confirmation sent</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: '#166534', textAlign: 'center', lineHeight: 20 }}>
                   We sent a confirmation link to {email.trim().toLowerCase()}. Click the link to complete the change.
                 </Text>
-                <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Done" style={{ marginTop: 4, paddingHorizontal: 24, height: 44, borderRadius: 12, backgroundColor: '#16a34a', alignItems: 'center', justifyContent: 'center' }}>
+                <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Done" style={{ marginTop: 4, paddingHorizontal: 24, height: 44, borderRadius: 12, backgroundColor: Palette.success, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>done</Text>
                 </PressableScale>
               </View>

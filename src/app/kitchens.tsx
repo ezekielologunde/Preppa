@@ -91,7 +91,7 @@ export default function KitchensScreen() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'timing', duration: 260 }}
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <Compass size={40} color={Palette.divider} />
+            <Compass size={40} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>no kitchens here yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               {selected ? `No ${selected} kitchens nearby yet — try another tag.` : 'Check back soon as more kitchens join.'}

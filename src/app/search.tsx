@@ -182,7 +182,7 @@ export default function SearchScreen() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'timing', duration: 280 }}
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <Search size={40} color={Palette.divider} />
+            <Search size={40} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: Palette.textSecondary }}>find your next meal</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>type to search — or tap a filter to browse</Text>
             {suggestions.length > 0 ? (

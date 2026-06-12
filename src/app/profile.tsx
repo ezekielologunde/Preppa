@@ -53,9 +53,9 @@ import { toggleDarkMode, useDarkMode } from '@/lib/theme-mode';
 import { useAuth } from '@/providers/auth-provider';
 
 const quickLinks = [
-  { label: 'favorites', sub: '0 meals', Icon: Heart, color: Palette.danger, bg: '#FEE2E2' },
-  { label: 'saved', sub: '0 items', Icon: Bookmark, color: Palette.amber, bg: '#FEF3C7' },
-  { label: 'recently viewed', sub: '0 meals', Icon: Clock, color: Palette.success, bg: '#DCFCE7' },
+  { label: 'favorites', sub: '0 meals', Icon: Heart, color: Palette.danger, bg: Palette.danger + '1A' },
+  { label: 'saved', sub: '0 items', Icon: Bookmark, color: Palette.amber, bg: Palette.amber + '1A' },
+  { label: 'recently viewed', sub: '0 meals', Icon: Clock, color: Palette.success, bg: Palette.success + '1A' },
   { label: 'following', sub: '0 preppers', Icon: Users, color: '#8b5cf6', bg: '#EDE9FE' },
   { label: 'referrals', sub: 'invite', Icon: Ticket, color: Palette.amber, bg: '#FEF3C7' },
 ];
@@ -100,7 +100,7 @@ function HubGrid({ hub, dark, onHub }: { hub: HubItem[]; dark: boolean; onHub: (
             <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 13.5, color: h.accent ? Palette.brand : Palette.ink }}>{h.label}</Text>
             <Text numberOfLines={1} style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, marginTop: 1 }}>{h.sub}</Text>
           </View>
-          <ChevronRight size={15} color={Palette.divider} />
+          <ChevronRight size={15} color={Palette.textSecondary} />
         </PressableScale>
       ))}
       <PressableScale onPress={() => { feedback.tap(); toggleDarkMode(); }} accessibilityRole="switch" accessibilityState={{ checked: dark }} accessibilityLabel="Dark mode"
@@ -386,7 +386,7 @@ export default function ProfileScreen() {
                         </Text>
                       </View>
                     </View>
-                    <ChevronRight size={18} color={Palette.divider} />
+                    <ChevronRight size={18} color={Palette.textSecondary} />
                   </PressableScale>
                 );
               })}
@@ -401,7 +401,7 @@ export default function ProfileScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink }}>Subscribe & save</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted, marginTop: 1 }}>Weekly meal plans from your favorite kitchens, on repeat.</Text>
               </View>
-              <ChevronRight size={18} color={Palette.divider} />
+              <ChevronRight size={18} color={Palette.textSecondary} />
             </PressableScale>
           )}
 

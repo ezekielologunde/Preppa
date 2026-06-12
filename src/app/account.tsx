@@ -133,7 +133,7 @@ export default function AccountScreen() {
                 right={
                   <ChevronRight
                     size={18}
-                    color={Palette.divider}
+                    color={Palette.textSecondary}
                     style={{
                       transform: [{ rotate: passwordOpen ? '90deg' : '0deg' }],
                     }}
@@ -312,7 +312,7 @@ export default function AccountScreen() {
                     {user?.email ?? '—'}
                   </Text>
                 </View>
-                <Lock size={15} color={Palette.divider} />
+                <Lock size={15} color={Palette.textSecondary} />
               </View>
             </View>
           </MotiView>
@@ -329,7 +329,7 @@ export default function AccountScreen() {
               <Row
                 icon={<Download size={17} color={Palette.textSecondary} />}
                 label="download my data"
-                right={<ChevronRight size={18} color={Palette.divider} />}
+                right={<ChevronRight size={18} color={Palette.textSecondary} />}
                 onPress={() => { feedback.tap(); setDownloadModal(true); }}
                 accessLabel="Download my data"
               />
@@ -337,7 +337,7 @@ export default function AccountScreen() {
               <Row
                 icon={<Shield size={17} color={Palette.textSecondary} />}
                 label="privacy settings"
-                right={<ChevronRight size={18} color={Palette.divider} />}
+                right={<ChevronRight size={18} color={Palette.textSecondary} />}
                 onPress={() => soon('Privacy settings')}
                 accessLabel="Privacy settings"
               />

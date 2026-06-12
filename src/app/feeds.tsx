@@ -46,7 +46,7 @@ function ActionBtn({
   return (
     <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 5 }}>
       <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(0,0,0,0.38)', alignItems: 'center', justifyContent: 'center' }}>
-        <Icon size={21} color={active ? '#ef4444' : color} fill={active ? '#ef4444' : 'transparent'} />
+        <Icon size={21} color={active ? Palette.danger : color} fill={active ? Palette.danger : 'transparent'} />
       </View>
       {caption ? (
         <Text style={{ fontFamily: Font.medium, fontSize: 11, color: 'rgba(255,255,255,0.88)', textShadowColor: 'rgba(0,0,0,0.55)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 3 }}>

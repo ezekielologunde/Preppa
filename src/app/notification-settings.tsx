@@ -68,7 +68,7 @@ export default function NotificationSettingsScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 100 }}>
 
           <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240 }}>
-          <View style={{ backgroundColor: '#11151C', borderRadius: Radius.lg, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+          <View style={{ backgroundColor: INK, borderRadius: Radius.lg, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
             <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: ORANGE + '22', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
               <Bell size={15} color={ORANGE} />
             </View>
