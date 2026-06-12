@@ -54,6 +54,9 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <View style={{ flex: 1, height: 60, justifyContent: 'flex-end', alignItems: 'center' }}>
+      {value > 0 ? (
+        <Text style={{ fontFamily: Font.medium, fontSize: 9, color, marginBottom: 2, fontVariant: ['tabular-nums'] }}>{value}</Text>
+      ) : null}
       <View style={{ width: 20, backgroundColor: color + '20', borderRadius: 6, overflow: 'hidden', height: 48 }}>
         <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: `${pct}%`, backgroundColor: color, borderRadius: 6 }} />
       </View>
@@ -74,6 +77,7 @@ export default function PrepperAnalyticsScreen() {
   const { data: orders } = useMyOrders(user?.id);
   const completed = (orders ?? []).filter((o) => o.status === 'completed');
 
+  const todayIdx = new Date().getDay();
   const dayBars = buildDayBars(completed);
   const slotBars = buildSlotBars(completed);
   const topDish = computeTopDish(completed);
@@ -125,12 +129,15 @@ export default function PrepperAnalyticsScreen() {
           <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16 }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK, marginBottom: 14 }}>orders by day of week</Text>
             <View style={{ flexDirection: 'row', gap: 4, alignItems: 'flex-end', height: 68 }}>
-              {dayBars.map(({ day, count }) => (
-                <View key={day} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
-                  <Bar value={count} max={maxDay} color={ORANGE} />
-                  <Text style={{ fontFamily: Font.medium, fontSize: 10, color: Palette.textMuted }}>{day}</Text>
-                </View>
-              ))}
+              {dayBars.map(({ day, count }, i) => {
+                const isToday = i === todayIdx;
+                return (
+                  <View key={day} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
+                    <Bar value={count} max={maxDay} color={isToday ? ORANGE : Palette.divider} />
+                    <Text style={{ fontFamily: Font.medium, fontSize: 10, color: isToday ? ORANGE : Palette.textMuted }}>{day}</Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
           </MotiView>
