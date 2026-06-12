@@ -58,8 +58,8 @@ export default function RewardsScreen() {
   async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/'); }
   }
 
   return (
@@ -76,7 +76,7 @@ export default function RewardsScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Gift size={28} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to start earning points on every order.</Text>
-            <PressableScale onPress={() => router.push('/auth?mode=signin')} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>

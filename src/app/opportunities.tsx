@@ -110,8 +110,8 @@ export default function OpportunitiesScreen() {
   async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/dashboard');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/dashboard'); }
   }
 
   const Header = (
