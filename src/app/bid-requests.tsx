@@ -163,7 +163,7 @@ export default function BidRequestsScreen() {
 
         {/* Post request modal */}
         <Modal visible={showPost} transparent animationType="slide" onRequestClose={() => setShowPost(false)}>
-          <Pressable onPress={() => setShowPost(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.5)', justifyContent: 'flex-end' }}>
+          <Pressable onPress={() => setShowPost(false)} style={{ flex: 1, backgroundColor: Palette.overlay, justifyContent: 'flex-end' }}>
             <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5 }}>post a meal request</Text>
               <TextInput value={reqTitle} onChangeText={setReqTitle} placeholder="What do you need? (e.g. Jerk chicken meal prep)" placeholderTextColor={Palette.textMuted}
@@ -186,7 +186,7 @@ export default function BidRequestsScreen() {
 
         {/* Bid modal */}
         <Modal visible={!!bidTarget} transparent animationType="slide" onRequestClose={() => setBidTarget(null)}>
-          <Pressable onPress={() => setBidTarget(null)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.5)', justifyContent: 'flex-end' }}>
+          <Pressable onPress={() => setBidTarget(null)} style={{ flex: 1, backgroundColor: Palette.overlay, justifyContent: 'flex-end' }}>
             <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, padding: 24, gap: 14 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, flex: 1 }} numberOfLines={1}>{bidTarget?.title}</Text>

@@ -50,7 +50,7 @@ export function StripeEmbeddedSheet({ clientSecret, pk, onClose }: { clientSecre
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.6)', justifyContent: 'flex-end' }}>
+      <View style={{ flex: 1, backgroundColor: Palette.overlay, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 26, borderTopRightRadius: 26, maxHeight: '92%', alignSelf: 'center', width: '100%', maxWidth: 520, overflow: 'hidden' }}>
           {/* Sheet header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 14, gap: 9, borderBottomWidth: 1, borderBottomColor: Palette.chip }}>

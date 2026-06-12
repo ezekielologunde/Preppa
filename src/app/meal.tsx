@@ -347,7 +347,7 @@ export default function MealScreen() {
 
       {/* Switching kitchens — one prepper per cart */}
       <Modal visible={switchPrompt} transparent animationType="fade" onRequestClose={() => setSwitchPrompt(false)}>
-        <Pressable onPress={() => setSwitchPrompt(false)} style={{ flex: 1, backgroundColor: 'rgba(17,24,39,0.5)', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+        <Pressable onPress={() => setSwitchPrompt(false)} style={{ flex: 1, backgroundColor: Palette.overlay, alignItems: 'center', justifyContent: 'center', padding: 28 }}>
           <Pressable onPress={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 360, backgroundColor: Palette.surface, borderRadius: 22, padding: 22, gap: 10 }}>
             <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
               <ShoppingBag size={22} color={ORANGE} />

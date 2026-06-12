@@ -97,6 +97,9 @@ export const Palette = {
   // Prepper (dark) app — intentionally an operations tool
   prepperBg: '#0C0E13',
   prepperCard: '#13161D',
+
+  // Modal and sheet backdrop
+  overlay: 'rgba(17,24,39,0.55)',
 } as const;
 
 export type PaletteToken = keyof typeof Palette;
