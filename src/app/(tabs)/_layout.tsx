@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Clapperboard, Compass, House, Ticket, User } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { Text, View } from 'react-native';
+import { Platform, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -26,6 +26,8 @@ type TabBarProps = {
 function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   const { data: flags } = useFeatureFlags();
+  const { width } = useWindowDimensions();
+  const showLabels = Platform.OS === 'web' && width >= 1024;
 
   const visibleTabs = TABS.filter((t) => !('flag' in t) || flags?.[t.flag] !== false);
 
@@ -38,8 +40,8 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
         bottom: 0,
         flexDirection: 'row',
         backgroundColor: Palette.surface,
-        paddingTop: 8,
-        paddingBottom: Math.max(insets.bottom, 12),
+        paddingTop: showLabels ? 8 : 6,
+        paddingBottom: Math.max(insets.bottom, showLabels ? 12 : 10),
         borderTopLeftRadius: 26,
         borderTopRightRadius: 26,
         ...Shadow.navBar,
@@ -56,9 +58,9 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
             accessibilityRole="button"
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}
-            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: TouchTarget, gap: 3, paddingTop: 4 }}>
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: TouchTarget, gap: showLabels ? 3 : 0, paddingTop: showLabels ? 4 : 0 }}>
 
-            <View style={{ alignItems: 'center', justifyContent: 'center', width: 52, height: 32 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', width: showLabels ? 52 : 44, height: showLabels ? 32 : 44 }}>
               <MotiView
                 animate={{ opacity: focused ? 1 : 0, scale: focused ? 1 : 0.5 }}
                 transition={{ type: 'spring', damping: 20, stiffness: 300 }}
@@ -66,16 +68,18 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
                   position: 'absolute',
                   width: '100%',
                   height: '100%',
-                  borderRadius: 16,
+                  borderRadius: showLabels ? 16 : 22,
                   backgroundColor: Palette.brandTint,
                 }}
               />
               <tab.Icon size={22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
             </View>
 
-            <Text style={{ fontFamily: focused ? Font.semibold : Font.medium, fontSize: 11, color, letterSpacing: focused ? 0 : 0.1 }}>
-              {tab.label}
-            </Text>
+            {showLabels && (
+              <Text style={{ fontFamily: focused ? Font.semibold : Font.medium, fontSize: 11, color, letterSpacing: focused ? 0 : 0.1 }}>
+                {tab.label}
+              </Text>
+            )}
           </PressableScale>
         );
       })}
