@@ -26,7 +26,7 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 import { Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Polyline } from 'react-native-svg';
 
 import { PrepperBadgeShelf } from '@/components/badge-shelf';
@@ -123,6 +123,7 @@ function StatCard({ Icon, value, label, trend, color, spark, onPress, flex }: { 
 export default function DashboardScreen() {
   const router = useRouter();
   const desktop = useBreakpoint() === 'desktop';
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { data: prepper, refetch: refetchPrepper } = useMyPrepperApplication(user?.id);
   const { data: prepperProfile } = usePrepperProfile(prepper?.id);
@@ -259,7 +260,7 @@ export default function DashboardScreen() {
 
           {/* Stat cards — KPI row on desktop, 2x2 grid on mobile */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 140 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 16, marginBottom: 4, letterSpacing: -0.3 }}>your stats</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 16, marginBottom: 8, letterSpacing: -0.3 }}>your stats</Text>
           {desktop ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
               <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
@@ -310,7 +311,7 @@ export default function DashboardScreen() {
 
           {/* Badges earned */}
           {prepperBadges && prepperBadges.length > 0 ? (
-            <View style={{ paddingHorizontal: 20, marginBottom: 8 }}>
+            <View style={{ paddingHorizontal: 20, marginTop: 8, marginBottom: 8 }}>
               <PrepperBadgeShelf badges={prepperBadges} />
             </View>
           ) : null}
@@ -337,7 +338,7 @@ export default function DashboardScreen() {
         </ScrollView>
 
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
-        <View style={[{ position: 'absolute', left: 16, right: 16, bottom: 78, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
+        <View style={[{ position: 'absolute', left: 16, right: 16, bottom: Math.max(insets.bottom, 16) + 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
           <ActionItem Icon={TrendingUp} label="earnings" color={Palette.inkSoft} onPress={() => router.push('/earnings')} />
           <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/post-video')} />
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => { feedback.tap(); router.push('/meal-editor'); }}>
@@ -350,7 +351,7 @@ export default function DashboardScreen() {
         </View>
 
         {/* Prepper tab nav (dark) */}
-        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: 22, borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
+        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: Math.max(insets.bottom, 16), borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
           <NavTab Icon={Home} label="home" onPress={() => router.push('/')} />
           <NavTab Icon={ShoppingBag} label="orders" badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
           <NavTab Icon={ChefHat} label="kitchen" active />
