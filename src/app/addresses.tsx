@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { MapPin, Pencil, Plus, Trash2, X } from 'lucide-react-native';
+import { ChevronLeft, MapPin, Pencil, Plus, Trash2 } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
@@ -258,28 +258,28 @@ export default function AddressesScreen() {
             alignItems: 'center',
             paddingHorizontal: Spacing.three,
             paddingVertical: Spacing.two,
-            gap: Spacing.two,
+            gap: 12,
           }}>
           <PressableScale
             onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/profile'); } }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 22,
+              width: 40,
+              height: 40,
+              borderRadius: 20,
               backgroundColor: Palette.surface,
               alignItems: 'center',
               justifyContent: 'center',
-              ...Shadow.card,
             }}>
-            <X size={18} color={Palette.ink} />
+            <ChevronLeft size={22} color={Palette.ink} />
           </PressableScale>
           <Text
             style={{
               flex: 1,
-              fontFamily: Font.heading,
-              fontSize: Type.title,
+              fontFamily: Font.display,
+              fontSize: 22,
+              letterSpacing: -0.5,
               color: Palette.ink,
             }}>
             addresses
