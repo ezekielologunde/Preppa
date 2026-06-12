@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Check,
   Crown,
-  Flame,
   Gift,
   Home,
   MessageSquare,
@@ -169,10 +168,7 @@ export default function DashboardScreen() {
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef 👋</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 27, color: INK, letterSpacing: -0.8 }}>my kitchen</Text>
-                <Flame size={20} color={ORANGE} fill={ORANGE} />
-              </View>
+              <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.6 }}>my kitchen</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
                 <PressableScale
                   onPress={() => {
@@ -312,36 +308,27 @@ export default function DashboardScreen() {
 
           </MotiView>
 
-          {/* Goal + streak — shown right after orders, before next-order card */}
+          {/* Goal + this week — single combined card */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 240 }}>
-          <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: 16, marginBottom: 4 }}>
-            <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 20, padding: 14, gap: 10 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 13, color: INK }}>today&apos;s goal</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 64, height: 64 }}>
-                  <Ring pct={goalPct} color={ORANGE} size={64} stroke={7} />
-                  <View style={{ position: 'absolute', alignItems: 'center' }}>
-                    <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK }}>{goalPct}%</Text>
-                  </View>
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 18, color: INK, fontVariant: ['tabular-nums'] }}>{money(revenue)}</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: MUTED }}>of $2k goal</Text>
-                </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginHorizontal: 20, marginTop: 16, marginBottom: 4, backgroundColor: CARD, borderRadius: 20, padding: 16 }}>
+            <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, flexShrink: 0 }}>
+              <Ring pct={goalPct} color={ORANGE} size={64} stroke={7} />
+              <View style={{ position: 'absolute', alignItems: 'center' }}>
+                <Text style={{ fontFamily: Font.display, fontSize: 14, color: INK }}>{goalPct}%</Text>
               </View>
             </View>
-
-            <View style={{ flex: 1, backgroundColor: ORANGE, borderRadius: 20, padding: 14, gap: 8 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                <Flame size={14} color="#fff" fill="#fff" />
-                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>you&apos;re on fire!</Text>
-              </View>
-              <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.5 }}>{Math.min(list.length, 30)}</Text>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: 'rgba(255,255,255,0.9)' }}>orders this week</Text>
-              <View style={{ flexDirection: 'row', gap: 4 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED }}>today's goal</Text>
+              <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4, fontVariant: ['tabular-nums'] }}>{money(revenue)}</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: MUTED }}>of $2k</Text>
+            </View>
+            <View style={{ alignItems: 'center', paddingLeft: 16, borderLeftWidth: 1, borderLeftColor: Palette.chip }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 24, color: ORANGE, letterSpacing: -0.5, fontVariant: ['tabular-nums'] }}>{Math.min(list.length, 30)}</Text>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: MUTED, marginBottom: 6 }}>this week</Text>
+              <View style={{ flexDirection: 'row', gap: 3 }}>
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                  <View key={i} style={{ flex: 1, height: 20, borderRadius: 4, backgroundColor: i < 5 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: i < 5 ? ORANGE : '#fff' }}>{d}</Text>
+                  <View key={i} style={{ width: 18, height: 18, borderRadius: 4, backgroundColor: i < 5 ? ORANGE + '22' : Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: i < 5 ? ORANGE : MUTED }}>{d}</Text>
                   </View>
                 ))}
               </View>
