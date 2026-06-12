@@ -121,21 +121,6 @@ function StatCard({ Icon, value, label, trend, color, spark, onPress }: { Icon: 
   );
 }
 
-function QuickAction({ Icon, label, color, badge, onPress }: { Icon: LucideIcon; label: string; color: string; badge?: number; onPress?: () => void }) {
-  return (
-    <PressableScale onPress={onPress ? () => { feedback.tap(); onPress(); } : undefined} accessibilityRole="button" accessibilityLabel={label} style={{ alignItems: 'center', gap: 8, width: 72 }}>
-      <View style={{ width: 58, height: 58, borderRadius: 29, borderWidth: 1.5, borderColor: color + '4D', backgroundColor: color + '14', alignItems: 'center', justifyContent: 'center' }}>
-        <Icon size={23} color={color} />
-        {badge ? (
-          <View style={{ position: 'absolute', top: -3, right: -3, minWidth: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{badge}</Text>
-          </View>
-        ) : null}
-      </View>
-      <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.textMuted }}>{label}</Text>
-    </PressableScale>
-  );
-}
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -329,61 +314,68 @@ export default function DashboardScreen() {
 
           </MotiView>
 
-          {/* Today at a glance */}
+          {/* Goal + streak — shown right after orders, before next-order card */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 240 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginTop: 26, marginBottom: 14 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5 }}>at a glance</Text>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="View all orders">
-              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: ORANGE }}>view all</Text>
-            </PressableScale>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16 }}>
-            <QuickAction Icon={ShoppingBag} label="orders" color={ORANGE} badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
-            <QuickAction Icon={UtensilsCrossed} label="menu" color={GREEN} onPress={() => router.push('/meal-editor')} />
-            <QuickAction Icon={Boxes} label="inventory" color={BLUE} onPress={() => router.push('/meal-editor')} />
-            <QuickAction Icon={DollarSign} label="earnings" color={GREEN} onPress={() => router.push('/earnings')} />
-            <QuickAction Icon={Users} label="customers" color={PURPLE} onPress={() => router.push('/customers')} />
-            <QuickAction Icon={TrendingUp} label="insights" color={BLUE} onPress={() => router.push('/prepper-hub')} />
-            <QuickAction Icon={Briefcase} label="requests" color={PINK} onPress={() => router.push('/bid-requests')} />
-          </ScrollView>
-          </MotiView>
-          </View>
-
-          {/* Goal + streak */}
-          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 300 }}>
-          <View style={desktop ? { flex: 2 } : undefined}>
-          <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: desktop ? 0 : 22 }}>
-            <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 12 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: INK }}>today&apos;s goal</Text>
-              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <Ring pct={goalPct} color={ORANGE} />
-                <View style={{ position: 'absolute', alignItems: 'center' }}>
-                  <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK }}>{goalPct}%</Text>
+          <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20, marginTop: 16, marginBottom: 4 }}>
+            <View style={{ flex: 1, backgroundColor: CARD, borderRadius: 20, padding: 14, gap: 10 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13, color: INK }}>today&apos;s goal</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 64, height: 64 }}>
+                  <Ring pct={goalPct} color={ORANGE} size={64} stroke={7} />
+                  <View style={{ position: 'absolute', alignItems: 'center' }}>
+                    <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK }}>{goalPct}%</Text>
+                  </View>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 18, color: INK, fontVariant: ['tabular-nums'] }}>{money(revenue)}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: MUTED }}>of $2k goal</Text>
                 </View>
               </View>
-              <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, textAlign: 'center' }}>{money(revenue)} of $2k goal</Text>
             </View>
 
-            <View style={{ flex: 1, backgroundColor: ORANGE, borderRadius: 22, padding: 16, justifyContent: 'space-between' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Flame size={15} color="#fff" fill="#fff" />
-                <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#fff' }}>you&apos;re on fire!</Text>
+            <View style={{ flex: 1, backgroundColor: ORANGE, borderRadius: 20, padding: 14, gap: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <Flame size={14} color="#fff" fill="#fff" />
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>you&apos;re on fire!</Text>
               </View>
-              <View>
-                <Text style={{ fontFamily: Font.display, fontSize: 30, color: '#fff', letterSpacing: -0.5 }}>{Math.min(list.length, 30)}</Text>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: 'rgba(255,255,255,0.9)' }}>orders this week</Text>
-              </View>
-              <View style={{ flexDirection: 'row', gap: 5, marginTop: 6 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.5 }}>{Math.min(list.length, 30)}</Text>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: 'rgba(255,255,255,0.9)' }}>orders this week</Text>
+              <View style={{ flexDirection: 'row', gap: 4 }}>
                 {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                  <View key={i} style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: i < 5 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.28)', alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: i < 5 ? ORANGE : '#fff' }}>{d}</Text>
+                  <View key={i} style={{ flex: 1, height: 20, borderRadius: 4, backgroundColor: i < 5 ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: i < 5 ? ORANGE : '#fff' }}>{d}</Text>
                   </View>
                 ))}
               </View>
             </View>
           </View>
+          </MotiView>
+
+          {/* At a glance — 4-item visible grid (no scroll) */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 280 }}>
+          <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginTop: 20, gap: 10 }}>
+            {[
+              { Icon: ShoppingBag, label: 'orders', color: ORANGE, badge: newCount || undefined, route: '/prepper-orders' },
+              { Icon: UtensilsCrossed, label: 'menu', color: GREEN, route: '/meal-editor' },
+              { Icon: DollarSign, label: 'earnings', color: GREEN, route: '/earnings' },
+              { Icon: TrendingUp, label: 'insights', color: BLUE, route: '/prepper-hub' },
+            ].map(({ Icon, label, color, badge, route }) => (
+              <PressableScale key={label} onPress={() => { feedback.tap(); router.push(route as never); }} accessibilityRole="button" accessibilityLabel={label}
+                style={{ flex: 1, backgroundColor: CARD, borderRadius: 16, paddingVertical: 14, alignItems: 'center', gap: 7 }}>
+                <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: color + '1E', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon size={18} color={color} />
+                  {badge ? (
+                    <View style={{ position: 'absolute', top: -3, right: -3, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>{badge}</Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={{ fontFamily: Font.medium, fontSize: 11, color: MUTED }}>{label}</Text>
+              </PressableScale>
+            ))}
           </View>
           </MotiView>
+          </View>
           </View>
         </ScrollView>
 
