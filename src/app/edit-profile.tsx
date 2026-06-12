@@ -124,12 +124,12 @@ export default function EditProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14, backgroundColor: Palette.ink, gap: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 14, backgroundColor: Palette.surface, gap: 12 }}>
           <PressableScale onPress={() => { feedback.tap(); router.back(); }} accessibilityRole="button" accessibilityLabel="Go back"
             style={{ width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' }}>
-            <ArrowLeft size={22} color="#fff" />
+            <ArrowLeft size={22} color={Palette.ink} />
           </PressableScale>
-          <Text style={{ flex: 1, fontFamily: Font.heading, fontSize: 18, color: '#fff', letterSpacing: -0.3 }}>edit profile</Text>
+          <Text style={{ flex: 1, fontFamily: Font.heading, fontSize: 18, color: Palette.ink, letterSpacing: -0.3 }}>edit profile</Text>
           {saved ? (
             <MotiView from={{ scale: 0.82, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 18 }}
               style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.success, alignItems: 'center', justifyContent: 'center' }}>

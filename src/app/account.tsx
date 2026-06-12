@@ -87,7 +87,7 @@ export default function AccountScreen() {
             alignItems: 'center',
             paddingHorizontal: 20,
             paddingVertical: 14,
-            backgroundColor: Palette.ink,
+            backgroundColor: Palette.surface,
             gap: 12,
           }}>
           <PressableScale
@@ -101,13 +101,13 @@ export default function AccountScreen() {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <ArrowLeft size={22} color="#fff" />
+            <ArrowLeft size={22} color={Palette.ink} />
           </PressableScale>
           <Text
             style={{
               fontFamily: Font.heading,
               fontSize: 18,
-              color: '#fff',
+              color: Palette.ink,
               letterSpacing: -0.3,
             }}>
             account
