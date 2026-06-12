@@ -43,7 +43,7 @@ function CustomPlanCard({ plan, onUpdate, busy }: { plan: CustomMealPlan; onUpda
             {mealCount} {mealCount === 1 ? 'meal' : 'meals'} · {plan.frequency} · {DAY_LABEL[plan.delivery_day as DeliveryDay] ?? plan.delivery_day}
           </Text>
         </View>
-        <View style={{ backgroundColor: plan.status === 'active' ? '#DCFCE7' : '#FEF3C7', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+        <View style={{ backgroundColor: plan.status === 'active' ? Palette.success + '1A' : Palette.amber + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: plan.status === 'active' ? Palette.success : '#b45309', textTransform: 'capitalize' }}>{plan.status}</Text>
         </View>
       </View>
@@ -209,7 +209,7 @@ export default function MealPlansScreen() {
                           {s.delivery_day ? ` · ${DAY_LABEL[s.delivery_day]}` : ''}
                         </Text>
                       </View>
-                      <View style={{ backgroundColor: s.status === 'active' ? '#DCFCE7' : '#FEF3C7', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+                      <View style={{ backgroundColor: s.status === 'active' ? Palette.success + '1A' : Palette.amber + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                         <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: s.status === 'active' ? Palette.success : '#b45309', textTransform: 'capitalize' }}>{s.status}</Text>
                       </View>
                     </View>
