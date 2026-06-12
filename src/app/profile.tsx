@@ -178,27 +178,19 @@ export default function ProfileScreen() {
   const onQuick = (label: string) => {
     if (label === 'recently viewed') { feedback.tap(); return go('/explore'); }
     if (label === 'following') { feedback.tap(); return go('/explore'); }
+    if (label === 'referrals') { feedback.tap(); return go('/referral'); }
     return soon(label.replace(/\b\w/, (c) => c.toUpperCase()));
   };
   const onHub = (h: HubItem) => {
     if (h.accent) { feedback.tap(); return go('/dashboard'); }
     if (h.route) { feedback.tap(); return go(h.route); }
-    if (h.label === 'notifications') { feedback.tap(); return go('/messages'); }
+    if (h.label === 'notifications') { feedback.tap(); return go('/notifications'); }
     if (h.label === 'help center') {
       feedback.tap();
       Linking.openURL('mailto:support@preppa.live?subject=Preppa%20support').catch(() => soon('Help center'));
       return;
     }
-    if (h.label === 'invite friends') {
-      feedback.success();
-      try {
-        (navigator as unknown as { clipboard?: { writeText?: (s: string) => void } })?.clipboard?.writeText?.('https://app.preppa.live');
-      } catch {
-        /* clipboard unavailable */
-      }
-      flash('Invite link copied — share it with friends!');
-      return;
-    }
+    if (h.label === 'invite friends') { feedback.tap(); return go('/referral'); }
     return soon(h.label.replace(/\b\w/g, (c) => c.toUpperCase()));
   };
 
@@ -211,7 +203,7 @@ export default function ProfileScreen() {
             <PressableScale onPress={() => { feedback.tap(); router.push('/settings'); }} accessibilityRole="button" accessibilityLabel="Settings" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Settings size={19} color={Palette.ink} />
             </PressableScale>
-            <PressableScale onPress={() => { feedback.tap(); go('/messages'); }} accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); go('/notifications'); }} accessibilityRole="button" accessibilityLabel="Notifications" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={19} color={Palette.ink} />
             </PressableScale>
           </View>

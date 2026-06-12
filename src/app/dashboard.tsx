@@ -30,6 +30,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle, Polyline } from 'react-native-svg';
 
 import { PrepperBadgeShelf } from '@/components/badge-shelf';
+import { ProfileHealthCard } from '@/components/profile-health-card';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
@@ -39,7 +40,7 @@ import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
 import { usePrepperMembership } from '@/lib/queries/memberships';
 import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
-import { useMyPrepperApplication, usePrepperBadges, useToggleAvailability } from '@/lib/queries/preppers';
+import { useMyPrepperApplication, usePrepperBadges, usePrepperProfile, useToggleAvailability } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -139,6 +140,7 @@ export default function DashboardScreen() {
   const desktop = useBreakpoint() === 'desktop';
   const { user } = useAuth();
   const { data: prepper, refetch: refetchPrepper } = useMyPrepperApplication(user?.id);
+  const { data: prepperProfile } = usePrepperProfile(prepper?.id);
   const { data: prepperMembership, refetch: refetchMembership } = usePrepperMembership(prepper?.id);
   const isPro = prepperMembership?.isPro === true;
   const { data: prepperBadges, refetch: refetchBadges } = usePrepperBadges(prepper?.id);
@@ -257,6 +259,13 @@ export default function DashboardScreen() {
                 </View>
                 <ChevronRight size={16} color={ORANGE} />
               </PressableScale>
+            </MotiView>
+          ) : null}
+
+          {/* Profile health score */}
+          {prepperProfile ? (
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 200 }}>
+              <ProfileHealthCard profile={prepperProfile} />
             </MotiView>
           ) : null}
 
