@@ -213,7 +213,7 @@ export default function ExperiencesScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 30, marginBottom: 14 }}>featured experiences</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
             {featuredExperiences.map((e) => (
-              <ExperienceCard key={e.id} exp={e} onPress={() => router.push(`/experience-request?kind=${e.type}`)} />
+              <ExperienceCard key={e.id} exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
             ))}
           </ScrollView>
 
