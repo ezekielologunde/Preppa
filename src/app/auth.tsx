@@ -250,11 +250,11 @@ export default function AuthScreen() {
               {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{mode === 'signup' ? 'Create account' : 'Sign in'}</Text>}
             </PressableScale>
 
-            <Pressable onPress={sendOtp} disabled={busy} style={{ alignItems: 'center', paddingVertical: 10 }}>
+            <PressableScale onPress={sendOtp} disabled={busy} accessibilityRole="button" accessibilityLabel="Email me a sign-in code instead" style={{ alignItems: 'center', paddingVertical: 10 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.textSecondary }}>
                 Email me a sign-in code <Text style={{ fontFamily: Font.heading, color: ORANGE }}>instead</Text>
               </Text>
-            </Pressable>
+            </PressableScale>
           </MotiView>
         ) : (
           <MotiView
@@ -267,7 +267,7 @@ export default function AuthScreen() {
               ref={codeRef}
               style={[input, { textAlign: 'center', fontSize: 30, letterSpacing: 14, fontFamily: Font.display, height: 64 }]}
               placeholder="••••••"
-              placeholderTextColor="#d1d5db"
+              placeholderTextColor={Palette.textMuted}
               keyboardType="number-pad"
               autoComplete="one-time-code"
               textContentType="oneTimeCode"
