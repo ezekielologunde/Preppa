@@ -147,6 +147,19 @@ export default function SpecialsScreen() {
           </PressableScale>
           </MotiView>
 
+          {/* Holiday specials CTA */}
+          <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 40 }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push('/holiday-specials'); }} accessibilityRole="button" accessibilityLabel="Holiday specials"
+            style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: ORANGE + '30' }}>
+            <Gift size={17} color={ORANGE} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 14, color: Palette.ink }}>holiday & cultural specials</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 1 }}>Eid, Juneteenth, Father's Day meals & more</Text>
+            </View>
+            <ChevronRight size={15} color={Palette.textMuted} />
+          </PressableScale>
+          </MotiView>
+
           {/* Rush hour */}
           <RushHourCard />
 

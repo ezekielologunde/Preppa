@@ -352,6 +352,7 @@ export default function SettingsScreen() {
 
           {/* NOTIFICATIONS */}
           <Section title="notifications" delay={60}>
+            <Row Icon={Bell} label="notification preferences" right={{ type: 'chevron' }} onPress={() => go('/notification-settings')} />
             <Row Icon={Bell} label="push notifications" right={{ type: 'toggle', value: pushEnabled, onToggle: () => setPushEnabled((v) => !v) }} onPress={() => setPushEnabled((v) => !v)} />
             <Row Icon={Mail} label="email digest" right={{ type: 'toggle', value: emailDigest, onToggle: () => setEmailDigest((v) => !v) }} onPress={() => setEmailDigest((v) => !v)} />
             <Row Icon={Zap} label="order updates" right={{ type: 'toggle', value: orderUpdates, onToggle: () => setOrderUpdates((v) => !v) }} onPress={() => setOrderUpdates((v) => !v)} />
