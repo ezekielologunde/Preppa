@@ -159,6 +159,18 @@ export default function SearchScreen() {
           </PressableScale>
         </ScrollView>
 
+        {/* Results count — visible when query is active and data has loaded */}
+        {active && !loading && ((sortedResults?.length ?? 0) > 0 || (preppers?.length ?? 0) > 0) ? (
+          <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 200 }}>
+            <Text style={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: 2, fontFamily: Font.medium, fontSize: 12, color: Palette.textMuted }}>
+              {[
+                (sortedResults?.length ?? 0) > 0 ? `${sortedResults!.length} meal${sortedResults!.length !== 1 ? 's' : ''}` : null,
+                (preppers?.length ?? 0) > 0 ? `${preppers!.length} kitchen${preppers!.length !== 1 ? 's' : ''}` : null,
+              ].filter(Boolean).join(' · ')}
+            </Text>
+          </MotiView>
+        ) : null}
+
         {/* Results */}
         {!active ? (
           <MotiView
