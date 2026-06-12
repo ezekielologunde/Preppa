@@ -258,7 +258,7 @@ export default function CartScreen() {
                   <View style={{ alignItems: 'center', gap: 8 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: Palette.canvas, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 4 }}>
                       <PressableScale onPress={() => { feedback.tap(); updateItem.mutate({ itemId: it.id, quantity: it.quantity - 1 }); }} accessibilityRole="button" accessibilityLabel="Decrease quantity" hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-                        {it.quantity <= 1 ? <Trash2 size={14} color="#ef4444" /> : <Minus size={14} color={INK} />}
+                        {it.quantity <= 1 ? <Trash2 size={14} color={Palette.danger} /> : <Minus size={14} color={INK} />}
                       </PressableScale>
                       <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, minWidth: 18, textAlign: 'center', fontVariant: ['tabular-nums'] }}>{it.quantity}</Text>
                       <PressableScale onPress={() => { feedback.tap(); updateItem.mutate({ itemId: it.id, quantity: it.quantity + 1 }); }} accessibilityRole="button" accessibilityLabel="Increase quantity" hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
@@ -305,7 +305,7 @@ export default function CartScreen() {
                 accessibilityRole="button"
                 accessibilityState={{ selected: method === 'in_home' }}
                 accessibilityLabel="Cooked in my kitchen — a prepper visits your home"
-                style={{ backgroundColor: method === 'in_home' ? '#11151C' : Palette.surface, borderWidth: 1.5, borderColor: method === 'in_home' ? '#11151C' : Palette.border, borderRadius: Radius.md, paddingHorizontal: 16, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                style={{ backgroundColor: method === 'in_home' ? INK : Palette.surface, borderWidth: 1.5, borderColor: method === 'in_home' ? INK : Palette.border, borderRadius: Radius.md, paddingHorizontal: 16, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                 {method === 'in_home' ? (
                   <View style={{ position: 'absolute', top: 10, right: 12, width: 18, height: 18, borderRadius: 9, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                     <Check size={11} color="#fff" strokeWidth={3.5} />
