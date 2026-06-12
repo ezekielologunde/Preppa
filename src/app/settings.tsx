@@ -7,6 +7,8 @@ import {
   CreditCard,
   Eye,
   Fingerprint,
+  Flame,
+  Gift,
   Globe,
   HelpCircle,
   Info,
@@ -240,7 +242,9 @@ export default function SettingsScreen() {
   const [emailDigest, setEmailDigest] = useState(false);
   const [orderUpdates, setOrderUpdates] = useState(true);
   const [nearbyPreppers, setNearbyPreppers] = useState(true);
-  const [marketing, setMarketing] = useState(false);
+  const [rushAlerts, setRushAlerts] = useState(false);
+  const [weeklyPicks, setWeeklyPicks] = useState(false);
+  const [holidaySpecials, setHolidaySpecials] = useState(false);
 
   // privacy toggles
   const [activityStatus, setActivityStatus] = useState(true);
@@ -352,7 +356,9 @@ export default function SettingsScreen() {
             <Row Icon={Mail} label="email digest" right={{ type: 'toggle', value: emailDigest, onToggle: () => setEmailDigest((v) => !v) }} onPress={() => setEmailDigest((v) => !v)} />
             <Row Icon={Zap} label="order updates" right={{ type: 'toggle', value: orderUpdates, onToggle: () => setOrderUpdates((v) => !v) }} onPress={() => setOrderUpdates((v) => !v)} />
             <Row Icon={MapPin} label="new preppers nearby" right={{ type: 'toggle', value: nearbyPreppers, onToggle: () => setNearbyPreppers((v) => !v) }} onPress={() => setNearbyPreppers((v) => !v)} />
-            <Row Icon={TrendingUp} label="marketing" right={{ type: 'toggle', value: marketing, onToggle: () => setMarketing((v) => !v) }} onPress={() => setMarketing((v) => !v)} isLast />
+            <Row Icon={Flame} label="rush hour alerts" right={{ type: 'toggle', value: rushAlerts, onToggle: () => setRushAlerts((v) => !v) }} onPress={() => setRushAlerts((v) => !v)} />
+            <Row Icon={TrendingUp} label="weekly picks" right={{ type: 'toggle', value: weeklyPicks, onToggle: () => setWeeklyPicks((v) => !v) }} onPress={() => setWeeklyPicks((v) => !v)} />
+            <Row Icon={Gift} label="holiday specials" right={{ type: 'toggle', value: holidaySpecials, onToggle: () => setHolidaySpecials((v) => !v) }} onPress={() => setHolidaySpecials((v) => !v)} isLast />
           </Section>
 
           {/* PRIVACY */}

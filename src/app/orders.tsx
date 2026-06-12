@@ -318,6 +318,31 @@ export default function OrdersScreen() {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
+            {/* Order stats summary */}
+            {(() => {
+              const done = orders.filter((o) => o.status === 'completed');
+              if (!done.length) return null;
+              const spent = done.reduce((s, o) => s + o.total, 0);
+              const freqs: Record<string, number> = {};
+              done.forEach((o) => { freqs[o.prepper] = (freqs[o.prepper] ?? 0) + 1; });
+              const fav = Object.entries(freqs).sort((a, b) => b[1] - a[1])[0]?.[0];
+              const stats = [
+                { label: 'completed', value: done.length.toString() },
+                { label: 'total spent', value: `$${spent.toFixed(0)}` },
+                ...(fav ? [{ label: 'top kitchen', value: fav.split(' ')[0] }] : []),
+              ];
+              return (
+                <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}
+                  style={{ flexDirection: 'row', gap: 8, marginBottom: 4 }}>
+                  {stats.map(({ label, value }) => (
+                    <View key={label} style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 2 }}>
+                      <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, fontVariant: ['tabular-nums'] }}>{value}</Text>
+                      <Text style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, textAlign: 'center' }}>{label}</Text>
+                    </View>
+                  ))}
+                </MotiView>
+              );
+            })()}
             {orders.map((o, i) => (
               <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 50 }}>
                 <OrderCard
