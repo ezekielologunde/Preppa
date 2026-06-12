@@ -69,8 +69,8 @@ const GOALS: { label: string; tag: string; Icon: LucideIcon; color: string }[] =
 
 function SectionHeader({ title, onSeeAll }: { title: string; onSeeAll?: () => void }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 14 }}>
-      <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5 }}>{title}</Text>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, marginBottom: 10 }}>
+      <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4 }}>{title}</Text>
       {onSeeAll ? (
         <PressableScale onPress={() => { feedback.tap(); onSeeAll!(); }} accessibilityRole="button" accessibilityLabel={`See all ${title}`}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: ORANGE }}>see all</Text>
@@ -129,7 +129,7 @@ export default function ExploreScreen() {
             onPress={() => { feedback.tap(); router.push('/search'); }}
             accessibilityRole="search"
             accessibilityLabel="Search meals, cuisines, or preppers"
-            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 16, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 54, gap: 10 }}>
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 12, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 48, gap: 10 }}>
             <Search size={20} color={MUTED} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 15, color: MUTED }}>search meals, cuisines, or preppers</Text>
             <Scan size={20} color={ORANGE} />
@@ -176,12 +176,12 @@ export default function ExploreScreen() {
             });
             return bp !== 'mobile'
               ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingVertical: 20 }}>{items}</View>
-              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 20 }}>{items}</ScrollView>;
+              : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 16, paddingVertical: 14 }}>{items}</ScrollView>;
           })()}
 
           {/* Cuisines */}
           <SectionHeader title="cuisines" onSeeAll={() => { feedback.tap(); router.push('/cuisine-explorer'); }} />
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 26 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 20 }}>
             {cuisines.map((c) => (
               <CuisineCard key={c.id} cuisine={c} onPress={() => router.push(`/search?q=${encodeURIComponent(c.name)}`)} />
             ))}
@@ -192,7 +192,7 @@ export default function ExploreScreen() {
             <>
               <SectionHeader title="find your kind of kitchen" onSeeAll={() => router.push('/kitchens')} />
               {bp !== 'mobile' ? (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 8, paddingBottom: 26 }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 8, paddingBottom: 20 }}>
                   {kitchenTags.map((t) => (
                     <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
@@ -201,7 +201,7 @@ export default function ExploreScreen() {
                   ))}
                 </View>
               ) : (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 26 }}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 8, paddingBottom: 20 }}>
                   {kitchenTags.map((t) => (
                     <PressableScale key={t.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${t.tag} kitchens`} style={{ paddingHorizontal: 16, height: 42, borderRadius: Radius.pill, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7, ...Shadow.card }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{t.tag}</Text>
@@ -217,7 +217,7 @@ export default function ExploreScreen() {
           <View style={{ marginBottom: 10 }}>
             <SectionHeader title="shop by goal" onSeeAll={() => router.push('/kitchens')} />
             {bp !== 'mobile' ? (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingBottom: 26 }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: pad, gap: 14, paddingBottom: 20 }}>
                 {GOALS.map((g) => (
                   <PressableScale key={g.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(g.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${g.label} meal prep kitchens`} style={{ alignItems: 'center', gap: 8, width: 68 }}>
                     <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: g.color + '18', alignItems: 'center', justifyContent: 'center' }}>
@@ -228,7 +228,7 @@ export default function ExploreScreen() {
                 ))}
               </View>
             ) : (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
                 {GOALS.map((g) => (
                   <PressableScale key={g.tag} onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(g.tag)}`); }} accessibilityRole="button" accessibilityLabel={`${g.label} meal prep kitchens`} style={{ alignItems: 'center', gap: 8, width: 68 }}>
                     <View style={{ width: 60, height: 60, borderRadius: 20, backgroundColor: g.color + '18', alignItems: 'center', justifyContent: 'center' }}>
@@ -244,9 +244,9 @@ export default function ExploreScreen() {
           {/* Top kitchens — personalised ranking via match engine */}
           <SectionHeader title="top kitchens · for you" />
           {preppersLoading ? (
-            <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} width={210} /></View>
+            <View style={{ paddingBottom: 20 }}><CardRowSkeleton count={3} width={210} /></View>
           ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
               {rankedPreppers.map((p, i) => (
                 <MotiView key={p.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 40 }}>
                   <PrepperCard prepper={p} showRank />
@@ -258,7 +258,7 @@ export default function ExploreScreen() {
           {/* Grocery concierge — ingredient kits banner */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
           <PressableScale onPress={() => { feedback.tap(); router.push('/grocery-concierge'); }} accessibilityRole="button" accessibilityLabel="Grocery concierge — ingredient kits"
-            style={{ marginHorizontal: 20, backgroundColor: INK, borderRadius: 18, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 }}>
+            style={{ marginHorizontal: 20, backgroundColor: INK, borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 }}>
             <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: Palette.brand + '22', alignItems: 'center', justifyContent: 'center' }}>
               <ShoppingBag size={21} color={Palette.brand} />
             </View>
@@ -274,7 +274,7 @@ export default function ExploreScreen() {
           {drops && drops.length > 0 ? (
             <>
               <SectionHeader title="limited drops" />
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
                 {drops.map((m, i) => (
                   <MotiView key={m.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
                     <MealCard meal={m} />
@@ -287,9 +287,9 @@ export default function ExploreScreen() {
           {/* Popular (live) */}
           <SectionHeader title="popular right now" onSeeAll={() => router.push('/category?key=all&label=popular')} />
           {mealsLoading ? (
-            <View style={{ paddingBottom: 26 }}><CardRowSkeleton count={3} /></View>
+            <View style={{ paddingBottom: 20 }}><CardRowSkeleton count={3} /></View>
           ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
               {(meals ?? []).map((m, i) => (
                 <MotiView key={m.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
                   <MealCard meal={m} />
@@ -302,7 +302,7 @@ export default function ExploreScreen() {
           {forYou.length > 0 ? (
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 80 }}>
               <SectionHeader title="for you" onSeeAll={() => router.push('/category?key=all&label=for+you')} />
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 26 }}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, paddingBottom: 20 }}>
                 {forYou.map((s, i) => (
                   <MotiView key={s.meal.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
                     <View>
