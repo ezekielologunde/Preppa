@@ -8,6 +8,7 @@ import {
   Briefcase,
   ChefHat,
   ChevronRight,
+  Check,
   Crown,
   DollarSign,
   Flame,
@@ -103,9 +104,9 @@ function Ring({ pct, color, size = 96, stroke = 9 }: { pct: number; color: strin
   );
 }
 
-function StatCard({ Icon, value, label, trend, color, spark }: { Icon: LucideIcon; value: string; label: string; trend: string; color: string; spark: number[] }) {
+function StatCard({ Icon, value, label, trend, color, spark, onPress }: { Icon: LucideIcon; value: string; label: string; trend: string; color: string; spark: number[]; onPress?: () => void }) {
   return (
-    <View style={{ width: 150, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 8 }}>
+    <PressableScale onPress={onPress ? () => { feedback.tap(); onPress(); } : undefined} accessibilityRole="button" accessibilityLabel={`${label}: ${value}`} style={{ width: 150, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 8 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: color + '24', alignItems: 'center', justifyContent: 'center' }}>
           <Icon size={19} color={color} />
@@ -115,7 +116,7 @@ function StatCard({ Icon, value, label, trend, color, spark }: { Icon: LucideIco
       <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: MUTED }}>{label}</Text>
       <Text style={{ fontFamily: Font.display, fontSize: 26, color: '#fff', letterSpacing: -0.6 }}>{value}</Text>
       <Sparkline color={color} data={spark} />
-    </View>
+    </PressableScale>
   );
 }
 
@@ -130,7 +131,7 @@ function QuickAction({ Icon, label, color, badge, onPress }: { Icon: LucideIcon;
           </View>
         ) : null}
       </View>
-      <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.divider }}>{label}</Text>
+      <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.textMuted }}>{label}</Text>
     </PressableScale>
   );
 }
@@ -224,10 +225,10 @@ export default function DashboardScreen() {
           {(() => {
             const cards = (
               <>
-                <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} />
-                <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} />
-                <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} />
-                <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} />
+                <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
+                <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} />
+                <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} />
+                <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} />
               </>
             );
             return desktop ? (
@@ -300,7 +301,8 @@ export default function DashboardScreen() {
                   </Text>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 2 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: next.paymentStatus === 'paid' ? GREEN + '24' : '#252a34', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3 }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: next.paymentStatus === 'paid' ? GREEN : MUTED }}>{next.paymentStatus === 'paid' ? '✓ paid' : 'unpaid'}</Text>
+                      {next.paymentStatus === 'paid' ? <Check size={11} color={GREEN} strokeWidth={2.5} /> : null}
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: next.paymentStatus === 'paid' ? GREEN : MUTED }}>{next.paymentStatus === 'paid' ? 'paid' : 'unpaid'}</Text>
                     </View>
                     <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#fff', fontVariant: ['tabular-nums'] }}>${next.total.toFixed(2)}</Text>
                   </View>
