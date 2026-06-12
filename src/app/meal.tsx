@@ -171,6 +171,19 @@ export default function MealScreen() {
           </SafeAreaView>
         </View>
 
+        {/* Thumbnail strip — only when meal has 2+ images */}
+        {meal?.images && meal.images.length > 1 ? (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingVertical: 10, backgroundColor: Palette.surface }}>
+            {meal.images.map((img, i) => (
+              <PressableScale key={i} onPress={() => { feedback.tap(); setHeroIdx(i); }} accessibilityRole="button" accessibilityLabel={`Photo ${i + 1}`}>
+                <View style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', borderWidth: 2.5, borderColor: i === heroIdx ? ORANGE : 'transparent' }}>
+                  <Image source={img} style={{ flex: 1 }} contentFit="cover" transition={150} />
+                </View>
+              </PressableScale>
+            ))}
+          </ScrollView>
+        ) : null}
+
         {/* Body */}
         <View style={{ padding: 20, gap: 14 }}>
           {isLoading ? (

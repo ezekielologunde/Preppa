@@ -174,7 +174,7 @@ export default function ReviewScreen() {
           {/* Photo attachments */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 220 }}>
             <View style={{ gap: 8 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary }}>Add photos (optional)</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary }}>Add photos (optional · up to 5)</Text>
               <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
                 {photos.map((p, idx) => (
                   <View key={idx} style={{ width: 80, height: 80, borderRadius: 12, overflow: 'hidden', backgroundColor: Palette.canvas }}>
@@ -190,7 +190,7 @@ export default function ReviewScreen() {
                     </PressableScale>
                   </View>
                 ))}
-                {photos.length < 3 && (
+                {photos.length < 5 && (
                   <PressableScale onPress={() => { feedback.tap(); void pickPhoto(); }}
                     style={{ width: 80, height: 80, borderRadius: 12, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', backgroundColor: Palette.canvas, gap: 4 }}>
                     <Camera size={18} color={Palette.textSecondary} />
