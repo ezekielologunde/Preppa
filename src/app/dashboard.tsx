@@ -17,6 +17,7 @@ import {
   Search,
   ShoppingBag,
   Star,
+  TrendingUp,
   User,
   Users,
   UtensilsCrossed,
@@ -329,7 +330,7 @@ export default function DashboardScreen() {
 
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
         <View style={[{ position: 'absolute', left: 16, right: 16, bottom: 78, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
-          <ActionItem Icon={UtensilsCrossed} label="add meal" color={Palette.inkSoft} onPress={() => router.push('/meal-editor')} />
+          <ActionItem Icon={TrendingUp} label="earnings" color={Palette.inkSoft} onPress={() => router.push('/earnings')} />
           <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/post-video')} />
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => { feedback.tap(); router.push('/meal-editor'); }}>
             <View style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginTop: -26, backgroundColor: ORANGE, ...Shadow.floating, shadowColor: ORANGE, shadowOpacity: 0.45 }}>

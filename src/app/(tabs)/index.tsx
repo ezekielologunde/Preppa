@@ -255,6 +255,7 @@ export default function HomeScreen() {
 
           {/* Primary products — compact list card so nothing wraps */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }}>
+          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginBottom: 10 }}>browse</Text>
           <View style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden' }}>
             {showPlans ? (
               <>
