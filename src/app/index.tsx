@@ -137,7 +137,7 @@ export default function HomeScreen() {
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
             <PressableScale
-              onPress={() => router.push('/profile')}
+              onPress={() => { feedback.tap(); router.push('/profile'); }}
               accessibilityRole="button"
               accessibilityLabel="Your profile"
               style={{ width: 52, height: 52, alignItems: 'center', justifyContent: 'center' }}>
@@ -155,7 +155,7 @@ export default function HomeScreen() {
                 <Text style={{ color: ORANGE }}>craving today?</Text>
               </Text>
             </View>
-            <PressableScale onPress={() => router.push('/messages')} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={20} color={INK} />
               {badgeCount > 0 ? (
                 <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
@@ -336,12 +336,12 @@ export default function HomeScreen() {
                   <Sparkles size={14} color="#fff" />
                 </View>
                 <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff', flex: 1 }}>Preppa AI · picked for you</Text>
-                <PressableScale onPress={() => setAiIdx((i) => i + 1)} accessibilityRole="button" accessibilityLabel="Suggest another meal" hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, height: 30, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.12)' }}>
+                <PressableScale onPress={() => { feedback.tap(); setAiIdx((i) => i + 1); }} accessibilityRole="button" accessibilityLabel="Suggest another meal" hitSlop={8} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, height: 30, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.12)' }}>
                   <RefreshCw size={13} color="#fff" />
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>shuffle</Text>
                 </PressableScale>
               </View>
-              <PressableScale onPress={() => router.push(`/meal?id=${aiPick.meal.id}`)} accessibilityRole="button" accessibilityLabel={`${aiPick.meal.title} — ${aiPick.reason}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+              <PressableScale onPress={() => { feedback.tap(); router.push(`/meal?id=${aiPick.meal.id}`); }} accessibilityRole="button" accessibilityLabel={`${aiPick.meal.title} — ${aiPick.reason}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
                 <Image source={aiPick.meal.image} style={{ width: 76, height: 76, borderRadius: 16 }} contentFit="cover" transition={200} />
                 <View style={{ flex: 1, gap: 3 }}>
                   <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{aiPick.meal.title}</Text>
@@ -411,7 +411,7 @@ export default function HomeScreen() {
             <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Palette.border, alignSelf: 'center', marginTop: 12, marginBottom: 6 }} />
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingVertical: 14 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.4 }}>your location</Text>
-              <PressableScale onPress={() => setLocationOpen(false)} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+              <PressableScale onPress={() => { feedback.tap(); setLocationOpen(false); }} accessibilityRole="button" accessibilityLabel="Close" style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
                 <X size={18} color={Palette.textSecondary} />
               </PressableScale>
             </View>

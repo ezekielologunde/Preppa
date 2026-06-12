@@ -213,7 +213,7 @@ function DeleteModal({ visible, onCancel, onConfirm }: { visible: boolean; onCan
           <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20 }}>
             This will permanently delete your Preppa account, orders, and all saved data. This action cannot be undone.
           </Text>
-          <PressableScale onPress={onConfirm} accessibilityRole="button" accessibilityLabel="Confirm delete account"
+          <PressableScale onPress={() => { feedback.warning(); onConfirm(); }} accessibilityRole="button" accessibilityLabel="Confirm delete account"
             style={{ marginTop: 16, paddingVertical: 15, borderRadius: 16, backgroundColor: Palette.danger, alignItems: 'center' }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.surface }}>Yes, delete my account</Text>
           </PressableScale>
