@@ -8,27 +8,12 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
 import { useMyOrders } from '@/lib/queries/orders';
+import { getCurrentRush, getNextRush } from '@/lib/rush-hour';
 import { Palette, Radius } from '@/constants/theme';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
-
-type RushWindow = { label: string; start: number; end: number; tip: string; prepTip: string };
-const RUSH_WINDOWS: RushWindow[] = [
-  { label: 'morning prep', start: 7, end: 10, tip: 'Morning commuters want quick, filling breakfasts.', prepTip: 'Prep high-protein bowls, egg dishes, and oats tonight.' },
-  { label: 'lunch rush', start: 11, end: 14, tip: 'Lunch is your highest-volume window — have meals ready before 11 am.', prepTip: 'Stock extra rice, soups, and wraps. Batch-cook proteins early.' },
-  { label: 'dinner window', start: 16, end: 20, tip: 'Dinner orders peak between 6–7 pm. Ready early = first in queue.', prepTip: 'Pre-portion family portions and one-pot meals for fast plating.' },
-];
-
-function getCurrentRush(h: number): RushWindow | null {
-  return RUSH_WINDOWS.find((w) => h >= w.start && h < w.end) ?? null;
-}
-
-function getNextRush(h: number): { window: RushWindow; inMins: number } | null {
-  const upcoming = RUSH_WINDOWS.map((w) => ({ window: w, inMins: (w.start - h) * 60 })).filter((r) => r.inMins > 0);
-  return upcoming.length ? upcoming[0] : null;
-}
 
 const WEEKLY_INSIGHTS = [
   { label: 'Nigerian cuisine', trend: '+34%', note: 'Jollof rice orders surging this week' },
@@ -89,10 +74,10 @@ export default function PrepperHubScreen() {
                 <Flame size={18} color="#fff" />
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{currentRush.label} is active</Text>
               </View>
-              <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: 'rgba(255,255,255,0.92)', lineHeight: 20 }}>{currentRush.tip}</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: 'rgba(255,255,255,0.92)', lineHeight: 20 }}>{currentRush.prepperAlert}</Text>
               <View style={{ marginTop: 4, backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 10, padding: 12 }}>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#fff', marginBottom: 3 }}>prep tip</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.92)', lineHeight: 18 }}>{currentRush.prepTip}</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.92)', lineHeight: 18 }}>{currentRush.prepperPrepTip}</Text>
               </View>
             </View>
           ) : nextRush ? (
@@ -105,7 +90,7 @@ export default function PrepperHubScreen() {
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: ORANGE }}>in ~{nextRush.inMins}m</Text>
                 </View>
               </View>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{nextRush.window.prepTip}</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, lineHeight: 19 }}>{nextRush.window.prepperPrepTip}</Text>
             </View>
           ) : (
             <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 18, gap: 6 }}>

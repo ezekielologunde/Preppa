@@ -10,21 +10,25 @@ import { Font } from '@/constants/fonts';
 import { recommendedMeals } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { getCurrentRush, getNextRush } from '@/lib/rush-hour';
+import { getSeasonalTheme } from '@/lib/marketing';
 
 const ORANGE = Palette.brand;
 
 function rushHourContext(): { active: boolean; label: string; sub: string; icon: typeof Flame } {
   const h = new Date().getHours();
-  if (h >= 11 && h < 14) return { active: true, label: 'lunch rush', sub: 'Order now for 12–1pm pickup', icon: Flame };
-  if (h >= 16 && h < 20) return { active: true, label: 'dinner window', sub: 'Order now for 6–7pm delivery', icon: Clock };
-  if (h >= 7 && h < 10) return { active: true, label: 'morning prep', sub: 'Weekend brunch drops available now', icon: Sun };
-  return { active: false, label: 'coming up', sub: 'Rush hour deals land at 11am · 4pm · 7am', icon: Clock };
+  const rush = getCurrentRush(h);
+  if (rush) return { active: true, label: rush.label, sub: rush.buyerTip, icon: rush.id === 'morning' ? Sun : rush.id === 'lunch' ? Flame : Clock };
+  const next = getNextRush(h);
+  if (next) return { active: false, label: 'coming up', sub: `Next: ${next.window.label} in ~${next.inMins}m`, icon: Clock };
+  return { active: false, label: 'coming up', sub: 'Rush hour deals land at 7am · 11am · 4pm', icon: Clock };
 }
 
+const _seasonal = getSeasonalTheme();
 const SEASONAL = {
-  label: 'summer grilling',
-  sub: 'Outdoor-ready meals, BBQ platters & cold sides',
-  color: '#ea580c',
+  label: _seasonal.label,
+  sub: _seasonal.tag,
+  color: _seasonal.color,
   icon: Sun,
 };
 
