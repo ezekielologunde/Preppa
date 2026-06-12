@@ -153,7 +153,7 @@ export default function HomeScreen() {
                 what are you <Text style={{ color: ORANGE }}>craving?</Text>
               </Text>
             </View>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/notifications'); }} accessibilityRole="button" accessibilityLabel={badgeCount ? `Notifications, ${badgeCount} updates` : 'Notifications'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Bell size={20} color={INK} />
               {badgeCount > 0 ? (
                 <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
@@ -167,7 +167,7 @@ export default function HomeScreen() {
 
           {/* Search + location */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 10, gap: 8, alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 6, gap: 8, alignItems: 'center' }}>
             <PressableScale
               onPress={() => { feedback.tap(); router.push('/search'); }}
               accessibilityRole="search"
@@ -228,9 +228,6 @@ export default function HomeScreen() {
             </PressableScale>
             </MotiView>
           ) : null}
-
-          {/* Marketing banner — holidays, weekly digest (suppressed during rush since we show the dedicated banner) */}
-          {!rushActive ? <MarketingBanner /> : null}
 
           {/* Categories — horizontal scroll on phone, wrapping chip grid on tablet+ */}
           {(() => {
@@ -294,6 +291,9 @@ export default function HomeScreen() {
               )}
             </>
           ) : null}
+
+          {/* Marketing banner — between meals and secondary nav so meals are immediately visible */}
+          {!rushActive ? <MarketingBanner /> : null}
 
           {/* Browse — secondary navigation after primary content */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 60 }}>
