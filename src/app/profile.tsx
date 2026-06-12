@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Sparkles,
   Ticket,
+  TrendingUp,
   UserPlus,
   Users,
   type LucideIcon,
@@ -60,6 +61,7 @@ const quickLinks = [
 
 const STATIC_HUB: { label: string; sub: string; Icon: LucideIcon; accent?: boolean; route?: string }[] = [
   { label: 'your orders', sub: 'track & reorder', Icon: Receipt, route: '/orders' },
+  { label: 'my stats', sub: 'food insights & trends', Icon: TrendingUp, route: '/insights' },
   { label: 'messages', sub: 'chat with preppers', Icon: MessageCircle, route: '/messages?tab=messages' },
   { label: 'addresses', sub: 'saved', Icon: MapPin, route: '/addresses' },
   { label: 'payment methods', sub: 'manage', Icon: CreditCard, route: '/payment-methods' },
