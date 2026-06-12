@@ -60,7 +60,7 @@ export default function CategoryScreen() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'timing', duration: 260 }}
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <UtensilsCrossed size={40} color={Palette.divider} />
+            <UtensilsCrossed size={40} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>no meals here yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>
               fresh {title} meals from local preppas are coming soon

@@ -87,7 +87,7 @@ function MealRow({ meal, busy, onEdit, onSetStatus }: { meal: MyMeal; busy: bool
       </View>
       <View style={{ gap: 6, alignItems: 'flex-end' }}>
         <PressableScale onPress={() => { feedback.tap(); onEdit(); }} accessibilityRole="button" accessibilityLabel={`Edit ${meal.title}`} hitSlop={6} style={{ paddingHorizontal: 12, height: 32, borderRadius: 10, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.divider }}>Edit</Text>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.textMuted }}>Edit</Text>
         </PressableScale>
         <PressableScale
           onPress={() => { feedback.tap(); onSetStatus(isLive ? 'paused' : 'published'); }}
@@ -258,8 +258,8 @@ export default function MealEditorScreen() {
                   )}
                   {uploadSupported ? (
                     <PressableScale onPress={() => { feedback.tap(); pickPhoto(); }} disabled={uploading} accessibilityRole="button" accessibilityLabel="Upload a photo" style={{ flex: 1, height: 48, borderRadius: 12, borderWidth: 1, borderColor: '#3f4451', flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', opacity: uploading ? 0.6 : 1 }}>
-                      {uploading ? <ActivityIndicator color="#fff" /> : <Upload size={17} color={Palette.divider} />}
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.divider }}>{uploading ? 'Uploading…' : draft?.imageUrl ? 'Change photo' : 'Upload photo'}</Text>
+                      {uploading ? <ActivityIndicator color="#fff" /> : <Upload size={17} color={Palette.textMuted} />}
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textMuted }}>{uploading ? 'Uploading…' : draft?.imageUrl ? 'Change photo' : 'Upload photo'}</Text>
                     </PressableScale>
                   ) : (
                     <View style={{ flex: 1 }}>
