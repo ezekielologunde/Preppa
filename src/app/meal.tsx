@@ -53,6 +53,7 @@ export default function MealScreen() {
   const [added, setAdded] = useState(false);
   const [switchPrompt, setSwitchPrompt] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [allReviews, setAllReviews] = useState(false);
 
   useEffect(() => {
     if (meal?.id) recordMealView(meal.id);
@@ -248,7 +249,7 @@ export default function MealScreen() {
               {reviews && reviews.length > 0 ? (
                 <View style={{ gap: 12, marginTop: 6 }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>reviews ({reviews.length})</Text>
-                  {reviews.slice(0, 4).map((rv) => (
+                  {(allReviews ? reviews : reviews.slice(0, 4)).map((rv) => (
                     <View key={rv.id} style={{ gap: 5 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: INK }}>{rv.author}</Text>
@@ -261,6 +262,13 @@ export default function MealScreen() {
                       {rv.body ? <Text style={{ fontFamily: Font.body, fontSize: 13.5, lineHeight: 20, color: Palette.inkSoft }}>{rv.body}</Text> : null}
                     </View>
                   ))}
+                  {reviews.length > 4 ? (
+                    <PressableScale onPress={() => { feedback.tap(); setAllReviews((v) => !v); }} accessibilityRole="button" accessibilityLabel={allReviews ? 'Show fewer reviews' : `See all ${reviews.length} reviews`} style={{ alignSelf: 'flex-start', paddingVertical: 6 }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: ORANGE }}>
+                        {allReviews ? 'show fewer' : `see all ${reviews.length} reviews`}
+                      </Text>
+                    </PressableScale>
+                  ) : null}
                 </View>
               ) : null}
             </MotiView>
