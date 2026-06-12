@@ -27,7 +27,7 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   const { data: flags } = useFeatureFlags();
   const { width } = useWindowDimensions();
-  const showLabels = width >= 1024;
+  const showLabels = width >= 768;
 
   const visibleTabs = TABS.filter((t) => !('flag' in t) || (flags !== undefined && flags[t.flag] !== false));
 
