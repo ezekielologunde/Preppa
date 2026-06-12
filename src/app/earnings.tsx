@@ -12,7 +12,7 @@ import { Palette } from '@/constants/theme';
 import { useMyEarnings, type EarningsRecent } from '@/lib/queries/earnings';
 
 const ORANGE = Palette.brand;
-const GREEN = '#34d399';
+const GREEN = Palette.success;
 const CARD = Palette.prepperCard;
 const BG = Palette.prepperBg;
 const MUTED = Palette.textMuted;

@@ -124,7 +124,7 @@ export default function MealScreen() {
     <View style={{ flex: 1, backgroundColor: Palette.surface }}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Hero */}
-        <View style={{ height: 320, backgroundColor: '#FCE9DD' }}>
+        <View style={{ height: 320, backgroundColor: Palette.brandTint }}>
           {isLoading ? (
             <Skeleton width="100%" height={320} radius={0} />
           ) : meal?.images.length ? (
