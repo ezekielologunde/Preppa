@@ -74,6 +74,7 @@ export default function SurpriseScreen() {
   }
 
   async function addPick(mealId: string, price: number) {
+    feedback.tap();
     if (!user) { router.push('/auth?mode=signup'); return; }
     setAddingId(mealId);
     feedback.success();
@@ -91,7 +92,7 @@ export default function SurpriseScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 20 }}>
-            <PressableScale onPress={() => { feedback.tap(); router.back(); }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); try { router.back(); } catch { router.replace('/'); } }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <ChevronLeft size={22} color={INK} />
             </PressableScale>
             <View style={{ flex: 1 }}>

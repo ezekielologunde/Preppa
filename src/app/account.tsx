@@ -91,7 +91,7 @@ export default function AccountScreen() {
             gap: 12,
           }}>
           <PressableScale
-            onPress={() => { feedback.tap(); router.back(); }}
+            onPress={() => { feedback.tap(); try { router.back(); } catch { router.replace('/settings'); } }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             style={{
@@ -139,7 +139,7 @@ export default function AccountScreen() {
                     }}
                   />
                 }
-                onPress={() => setPasswordOpen((v) => !v)}
+                onPress={() => { feedback.tap(); setPasswordOpen((v) => !v); }}
                 accessLabel="Change password"
               />
               {passwordOpen ? (
@@ -332,7 +332,7 @@ export default function AccountScreen() {
                 icon={<Download size={17} color={Palette.textSecondary} />}
                 label="download my data"
                 right={<ChevronRight size={18} color={Palette.divider} />}
-                onPress={() => setDownloadModal(true)}
+                onPress={() => { feedback.tap(); setDownloadModal(true); }}
                 accessLabel="Download my data"
               />
               <Divider />
