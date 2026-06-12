@@ -173,7 +173,7 @@ export default function MealScreen() {
 
         {/* Thumbnail strip — only when meal has 2+ images */}
         {meal?.images && meal.images.length > 1 ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingVertical: 10, backgroundColor: Palette.surface }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8, paddingVertical: 8, backgroundColor: Palette.surface }}>
             {meal.images.map((img, i) => (
               <PressableScale key={i} onPress={() => { feedback.tap(); setHeroIdx(i); }} accessibilityRole="button" accessibilityLabel={`Photo ${i + 1}`}>
                 <View style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', borderWidth: 2.5, borderColor: i === heroIdx ? ORANGE : 'transparent' }}>
@@ -185,7 +185,7 @@ export default function MealScreen() {
         ) : null}
 
         {/* Body */}
-        <View style={{ padding: 20, gap: 14 }}>
+        <View style={{ padding: 20, gap: 12 }}>
           {isLoading ? (
             <>
               <Skeleton width="70%" height={26} radius={8} />
@@ -257,9 +257,9 @@ export default function MealScreen() {
               ) : null}
 
               {meal.prepperBio ? (
-                <View style={{ backgroundColor: '#FAF7F4', borderRadius: 16, padding: 14, marginTop: 4 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 13, color: INK, marginBottom: 4 }}>about the prepper</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 13, lineHeight: 20, color: Palette.textSecondary }}>{meal.prepperBio}</Text>
+                <View style={{ backgroundColor: Palette.canvas, borderRadius: 16, padding: 14, marginTop: 4 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textMuted, marginBottom: 4 }}>about the prepper</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 13.5, lineHeight: 20, color: Palette.inkSoft }}>{meal.prepperBio}</Text>
                 </View>
               ) : null}
 
@@ -267,16 +267,16 @@ export default function MealScreen() {
                 <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 }}>pairs well with</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {['Fresh lemonade', 'Ginger beer', 'Hibiscus punch', 'Sparkling water'].map((d) => (
-                    <View key={d} style={{ paddingHorizontal: 13, paddingVertical: 8, borderRadius: Radius.pill, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
-                      <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.inkSoft }}>🥤 {d}</Text>
+                    <View key={d} style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: Radius.pill, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
+                      <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.inkSoft }}>{d}</Text>
                     </View>
                   ))}
                 </View>
               </View>
 
               {reviews && reviews.length > 0 ? (
-                <View style={{ marginTop: 6 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginBottom: 4 }}>reviews ({reviews.length})</Text>
+                <View>
+                  <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, marginBottom: 8 }}>reviews ({reviews.length})</Text>
                   {(allReviews ? reviews : reviews.slice(0, 4)).map((rv, i) => (
                     <MotiView key={rv.id} from={{ opacity: 0, translateX: -6 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 40 }}
                       style={{ paddingVertical: 11, borderTopWidth: i > 0 ? 1 : 0, borderTopColor: Palette.divider, gap: 5 }}>
