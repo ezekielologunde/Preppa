@@ -4,6 +4,7 @@ import {
   CakeSlice,
   Check,
   ChevronDown,
+  ChevronRight,
   Coffee,
   Compass,
   Cookie,
@@ -16,6 +17,7 @@ import {
   Salad,
   Scan,
   Search,
+  ShoppingBag,
   Sparkles,
   Sprout,
   UtensilsCrossed,
@@ -230,6 +232,21 @@ export default function ExploreScreen() {
               ))}
             </ScrollView>
           )}
+
+          {/* Grocery concierge — ingredient kits banner */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push('/grocery-concierge'); }} accessibilityRole="button" accessibilityLabel="Grocery concierge — ingredient kits"
+            style={{ marginHorizontal: 20, backgroundColor: '#11151C', borderRadius: 18, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 }}>
+            <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: Palette.brand + '22', alignItems: 'center', justifyContent: 'center' }}>
+              <ShoppingBag size={21} color={Palette.brand} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>grocery concierge</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>Pre-portioned ingredient kits from local preppers</Text>
+            </View>
+            <ChevronRight size={16} color="rgba(255,255,255,0.4)" />
+          </PressableScale>
+          </MotiView>
 
           {/* Limited drops — only shown when active drops exist */}
           {drops && drops.length > 0 ? (
