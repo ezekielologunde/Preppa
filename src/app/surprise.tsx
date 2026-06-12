@@ -181,7 +181,7 @@ export default function SurpriseScreen() {
                       key={meal.id}
                       from={{ opacity: 0, translateY: 14, scale: 0.97 }}
                       animate={{ opacity: 1, translateY: 0, scale: 1 }}
-                      transition={{ type: 'timing', duration: 280, delay: i * 70 }}
+                      transition={{ type: 'timing', duration: 280, delay: i * 45 }}
                       style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
                       <View style={{ flex: 1 }}>
                         <MealCard meal={meal} width={null} />

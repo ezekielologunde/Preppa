@@ -10,7 +10,7 @@ export function ComingSoon({ Icon, title, subtitle }: { Icon: LucideIcon; title:
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
       <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, padding: 32 }}>
-        <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', duration: 380, bounce: 0.2 }}>
+        <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 16, stiffness: 140 }}>
           <View style={{ width: 88, height: 88, borderRadius: 28, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
             <Icon size={40} color={Palette.brand} />
           </View>

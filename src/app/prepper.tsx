@@ -245,7 +245,7 @@ export default function PrepperScreen() {
               {plans.map((plan, i) => {
                 const subscribed = subscribedNames.has(plan.name);
                 return (
-                  <MotiView key={plan.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 60 }}>
+                  <MotiView key={plan.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 45 }}>
                   <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: 4 } }}>
                     <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                       <RefreshCw size={20} color={ORANGE} />

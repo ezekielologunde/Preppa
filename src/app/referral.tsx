@@ -123,7 +123,7 @@ export default function ReferralScreen() {
               key={title}
               from={{ opacity: 0, translateX: -10 }}
               animate={{ opacity: 1, translateX: 0 }}
-              transition={{ type: 'timing', duration: 240, delay: 200 + i * 70 }}>
+              transition={{ type: 'timing', duration: 240, delay: 160 + i * 45 }}>
               <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 14, paddingVertical: 14, borderBottomWidth: i < HOW_IT_WORKS.length - 1 ? 1 : 0, borderColor: Palette.border }}>
                 <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: color + '18', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Icon size={19} color={color} />

@@ -122,7 +122,7 @@ export default function RewardsScreen() {
             {/* Tiers */}
             <Text style={{ fontFamily: Font.display, fontSize: 18, color: INK, letterSpacing: -0.4, marginTop: 2 }}>your tiers</Text>
             {TIERS.map((t, i) => (
-              <MotiView key={t.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 160 + i * 60 }}>
+              <MotiView key={t.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 160 + i * 45 }}>
                 <TierCard tier={t} reached={r.lifetimeSpend >= t.min} current={t.key === r.tier.key} />
               </MotiView>
             ))}

@@ -194,7 +194,7 @@ export default function ExperiencesScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginTop: 30, marginBottom: 14 }}>how it works</Text>
           <View style={{ marginHorizontal: 20, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 4 }}>
             {STEPS.map((s, i) => (
-              <MotiView key={s.title} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 + i * 70 }}>
+              <MotiView key={s.title} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 260, delay: 160 + i * 45 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 10, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.chip }}>
                 <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                   <s.Icon size={19} color={ORANGE} />
