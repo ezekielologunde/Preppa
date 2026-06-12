@@ -42,7 +42,7 @@ export default function PostVideoScreen() {
             </Text>
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
-            <PressableScale onPress={() => router.replace('/become-prepper')} accessibilityRole="button" accessibilityLabel="Apply to become a prepper"
+            <PressableScale onPress={() => { feedback.tap(); router.replace('/become-prepper'); }} accessibilityRole="button" accessibilityLabel="Apply to become a prepper"
               style={{ height: 50, borderRadius: Radius.sm, backgroundColor: ORANGE, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Apply now</Text>
             </PressableScale>
@@ -53,6 +53,7 @@ export default function PostVideoScreen() {
   }
 
   async function pickThumb() {
+    feedback.tap();
     setUploading(true);
     try {
       const url = await pickAndUploadImage('meal-videos');
@@ -69,6 +70,7 @@ export default function PostVideoScreen() {
 
   async function handlePost() {
     if (!caption.trim() && !thumb) return;
+    feedback.tap();
     setUploading(true);
     try {
       const { error } = await supabase.from('feed_posts').insert({
@@ -91,7 +93,7 @@ export default function PostVideoScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 6, gap: 12 }}>
-          <PressableScale onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Back"
+          <PressableScale onPress={() => { feedback.tap(); try { router.back(); } catch { router.replace('/dashboard'); } }} accessibilityRole="button" accessibilityLabel="Back"
             style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color="#fff" />
           </PressableScale>

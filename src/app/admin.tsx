@@ -25,6 +25,7 @@ import { AdminOverview } from '@/components/admin/overview';
 import { AdminPreppers } from '@/components/admin/preppers';
 import { Admin } from '@/components/admin/ui';
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { feedback } from '@/lib/feedback';
 import { Font } from '@/constants/fonts';
 import { Radius } from '@/constants/theme';
 import { useAuth } from '@/providers/auth-provider';
@@ -46,8 +47,8 @@ export default function AdminScreen() {
   const [section, setSection] = useState<SectionKey>('overview');
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/profile');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/profile'); }
   }
 
   // Access guard — only granted admins see the console.
@@ -99,7 +100,7 @@ export default function AdminScreen() {
             return (
               <PressableScale
                 key={s.key}
-                onPress={() => setSection(s.key)}
+                onPress={() => { feedback.tap(); setSection(s.key); }}
                 accessibilityRole="button"
                 accessibilityState={{ selected: active }}
                 accessibilityLabel={s.label}
