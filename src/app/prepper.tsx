@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, RefreshCw, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
+import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, MessageSquare, RefreshCw, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { MotiView } from 'moti';
 import { RefreshControl, ScrollView, Text, View } from 'react-native';
@@ -83,7 +83,7 @@ export default function PrepperScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
-      <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingBottom: 130 }}>
+      <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingBottom: 180 }}>
         {/* Header band */}
         <View style={{ backgroundColor: INK, paddingBottom: 22 }}>
           <SafeAreaView edges={['top']}>
@@ -317,6 +317,20 @@ export default function PrepperScreen() {
 
       {/* Subscribe sheet — servings + delivery schedule (shared with /meal-plans) */}
       {user ? <SubscribePlanSheet plan={sheetPlan} userId={user.id} onClose={() => setSheetPlan(null)} /> : null}
+
+      {/* Sticky action bar — message + order quick-actions */}
+      {p && !isLoading ? (
+        <View style={{ position: 'absolute', bottom: 80, left: 0, right: 0, backgroundColor: Palette.surface, borderTopWidth: 1, borderTopColor: Palette.divider, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', gap: 10, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 16, shadowOffset: { width: 0, height: -4 } }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel="Message this prepper" style={{ height: 50, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
+            <MessageSquare size={17} color={INK} />
+            <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Message</Text>
+          </PressableScale>
+          <PressableScale onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(p.name)}`); }} accessibilityRole="button" accessibilityLabel={`Order from ${p.name}`} style={{ flex: 1, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+            <ShoppingBag size={17} color="#fff" />
+            <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: '#fff' }}>Order from {p.name.split(' ')[0]}</Text>
+          </PressableScale>
+        </View>
+      ) : null}
     </View>
   );
 }
