@@ -53,17 +53,17 @@ export function StatCard({ label, value, sub, Icon, tone = 'brand' }: { label: s
 
 const PILL_TONES: Record<string, { bg: string; fg: string }> = {
   pending: { bg: Palette.amber + '22', fg: Palette.amber },
-  approved: { bg: Palette.success + '22', fg: '#22C55E' },
-  rejected: { bg: Palette.danger + '22', fg: '#F87171' },
+  approved: { bg: Palette.success + '22', fg: Palette.success },
+  rejected: { bg: Palette.danger + '22', fg: Palette.danger },
   suspended: { bg: Palette.textSecondary + '22', fg: Palette.textMuted },
-  active: { bg: Palette.success + '22', fg: '#22C55E' },
-  completed: { bg: Palette.success + '22', fg: '#22C55E' },
+  active: { bg: Palette.success + '22', fg: Palette.success },
+  completed: { bg: Palette.success + '22', fg: Palette.success },
   confirmed: { bg: Palette.brand + '22', fg: Palette.brand },
   preparing: { bg: Palette.brand + '22', fg: Palette.brand },
   ready: { bg: Palette.brand + '22', fg: Palette.brand },
   out_for_delivery: { bg: Palette.brand + '22', fg: Palette.brand },
-  cancelled: { bg: Palette.danger + '22', fg: '#F87171' },
-  deleted: { bg: Palette.danger + '22', fg: '#F87171' },
+  cancelled: { bg: Palette.danger + '22', fg: Palette.danger },
+  deleted: { bg: Palette.danger + '22', fg: Palette.danger },
 };
 
 export function Pill({ label }: { label: string }) {
