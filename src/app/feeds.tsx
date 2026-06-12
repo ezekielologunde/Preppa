@@ -98,6 +98,7 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
 }
 
 export default function FeedsScreen() {
+  const router = useRouter();
   const { data: items, isLoading } = useFeed();
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -126,6 +127,12 @@ export default function FeedsScreen() {
         <Text style={{ fontFamily: Font.body, fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: 290, lineHeight: 22 }}>
           Meal drops from the preppers you follow will appear here. Check back when kitchens go live.
         </Text>
+        </MotiView>
+        <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 280 }}>
+        <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} accessibilityRole="button" accessibilityLabel="Discover kitchens to follow"
+          style={{ marginTop: 8, paddingHorizontal: 24, height: 50, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>discover kitchens</Text>
+        </PressableScale>
         </MotiView>
       </View>
     );

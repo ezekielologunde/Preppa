@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ChevronLeft, Clock, Flame, Leaf, Sparkles, Star, Sun } from 'lucide-react-native';
+import { ChevronLeft, Clock, Flame, Gift, Leaf, Sparkles, Star, Sun } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -101,10 +101,15 @@ function SeasonalCard() {
   );
 }
 
+const now = new Date();
+const isFathersDayWindow = now.getMonth() === 5 && now.getDate() >= 12 && now.getDate() <= 22;
+const fathersDayDaysLeft = isFathersDayWindow ? 21 - now.getDate() : 0;
+
 export default function SpecialsScreen() {
   const router = useRouter();
   const weeklyPicks = recommendedMeals.slice(0, 4);
   const freshDrops = [...recommendedMeals].reverse().slice(0, 4);
+  const fathersDayPicks = recommendedMeals.slice(1, 5);
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -144,6 +149,28 @@ export default function SpecialsScreen() {
             {weeklyPicks.map((m) => <MealCard key={m.id} meal={m} />)}
           </ScrollView>
           </MotiView>
+
+          {/* Father's Day picks */}
+          {isFathersDayWindow ? (
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
+            <View style={{ marginHorizontal: 20, backgroundColor: '#1e1b4b', borderRadius: 20, padding: 16, gap: 12, borderWidth: 1, borderColor: '#4f46e5' + '40' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: '#4f46e5' + '22', alignItems: 'center', justifyContent: 'center' }}>
+                  <Gift size={16} color="#818cf8" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#c7d2fe', letterSpacing: -0.3 }}>Father's Day picks</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#6366f1', marginTop: 1 }}>
+                    {fathersDayDaysLeft === 0 ? 'Today — treat dad to something special' : `${fathersDayDaysLeft} day${fathersDayDaysLeft !== 1 ? 's' : ''} away — order ahead`}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, marginTop: 14 }}>
+              {fathersDayPicks.map((m) => <MealCard key={m.id} meal={m} />)}
+            </ScrollView>
+            </MotiView>
+          ) : null}
 
           {/* Fresh drops */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 180 }}>
