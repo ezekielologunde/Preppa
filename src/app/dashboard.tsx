@@ -166,7 +166,7 @@ export default function DashboardScreen() {
               />
             </PressableScale>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef 👋</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.6 }}>my kitchen</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
                 <PressableScale
@@ -199,57 +199,9 @@ export default function DashboardScreen() {
           </View>
           </MotiView>
 
-          {/* Stat cards — KPI row on desktop, swipeable on phones */}
+          {/* Next order — most urgent operational info, shown first */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 80 }}>
-          {desktop ? (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, gap: 10 }}>
-              <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
-              <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} />
-              <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} />
-              <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} />
-            </View>
-          ) : (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, paddingTop: 14, paddingBottom: 6 }}>
-              <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} flex />
-              <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} flex />
-              <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} flex />
-              <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} flex />
-            </View>
-          )}
-          </MotiView>
-
-          {/* Badges earned */}
-          {prepperBadges && prepperBadges.length > 0 ? (
-            <View style={{ paddingHorizontal: 20, marginBottom: 4 }}>
-              <PrepperBadgeShelf badges={prepperBadges} />
-            </View>
-          ) : null}
-
-          {/* Pro upgrade nudge — shown only on free tier */}
-          {!isPro ? (
-            <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 160 }}>
-              <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-premium'); }} accessibilityRole="button" accessibilityLabel="Upgrade to Prepper Pro"
-                style={{ marginHorizontal: 20, marginBottom: 10, backgroundColor: CARD, borderRadius: 14, paddingVertical: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: ORANGE + '28' }}>
-                <Crown size={15} color={ORANGE} />
-                <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13, color: MUTED }}>Go Pro — boosts, livestream & AI tools · $29/mo</Text>
-                <ChevronRight size={14} color={ORANGE} />
-              </PressableScale>
-            </MotiView>
-          ) : null}
-
-          {/* Profile health score */}
-          {prepperProfile ? (
-            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 200 }}>
-              <ProfileHealthCard profile={prepperProfile} />
-            </MotiView>
-          ) : null}
-
-          {/* Desktop: operations on the left, performance on the right */}
-          <View style={desktop ? { flexDirection: 'row', alignItems: 'flex-start' } : undefined}>
-          <View style={desktop ? { flex: 3 } : undefined}>
-          {/* Next order */}
-          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 160 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, marginTop: 4, marginBottom: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 20, marginTop: 12, marginBottom: 10 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3 }}>next order</Text>
             {next ? (
               <View style={{ backgroundColor: ORANGE + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
@@ -257,7 +209,6 @@ export default function DashboardScreen() {
               </View>
             ) : null}
           </View>
-
           {next ? (
             <View style={{ marginHorizontal: 20, backgroundColor: CARD, borderRadius: 22, padding: 16, gap: 14 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
@@ -299,12 +250,30 @@ export default function DashboardScreen() {
               <Text style={{ fontFamily: Font.body, fontSize: 14, color: MUTED, textAlign: 'center' }}>No active orders right now. New orders land here instantly.</Text>
             </View>
           )}
-
           </MotiView>
 
-          {/* Goal + this week — single combined card */}
-          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 240 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginHorizontal: 20, marginTop: 16, marginBottom: 4, backgroundColor: CARD, borderRadius: 20, padding: 16 }}>
+          {/* Stat cards — KPI row on desktop, 2x2 grid on mobile */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 140 }}>
+          {desktop ? (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, gap: 10 }}>
+              <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
+              <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} />
+              <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} />
+              <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} />
+            </View>
+          ) : (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, paddingTop: 14, paddingBottom: 6 }}>
+              <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} flex />
+              <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} flex />
+              <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} flex />
+              <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} flex />
+            </View>
+          )}
+          </MotiView>
+
+          {/* Goal + this week */}
+          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 180 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginHorizontal: 20, marginTop: 4, marginBottom: 4, backgroundColor: CARD, borderRadius: 20, padding: 16 }}>
             <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, flexShrink: 0 }}>
               <Ring pct={goalPct} color={ORANGE} size={64} stroke={7} />
               <View style={{ position: 'absolute', alignItems: 'center' }}>
@@ -330,8 +299,32 @@ export default function DashboardScreen() {
           </View>
           </MotiView>
 
-          </View>
-          </View>
+          {/* Badges earned */}
+          {prepperBadges && prepperBadges.length > 0 ? (
+            <View style={{ paddingHorizontal: 20, marginBottom: 4 }}>
+              <PrepperBadgeShelf badges={prepperBadges} />
+            </View>
+          ) : null}
+
+          {/* Pro upgrade nudge — shown only on free tier */}
+          {!isPro ? (
+            <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 220 }}>
+              <PressableScale onPress={() => { feedback.tap(); router.push('/prepper-premium'); }} accessibilityRole="button" accessibilityLabel="Upgrade to Prepper Pro"
+                style={{ marginHorizontal: 20, marginBottom: 10, backgroundColor: CARD, borderRadius: 14, paddingVertical: 10, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: ORANGE + '28' }}>
+                <Crown size={15} color={ORANGE} />
+                <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13, color: MUTED }}>Go Pro — boosts, livestream & AI tools · $29/mo</Text>
+                <ChevronRight size={14} color={ORANGE} />
+              </PressableScale>
+            </MotiView>
+          ) : null}
+
+          {/* Profile health score */}
+          {prepperProfile ? (
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 260 }}>
+              <ProfileHealthCard profile={prepperProfile} />
+            </MotiView>
+          ) : null}
+
         </ScrollView>
 
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
