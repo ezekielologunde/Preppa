@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ChevronLeft, DollarSign, Receipt, TrendingUp, Wallet } from 'lucide-react-native';
+import { ChevronLeft, DollarSign, Lightbulb, Receipt, TrendingUp, Wallet } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
@@ -130,6 +130,31 @@ export default function EarningsScreen() {
               <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: '#cbd5e1', lineHeight: 18 }}>
                 Preppa pays you directly — no Stripe account or setup needed. Card processing and the Preppa platform fee are calculated automatically on each order and already deducted from the amounts shown here.
               </Text>
+            </View>
+            </MotiView>
+
+            {/* Prepper insights */}
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
+            <View style={{ backgroundColor: CARD, borderRadius: 18, padding: 16, gap: 12 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Lightbulb size={16} color={ORANGE} />
+                <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: '#fff' }}>prepper insights</Text>
+              </View>
+              {[
+                data.net_week < 50
+                  ? { tip: 'List meals available Fri–Sun 11am–7pm — weekend lunch & dinner are peak demand windows.' }
+                  : { tip: 'Great week! Try a weekend-only drop to capture higher-intent customers.' },
+                { tip: 'Listings with 3+ photos earn ~40% more than text-only listings — add shots of your plating.' },
+                { tip: 'Reply to order questions within 2 hours. Fast responses lift repeat order rates significantly.' },
+                data.orders_paid < 10
+                  ? { tip: 'Your first 10 orders build your review score. Offer a small first-order discount to accelerate them.' }
+                  : { tip: 'At 10+ orders your average rating becomes a search ranking signal — keep response time under 2 hrs.' },
+              ].map(({ tip }, i) => (
+                <View key={i} style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+                  <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: ORANGE, marginTop: 6 }} />
+                  <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: '#cbd5e1', lineHeight: 18 }}>{tip}</Text>
+                </View>
+              ))}
             </View>
             </MotiView>
 

@@ -378,9 +378,9 @@ export default function SettingsScreen() {
 
           {/* MEAL PREFERENCES */}
           <Section title="meal preferences" delay={300}>
-            <Row Icon={Salad} label="dietary restrictions" right={{ type: 'chevron' }} onPress={() => soon('Dietary restrictions')} />
-            <Row Icon={Globe} label="cuisine preferences" right={{ type: 'chevron' }} onPress={() => soon('Cuisine preferences')} />
-            <Row Icon={Zap} label="spice tolerance" right={{ type: 'chip', label: 'Medium' }} onPress={() => soon('Spice tolerance')} />
+            <Row Icon={Salad} label="dietary restrictions" right={{ type: 'chevron' }} onPress={() => go('/dietary-preferences')} />
+            <Row Icon={Globe} label="cuisine preferences" right={{ type: 'chevron' }} onPress={() => go('/dietary-preferences')} />
+            <Row Icon={Zap} label="spice tolerance" right={{ type: 'chip', label: 'Medium' }} onPress={() => go('/dietary-preferences')} />
             <Row Icon={AlertTriangle} label="allergen alerts" right={{ type: 'toggle', value: allergenAlerts, onToggle: () => setAllergenAlerts((v) => !v) }} onPress={() => setAllergenAlerts((v) => !v)} isLast />
           </Section>
 
@@ -402,7 +402,7 @@ export default function SettingsScreen() {
           {/* SUPPORT */}
           <Section title="support" delay={480}>
             <Row Icon={HelpCircle} label="help center" right={{ type: 'chevron' }} onPress={() => Linking.openURL('mailto:support@preppa.live?subject=Preppa%20support').catch(() => soon('Help center'))} />
-            <Row Icon={AlertTriangle} label="report a problem" right={{ type: 'chevron' }} onPress={() => soon('Report a problem')} />
+            <Row Icon={AlertTriangle} label="report a problem" right={{ type: 'chevron' }} onPress={() => Linking.openURL('mailto:support@preppa.live?subject=Report%20a%20Problem').catch(() => soon('Report a problem'))} />
             <Row Icon={Star} label="rate the app" right={{ type: 'chevron' }} onPress={() => soon('Rate the app')} />
             <Row Icon={MessageCircle} label="chat support" right={{ type: 'chevron' }} onPress={() => soon('Chat support')} isLast />
           </Section>
@@ -410,8 +410,8 @@ export default function SettingsScreen() {
           {/* ABOUT */}
           <Section title="about" delay={540}>
             <Row Icon={Info} label="app version" right={{ type: 'value', label: '1.0.0' }} onPress={() => {}} />
-            <Row Icon={ShieldCheck} label="terms of service" right={{ type: 'chevron' }} onPress={() => soon('Terms of service')} />
-            <Row Icon={Lock} label="privacy policy" right={{ type: 'chevron' }} onPress={() => soon('Privacy policy')} />
+            <Row Icon={ShieldCheck} label="terms of service" right={{ type: 'chevron' }} onPress={() => Linking.openURL('https://preppa.live/terms').catch(() => {})} />
+            <Row Icon={Lock} label="privacy policy" right={{ type: 'chevron' }} onPress={() => Linking.openURL('https://preppa.live/privacy').catch(() => {})} />
             <Row Icon={Globe} label="licenses" right={{ type: 'chevron' }} onPress={() => soon('Licenses')} isLast />
           </Section>
 
