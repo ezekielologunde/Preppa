@@ -190,11 +190,7 @@ export default function NotificationsScreen() {
           <PressableScale
             onPress={() => {
               feedback.tap();
-              try {
-                router.back();
-              } catch {
-                router.replace('/profile');
-              }
+              if (router.canGoBack()) { router.back(); } else { router.replace('/profile'); }
             }}
             accessibilityRole="button"
             accessibilityLabel="Go back"
