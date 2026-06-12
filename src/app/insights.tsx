@@ -138,7 +138,7 @@ export default function InsightsScreen() {
 
           {/* Preppa AI insight card */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 200 }}>
-          <View style={{ backgroundColor: '#11151C', borderRadius: Radius.lg, padding: 18, gap: 10 }}>
+          <View style={{ backgroundColor: INK, borderRadius: Radius.lg, padding: 18, gap: 10 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                 <Sparkles size={14} color="#fff" />
