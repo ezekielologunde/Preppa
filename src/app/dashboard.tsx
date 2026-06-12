@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Check,
   Crown,
-  DollarSign,
   Flame,
   Gift,
   Home,
@@ -19,7 +18,6 @@ import {
   Search,
   ShoppingBag,
   Star,
-  TrendingUp,
   User,
   Users,
   UtensilsCrossed,
@@ -218,9 +216,9 @@ export default function DashboardScreen() {
               </>
             );
             return desktop ? (
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 20, gap: 12 }}>{cards}</View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, gap: 12 }}>{cards}</View>
             ) : (
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingVertical: 20 }}>{cards}</ScrollView>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingVertical: 14 }}>{cards}</ScrollView>
             );
           })()}
           </MotiView>
@@ -351,30 +349,6 @@ export default function DashboardScreen() {
           </View>
           </MotiView>
 
-          {/* At a glance — 4-item visible grid (no scroll) */}
-          <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 280 }}>
-          <View style={{ flexDirection: 'row', paddingHorizontal: 20, marginTop: 20, gap: 10 }}>
-            {[
-              { Icon: ShoppingBag, label: 'orders', color: ORANGE, badge: newCount || undefined, route: '/prepper-orders' },
-              { Icon: UtensilsCrossed, label: 'menu', color: GREEN, route: '/meal-editor' },
-              { Icon: DollarSign, label: 'earnings', color: GREEN, route: '/earnings' },
-              { Icon: TrendingUp, label: 'insights', color: BLUE, route: '/prepper-hub' },
-            ].map(({ Icon, label, color, badge, route }) => (
-              <PressableScale key={label} onPress={() => { feedback.tap(); router.push(route as never); }} accessibilityRole="button" accessibilityLabel={label}
-                style={{ flex: 1, backgroundColor: CARD, borderRadius: 16, paddingVertical: 14, alignItems: 'center', gap: 7 }}>
-                <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: color + '1E', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon size={18} color={color} />
-                  {badge ? (
-                    <View style={{ position: 'absolute', top: -3, right: -3, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>{badge}</Text>
-                    </View>
-                  ) : null}
-                </View>
-                <Text style={{ fontFamily: Font.medium, fontSize: 11, color: MUTED }}>{label}</Text>
-              </PressableScale>
-            ))}
-          </View>
-          </MotiView>
           </View>
           </View>
         </ScrollView>

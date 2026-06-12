@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Clapperboard, Compass, House, Ticket, User } from 'lucide-react-native';
+import { Compass, House, Ticket, User, Video } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { Platform, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,11 +11,11 @@ import { useFeatureFlags } from '@/lib/queries/feature-flags';
 import { Palette, Shadow, TouchTarget } from '@/constants/theme';
 
 const TABS = [
-  { name: 'index',       label: 'home',    Icon: House },
-  { name: 'explore',     label: 'discover', Icon: Compass },
-  { name: 'feeds',       label: 'feeds',   Icon: Clapperboard, flag: 'live_feeds' },
-  { name: 'experiences', label: 'events',  Icon: Ticket, flag: 'experiences' },
-  { name: 'profile',     label: 'you',     Icon: User },
+  { name: 'index',       label: 'home',        Icon: House },
+  { name: 'explore',     label: 'explore',     Icon: Compass },
+  { name: 'feeds',       label: 'live',        Icon: Video, flag: 'live_feeds' },
+  { name: 'experiences', label: 'experiences', Icon: Ticket, flag: 'experiences' },
+  { name: 'profile',     label: 'profile',     Icon: User },
 ] as const;
 
 type TabBarProps = {
