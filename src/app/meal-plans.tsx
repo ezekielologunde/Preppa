@@ -134,8 +134,8 @@ export default function MealPlansScreen() {
   async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPlans(), refetchSubs(), refetchCustom()]); setRefreshing(false); }
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/'); }
   }
 
   function onSubscribe(plan: MealPlan) {
@@ -161,7 +161,7 @@ export default function MealPlansScreen() {
         <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 12 : 6, paddingBottom: 130 }}>
           {/* Build your own plan CTA */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
-            <PressableScale onPress={() => router.push('/create-meal-plan')} accessibilityRole="button" accessibilityLabel="Build your own meal plan"
+            <PressableScale onPress={() => { feedback.tap(); router.push('/create-meal-plan'); }} accessibilityRole="button" accessibilityLabel="Build your own meal plan"
               style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: Palette.brandTint, borderRadius: Radius.md, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <View style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                 <Plus size={22} color="#fff" />
@@ -216,7 +216,7 @@ export default function MealPlansScreen() {
                     <View style={{ flexDirection: 'row', gap: 8 }}>
                       {s.status === 'active' ? (
                         <PressableScale
-                          onPress={() => skipDelivery.mutate(s.id, { onSuccess: (r) => (r.ok ? feedback.success() : feedback.warning()) })}
+                          onPress={() => { feedback.tap(); skipDelivery.mutate(s.id, { onSuccess: (r) => (r.ok ? feedback.success() : feedback.warning()) }); }}
                           disabled={skipDelivery.isPending}
                           accessibilityRole="button"
                           accessibilityLabel="Skip next delivery"
@@ -225,7 +225,7 @@ export default function MealPlansScreen() {
                         </PressableScale>
                       ) : null}
                       <PressableScale
-                        onPress={() => updateSub.mutate({ id: s.id, status: s.status === 'active' ? 'paused' : 'active' })}
+                        onPress={() => { feedback.tap(); updateSub.mutate({ id: s.id, status: s.status === 'active' ? 'paused' : 'active' }); }}
                         disabled={updateSub.isPending}
                         accessibilityRole="button"
                         accessibilityLabel={s.status === 'active' ? 'Pause plan' : 'Resume plan'}

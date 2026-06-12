@@ -6,6 +6,7 @@ import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { feedback } from '@/lib/feedback';
 import { Font } from '@/constants/fonts';
 import { experienceTypes } from '@/constants/mock';
 import { Palette, Radius } from '@/constants/theme';
@@ -40,14 +41,15 @@ export default function ExperienceRequestScreen() {
   const [err, setErr] = useState<string | null>(null);
 
   function goBack() {
-    if (router.canGoBack()) router.back();
-    else router.replace('/experiences');
+    feedback.tap();
+    try { router.back(); } catch { router.replace('/experiences'); }
   }
 
   function submit() {
     setErr(null);
     if (!user) return router.push('/auth?mode=signup');
     if (title.trim().length < 3) return setErr('Give your request a short title.');
+    feedback.tap();
     create.mutate(
       {
         userId: user.id,
@@ -83,7 +85,7 @@ export default function ExperienceRequestScreen() {
             {KINDS.map((k) => {
               const on = kind === k.key;
               return (
-                <PressableScale key={k.key} onPress={() => setKind(k.key)} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={k.label}
+                <PressableScale key={k.key} onPress={() => { feedback.tap(); setKind(k.key); }} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={k.label}
                   style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : Palette.canvas, borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{k.label}</Text>
                 </PressableScale>
@@ -154,7 +156,7 @@ export default function ExperienceRequestScreen() {
                           <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.success }}>Booked</Text>
                         </View>
                       ) : r.status === 'open' && b.status === 'pending' ? (
-                        <PressableScale onPress={() => accept.mutate(b.id)} disabled={accept.isPending} accessibilityRole="button" accessibilityLabel={`Accept bid from ${b.prepper?.display_name ?? 'prepper'}`}
+                        <PressableScale onPress={() => { feedback.tap(); accept.mutate(b.id); }} disabled={accept.isPending} accessibilityRole="button" accessibilityLabel={`Accept bid from ${b.prepper?.display_name ?? 'prepper'}`}
                           style={{ paddingHorizontal: 14, height: 38, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                           <Text style={{ fontFamily: Font.heading, fontSize: 13, color: '#fff' }}>Accept</Text>
                         </PressableScale>
