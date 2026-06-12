@@ -247,10 +247,11 @@ export default function MealScreen() {
               </View>
 
               {reviews && reviews.length > 0 ? (
-                <View style={{ gap: 12, marginTop: 6 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>reviews ({reviews.length})</Text>
-                  {(allReviews ? reviews : reviews.slice(0, 4)).map((rv) => (
-                    <View key={rv.id} style={{ gap: 5 }}>
+                <View style={{ marginTop: 6 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, marginBottom: 4 }}>reviews ({reviews.length})</Text>
+                  {(allReviews ? reviews : reviews.slice(0, 4)).map((rv, i) => (
+                    <MotiView key={rv.id} from={{ opacity: 0, translateX: -6 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 40 }}
+                      style={{ paddingVertical: 11, borderTopWidth: i > 0 ? 1 : 0, borderTopColor: Palette.divider, gap: 5 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                         <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: INK }}>{rv.author}</Text>
                         <View style={{ flexDirection: 'row', gap: 1 }}>
@@ -260,7 +261,7 @@ export default function MealScreen() {
                         </View>
                       </View>
                       {rv.body ? <Text style={{ fontFamily: Font.body, fontSize: 13.5, lineHeight: 20, color: Palette.inkSoft }}>{rv.body}</Text> : null}
-                    </View>
+                    </MotiView>
                   ))}
                   {reviews.length > 4 ? (
                     <PressableScale onPress={() => { feedback.tap(); setAllReviews((v) => !v); }} accessibilityRole="button" accessibilityLabel={allReviews ? 'Show fewer reviews' : `See all ${reviews.length} reviews`} style={{ alignSelf: 'flex-start', paddingVertical: 6 }}>
@@ -291,9 +292,9 @@ export default function MealScreen() {
                 <Check size={15} color="#fff" strokeWidth={3} />
               </View>
               <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>Added to cart</Text>
-              <Pressable onPress={() => { feedback.tap(); router.push('/cart'); }} hitSlop={8} accessibilityRole="button" accessibilityLabel="View cart">
+              <PressableScale onPress={() => { feedback.tap(); router.push('/cart'); }} hitSlop={8} accessibilityRole="button" accessibilityLabel="View cart">
                 <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: ORANGE }}>View →</Text>
-              </Pressable>
+              </PressableScale>
             </MotiView>
           ) : null}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 20, paddingVertical: 12 }}>
