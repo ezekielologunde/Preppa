@@ -350,7 +350,7 @@ export default function ProfileScreen() {
                     ? `${followed} prepper${followed === 1 ? '' : 's'}`
                     : q.label === 'saved'
                     ? `${favMeals + followed} items`
-                    : q.label === 'recently viewed'
+                    : q.label === 'history'
                     ? `${recentCount} meal${recentCount === 1 ? '' : 's'}`
                     : q.sub}
                 </Text>
