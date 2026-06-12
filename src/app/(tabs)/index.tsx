@@ -191,13 +191,13 @@ export default function HomeScreen() {
           </PressableScale>
           </MotiView>
 
-          {/* Rush hour / specials entry */}
+          {/* Rush hour / specials entry — only when rush is active, replaces MarketingBanner for that moment */}
           {rushActive ? (
             <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 80 }}>
             <PressableScale onPress={() => { feedback.tap(); router.push('/specials'); }} accessibilityRole="button" accessibilityLabel="Deals and specials"
               style={{ marginHorizontal: 20, marginTop: 10, backgroundColor: ORANGE, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Sparkles size={17} color="#fff" />
-              <Text style={{ flex: 1, fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>{rushLabel} — deals & specials live now</Text>
+              <Text style={{ flex: 1, fontFamily: Font.semibold, fontSize: 14, color: '#fff' }} numberOfLines={1}>{rushLabel} — specials live now</Text>
               <ChevronRight size={16} color="rgba(255,255,255,0.7)" />
             </PressableScale>
             </MotiView>
@@ -235,8 +235,8 @@ export default function HomeScreen() {
             </MotiView>
           ) : null}
 
-          {/* Marketing banner — rush hour, holidays, weekly digest */}
-          <MarketingBanner />
+          {/* Marketing banner — holidays, weekly digest (suppressed during rush since we show the dedicated banner) */}
+          {!rushActive ? <MarketingBanner /> : null}
 
           {/* Categories — horizontal scroll on phone, wrapping chip grid on tablet+ */}
           {(() => {
@@ -259,43 +259,54 @@ export default function HomeScreen() {
               : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 18, paddingVertical: 20 }}>{items}</ScrollView>;
           })()}
 
-          {/* Primary products — Meal Plans + Experiences + Requests */}
-          <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12, marginBottom: 26 }}>
+          {/* Primary products — compact list card so nothing wraps */}
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }}>
+          <View style={{ marginHorizontal: 20, marginBottom: 26, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden' }}>
             {showPlans ? (
-              <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }} style={{ flex: 1 }}>
+              <>
               <PressableScale onPress={() => { feedback.tap(); router.push('/meal-plans'); }} accessibilityRole="button" accessibilityLabel="Meal plans"
-                style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 10 }}>
-                <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-                  <CalendarCheck size={20} color={ORANGE} />
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 14 }}>
+                <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                  <CalendarCheck size={18} color={ORANGE} />
                 </View>
-                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>meal plans</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>weekly & family, on repeat</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>meal plans</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>weekly & family, on repeat</Text>
+                </View>
+                <ChevronRight size={16} color={Palette.textSecondary} />
               </PressableScale>
-              </MotiView>
+              <View style={{ height: 1, backgroundColor: Palette.border, marginLeft: 68 }} />
+              </>
             ) : null}
             {showExperiences ? (
-              <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 220 }} style={{ flex: 1 }}>
+              <>
               <PressableScale onPress={() => { feedback.tap(); router.push('/experiences'); }} accessibilityRole="button" accessibilityLabel="Experiences"
-                style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 10 }}>
-                <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-                  <Ticket size={20} color={ORANGE} />
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 14 }}>
+                <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                  <Ticket size={18} color={ORANGE} />
                 </View>
-                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>experiences</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>catering, chefs & classes</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>experiences</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>catering, chefs & classes</Text>
+                </View>
+                <ChevronRight size={16} color={Palette.textSecondary} />
               </PressableScale>
-              </MotiView>
+              <View style={{ height: 1, backgroundColor: Palette.border, marginLeft: 68 }} />
+              </>
             ) : null}
-            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 260 }} style={{ flex: 1 }}>
             <PressableScale onPress={() => { feedback.tap(); router.push('/bid-requests'); }} accessibilityRole="button" accessibilityLabel="Meal requests"
-              style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16, gap: 10 }}>
-              <View style={{ width: 42, height: 42, borderRadius: 13, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-                <UtensilsCrossed size={20} color={ORANGE} />
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 16, paddingVertical: 14 }}>
+              <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                <UtensilsCrossed size={18} color={ORANGE} />
               </View>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>requests</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, lineHeight: 16 }}>post a request, get bids</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK }}>requests</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>post a request, get bids</Text>
+              </View>
+              <ChevronRight size={16} color={Palette.textSecondary} />
             </PressableScale>
-            </MotiView>
           </View>
+          </MotiView>
 
           {/* From kitchens you follow — the creator-economy retention loop */}
           {followingFeed && followingFeed.length > 0 ? (
