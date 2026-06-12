@@ -163,7 +163,7 @@ export default function PrepperScreen() {
           transition={{ type: 'timing', duration: 280 }}
           style={{ marginHorizontal: 16, marginTop: -16, backgroundColor: Palette.surface, borderRadius: Radius.lg, paddingVertical: 16, paddingHorizontal: 8, flexDirection: 'row', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } }}>
           {trustRow(p?.rating ?? 0, p?.reviews ?? 0, p?.stats ?? null).map((t, i) => (
-            <MotiView key={t.label} from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 200, delay: 100 + i * 50 }}>
+            <MotiView key={t.label} style={{ flex: 1 }} from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 200, delay: 100 + i * 50 }}>
               <TrustStat value={t.value} label={t.label} color={t.color} />
             </MotiView>
           ))}

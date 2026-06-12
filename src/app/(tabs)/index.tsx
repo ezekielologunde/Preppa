@@ -376,16 +376,16 @@ export default function HomeScreen() {
 
           {/* Points banner — real points from completed orders */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
-          <PressableScale onPress={() => { feedback.tap(); router.push('/rewards'); }} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: '#E7F6EC', borderRadius: 16, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#22c55e', alignItems: 'center', justifyContent: 'center' }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push('/rewards'); }} accessibilityRole="button" accessibilityLabel={`Rewards, ${rewards.points} points, ${rewards.tier.name} tier`} style={{ marginHorizontal: 20, marginBottom: 20, backgroundColor: Palette.success + '18', borderRadius: 16, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.success, alignItems: 'center', justifyContent: 'center' }}>
               <Gift size={20} color="#fff" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#14532d' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink }}>
                 {rewards.points > 0 ? `you have ${rewards.points.toLocaleString()} points` : 'start earning rewards'}
               </Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#3f6212' }}>
-                {rewards.nextTier ? `${rewards.tier.name} · $${rewards.toNext.toFixed(0)} to ${rewards.nextTier.name}` : `${rewards.tier.name} member · top tier 🎉`}
+              <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>
+                {rewards.nextTier ? `${rewards.tier.name} · $${rewards.toNext.toFixed(0)} to ${rewards.nextTier.name}` : `${rewards.tier.name} member · top tier`}
               </Text>
             </View>
             <View style={{ backgroundColor: INK, borderRadius: Radius.pill, paddingHorizontal: 14, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
