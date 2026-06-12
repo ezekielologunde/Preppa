@@ -17,9 +17,9 @@ const ORANGE = Palette.brand;
 const INK = Palette.ink;
 
 const URGENCY_OPTIONS = [
-  { label: '30 min', sub: 'I need food now', mins: 30, color: '#dc2626' },
+  { label: '30 min', sub: 'I need food now', mins: 30, color: Palette.danger },
   { label: '1 hour', sub: 'Pretty urgent', mins: 60, color: ORANGE },
-  { label: '2 hours', sub: 'Flexible but soon', mins: 120, color: '#ca8a04' },
+  { label: '2 hours', sub: 'Flexible but soon', mins: 120, color: Palette.amber },
 ];
 
 const CUISINE_QUICK = ['anything', 'Nigerian', 'Italian', 'Mexican', 'Asian', 'Healthy', 'Comfort'];
