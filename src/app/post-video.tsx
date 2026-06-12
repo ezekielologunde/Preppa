@@ -135,7 +135,7 @@ export default function PostVideoScreen() {
           {/* Caption */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
           <View>
-            <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: Palette.divider, marginBottom: 8 }}>caption</Text>
+            <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: Palette.textMuted, marginBottom: 8 }}>caption</Text>
             <TextInput
               value={caption}
               onChangeText={setCaption}
@@ -154,7 +154,7 @@ export default function PostVideoScreen() {
           <View>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 }}>
               <Hash size={14} color={MUTED} />
-              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: Palette.divider }}>tags</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: Palette.textMuted }}>tags</Text>
             </View>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
               {TAGS.map((t) => {

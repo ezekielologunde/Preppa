@@ -132,7 +132,7 @@ export default function ExperienceRequestScreen() {
                 <View style={{ backgroundColor: Palette.surface, borderWidth: 1, borderColor: Palette.border, borderRadius: Radius.md, padding: 16 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK, flex: 1 }}>{r.title}</Text>
-                    <View style={{ backgroundColor: r.status === 'open' ? Palette.brandTint : '#DCFCE7', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
+                    <View style={{ backgroundColor: r.status === 'open' ? Palette.brandTint : Palette.success + '1A', borderRadius: Radius.pill, paddingHorizontal: 9, paddingVertical: 3 }}>
                       <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: r.status === 'open' ? ORANGE : Palette.success, textTransform: 'capitalize' }}>{r.status}</Text>
                     </View>
                   </View>
