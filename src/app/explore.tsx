@@ -156,7 +156,7 @@ export default function ExploreScreen() {
           })()}
 
           {/* Cuisines */}
-          <SectionHeader title="cuisines" />
+          <SectionHeader title="cuisines" onSeeAll={() => { feedback.tap(); router.push('/cuisine-explorer'); }} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 26 }}>
             {cuisines.map((c) => (
               <CuisineCard key={c.id} cuisine={c} onPress={() => router.push(`/search?q=${encodeURIComponent(c.name)}`)} />
