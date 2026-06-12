@@ -259,7 +259,7 @@ export default function DashboardScreen() {
 
           {/* Stat cards — KPI row on desktop, 2x2 grid on mobile */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 140 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 10, marginBottom: 4, letterSpacing: -0.3 }}>your stats</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 16, marginBottom: 4, letterSpacing: -0.3 }}>your stats</Text>
           {desktop ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
               <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
@@ -279,7 +279,7 @@ export default function DashboardScreen() {
 
           {/* Goal + this week */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 180 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 10, marginBottom: 6, letterSpacing: -0.3 }}>today's progress</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 16, marginBottom: 6, letterSpacing: -0.3 }}>today's progress</Text>
           <View style={{ marginHorizontal: 20, marginBottom: 8, backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 14 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 68, height: 68, flexShrink: 0 }}>
