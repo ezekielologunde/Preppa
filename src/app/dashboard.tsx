@@ -7,6 +7,7 @@ import {
   Boxes,
   Briefcase,
   ChefHat,
+  ChevronLeft,
   ChevronRight,
   Check,
   Crown,
@@ -159,13 +160,16 @@ export default function DashboardScreen() {
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
-            <PressableScale onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/profile'); } }} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 54, height: 54, borderRadius: 27, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/profile'); } }} accessibilityRole="button" accessibilityLabel="Back to customer view" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+              <ChevronLeft size={22} color={INK} />
+            </PressableScale>
+            <View style={{ width: 46, height: 46, borderRadius: 23, borderWidth: 2, borderColor: ORANGE, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
               <Avatar
                 name={prepper?.display_name ?? (user?.user_metadata?.full_name as string | undefined) ?? 'chef'}
                 url={user?.user_metadata?.avatar_url as string | undefined}
-                size={46}
+                size={42}
               />
-            </PressableScale>
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.6 }}>my kitchen</Text>
@@ -255,7 +259,7 @@ export default function DashboardScreen() {
 
           {/* Stat cards — KPI row on desktop, 2x2 grid on mobile */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 140 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: MUTED, paddingHorizontal: 20, marginTop: 10, marginBottom: 2, letterSpacing: 0.8, textTransform: 'uppercase' }}>your stats</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 10, marginBottom: 4, letterSpacing: -0.3 }}>your stats</Text>
           {desktop ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
               <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
@@ -275,7 +279,7 @@ export default function DashboardScreen() {
 
           {/* Goal + this week */}
           <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320, delay: 180 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: MUTED, paddingHorizontal: 20, marginTop: 10, marginBottom: 6, letterSpacing: 0.8, textTransform: 'uppercase' }}>today's progress</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, paddingHorizontal: 20, marginTop: 10, marginBottom: 6, letterSpacing: -0.3 }}>today's progress</Text>
           <View style={{ marginHorizontal: 20, marginBottom: 8, backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 14 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
               <View style={{ position: 'relative', alignItems: 'center', justifyContent: 'center', width: 68, height: 68, flexShrink: 0 }}>
