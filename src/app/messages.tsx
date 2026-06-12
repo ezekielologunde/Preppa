@@ -190,7 +190,8 @@ export default function MessagesScreen() {
     try { router.back(); } catch { router.replace('/'); }
   }
 
-  const unreadCount = (conversations ?? []).filter((c) => c.unread).length;
+  const unreadNotifCount = (notifications ?? []).filter((n) => !n.read).length;
+  const unreadMsgCount = (conversations ?? []).filter((c) => c.unread).length;
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.surface }}>
@@ -214,8 +215,8 @@ export default function MessagesScreen() {
           <>
             {/* Tabs */}
             <View style={{ flexDirection: 'row', marginHorizontal: 16, marginBottom: 6, backgroundColor: Palette.canvas, borderRadius: 999, padding: 4 }}>
-              <TabButton active={tab === 'updates'} label="Updates" onPress={() => { feedback.tap(); setTab('updates'); }} />
-              <TabButton active={tab === 'messages'} label="Messages" count={unreadCount || undefined} onPress={() => { feedback.tap(); setTab('messages'); }} />
+              <TabButton active={tab === 'updates'} label="Updates" count={unreadNotifCount || undefined} onPress={() => { feedback.tap(); setTab('updates'); }} />
+              <TabButton active={tab === 'messages'} label="Messages" count={unreadMsgCount || undefined} onPress={() => { feedback.tap(); setTab('messages'); }} />
             </View>
 
             {tab === 'updates' ? (
@@ -225,16 +226,34 @@ export default function MessagesScreen() {
                 <Empty Icon={Bell} title="No updates yet" sub="Order updates, new bids, reviews and renewals will show up here." />
               ) : (
                 <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 130 }}>
-                  {(notifications ?? []).map((n, i) => (
-                    <MotiView key={n.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 35 }}>
-                      <NotificationItemRow n={n} onPress={() => routeNotification(n)} />
-                    </MotiView>
-                  ))}
-                  {orders?.map((o, i) => (
-                    <MotiView key={o.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: ((notifications?.length ?? 0) + i) * 35 }}>
-                      <NotificationRow o={o} onPress={() => router.push('/orders')} />
-                    </MotiView>
-                  ))}
+                  {(notifications?.length ?? 0) > 0 ? (
+                    <>
+                      {(orders?.length ?? 0) > 0 ? (
+                        <Text style={{ paddingHorizontal: 20, paddingTop: 4, paddingBottom: 6, fontFamily: Font.semibold, fontSize: 11, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                          activity
+                        </Text>
+                      ) : null}
+                      {notifications!.map((n, i) => (
+                        <MotiView key={n.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 35 }}>
+                          <NotificationItemRow n={n} onPress={() => routeNotification(n)} />
+                        </MotiView>
+                      ))}
+                    </>
+                  ) : null}
+                  {(orders?.length ?? 0) > 0 ? (
+                    <>
+                      {(notifications?.length ?? 0) > 0 ? (
+                        <Text style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 6, fontFamily: Font.semibold, fontSize: 11, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                          recent orders
+                        </Text>
+                      ) : null}
+                      {orders!.map((o, i) => (
+                        <MotiView key={o.id} from={{ opacity: 0, translateX: -8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: ((notifications?.length ?? 0) + i) * 35 }}>
+                          <NotificationRow o={o} onPress={() => router.push('/orders')} />
+                        </MotiView>
+                      ))}
+                    </>
+                  ) : null}
                 </ScrollView>
               )
             ) : convLoading ? (
