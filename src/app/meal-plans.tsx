@@ -44,7 +44,7 @@ function CustomPlanCard({ plan, onUpdate, busy }: { plan: CustomMealPlan; onUpda
           </Text>
         </View>
         <View style={{ backgroundColor: plan.status === 'active' ? Palette.success + '1A' : Palette.amber + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: plan.status === 'active' ? Palette.success : '#b45309', textTransform: 'capitalize' }}>{plan.status}</Text>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: plan.status === 'active' ? Palette.success : Palette.amber, textTransform: 'capitalize' }}>{plan.status}</Text>
         </View>
       </View>
       <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -210,7 +210,7 @@ export default function MealPlansScreen() {
                         </Text>
                       </View>
                       <View style={{ backgroundColor: s.status === 'active' ? Palette.success + '1A' : Palette.amber + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
-                        <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: s.status === 'active' ? Palette.success : '#b45309', textTransform: 'capitalize' }}>{s.status}</Text>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: s.status === 'active' ? Palette.success : Palette.amber, textTransform: 'capitalize' }}>{s.status}</Text>
                       </View>
                     </View>
                     <View style={{ flexDirection: 'row', gap: 8 }}>
