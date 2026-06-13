@@ -10,6 +10,7 @@ import { Font } from '@/constants/fonts';
 import { recommendedMeals } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { useCarouselCardWidth, usePagePadding } from '@/lib/layout';
 import { getCurrentRush, getNextRush } from '@/lib/rush-hour';
 import { getSeasonalTheme } from '@/lib/marketing';
 
@@ -114,6 +115,8 @@ export default function SpecialsScreen() {
   const weeklyPicks = recommendedMeals.slice(0, 4);
   const freshDrops = [...recommendedMeals].reverse().slice(0, 4);
   const fathersDayPicks = recommendedMeals.slice(1, 5);
+  const carouselCardWidth = useCarouselCardWidth();
+  const pad = usePagePadding();
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -175,8 +178,8 @@ export default function SpecialsScreen() {
           <View style={{ paddingHorizontal: 20 }}>
             <SectionBadge label={WEEKLY_BADGE.label} color={WEEKLY_BADGE.color} Icon={WEEKLY_BADGE.icon} />
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {weeklyPicks.map((m) => <MealCard key={m.id} meal={m} />)}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: pad, gap: 12 }}>
+            {weeklyPicks.map((m) => <MealCard key={m.id} meal={m} width={carouselCardWidth} />)}
           </ScrollView>
           </MotiView>
 
@@ -196,8 +199,8 @@ export default function SpecialsScreen() {
                 </View>
               </View>
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14, marginTop: 14 }}>
-              {fathersDayPicks.map((m) => <MealCard key={m.id} meal={m} />)}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: pad, gap: 12, marginTop: 14 }}>
+              {fathersDayPicks.map((m) => <MealCard key={m.id} meal={m} width={carouselCardWidth} />)}
             </ScrollView>
             </MotiView>
           ) : null}
@@ -207,8 +210,8 @@ export default function SpecialsScreen() {
           <View style={{ paddingHorizontal: 20 }}>
             <SectionBadge label="fresh drops" color="#059669" Icon={Leaf} />
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {freshDrops.map((m) => <MealCard key={m.id} meal={m} />)}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: pad, gap: 12 }}>
+            {freshDrops.map((m) => <MealCard key={m.id} meal={m} width={carouselCardWidth} />)}
           </ScrollView>
           </MotiView>
 

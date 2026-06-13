@@ -329,7 +329,7 @@ export default function SettingsScreen() {
 
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 130, gap: 24, paddingTop: 4 }}>
+          contentContainerStyle={{ paddingBottom: 32, gap: 24, paddingTop: 4 }}>
 
           {/* ACCOUNT */}
           <Section title="account" delay={0}>

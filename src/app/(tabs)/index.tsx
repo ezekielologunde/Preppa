@@ -151,7 +151,7 @@ export default function HomeScreen() {
             <View style={{ flex: 1, paddingTop: 2 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{greeting()}{firstName ? `, ${firstName}` : ''}</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 14.5, color: INK, letterSpacing: -0.3, lineHeight: 18 }}>
-                what are you <Text style={{ color: ORANGE }}>craving?</Text>
+                real food from <Text style={{ color: ORANGE }}>local kitchens</Text>
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end', gap: 6 }}>

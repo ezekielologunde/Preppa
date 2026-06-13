@@ -266,7 +266,7 @@ export default function ExploreScreen() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: pad, gap: 12, paddingBottom: 20 }}>
               {(meals ?? []).map((m, i) => (
                 <MotiView key={m.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
-                  <MealCard meal={m} />
+                  <MealCard meal={m} width={carouselCardWidth} />
                 </MotiView>
               ))}
             </ScrollView>
