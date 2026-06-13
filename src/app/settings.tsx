@@ -45,27 +45,24 @@ import { toggleDarkMode, useDarkMode } from '@/lib/theme-mode';
 
 function Toggle({ value, onToggle }: { value: boolean; onToggle: () => void }) {
   return (
-    <PressableScale
-      onPress={onToggle}
-      accessibilityRole="switch"
-      accessibilityState={{ checked: value }}
-      accessibilityLabel={value ? 'On' : 'Off'}
-      scaleTo={0.96}
-      style={{
-        width: 40,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: value ? Palette.brand : Palette.border,
-        justifyContent: 'center',
-        paddingHorizontal: 3,
-        alignItems: 'flex-start',
-      }}>
-      <MotiView
-        animate={{ translateX: value ? 16 : 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-        style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: Palette.surface }}
-      />
-    </PressableScale>
+    <MotiView
+      animate={{ backgroundColor: value ? Palette.brand : Palette.border }}
+      transition={{ type: 'timing', duration: 200 }}
+      style={{ width: 40, height: 24, borderRadius: 12, overflow: 'hidden' }}>
+      <PressableScale
+        onPress={onToggle}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: value }}
+        accessibilityLabel={value ? 'On' : 'Off'}
+        scaleTo={0.96}
+        style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 3, alignItems: 'flex-start' }}>
+        <MotiView
+          animate={{ translateX: value ? 16 : 0 }}
+          transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+          style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: Palette.surface }}
+        />
+      </PressableScale>
+    </MotiView>
   );
 }
 

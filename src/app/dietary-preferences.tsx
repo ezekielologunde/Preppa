@@ -51,24 +51,25 @@ function ChipGroup({
           {options.map((opt) => {
             const active = selected.includes(opt);
             return (
-              <PressableScale
+              <MotiView
                 key={opt}
-                onPress={() => { feedback.tap(); onToggle(opt); }}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: active }}
-                accessibilityLabel={opt}
-                style={{
-                  paddingHorizontal: 14,
-                  paddingVertical: 9,
-                  borderRadius: Radius.pill,
+                animate={{
                   backgroundColor: active ? Palette.brand : Palette.surface,
-                  borderWidth: 1.5,
                   borderColor: active ? Palette.brand : Palette.border,
-                }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : Palette.textSecondary }}>
-                  {opt}
-                </Text>
-              </PressableScale>
+                }}
+                transition={{ type: 'timing', duration: 180 }}
+                style={{ borderRadius: Radius.pill, borderWidth: 1.5, overflow: 'hidden' }}>
+                <PressableScale
+                  onPress={() => { feedback.tap(); onToggle(opt); }}
+                  accessibilityRole="checkbox"
+                  accessibilityState={{ checked: active }}
+                  accessibilityLabel={opt}
+                  style={{ paddingHorizontal: 14, paddingVertical: 9 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : Palette.textSecondary }}>
+                    {opt}
+                  </Text>
+                </PressableScale>
+              </MotiView>
             );
           })}
         </View>
@@ -88,17 +89,22 @@ function SpiceRow({ selected, onSelect }: { selected: SpiceLevel; onSelect: (v: 
           {SPICE.map((level) => {
             const active = selected === level;
             return (
-              <PressableScale
+              <MotiView
                 key={level}
-                onPress={() => { feedback.tap(); onSelect(level); }}
-                accessibilityRole="radio"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={level}
-                style={{ flex: 1, paddingVertical: 10, borderRadius: Radius.sm, backgroundColor: active ? Palette.brand : 'transparent', alignItems: 'center' }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: active ? '#fff' : Palette.textSecondary }} numberOfLines={1}>
-                  {level}
-                </Text>
-              </PressableScale>
+                animate={{ backgroundColor: active ? Palette.brand : Palette.surface }}
+                transition={{ type: 'timing', duration: 200 }}
+                style={{ flex: 1, borderRadius: Radius.sm, overflow: 'hidden' }}>
+                <PressableScale
+                  onPress={() => { feedback.tap(); onSelect(level); }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={level}
+                  style={{ paddingVertical: 10, alignItems: 'center' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: active ? '#fff' : Palette.textSecondary }} numberOfLines={1}>
+                    {level}
+                  </Text>
+                </PressableScale>
+              </MotiView>
             );
           })}
         </View>
@@ -172,23 +178,28 @@ export default function DietaryPreferencesScreen() {
 
         {/* Sticky save */}
         <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: Palette.canvas, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 32 }}>
-          <PressableScale
-            onPress={handleSave}
-            disabled={saving}
-            accessibilityRole="button"
-            accessibilityLabel="Save preferences"
-            style={{ height: 56, borderRadius: Radius.md, backgroundColor: saved ? Palette.success : Palette.brand, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: saving ? 0.7 : 1, ...Shadow.floating }}>
-            {saving ? (
-              <ActivityIndicator color="#fff" />
-            ) : saved ? (
-              <>
-                <CheckCircle2 size={18} color="#fff" />
-                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>saved!</Text>
-              </>
-            ) : (
-              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>save preferences</Text>
-            )}
-          </PressableScale>
+          <MotiView
+            animate={{ backgroundColor: saved ? Palette.success : Palette.brand }}
+            transition={{ type: 'timing', duration: 300 }}
+            style={{ height: 56, borderRadius: Radius.md, overflow: 'hidden', ...Shadow.floating }}>
+            <PressableScale
+              onPress={handleSave}
+              disabled={saving}
+              accessibilityRole="button"
+              accessibilityLabel="Save preferences"
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: saving ? 0.7 : 1 }}>
+              {saving ? (
+                <ActivityIndicator color="#fff" />
+              ) : saved ? (
+                <>
+                  <CheckCircle2 size={18} color="#fff" />
+                  <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>saved!</Text>
+                </>
+              ) : (
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>save preferences</Text>
+              )}
+            </PressableScale>
+          </MotiView>
         </View>
       </SafeAreaView>
     </View>
