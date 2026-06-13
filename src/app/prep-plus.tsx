@@ -78,7 +78,7 @@ export default function PrepPlusScreen() {
         Linking.openURL(data.url);
       }
     } catch (e) {
-      feedback.error?.();
+      feedback.error();
       console.error('stripe-subscribe error', e);
     } finally {
       setLoading(false);

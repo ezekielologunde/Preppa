@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import { ChevronLeft, Users } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PrepperCard } from '@/components/prepper-card';
@@ -19,8 +20,10 @@ const INK = Palette.ink;
 export default function FollowingScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: preppers, isLoading } = useFollowedPreppers(user?.id);
+  const { data: preppers, isLoading, refetch } = useFollowedPreppers(user?.id);
   const count = preppers?.length ?? 0;
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   return (
     <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
@@ -65,7 +68,7 @@ export default function FollowingScreen() {
             </PressableScale>
           </MotiView>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, paddingBottom: 60, flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, paddingBottom: 60, flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center' }}>
             {preppers!.map((p, i) => (
               <MotiView key={p.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 30 }}>
                 <PrepperCard prepper={p} />

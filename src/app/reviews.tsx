@@ -50,7 +50,7 @@ export default function ReviewsScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { data: application } = useMyPrepperApplication(user?.id);
-  const prepperId = application?.prepperId ?? application?.id;
+  const prepperId = application?.id;
   const { data: profile } = usePrepperProfile(prepperId);
   const { data: reviews, isLoading, refetch } = usePrepperReviews(prepperId, 50);
   const [refreshing, setRefreshing] = useState(false);

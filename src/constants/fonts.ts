@@ -1,10 +1,3 @@
-import {
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-  Poppins_800ExtraBold,
-} from '@expo-google-fonts/poppins';
 import { Platform } from 'react-native';
 
 export const Font = {
@@ -16,11 +9,11 @@ export const Font = {
   logo: Platform.OS === 'web' ? 'Clash Display' : 'Poppins-ExtraBold',
 } as const;
 
-/** require() map for expo-font's useFonts(). */
+/** Self-hosted TTFs in assets/fonts — safe for Vercel deployments. */
 export const fontAssets = {
-  'Poppins-Regular': Poppins_400Regular,
-  'Poppins-Medium': Poppins_500Medium,
-  'Poppins-SemiBold': Poppins_600SemiBold,
-  'Poppins-Bold': Poppins_700Bold,
-  'Poppins-ExtraBold': Poppins_800ExtraBold,
+  'Poppins-Regular': require('../../assets/fonts/Poppins-Regular.ttf'),
+  'Poppins-Medium': require('../../assets/fonts/Poppins-Medium.ttf'),
+  'Poppins-SemiBold': require('../../assets/fonts/Poppins-SemiBold.ttf'),
+  'Poppins-Bold': require('../../assets/fonts/Poppins-Bold.ttf'),
+  'Poppins-ExtraBold': require('../../assets/fonts/Poppins-ExtraBold.ttf'),
 };

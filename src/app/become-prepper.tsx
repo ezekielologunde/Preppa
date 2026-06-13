@@ -18,6 +18,9 @@ import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/auth-provider';
 
+const cleanLine = (s: string) => s.replace(/[\x00-\x1F\x7F]/g, '');
+const cleanBlock = (s: string) => s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
 const SPECIALTIES = ['Comfort food', 'Healthy', 'Vegan', 'Desserts', 'Caribbean', 'Asian', 'Mexican', 'Mediterranean', 'Halal', 'Keto'];
@@ -135,7 +138,7 @@ export default function BecomePrepperScreen() {
     if ([...idDocs, ...certDocs].some((d) => d.uploading)) return setErr('Please wait for uploads to finish.');
     const docs = [...idDocs, ...certDocs].filter((d) => d.storagePath).map((d) => d.storagePath!);
     apply.mutate(
-      { userId: user.id, displayName: name.trim(), bio: bio.trim(), specialties: picked, applicationDocuments: docs },
+      { userId: user.id, displayName: cleanLine(name).trim(), bio: cleanBlock(bio).trim(), specialties: picked, applicationDocuments: docs },
       { onError: (e) => setErr(e instanceof Error ? e.message : 'Something went wrong.') },
     );
   }

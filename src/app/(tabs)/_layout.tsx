@@ -1,38 +1,46 @@
-import { Tabs } from 'expo-router';
-import { CircleUser, Compass, House, MonitorPlay, Ticket } from 'lucide-react-native';
+import { Tabs, useRouter } from 'expo-router';
+import { ChefHat, CircleUser, Compass, House, MonitorPlay, Ticket } from 'lucide-react-native';
 import { MotiView } from 'moti';
+import type React from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
+import { Palette } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { BP } from '@/lib/layout';
-import { Palette } from '@/constants/theme';
+import { usePrepperOrders } from '@/lib/queries/orders';
+import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { useAuth } from '@/providers/auth-provider';
 
-const TABS = [
+type TabDef = {
+  name: string;
+  label: string;
+  Icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+};
+
+const BASE_TABS: TabDef[] = [
   { name: 'index',       label: 'Home',        Icon: House },
   { name: 'explore',     label: 'Explore',     Icon: Compass },
   { name: 'feeds',       label: 'Feeds',       Icon: MonitorPlay },
   { name: 'experiences', label: 'Experiences', Icon: Ticket },
   { name: 'profile',     label: 'Profile',     Icon: CircleUser },
-] as const;
+];
 
 type TabBarProps = {
   state: { index: number; routes: { name: string; key: string }[] };
   navigation: { navigate: (name: string) => void };
 };
 
-function TabBarIcon({ tab, focused }: { tab: (typeof TABS)[number]; focused: boolean }) {
-  const color = focused ? Palette.brand : Palette.textSecondary;
-
+function TabBarIcon({ Icon, focused }: { Icon: TabDef['Icon']; focused: boolean }) {
   return (
     <MotiView
       animate={{ scale: focused ? 1.08 : 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
-      <tab.Icon
+      <Icon
         size={24}
-        color={color}
+        color={focused ? Palette.brand : Palette.textSecondary}
         strokeWidth={focused ? 2.2 : 1.6}
       />
     </MotiView>
@@ -40,15 +48,13 @@ function TabBarIcon({ tab, focused }: { tab: (typeof TABS)[number]; focused: boo
 }
 
 function TabBarLabel({ label, focused, compact }: { label: string; focused: boolean; compact?: boolean }) {
-  const color = focused ? Palette.brand : Palette.textSecondary;
-
   return (
     <Text
       numberOfLines={1}
       style={{
         fontFamily: focused ? Font.semibold : Font.medium,
         fontSize: compact ? 10.5 : 11.5,
-        color,
+        color: focused ? Palette.brand : Palette.textSecondary,
         letterSpacing: 0,
       }}>
       {label}
@@ -59,13 +65,24 @@ function TabBarLabel({ label, focused, compact }: { label: string; focused: bool
 function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const router = useRouter();
+  const { user } = useAuth();
+  const { data: prepper } = useMyPrepperApplication(user?.id);
+  const isPrepper = prepper?.status === 'approved';
+  const { data: pendingOrders } = usePrepperOrders(isPrepper ? prepper?.id : undefined, 'pending');
+  const pendingCount = pendingOrders?.length ?? 0;
 
-  // Tablet+ (any platform) uses the AppSidebar rail; hide the bottom bar there.
+  // Tablet+ uses the AppSidebar rail; hide the bottom bar there.
   if (width >= BP.tablet) return null;
 
-  // One clean bar: 5 equal-width tabs that fit any phone from 320px up.
-  // (No hamburger / horizontal-scroll — those pushed tabs off-screen.)
-  const compact = width < 360; // tighten spacing on the smallest phones
+  const compact = width < 360;
+
+  // Approved preppers see "My Hub" in the feeds slot — launcher for the kitchen dashboard.
+  const tabs: TabDef[] = BASE_TABS.map((tab) =>
+    tab.name === 'feeds' && isPrepper
+      ? { name: 'feeds', label: 'My Hub', Icon: ChefHat }
+      : tab,
+  );
 
   return (
     <View style={{
@@ -77,17 +94,22 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
       borderTopColor: Palette.border,
       paddingBottom: Math.max(insets.bottom + 4, 12),
     }}>
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
+        const isHubTab = tab.name === 'feeds' && isPrepper;
         const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
         const focused = routeIndex >= 0 && state.index === routeIndex;
 
-        // The flex item is THIS wrapper View — each tab gets an equal 1/5 of the
-        // bar. (PressableScale applies its style to an inner MotiView, so putting
-        // `flex:1` on it does nothing; the flex must live on a real flex child.)
         return (
           <View key={tab.name} style={{ flex: 1, minWidth: 0 }}>
             <PressableScale
-              onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
+              onPress={() => {
+                feedback.tap();
+                if (isHubTab) {
+                  router.push('/dashboard');
+                } else {
+                  navigation.navigate(tab.name);
+                }
+              }}
               accessibilityRole="button"
               accessibilityState={{ selected: focused }}
               accessibilityLabel={tab.label}
@@ -106,7 +128,23 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
                 }}
               />
 
-              <TabBarIcon tab={tab} focused={focused} />
+              <View style={{ position: 'relative' }}>
+                <TabBarIcon Icon={tab.Icon} focused={focused} />
+                {isHubTab && pendingCount > 0 ? (
+                  <View style={{
+                    position: 'absolute', top: -4, right: -8,
+                    minWidth: 16, height: 16, borderRadius: 8,
+                    backgroundColor: Palette.brand, paddingHorizontal: 3,
+                    alignItems: 'center', justifyContent: 'center',
+                    borderWidth: 1.5, borderColor: Palette.surface,
+                  }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 9.5, color: '#fff', lineHeight: 13 }}>
+                      {pendingCount > 9 ? '9+' : pendingCount}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+
               <TabBarLabel label={tab.label} focused={focused} compact={compact} />
             </PressableScale>
           </View>

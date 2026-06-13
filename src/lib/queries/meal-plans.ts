@@ -144,6 +144,85 @@ export function useUpdateSubscription(userId?: string | null) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Prepper-side plan management
+// ---------------------------------------------------------------------------
+
+export type PrepperMealPlan = {
+  id: string;
+  name: string;
+  description: string | null;
+  frequency: string;
+  price: number;
+  meals_per_cycle: number;
+  serves: number;
+  active: boolean;
+  created_at: string;
+};
+
+/** The signed-in prepper's own meal plans (all, including inactive). */
+export function useMyPrepperMealPlans(prepperId?: string | null) {
+  return useQuery({
+    queryKey: ['meal-plans', 'mine', prepperId ?? 'none'],
+    enabled: !!prepperId,
+    queryFn: async (): Promise<PrepperMealPlan[]> => {
+      const { data, error } = await supabase
+        .from('meal_plans')
+        .select('id,name,description,frequency,price,meals_per_cycle,serves,active,created_at')
+        .eq('prepper_id', prepperId!)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data ?? []).map((r) => ({ ...r, price: Number(r.price) }));
+    },
+  });
+}
+
+/** Create a new prepper meal plan. */
+export function useCreatePrepperMealPlan(prepperId?: string | null) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: {
+      name: string;
+      description?: string;
+      price: number;
+      frequency: string;
+      mealsPerCycle: number;
+      serves: number;
+    }) => {
+      const { error } = await supabase.from('meal_plans').insert({
+        prepper_id: prepperId!,
+        name: v.name,
+        description: v.description || null,
+        price: v.price,
+        frequency: v.frequency,
+        meals_per_cycle: v.mealsPerCycle,
+        serves: v.serves,
+        active: true,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['meal-plans', 'mine', prepperId ?? 'none'] });
+      qc.invalidateQueries({ queryKey: ['meal-plans', 'active'] });
+    },
+  });
+}
+
+/** Toggle a plan active/inactive or delete it. */
+export function useUpdatePrepperMealPlan(prepperId?: string | null) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: { id: string; active: boolean }) => {
+      const { error } = await supabase.from('meal_plans').update({ active: v.active }).eq('id', v.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['meal-plans', 'mine', prepperId ?? 'none'] });
+      qc.invalidateQueries({ queryKey: ['meal-plans', 'active'] });
+    },
+  });
+}
+
 /** Skip the next delivery — bumps next_billing_at forward one cycle, no charge. */
 export function useSkipDelivery(userId?: string | null) {
   const qc = useQueryClient();

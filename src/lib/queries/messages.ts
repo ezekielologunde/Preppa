@@ -98,10 +98,25 @@ export function useSendMessage() {
   });
 }
 
+export type HomeCookNegotiationCtx = {
+  id: string;
+  status: 'pending' | 'negotiating';
+  requestedDate: string;
+  requestedTime: string;
+  address: string;
+  guestCount: number;
+  cuisine: string | null;
+  ingredientBudget: number;
+  cookingFee: number | null;
+  travelFee: number | null;
+  iAmPrepper: boolean;
+};
+
 export type ChatContext = {
   otherUserId: string | null;
   otherPhone: string | null;
   order: { id: string; status: string; total: number; firstItem: string | null; items: number; iAmPrepper: boolean } | null;
+  homeCookRequest: HomeCookNegotiationCtx | null;
 };
 
 /**
@@ -154,7 +169,34 @@ export function useChatContext(conversationId?: string, userId?: string | null) 
           };
         }
       }
-      return { otherUserId: other, otherPhone: ((prof as { phone?: string | null } | null)?.phone as string | null) ?? null, order };
+      // Fetch any active home cook negotiation linked to this conversation.
+      let homeCookRequest: HomeCookNegotiationCtx | null = null;
+      const { data: hcRow } = await supabase
+        .from('home_cook_requests')
+        .select('id,status,requested_date,requested_time,address,guest_count,cuisine,ingredient_budget,cooking_fee,travel_fee,prepper_id')
+        .eq('conversation_id', conversationId!)
+        .in('status', ['pending', 'negotiating'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (hcRow) {
+        const h = hcRow as { id: string; status: string; requested_date: string; requested_time: string; address: string; guest_count: number; cuisine: string | null; ingredient_budget: number; cooking_fee: number | null; travel_fee: number | null; prepper_id: string };
+        homeCookRequest = {
+          id: h.id,
+          status: h.status as 'pending' | 'negotiating',
+          requestedDate: h.requested_date,
+          requestedTime: h.requested_time,
+          address: h.address,
+          guestCount: h.guest_count,
+          cuisine: h.cuisine,
+          ingredientBudget: Number(h.ingredient_budget),
+          cookingFee: h.cooking_fee != null ? Number(h.cooking_fee) : null,
+          travelFee: h.travel_fee != null ? Number(h.travel_fee) : null,
+          iAmPrepper: !!myPrep && h.prepper_id === myPrep.id,
+        };
+      }
+
+      return { otherUserId: other, otherPhone: ((prof as { phone?: string | null } | null)?.phone as string | null) ?? null, order, homeCookRequest };
     },
   });
 }

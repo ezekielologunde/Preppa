@@ -29,7 +29,6 @@ import { PrepperCard } from '@/components/prepper-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
-import { cuisines } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import {
@@ -42,7 +41,7 @@ import {
 } from '@/lib/layout';
 import { useRankedPreppers } from '@/lib/match';
 import { useFeaturedMeals, useLimitedDrops } from '@/lib/queries/meals';
-import { useTopPreppers } from '@/lib/queries/preppers';
+import { useKitchenTags, useTopPreppers } from '@/lib/queries/preppers';
 import { usePersonalizedMeals } from '@/lib/queries/recommend';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -62,6 +61,17 @@ const CATEGORY_CIRCLES = [
   { key: 'vegan', label: 'vegan', Icon: Sprout, color: '#8B5CF6' },
   { key: 'trending', label: 'trending', Icon: Flame, color: Palette.amber },
   { key: 'meal-plans', label: 'plans', Icon: Sparkles, color: Palette.brand },
+];
+
+type CuisineItem = { id: string; name: string; meals: number; image: string };
+const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=400&q=60`;
+const CUISINES: CuisineItem[] = [
+  { id: 'c1', name: 'italian', meals: 128, image: img('photo-1473093295043-cdd812d0e601') },
+  { id: 'c2', name: 'nigerian', meals: 94, image: img('photo-1604329760661-e71dc83f8f26') },
+  { id: 'c3', name: 'caribbean', meals: 67, image: img('photo-1559339352-11d035aa65de') },
+  { id: 'c4', name: 'asian', meals: 110, image: img('photo-1504674900247-0877df9cc836') },
+  { id: 'c5', name: 'mediterranean', meals: 82, image: img('photo-1544025162-d76694265947') },
+  { id: 'c6', name: 'american', meals: 75, image: img('photo-1568901346375-23c9450c58cd') },
 ];
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
@@ -118,10 +128,11 @@ export default function ExploreScreen() {
   const contentWidth = useContentWidth();
   const carouselCardWidth = useCarouselCardWidth();
 
+  const { data: vibeTags } = useKitchenTags();
   const { data: preppers, isLoading: preppersLoading, isError: preppersError, refetch: refetchPreppers } = useTopPreppers();
   const { data: meals, isLoading: mealsLoading, isError: mealsError, refetch: refetchMeals } = useFeaturedMeals();
   const { data: drops, refetch: refetchDrops } = useLimitedDrops(6);
-  const forYou = usePersonalizedMeals(meals ?? [], user?.id).slice(0, 6);
+  const forYou = usePersonalizedMeals(meals ?? [], user?.id, user?.user_metadata ?? null).slice(0, 6);
   const rankedPreppers = useRankedPreppers(preppers ?? [], user?.id);
 
   const [refreshing, setRefreshing] = useState(false);
@@ -133,14 +144,20 @@ export default function ExploreScreen() {
   const isTabletUp = bp !== 'mobile';
   const isDesktop = bp === 'desktop';
 
-  // Derive filtered meals — map category keys to tags/cuisine labels
-  const categoryFilter = activeCategory === 'all' ? null : activeCategory;
-  const filteredMeals = categoryFilter
-    ? (meals ?? []).filter((m) => {
-        const haystack = [m.title, m.cuisine, ...(m.tags ?? [])].join(' ').toLowerCase();
-        return haystack.includes(categoryFilter.replace('-', ' '));
-      })
-    : (meals ?? []);
+  function handleCategorySelect(key: string) {
+    if (key === 'meal-plans') { feedback.tap(); router.push('/meal-plans'); return; }
+    setActiveCategory(key);
+  }
+
+  const categoryFilter = (activeCategory === 'all' || activeCategory === 'trending') ? null : activeCategory;
+  const filteredMeals = activeCategory === 'trending'
+    ? [...(meals ?? [])].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    : categoryFilter
+      ? (meals ?? []).filter((m) => {
+          const haystack = [m.title, m.category ?? ''].join(' ').toLowerCase();
+          return haystack.includes(categoryFilter.replace('-', ' '));
+        })
+      : (meals ?? []);
 
   // Prepper grid columns: 2 tablet / 3 desktop
   const prepperCols = bp === 'desktop' ? 3 : bp === 'tablet' ? 2 : 0; // 0 = horizontal scroll
@@ -201,7 +218,7 @@ export default function ExploreScreen() {
           </View>
 
           {/* Category icon circles */}
-          <CategoryCircles active={activeCategory} onSelect={setActiveCategory} />
+          <CategoryCircles active={activeCategory} onSelect={handleCategorySelect} />
         </View>
 
         {/* ── Scrollable content ── */}
@@ -220,6 +237,30 @@ export default function ExploreScreen() {
               <AlertCircle size={18} color={Palette.danger} />
               <Text style={{ flex: 1, fontFamily: Font.medium, fontSize: 13.5, color: Palette.danger }}>Couldn't load meals. Tap to retry.</Text>
             </PressableScale>
+          ) : null}
+
+          {/* ── Browse by vibe — identity/diet/cuisine tags from live kitchens ── */}
+          {vibeTags && vibeTags.length > 0 ? (
+            <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240 }}>
+              <View style={{ paddingHorizontal: 20, paddingTop: 8, marginBottom: 6 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+                  browse by vibe
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+                  {vibeTags.slice(0, 10).map((t, i) => (
+                    <MotiView key={t.tag} from={{ opacity: 0, translateX: 8 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 28 }}>
+                      <PressableScale
+                        onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(t.tag)}`); }}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Browse ${t.tag} kitchens`}
+                        style={{ paddingHorizontal: 14, height: 34, borderRadius: Radius.pill, backgroundColor: Palette.surface, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', ...Shadow.card }}>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.inkSoft }}>{t.tag}</Text>
+                      </PressableScale>
+                    </MotiView>
+                  ))}
+                </ScrollView>
+              </View>
+            </MotiView>
           ) : null}
 
           {/* ── Section 1: Local Kitchens (Preppers) ── */}
@@ -349,9 +390,9 @@ export default function ExploreScreen() {
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 120 }}>
             <SectionHeader title="explore by cuisine" onSeeAll={() => router.push('/cuisine-explorer')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: pad, gap: 12, paddingBottom: 20 }}>
-              {cuisines.map((c, i) => (
+              {CUISINES.map((c, i) => (
                 <MotiView key={c.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
-                  <CuisineCard cuisine={c} onPress={() => { feedback.tap(); router.push(`/category?cuisine=${encodeURIComponent(c.name)}`); }} />
+                  <CuisineCard cuisine={c} onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(c.name)}`); }} />
                 </MotiView>
               ))}
             </ScrollView>

@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { BadgeCheck, Heart, MonitorPlay, Play, Share2, Star, UserCheck, UserPlus } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   NativeScrollEvent,
@@ -22,8 +22,8 @@ import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { BP } from '@/lib/layout';
 import { toggleFavorite, useFavorite } from '@/lib/favorites';
-import { useFeed, type FeedItem } from '@/lib/queries/feed';
-import { useIsFollowing, useToggleFollow } from '@/lib/queries/preppers';
+import { useFeed, useFollowingFeed, type FeedItem } from '@/lib/queries/feed';
+import { useIsFollowing, useMyPrepperApplication, useToggleFollow } from '@/lib/queries/preppers';
 import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
@@ -223,9 +223,46 @@ function PositionDots({ total, current }: { total: number; current: number }) {
 
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
+// ─── Tab bar (overlaid over feed) ────────────────────────────────────────────
+
+function FeedTabs({ tab, onTab }: { tab: 'following' | 'explore'; onTab: (t: 'following' | 'explore') => void }) {
+  return (
+    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20, alignItems: 'center', paddingTop: 14 }} pointerEvents="box-none">
+      <View style={{ flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: Radius.pill, padding: 3, gap: 2 }}>
+        {(['following', 'explore'] as const).map((t) => (
+          <PressableScale key={t} onPress={() => onTab(t)} accessibilityRole="tab" accessibilityState={{ selected: tab === t }} accessibilityLabel={t === 'following' ? 'Following feed' : 'Explore all meals'}>
+            <MotiView
+              animate={{ backgroundColor: tab === t ? 'rgba(255,255,255,0.18)' : 'transparent' }}
+              transition={{ type: 'timing', duration: 180 }}
+              style={{ paddingHorizontal: 18, paddingVertical: 7, borderRadius: Radius.pill }}>
+              <Text style={{ fontFamily: tab === t ? Font.semibold : Font.medium, fontSize: 13.5, color: tab === t ? '#fff' : 'rgba(255,255,255,0.55)' }}>
+                {t === 'following' ? 'following' : 'for you'}
+              </Text>
+            </MotiView>
+          </PressableScale>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 export default function FeedsScreen() {
   const router = useRouter();
-  const { data: items, isLoading } = useFeed();
+  const { user } = useAuth();
+  const { data: prepper } = useMyPrepperApplication(user?.id);
+
+  // Approved preppers reach here only via deep link or history — redirect them to their dashboard.
+  useEffect(() => {
+    if (prepper?.status === 'approved') {
+      router.replace('/dashboard');
+    }
+  }, [prepper?.status, router]);
+
+  const [tab, setTab] = useState<'following' | 'explore'>('following');
+  const { data: exploreItems, isLoading: exploreLoading } = useFeed();
+  const { data: followingItems, isLoading: followingLoading } = useFollowingFeed(user?.id);
+  const items = tab === 'following' ? followingItems : exploreItems;
+  const isLoading = tab === 'following' ? followingLoading : exploreLoading;
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
   const isDesktop = windowWidth >= BP.desktop;
   const insets = useSafeAreaInsets();
@@ -240,36 +277,57 @@ export default function FeedsScreen() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>
+        <FeedTabs tab={tab} onTab={(t) => { setTab(t); setPage(0); }} />
         <ActivityIndicator color={ORANGE} />
       </View>
     );
   }
 
   if (!items?.length) {
+    const isFollowingEmpty = tab === 'following';
     return (
       <View style={{ flex: 1, backgroundColor: '#0B0B0D', alignItems: 'center', justifyContent: 'center', gap: 16, padding: 32 }}>
+        <FeedTabs tab={tab} onTab={(t) => { setTab(t); setPage(0); }} />
         <MotiView from={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 14, stiffness: 180 }}>
           <View style={{ width: 88, height: 88, borderRadius: 28, backgroundColor: 'rgba(241,95,34,0.16)', alignItems: 'center', justifyContent: 'center' }}>
             <MonitorPlay size={40} color={ORANGE} />
           </View>
         </MotiView>
         <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 120 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.6 }}>your feed</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 28, color: '#fff', letterSpacing: -0.6 }}>
+            {isFollowingEmpty ? 'your feed' : 'nothing here'}
+          </Text>
         </MotiView>
         <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
           <Text style={{ fontFamily: Font.body, fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center', maxWidth: 290, lineHeight: 22 }}>
-            Meal drops from the kitchens you follow will appear here.
+            {isFollowingEmpty
+              ? user
+                ? 'Follow local kitchens to see their meal drops here.'
+                : 'Sign in and follow kitchens to see their drops here.'
+              : 'No meal drops published yet.'}
           </Text>
         </MotiView>
-        <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 280 }}>
-          <PressableScale
-            onPress={() => { feedback.tap(); router.push('/explore'); }}
-            accessibilityRole="button"
-            accessibilityLabel="Discover kitchens to follow"
-            style={{ marginTop: 8, paddingHorizontal: 24, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>discover kitchens</Text>
-          </PressableScale>
-        </MotiView>
+        {isFollowingEmpty ? (
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 280 }}>
+            {user ? (
+              <PressableScale
+                onPress={() => { feedback.tap(); router.push('/explore'); }}
+                accessibilityRole="button"
+                accessibilityLabel="Discover kitchens to follow"
+                style={{ marginTop: 8, paddingHorizontal: 24, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>discover kitchens</Text>
+              </PressableScale>
+            ) : (
+              <PressableScale
+                onPress={() => { feedback.tap(); router.push('/auth?mode=signup'); }}
+                accessibilityRole="button"
+                accessibilityLabel="Sign in to follow kitchens"
+                style={{ marginTop: 8, paddingHorizontal: 24, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>sign in to follow kitchens</Text>
+              </PressableScale>
+            )}
+          </MotiView>
+        ) : null}
       </View>
     );
   }
@@ -281,6 +339,7 @@ export default function FeedsScreen() {
       <View style={{ flex: 1, flexDirection: 'row', backgroundColor: '#0B0B0D' }}>
         {/* Constrained feed column — TikTok-style vertical scroll */}
         <View style={{ width: 480, alignSelf: 'stretch' }} onLayout={e => setCardHeight(e.nativeEvent.layout.height)}>
+          <FeedTabs tab={tab} onTab={(t) => { setTab(t); setPage(0); }} />
           <ScrollView
             pagingEnabled
             showsVerticalScrollIndicator={false}
@@ -356,6 +415,7 @@ export default function FeedsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000' }} onLayout={e => setCardHeight(e.nativeEvent.layout.height)}>
+      <FeedTabs tab={tab} onTab={(t) => { setTab(t); setPage(0); }} />
       <ScrollView
         pagingEnabled
         showsVerticalScrollIndicator={false}

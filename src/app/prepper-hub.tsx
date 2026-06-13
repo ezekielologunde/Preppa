@@ -1,13 +1,15 @@
 import { useRouter } from 'expo-router';
-import { ChevronLeft, ChevronRight, Clock, DollarSign, Flame, MessageSquare, Package, Sparkles, Star, TrendingUp, Zap } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Clock, DollarSign, Flame, MessageSquare, Package, RefreshCw, Sparkles, Star, TrendingUp, Zap } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
-import { useMyOrders } from '@/lib/queries/orders';
+import { usePrepperOrders } from '@/lib/queries/orders';
+import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { getCurrentRush, getNextRush } from '@/lib/rush-hour';
 import { Palette, Radius } from '@/constants/theme';
 import { useAuth } from '@/providers/auth-provider';
@@ -25,6 +27,7 @@ const WEEKLY_INSIGHTS = [
 const ACTIONS = [
   { label: 'add a rush-hour special', desc: 'Attract more preorders during peak windows', Icon: Flame, color: ORANGE, route: '/specials' },
   { label: 'update your menu', desc: 'Keep listings fresh — remove sold-out items', Icon: Package, color: '#06b6d4', route: '/meal-editor' },
+  { label: 'manage subscription plans', desc: 'Create and publish recurring meal plans customers subscribe to', Icon: RefreshCw, color: '#8b5cf6', route: '/prepper-meal-plans' },
   { label: 'reply to reviews', desc: 'Responding boosts your ranking score', Icon: MessageSquare, color: '#8b5cf6', route: '/reviews' },
   { label: 'boost your listing', desc: 'Appear at the top of search during rush', Icon: Zap, color: '#d97706', route: '/boost' },
   { label: 'view performance analytics', desc: 'Weekly trends, top dishes, and smart insights', Icon: TrendingUp, color: '#22c55e', route: '/prepper-analytics' },
@@ -42,7 +45,10 @@ const TIPS = [
 export default function PrepperHubScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: orders } = useMyOrders(user?.id);
+  const { data: application } = useMyPrepperApplication(user?.id);
+  const { data: orders, refetch: refetchOrders } = usePrepperOrders(application?.id);
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetchOrders(); setRefreshing(false); }
   const hour = new Date().getHours();
   const currentRush = getCurrentRush(hour);
   const nextRush = getNextRush(hour);
@@ -64,7 +70,7 @@ export default function PrepperHubScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>kitchen hub</Text>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 32 }}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 32 }}>
 
           {/* Rush hour status */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>

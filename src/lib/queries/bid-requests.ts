@@ -182,3 +182,79 @@ export function usePlaceBid() {
     },
   });
 }
+
+// ─── Customer view: own requests with full bid details ────────────────────────
+
+export type MyMealRequest = Omit<MealRequest, 'bid_count'> & {
+  bids: Array<{
+    id: string;
+    prepperId: string;
+    pricePerServing: number;
+    note: string | null;
+    status: RequestBid['status'];
+    prepperName: string;
+  }>;
+};
+
+const MY_REQUEST_SELECT =
+  'id,customer_id,title,description,servings,budget_per_serving,cuisine,deadline,status,created_at,' +
+  'poster:profiles(full_name,email),' +
+  'bids:meal_request_bids(id,prepper_id,price_per_serving,note,status,prepper:prepper_profiles(display_name))';
+
+/** Customer's own requests including all incoming bids. */
+export function useMyRequestsWithBids(userId?: string | null) {
+  return useQuery({
+    queryKey: ['meal-requests', 'mine-bids', userId ?? 'anon'],
+    enabled: !!userId,
+    queryFn: async (): Promise<MyMealRequest[]> => {
+      const { data, error } = await supabase
+        .from('meal_requests')
+        .select(MY_REQUEST_SELECT)
+        .eq('customer_id', userId!)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      type BidRow = { id: string; prepper_id: string; price_per_serving: number; note: string | null; status: string; prepper: { display_name: string } | { display_name: string }[] | null };
+      type Row = Omit<RequestRow, 'bid_count'> & { bids: BidRow[] };
+      return ((data ?? []) as unknown as Row[]).map((r) => {
+        const poster = Array.isArray(r.poster) ? r.poster[0] : r.poster;
+        return {
+          id: r.id,
+          customer_id: r.customer_id,
+          title: r.title,
+          description: r.description,
+          servings: r.servings,
+          budget_per_serving: r.budget_per_serving != null ? Number(r.budget_per_serving) : null,
+          cuisine: r.cuisine,
+          deadline: r.deadline,
+          status: r.status as MealRequest['status'],
+          created_at: r.created_at,
+          poster: poster?.full_name ?? poster?.email?.split('@')[0] ?? 'customer',
+          bids: (r.bids ?? []).map((b) => ({
+            id: b.id,
+            prepperId: b.prepper_id,
+            pricePerServing: Number(b.price_per_serving),
+            note: b.note,
+            status: b.status as RequestBid['status'],
+            prepperName: (Array.isArray(b.prepper) ? b.prepper[0]?.display_name : b.prepper?.display_name) ?? 'Prepper',
+          })),
+        };
+      });
+    },
+  });
+}
+
+/** Accept a meal request bid — atomically accepts bid, rejects others, closes request, creates order. */
+export function useAcceptMealBid() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (v: { bidId: string; requestId: string }) => {
+      const { error } = await supabase.rpc('create_order_from_meal_bid', { p_bid_id: v.bidId });
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      qc.invalidateQueries({ queryKey: ['meal-requests', 'mine-bids'] });
+      qc.invalidateQueries({ queryKey: ['meal-request-bids', v.requestId] });
+      qc.invalidateQueries({ queryKey: ['prepper-orders'] });
+    },
+  });
+}

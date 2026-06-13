@@ -28,22 +28,40 @@ function jitter(id: string): number {
   return h / 1000;
 }
 
+// Map Preppa dietary preference labels to meal category keys.
+const DIETARY_TO_CAT: Record<string, string> = {
+  vegan: 'vegan', vegetarian: 'healthy', 'gluten-free': 'healthy', keto: 'healthy',
+  paleo: 'healthy', healthy: 'healthy',
+};
+
 /**
  * Rank meals for a specific person from real signals: time of day, favorited
- * categories, and the categories/preppers they've ordered before. Returns a
- * sorted list with a human-readable reason for the top pick.
+ * categories, categories/preppers they've ordered before, and dietary preferences.
+ * Returns a sorted list with a human-readable reason for the top pick.
  */
 export function rankMeals(
   meals: Meal[],
-  opts: { favKeys: string[]; orderedMealIds: string[]; orderedPreppers: string[]; hour: number },
+  opts: {
+    favKeys: string[];
+    orderedMealIds: string[];
+    orderedPreppers: string[];
+    hour: number;
+    dietaryPrefs?: string[];
+    cuisinePrefs?: string[];
+  },
 ): Scored[] {
-  const { favKeys, orderedMealIds, orderedPreppers, hour } = opts;
+  const { favKeys, orderedMealIds, orderedPreppers, hour, dietaryPrefs = [], cuisinePrefs = [] } = opts;
   const byId = new Map(meals.map((m) => [m.id, m]));
 
   const favMealIds = favKeys.filter((k) => k.startsWith('meal:')).map((k) => k.slice(5));
   const favCats = new Set(favMealIds.map((id) => byId.get(id)?.category).filter(Boolean) as string[]);
   const orderedCats = new Set(orderedMealIds.map((id) => byId.get(id)?.category).filter(Boolean) as string[]);
   const slot = hourSlot(hour);
+
+  // Build a set of category keys implied by dietary prefs (e.g. Vegan → 'vegan')
+  const prefCats = new Set(dietaryPrefs.map((d) => DIETARY_TO_CAT[d.toLowerCase()]).filter(Boolean) as string[]);
+  // Lowercase cuisine terms for title-based matching
+  const cuisineTerms = cuisinePrefs.map((c) => c.toLowerCase());
 
   const scored = meals.map((m): Scored => {
     let score = m.rating; // 0–5 quality base
@@ -55,6 +73,15 @@ export function rankMeals(
     if (orderedPreppers.includes(m.prepper)) { score += 1.6; reason = `from ${m.prepper}, who you've ordered before`; }
     if (m.badge?.label === 'popular') score += 1;
 
+    // Dietary preference boost
+    if (m.category && prefCats.has(m.category)) { score += 2.8; reason = `matches your dietary preferences`; }
+
+    // Cuisine preference boost — title-based text match
+    if (cuisineTerms.length) {
+      const haystack = m.title.toLowerCase();
+      if (cuisineTerms.some((c) => haystack.includes(c))) { score += 2.4; reason = `matches your cuisine preferences`; }
+    }
+
     score += jitter(m.id) * 0.6; // tiny tiebreaker, deterministic
     return { meal: m, score, reason };
   });
@@ -62,14 +89,16 @@ export function rankMeals(
   return scored.sort((a, b) => b.score - a.score);
 }
 
-/** Personalized ranking for the signed-in user, derived from live signals. */
-export function usePersonalizedMeals(meals: Meal[], userId?: string | null): Scored[] {
+/** Personalized ranking for the signed-in user — combines history, favorites, and dietary preferences. */
+export function usePersonalizedMeals(meals: Meal[], userId?: string | null, userMeta?: Record<string, unknown> | null): Scored[] {
   const favKeys = useFavoriteKeys();
   const { data: orders } = useMyOrders(userId);
   return useMemo(() => {
     const orderedMealIds = (orders ?? []).map((o) => o.firstMealId).filter(Boolean) as string[];
     const orderedPreppers = [...new Set((orders ?? []).map((o) => o.prepper))];
     const hour = new Date().getHours();
-    return rankMeals(meals, { favKeys, orderedMealIds, orderedPreppers, hour });
-  }, [meals, favKeys, orders]);
+    const dietaryPrefs = (userMeta?.dietary as string[] | undefined) ?? [];
+    const cuisinePrefs = (userMeta?.cuisines as string[] | undefined) ?? [];
+    return rankMeals(meals, { favKeys, orderedMealIds, orderedPreppers, hour, dietaryPrefs, cuisinePrefs });
+  }, [meals, favKeys, orders, userMeta]);
 }

@@ -15,6 +15,9 @@ import { supabase } from '@/lib/supabase';
 import { pickAndUploadImage } from '@/lib/upload';
 import { useAuth } from '@/providers/auth-provider';
 
+const cleanLine = (s: string) => s.replace(/[\x00-\x1F\x7F]/g, '');
+const cleanBlock = (s: string) => s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
 const NAME_RE = /^[a-zA-Z\s\-']{2,60}$/;
 const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 const URL_RE = /^https?:\/\/.+/;
@@ -99,8 +102,8 @@ export default function EditProfileScreen() {
     if (Object.values(newErrors).some(Boolean)) { setErrors(newErrors); feedback.error(); return; }
     setSaving(true);
     const { error } = await supabase.auth.updateUser({
-      data: { full_name: fields.full_name.trim(), username: fields.username.trim(), bio: fields.bio,
-              location: fields.location.trim(), website: fields.website.trim(),
+      data: { full_name: cleanLine(fields.full_name).trim(), username: fields.username.trim(), bio: cleanBlock(fields.bio).trim(),
+              location: cleanLine(fields.location).trim(), website: cleanLine(fields.website).trim(),
               ...(avatarUrl ? { avatar_url: avatarUrl } : {}) },
     });
     setSaving(false);

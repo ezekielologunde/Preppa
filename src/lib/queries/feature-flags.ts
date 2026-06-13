@@ -18,7 +18,8 @@ export type FlagKey =
   | 'live_feeds'
   | 'prepper_signups'
   | 'reviews'
-  | 'payments';
+  | 'payments'
+  | 'home_cook';
 
 /**
  * All feature flags as a { key: enabled } map. Public read (RLS allows select).

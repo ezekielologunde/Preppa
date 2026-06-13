@@ -7,12 +7,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MealCard } from '@/components/meal-card';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { recommendedMeals } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useCarouselCardWidth, usePagePadding } from '@/lib/layout';
 import { getCurrentRush, getNextRush } from '@/lib/rush-hour';
 import { getSeasonalTheme } from '@/lib/marketing';
+import { useFeaturedMeals, useLimitedDrops } from '@/lib/queries/meals';
 
 const ORANGE = Palette.brand;
 
@@ -106,15 +106,16 @@ function SeasonalCard() {
   );
 }
 
-const now = new Date();
-const isFathersDayWindow = now.getMonth() === 5 && now.getDate() >= 12 && now.getDate() <= 22;
-const fathersDayDaysLeft = isFathersDayWindow ? 21 - now.getDate() : 0;
-
 export default function SpecialsScreen() {
+  const now = new Date();
+  const isFathersDayWindow = now.getMonth() === 5 && now.getDate() >= 12 && now.getDate() <= 22;
+  const fathersDayDaysLeft = isFathersDayWindow ? 21 - now.getDate() : 0;
   const router = useRouter();
-  const weeklyPicks = recommendedMeals.slice(0, 4);
-  const freshDrops = [...recommendedMeals].reverse().slice(0, 4);
-  const fathersDayPicks = recommendedMeals.slice(1, 5);
+  const { data: featuredMeals = [] } = useFeaturedMeals(8);
+  const { data: limitedDrops = [] } = useLimitedDrops(8);
+  const weeklyPicks = featuredMeals.slice(0, 4);
+  const freshDrops = limitedDrops.length ? limitedDrops.slice(0, 4) : featuredMeals.slice(4, 8);
+  const fathersDayPicks = featuredMeals.slice(0, 4);
   const carouselCardWidth = useCarouselCardWidth();
   const pad = usePagePadding();
 

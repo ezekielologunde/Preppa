@@ -1,4 +1,4 @@
-import { Minus, Plus, X } from 'lucide-react-native';
+import { Check, Lock, Minus, Plus, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Linking, Modal, Platform, Pressable, Text, View } from 'react-native';
@@ -7,8 +7,9 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { supabase } from '@/lib/supabase';
-import { nextDeliveryDate, type DeliveryDay, type MealPlan } from '@/lib/queries/meal-plans';
+import { nextDeliveryDate, useSubscribeToPlan, type DeliveryDay, type MealPlan } from '@/lib/queries/meal-plans';
 
 const DAYS: { key: DeliveryDay; label: string }[] = [
   { key: 'mon', label: 'Mon' }, { key: 'tue', label: 'Tue' }, { key: 'wed', label: 'Wed' },
@@ -25,15 +26,38 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
  * Pass `plan=null` to keep it closed; `userId` must be set (callers gate sign-in before opening).
  */
 export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan | null; userId: string; onClose: () => void }) {
+  const paymentsOn = useFeatureEnabled('payments');
   const [qty, setQty] = useState(1);
   const [day, setDay] = useState<DeliveryDay>('mon');
   const [loading, setLoading] = useState(false);
+  const [freeSubscribed, setFreeSubscribed] = useState(false);
+  const subscribeToPlan = useSubscribeToPlan();
 
   // Reset form each time a new plan opens the sheet.
   const [prevPlanId, setPrevPlanId] = useState<string | null>(plan?.id ?? null);
   if ((plan?.id ?? null) !== prevPlanId) {
     setPrevPlanId(plan?.id ?? null);
-    if (plan) { setQty(1); setDay('mon'); }
+    if (plan) { setQty(1); setDay('mon'); setFreeSubscribed(false); }
+  }
+
+  async function confirmFree() {
+    if (!plan || loading || subscribeToPlan.isPending) return;
+    feedback.tap();
+    try {
+      await subscribeToPlan.mutateAsync({
+        userId,
+        planId: plan.id,
+        prepperId: plan.prepper_id,
+        planName: plan.name,
+        frequency: plan.frequency,
+        qty,
+        deliveryDay: day,
+      });
+      feedback.success();
+      setFreeSubscribed(true);
+    } catch {
+      feedback.error();
+    }
   }
 
   async function confirm() {
@@ -52,7 +76,7 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
         Linking.openURL(data.url);
       }
     } catch (e) {
-      feedback.error?.();
+      feedback.error();
       console.error('subscribe-sheet stripe error', e);
     } finally {
       setLoading(false);
@@ -123,22 +147,43 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
           </View>
           </MotiView>
 
+          {/* Payment note */}
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 220 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: paymentsOn ? Palette.brandTint : Palette.canvas, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12 }}>
+            <Lock size={14} color={paymentsOn ? ORANGE : Palette.textMuted} style={{ marginTop: 2 }} />
+            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: paymentsOn ? ORANGE : Palette.textSecondary, lineHeight: 18 }}>
+              {paymentsOn
+                ? 'Billed securely via Stripe. Cancel anytime — no charge until after your first delivery.'
+                : 'Online payments coming soon. You\'ll be notified when billing goes live.'}
+            </Text>
+          </View>
+          </MotiView>
+
           {/* Confirm */}
-          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 }}>
-          <PressableScale
-            onPress={confirm}
-            disabled={loading}
-            accessibilityRole="button"
-            accessibilityLabel="Start plan"
-            style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: loading ? 0.7 : 1 }}>
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
-                Start plan · {money((plan?.price ?? 0) * qty)}/{plan?.frequency}
-              </Text>
-            )}
-          </PressableScale>
+          <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 260 }}>
+          {freeSubscribed ? (
+            <View style={{ height: 54, borderRadius: Radius.pill, backgroundColor: Palette.success, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+              <Check size={18} color="#fff" strokeWidth={3} />
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>You're on the list — we'll notify you</Text>
+            </View>
+          ) : (
+            <PressableScale
+              onPress={paymentsOn ? confirm : confirmFree}
+              disabled={loading || subscribeToPlan.isPending}
+              accessibilityRole="button"
+              accessibilityLabel={paymentsOn ? 'Start plan' : 'Join waitlist'}
+              style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: (loading || subscribeToPlan.isPending) ? 0.7 : 1 }}>
+              {loading || subscribeToPlan.isPending ? (
+                <ActivityIndicator color="#fff" />
+              ) : paymentsOn ? (
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
+                  Start plan · {money((plan?.price ?? 0) * qty)}/{plan?.frequency}
+                </Text>
+              ) : (
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Join waitlist · notified when live</Text>
+              )}
+            </PressableScale>
+          )}
           </MotiView>
         </Pressable>
       </Pressable>

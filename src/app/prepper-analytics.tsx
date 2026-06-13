@@ -1,13 +1,15 @@
 import { useRouter } from 'expo-router';
 import { Award, ChevronLeft, ChevronRight, Clock, Flame, Lightbulb, Package, Sparkles, TrendingUp } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
-import { useMyOrders } from '@/lib/queries/orders';
+import { usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
+import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { Palette, Radius } from '@/constants/theme';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -17,37 +19,43 @@ const INK = Palette.ink;
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const TIME_SLOTS = ['7–10am', '11am–2pm', '4–8pm', 'other'];
 
-function buildDayBars(orders: any[]): { day: string; count: number }[] {
+function buildDayBars(orders: OrderSummary[]): { day: string; count: number }[] {
   const counts = Array(7).fill(0);
-  orders.forEach((o) => {
-    const d = new Date(o.created_at ?? o.createdAt ?? '').getDay();
+  for (const o of orders) {
+    const d = new Date(o.created_at).getDay();
     if (!isNaN(d)) counts[d]++;
-  });
+  }
   return DAYS.map((day, i) => ({ day, count: counts[i] }));
 }
 
-function buildSlotBars(orders: any[]): { slot: string; count: number }[] {
+function buildSlotBars(orders: OrderSummary[]): { slot: string; count: number }[] {
   const counts = [0, 0, 0, 0];
-  orders.forEach((o) => {
-    const h = new Date(o.created_at ?? o.createdAt ?? '').getHours();
+  for (const o of orders) {
+    const h = new Date(o.created_at).getHours();
     if (h >= 7 && h < 10) counts[0]++;
     else if (h >= 11 && h < 14) counts[1]++;
     else if (h >= 16 && h < 20) counts[2]++;
     else counts[3]++;
-  });
+  }
   return TIME_SLOTS.map((slot, i) => ({ slot, count: counts[i] }));
 }
 
-function computeTopDish(orders: any[]): string {
+function computeTopDish(orders: OrderSummary[]): string {
   const freq: Record<string, number> = {};
-  orders.forEach((o) => {
-    (o.items ?? []).forEach((item: any) => {
-      const name = item.name ?? item.title ?? 'unknown';
-      freq[name] = (freq[name] ?? 0) + 1;
-    });
-  });
+  for (const o of orders) {
+    for (const item of o.items) freq[item.title] = (freq[item.title] ?? 0) + 1;
+  }
   const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
   return sorted[0]?.[0] ?? 'No data yet';
+}
+
+function computeRepeatRate(orders: OrderSummary[]): number {
+  if (!orders.length) return 0;
+  const freq = new Map<string, number>();
+  for (const o of orders) freq.set(o.customerId, (freq.get(o.customerId) ?? 0) + 1);
+  const unique = freq.size;
+  const repeats = [...freq.values()].filter((c) => c > 1).length;
+  return unique > 0 ? Math.round((repeats / unique) * 100) : 0;
 }
 
 function Bar({ value, max, color }: { value: number; max: number; color: string }) {
@@ -74,8 +82,11 @@ const INSIGHTS = [
 export default function PrepperAnalyticsScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: orders } = useMyOrders(user?.id);
+  const { data: application } = useMyPrepperApplication(user?.id);
+  const { data: orders, refetch } = usePrepperOrders(application?.id);
   const completed = (orders ?? []).filter((o) => o.status === 'completed');
+  const [refreshing, setRefreshing] = useState(false);
+  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
 
   const todayIdx = new Date().getDay();
   const dayBars = buildDayBars(completed);
@@ -85,7 +96,7 @@ export default function PrepperAnalyticsScreen() {
   const maxSlot = Math.max(...slotBars.map((s) => s.count), 1);
   const totalEarnings = completed.reduce((s, o) => s + (o.total ?? 0), 0);
   const avgOrder = completed.length ? totalEarnings / completed.length : 0;
-  const repeatRate = completed.length > 0 ? 62 : 0;
+  const repeatRate = computeRepeatRate(completed);
 
   function goBack() { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/prepper-hub'); } }
 
@@ -106,7 +117,20 @@ export default function PrepperAnalyticsScreen() {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 120 }}>
+        {application && application.status !== 'approved' ? (
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
+            <Package size={32} color={Palette.textMuted} />
+            <Text style={{ fontFamily: Font.heading, fontSize: 17, color: INK, textAlign: 'center' }}>
+              {application.status === 'pending' ? 'Application under review' : 'Analytics unavailable'}
+            </Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20 }}>
+              {application.status === 'pending'
+                ? 'Your prepper application is being reviewed. Analytics will appear once you\'re approved.'
+                : 'Your kitchen application was not approved. Contact support if you think this is a mistake.'}
+            </Text>
+          </MotiView>
+        ) : (
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: 120 }}>
 
           {/* KPI row */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
@@ -212,6 +236,7 @@ export default function PrepperAnalyticsScreen() {
           </MotiView>
 
         </ScrollView>
+        )}
       </SafeAreaView>
     </View>
   );

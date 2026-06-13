@@ -53,9 +53,9 @@ export default function RewardsScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const r = useRewards(user?.id);
-  const { refetch } = useMyOrders(user?.id);
+  const { refetch: refetchOrders } = useMyOrders(user?.id);
   const [refreshing, setRefreshing] = useState(false);
-  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
+  async function handleRefresh() { setRefreshing(true); await Promise.all([refetchOrders(), r.refetch()]); setRefreshing(false); }
 
   function goBack() {
     feedback.tap();

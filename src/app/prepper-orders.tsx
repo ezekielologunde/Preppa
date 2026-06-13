@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { ChevronLeft, QrCode, ShoppingBag, X } from 'lucide-react-native';
+import { CalendarCheck, ChefHat, ChevronLeft, MapPin, QrCode, ShoppingBag, Users, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
@@ -11,11 +11,15 @@ import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
 import { Palette, Radius } from '@/constants/theme';
 import { useRefundOrder } from '@/lib/queries/cart';
+import { useCaptureHomeCookPayment, usePrepperHomeCookRequests, useProposeHomeCookTerms, type HomeCookRequest } from '@/lib/queries/home-cook';
 import { useAdvanceOrder, useCancelOrder, useOrdersRealtime, usePrepperOrders, useVerifyHandoff, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { useBreakpoint } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
+
+const HC = '#5B21B6';
+const HC_TINT = '#EDE9FE';
 
 const ORANGE = Palette.brand;
 const CARD = Palette.prepperCard;
@@ -55,7 +59,7 @@ function OrderCard({
   busy: boolean;
 }) {
   const step = NEXT[order.status];
-  const needsHandoff = step?.next === 'completed' && (order.fulfillment === 'pickup' || order.fulfillment === 'meetup');
+  const needsHandoff = step?.next === 'completed' && (order.fulfillment === 'pickup' || order.fulfillment === 'meetup' || order.fulfillment === 'home_cook');
   const canCancel = order.status === 'pending' || order.status === 'confirmed';
   const done = order.status === 'completed' || order.status === 'cancelled';
   return (
@@ -64,7 +68,9 @@ function OrderCard({
         <View style={{ flex: 1 }}>
           <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }} numberOfLines={1}>{order.customer}</Text>
           <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, marginTop: 1 }}>
-            {order.items.reduce((s, i) => s + i.quantity, 0)} item{order.items.length === 1 ? '' : 's'} · {money(order.total)}
+            {order.items.length === 0
+              ? `Custom job · ${money(order.total)}`
+              : `${order.items.reduce((s, i) => s + i.quantity, 0)} item${order.items.length === 1 ? '' : 's'} · ${money(order.total)}`}
           </Text>
         </View>
         <View style={{ paddingHorizontal: 11, height: 26, borderRadius: Radius.pill, backgroundColor: done ? '#252a34' : ORANGE + '26', alignItems: 'center', justifyContent: 'center' }}>
@@ -83,7 +89,9 @@ function OrderCard({
 
       {/* Fulfillment */}
       <View style={{ backgroundColor: '#1d2129', borderRadius: 12, padding: 10, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: ORANGE, textTransform: 'capitalize' }}>{order.fulfillment === 'meetup' ? 'Meet up' : order.fulfillment}</Text>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: order.fulfillment === 'home_cook' ? HC : ORANGE, textTransform: 'capitalize' }}>
+          {order.fulfillment === 'meetup' ? 'Meet up' : order.fulfillment === 'home_cook' ? 'Home cook' : order.fulfillment}
+        </Text>
         {order.fulfillmentNote ? <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted }} numberOfLines={2}>· {order.fulfillmentNote}</Text> : null}
       </View>
 
@@ -115,25 +123,48 @@ export default function PrepperOrdersScreen() {
   const { data: prepper } = useMyPrepperApplication(user?.id);
   const prepperId = prepper?.id;
   const { data: orders, isLoading, refetch } = usePrepperOrders(prepperId);
+  const { data: homeCookJobs, refetch: refetchHC } = usePrepperHomeCookRequests(prepperId);
   useOrdersRealtime('prepper_id', prepperId);
   const [refreshing, setRefreshing] = useState(false);
-  async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
+  async function handleRefresh() { setRefreshing(true); await Promise.all([refetch(), refetchHC()]); setRefreshing(false); }
   const advance = useAdvanceOrder();
   const cancel = useCancelOrder();
   const refund = useRefundOrder();
   const verify = useVerifyHandoff();
+  const proposeTerms = useProposeHomeCookTerms();
+  const captureHC = useCaptureHomeCookPayment();
   const busyId = advance.isPending ? advance.variables?.orderId : cancel.isPending ? cancel.variables : undefined;
   const [actionErr, setActionErr] = useState<string | null>(null);
   const onErr = (e: unknown) => setActionErr(e instanceof Error ? e.message : 'Could not update the preorder. Try again.');
-  // Declining is destructive (refunds the customer) → confirm first.
   const [declineOrder, setDeclineOrder] = useState<OrderSummary | null>(null);
+  const [tab, setTab] = useState<'preorders' | 'homecook'>('preorders');
+  const [proposeTarget, setProposeTarget] = useState<HomeCookRequest | null>(null);
+  const [cookingFee, setCookingFee] = useState('');
+  const [travelFee, setTravelFee] = useState('');
+  const [termsErr, setTermsErr] = useState<string | null>(null);
+
   function doDecline(o: OrderSummary) {
     setDeclineOrder(null);
     setActionErr(null);
     cancel.mutate(o.id, { onSuccess: () => refund.mutate(o.id), onError: onErr });
   }
 
-  // Handoff verification modal (pickup/meetup): cook keys the customer's PIN.
+  function submitTerms() {
+    if (!proposeTarget) return;
+    const cf = parseFloat(cookingFee.replace(/[^0-9.]/g, ''));
+    const tf = parseFloat(travelFee.replace(/[^0-9.]/g, '') || '0');
+    if (!cf || cf <= 0) return setTermsErr('Enter a cooking fee.');
+    setTermsErr(null);
+    proposeTerms.mutate(
+      { requestId: proposeTarget.id, cookingFee: cf, travelFee: tf || 0 },
+      {
+        onSuccess: () => { feedback.success(); setProposeTarget(null); setCookingFee(''); setTravelFee(''); },
+        onError: (e) => setTermsErr(e instanceof Error ? e.message : 'Could not send proposal.'),
+      },
+    );
+  }
+
+  // Handoff verification modal (pickup/meetup/home_cook): cook keys the customer's PIN.
   const [verifyOrder, setVerifyOrder] = useState<OrderSummary | null>(null);
   const [pin, setPin] = useState('');
   const [verifyMsg, setVerifyMsg] = useState<string | null>(null);
@@ -143,7 +174,11 @@ export default function PrepperOrdersScreen() {
     setVerifyMsg(null);
     verify.mutate({ orderId: verifyOrder.id, pin }, {
       onSuccess: (r) => {
-        if (r.ok && r.completed) { feedback.success(); setVerifyOrder(null); }
+        if (r.ok && r.completed) {
+          feedback.success();
+          setVerifyOrder(null);
+          if (verifyOrder?.fulfillment === 'home_cook') captureHC.mutate(verifyOrder.id);
+        }
         else if (r.locked) { feedback.error(); setVerifyMsg(r.reason ?? 'Locked — ask for the QR code.'); }
         else { feedback.error(); setVerifyMsg(`${r.reason ?? 'Wrong code'}${typeof r.attempts_left === 'number' ? ` · ${r.attempts_left} tries left` : ''}`); setPin(''); }
       },
@@ -158,7 +193,28 @@ export default function PrepperOrdersScreen() {
           <PressableScale onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/dashboard'); } }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color="#fff" />
           </PressableScale>
-          <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>incoming preorders</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>
+            {tab === 'homecook' ? 'home cook jobs' : 'incoming preorders'}
+          </Text>
+        </View>
+
+        {/* Tab bar */}
+        <View style={{ flexDirection: 'row', marginHorizontal: 16, marginBottom: 8, backgroundColor: CARD, borderRadius: 14, padding: 4, gap: 4 }}>
+          {([['preorders', 'Preorders'], ['homecook', 'Home Cook']] as const).map(([key, label]) => {
+            const active = tab === key;
+            const badge = key === 'homecook' ? (homeCookJobs?.length ?? 0) : 0;
+            return (
+              <PressableScale key={key} onPress={() => { feedback.tap(); setTab(key); }} accessibilityRole="tab" accessibilityLabel={label}
+                style={{ flex: 1, height: 36, borderRadius: 10, backgroundColor: active ? (key === 'homecook' ? HC : ORANGE) : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : '#5b6170' }}>{label}</Text>
+                {badge > 0 ? (
+                  <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: active ? 'rgba(255,255,255,0.3)' : HC, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{badge}</Text>
+                  </View>
+                ) : null}
+              </PressableScale>
+            );
+          })}
         </View>
 
         {actionErr ? (
@@ -167,39 +223,130 @@ export default function PrepperOrdersScreen() {
           </PressableScale>
         ) : null}
 
-        {!prepperId ? (
-          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
-            <ShoppingBag size={28} color="#5b6170" />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>This is your kitchen&apos;s preorder queue. Approved preppers see incoming preorders here.</Text>
-          </MotiView>
-        ) : isLoading ? (
-          <ListSkeleton count={4} rowHeight={110} />
-        ) : !orders?.length ? (
-          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
-            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+        {/* Home Cook tab */}
+        {tab === 'homecook' ? (
+          !prepperId ? (
+            <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+              <ChefHat size={28} color="#5b6170" />
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>Approved preppers see home cook booking requests here.</Text>
+            </MotiView>
+          ) : !homeCookJobs?.length ? (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+              <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+                <ChefHat size={28} color="#5b6170" />
+              </View>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No home cook requests</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>When Prep+ customers book you to cook at their home, requests appear here for you to review and propose terms.</Text>
+            </MotiView>
+          ) : (
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={HC} colors={[HC]} />} contentContainerStyle={{ padding: 20, paddingBottom: 40, gap: 12 }}>
+              {homeCookJobs.map((job, i) => {
+                const isNegotiating = job.status === 'negotiating';
+                return (
+                  <MotiView key={job.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 45 }}>
+                  <View style={{ backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 12, borderLeftWidth: 3, borderLeftColor: isNegotiating ? HC : '#7C3AED66' }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }} numberOfLines={1}>{job.customerName ?? 'Customer'}</Text>
+                        <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, marginTop: 1 }}>
+                          ${job.ingredientBudget} ingredient budget · {job.guestCount} guest{job.guestCount !== 1 ? 's' : ''}
+                        </Text>
+                      </View>
+                      <View style={{ paddingHorizontal: 11, height: 26, borderRadius: Radius.pill, backgroundColor: isNegotiating ? HC + '30' : '#252a34', alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: isNegotiating ? HC_TINT : Palette.textMuted, textTransform: 'capitalize' }}>{job.status}</Text>
+                      </View>
+                    </View>
+
+                    <View style={{ gap: 6 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                        <CalendarCheck size={13} color={HC} />
+                        <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{job.requestedDate} · {job.requestedTime.replace('_', ' ')}</Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                        <MapPin size={13} color={HC} />
+                        <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }} numberOfLines={1}>{job.address}</Text>
+                      </View>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
+                        <Users size={13} color={HC} />
+                        <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>
+                          {job.guestCount} guests{job.cuisine ? ` · ${job.cuisine}` : ''}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {isNegotiating && job.cookingFee != null ? (
+                      <View style={{ backgroundColor: '#1d2129', borderRadius: 11, padding: 10, gap: 3 }}>
+                        <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: HC }}>Terms proposed — awaiting customer</Text>
+                        <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>
+                          Cooking: ${job.cookingFee} · Travel: ${job.travelFee ?? 0} · Customer total: ${job.ingredientBudget + job.cookingFee + (job.travelFee ?? 0)}
+                        </Text>
+                      </View>
+                    ) : null}
+
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                      {job.conversationId ? (
+                        <PressableScale onPress={() => { feedback.tap(); router.push({ pathname: '/chat', params: { id: job.conversationId!, name: job.customerName ?? 'Customer' } }); }}
+                          accessibilityRole="button" accessibilityLabel="Open chat"
+                          style={{ height: 44, paddingHorizontal: 18, borderRadius: 13, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textMuted }}>Chat</Text>
+                        </PressableScale>
+                      ) : null}
+                      {job.status === 'pending' ? (
+                        <PressableScale onPress={() => { feedback.tap(); setTermsErr(null); setProposeTarget(job); }}
+                          accessibilityRole="button" accessibilityLabel="Propose terms"
+                          style={{ flex: 1, height: 44, borderRadius: Radius.pill, backgroundColor: HC, alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: '#fff' }}>Propose terms</Text>
+                        </PressableScale>
+                      ) : (
+                        <View style={{ flex: 1, height: 44, borderRadius: Radius.pill, backgroundColor: '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
+                          <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.textMuted }}>Awaiting customer confirmation</Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                  </MotiView>
+                );
+              })}
+            </ScrollView>
+          )
+        ) : null}
+
+        {/* Preorders tab */}
+        {tab === 'preorders' ? (
+          !prepperId ? (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
               <ShoppingBag size={28} color="#5b6170" />
-            </View>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No preorders yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New preorders from customers will appear here in real time.</Text>
-          </MotiView>
-        ) : (
-          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
-            <View style={isDesktop ? { flexDirection: 'row', flexWrap: 'wrap', gap: 14 } : { gap: 12 }}>
-              {orders.map((o, i) => (
-                <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 45 }}
-                  style={isDesktop ? { flex: 1, minWidth: 320, maxWidth: '48%' } : undefined}>
-                  <OrderCard
-                    order={o}
-                    busy={busyId === o.id}
-                    onAdvance={(next) => { setActionErr(null); advance.mutate({ orderId: o.id, next }, { onError: onErr }); }}
-                    onCancel={() => { feedback.warning(); setDeclineOrder(o); }}
-                    onVerify={() => openVerify(o)}
-                  />
-                </MotiView>
-              ))}
-            </View>
-          </ScrollView>
-        )}
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>This is your kitchen&apos;s preorder queue. Approved preppers see incoming preorders here.</Text>
+            </MotiView>
+          ) : isLoading ? (
+            <ListSkeleton count={4} rowHeight={110} />
+          ) : !orders?.length ? (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+              <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+                <ShoppingBag size={28} color="#5b6170" />
+              </View>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No preorders yet</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New preorders from customers will appear here in real time.</Text>
+            </MotiView>
+          ) : (
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+              <View style={isDesktop ? { flexDirection: 'row', flexWrap: 'wrap', gap: 14 } : { gap: 12 }}>
+                {orders.map((o, i) => (
+                  <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 45 }}
+                    style={isDesktop ? { flex: 1, minWidth: 320, maxWidth: '48%' } : undefined}>
+                    <OrderCard
+                      order={o}
+                      busy={busyId === o.id}
+                      onAdvance={(next) => { setActionErr(null); advance.mutate({ orderId: o.id, next }, { onError: onErr }); }}
+                      onCancel={() => { feedback.warning(); setDeclineOrder(o); }}
+                      onVerify={() => openVerify(o)}
+                    />
+                  </MotiView>
+                ))}
+              </View>
+            </ScrollView>
+          )
+        ) : null}
       </SafeAreaView>
 
       {/* Decline confirmation */}
@@ -243,7 +390,7 @@ export default function PrepperOrdersScreen() {
               value={pin}
               onChangeText={(t) => { setPin(t.replace(/\D/g, '').slice(0, 3)); setVerifyMsg(null); }}
               placeholder="•••"
-              placeholderTextColor="#4b5563"
+              placeholderTextColor={Palette.textMuted}
               keyboardType="number-pad"
               maxLength={3}
               autoFocus
@@ -252,6 +399,72 @@ export default function PrepperOrdersScreen() {
             {verifyMsg ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5', textAlign: 'center' }}>{verifyMsg}</Text> : null}
             <PressableScale onPress={() => { feedback.tap(); submitPin(); }} disabled={verify.isPending} accessibilityRole="button" accessibilityLabel="Confirm handoff" style={{ height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: verify.isPending ? 0.7 : 1 }}>
               {verify.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Confirm & complete</Text>}
+            </PressableScale>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Propose Terms modal — home cook jobs */}
+      <Modal visible={!!proposeTarget} transparent animationType="fade" onRequestClose={() => setProposeTarget(null)}>
+        <Pressable onPress={() => setProposeTarget(null)} style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 360, backgroundColor: CARD, borderRadius: 22, padding: 22, gap: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: 44, height: 44, borderRadius: 13, backgroundColor: HC + '26', alignItems: 'center', justifyContent: 'center' }}>
+                <ChefHat size={20} color={HC_TINT} />
+              </View>
+              <PressableScale onPress={() => { feedback.tap(); setProposeTarget(null); }} accessibilityRole="button" accessibilityLabel="Close"
+                style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: '#252a34', alignItems: 'center', justifyContent: 'center' }}>
+                <X size={17} color={Palette.textMuted} />
+              </PressableScale>
+            </View>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.4 }}>Propose your terms</Text>
+            {proposeTarget ? (
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textMuted, lineHeight: 18 }}>
+                {proposeTarget.guestCount} guests · {proposeTarget.requestedDate} · ingredient budget ${proposeTarget.ingredientBudget}
+              </Text>
+            ) : null}
+            <View style={{ gap: 8 }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>Your cooking fee ($)</Text>
+              <TextInput
+                value={cookingFee}
+                onChangeText={setCookingFee}
+                placeholder="e.g. 120"
+                placeholderTextColor={Palette.textMuted}
+                keyboardType="numeric"
+                style={{ height: 50, borderRadius: 13, backgroundColor: '#1d2129', paddingHorizontal: 14, fontFamily: Font.body, fontSize: 15, color: '#fff' }}
+                accessibilityLabel="Cooking fee"
+              />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: '#fff' }}>Travel / ingredients transport ($) <Text style={{ fontFamily: Font.body, color: Palette.textMuted }}>optional</Text></Text>
+              <TextInput
+                value={travelFee}
+                onChangeText={setTravelFee}
+                placeholder="e.g. 15"
+                placeholderTextColor={Palette.textMuted}
+                keyboardType="numeric"
+                style={{ height: 50, borderRadius: 13, backgroundColor: '#1d2129', paddingHorizontal: 14, fontFamily: Font.body, fontSize: 15, color: '#fff' }}
+                accessibilityLabel="Travel or transport fee"
+              />
+            </View>
+            {proposeTarget && cookingFee ? (
+              <View style={{ backgroundColor: HC + '22', borderRadius: 11, padding: 10, gap: 3 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: HC_TINT }}>Customer pays total</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: '#fff' }}>
+                    ${proposeTarget.ingredientBudget + (parseFloat(cookingFee) || 0) + (parseFloat(travelFee) || 0)}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: HC_TINT }}>You receive (cooking fee)</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: HC_TINT }}>${parseFloat(cookingFee) || 0}</Text>
+                </View>
+              </View>
+            ) : null}
+            {termsErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13, color: '#fca5a5' }}>{termsErr}</Text> : null}
+            <PressableScale onPress={submitTerms} disabled={proposeTerms.isPending} accessibilityRole="button" accessibilityLabel="Send proposal to customer"
+              style={{ height: 52, borderRadius: Radius.pill, backgroundColor: HC, alignItems: 'center', justifyContent: 'center', opacity: proposeTerms.isPending ? 0.7 : 1 }}>
+              {proposeTerms.isPending ? <ActivityIndicator color="#fff" /> : (
+                <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Send proposal to customer</Text>
+              )}
             </PressableScale>
           </Pressable>
         </Pressable>

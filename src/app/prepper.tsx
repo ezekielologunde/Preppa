@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, MessageSquare, RefreshCw, Share2, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
+import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChefHat, ChevronLeft, Crown, MapPin, MessageSquare, RefreshCw, Share2, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { MotiView } from 'moti';
 import { RefreshControl, ScrollView, Share, Text, View } from 'react-native';
@@ -201,9 +201,14 @@ export default function PrepperScreen() {
             {p?.specialties.length ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {p.specialties.map((s) => (
-                  <View key={s} style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 13, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                  <PressableScale
+                    key={s}
+                    onPress={() => { feedback.tap(); router.push(`/kitchens?tag=${encodeURIComponent(s)}`); }}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Find more ${s} kitchens`}
+                    style={{ backgroundColor: Palette.brandTint, borderRadius: Radius.pill, paddingHorizontal: 13, height: 30, alignItems: 'center', justifyContent: 'center' }}>
                     <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.brandPressed }}>{s}</Text>
-                  </View>
+                  </PressableScale>
                 ))}
               </View>
             ) : null}
@@ -348,21 +353,37 @@ export default function PrepperScreen() {
       {/* Subscribe sheet — servings + delivery schedule (shared with /meal-plans) */}
       {user ? <SubscribePlanSheet plan={sheetPlan} userId={user.id} onClose={() => setSheetPlan(null)} /> : null}
 
-      {/* Sticky action bar — message + order quick-actions */}
+      {/* Sticky action bar — message, preorder, and home cook booking */}
       {p && !isLoading ? (
         <MotiView
           from={{ translateY: 64, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'spring', damping: 18, stiffness: 200 }}
-          style={{ position: 'absolute', bottom: 80, left: 0, right: 0, backgroundColor: Palette.surface, borderTopWidth: 1, borderTopColor: Palette.divider, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', gap: 10, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 16, shadowOffset: { width: 0, height: -4 } }}>
-          <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel="Message this prepper" style={{ height: 50, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
-            <MessageSquare size={17} color={INK} />
-            <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Message</Text>
-          </PressableScale>
-          <PressableScale onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(p.name)}`); }} accessibilityRole="button" accessibilityLabel={`Preorder from ${p.name}`} style={{ flex: 1, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
-            <ShoppingBag size={17} color="#fff" />
-            <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: '#fff' }}>Preorder from {p.name.split(' ')[0]}</Text>
-          </PressableScale>
+          style={{ position: 'absolute', bottom: 80, left: 0, right: 0, backgroundColor: Palette.surface, borderTopWidth: 1, borderTopColor: Palette.divider, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 14, gap: 10, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 16, shadowOffset: { width: 0, height: -4 } }}>
+          <View style={{ flexDirection: 'row', gap: 10 }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel="Message this prepper" style={{ height: 50, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
+              <MessageSquare size={17} color={INK} />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Message</Text>
+            </PressableScale>
+            <PressableScale onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(p.name)}`); }} accessibilityRole="button" accessibilityLabel={`Preorder from ${p.name}`} style={{ flex: 1, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+              <ShoppingBag size={17} color="#fff" />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: '#fff' }}>Preorder from {p.name.split(' ')[0]}</Text>
+            </PressableScale>
+          </View>
+          {p.homeCookAvailable ? (
+            <PressableScale
+              onPress={() => { feedback.tap(); router.push({ pathname: '/book-home-cook', params: { prepperId: id } }); }}
+              accessibilityRole="button"
+              accessibilityLabel={`Book ${p.name.split(' ')[0]} to cook at your home`}
+              style={{ height: 48, borderRadius: 14, backgroundColor: '#EDE9FE', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, borderWidth: 1.5, borderColor: '#7C3AED26' }}>
+              <ChefHat size={16} color="#5B21B6" />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#5B21B6' }}>Book {p.name.split(' ')[0]} to cook at your home</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: '#5B21B6', borderRadius: 6, paddingHorizontal: 7, paddingVertical: 3 }}>
+                <Crown size={9} color="#fff" />
+                <Text style={{ fontFamily: Font.semibold, fontSize: 9.5, color: '#fff' }}>Prep+</Text>
+              </View>
+            </PressableScale>
+          ) : null}
         </MotiView>
       ) : null}
     </View>

@@ -128,7 +128,7 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{order.prepper}</Text>
-          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 1, textTransform: 'capitalize' }}>{dateLabel(order.created_at)} · {order.fulfillment === 'meetup' ? 'meet up' : order.fulfillment}</Text>
+          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 1, textTransform: 'capitalize' }}>{dateLabel(order.created_at)} · {order.fulfillment === 'meetup' ? 'meet up' : order.fulfillment === 'home_cook' ? 'home cook' : order.fulfillment}</Text>
         </View>
         <View style={{ paddingHorizontal: 11, height: 26, borderRadius: Radius.pill, backgroundColor: st.bg, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: st.fg }}>{STATUS_LABEL[order.status]}</Text>
@@ -154,12 +154,12 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
       </View>
 
       {/* Pickup/meetup handoff code — shown to the customer until completed */}
-      {order.handoff && (order.fulfillment === 'pickup' || order.fulfillment === 'meetup') && order.status !== 'completed' && order.status !== 'cancelled' ? (
+      {order.handoff && (order.fulfillment === 'pickup' || order.fulfillment === 'meetup' || order.fulfillment === 'home_cook') && order.status !== 'completed' && order.status !== 'cancelled' ? (
         <HandoffCard
           pin={order.handoff.pin}
           token={order.handoff.token}
           verified={order.handoff.verified}
-          label={order.fulfillment === 'pickup' ? 'Pickup code' : 'Meet-up code'}
+          label={order.fulfillment === 'pickup' ? 'Pickup code' : order.fulfillment === 'home_cook' ? 'Home cook code' : 'Meet-up code'}
         />
       ) : null}
 

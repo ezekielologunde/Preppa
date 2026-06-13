@@ -1,26 +1,28 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { CalendarCheck, Check, ChefHat, ChevronLeft, ChevronRight, Plus, RefreshCw, Users } from 'lucide-react-native';
+import { AlertTriangle, CalendarCheck, Check, ChefHat, ChevronLeft, ChevronRight, Plus, RefreshCw, Users } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { Platform, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { Modal, Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SubscribePlanSheet } from '@/components/subscribe-sheet';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { ListSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
-import { featuredMealPlans, type MealPlanCard } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useMyCustomPlans, useUpdateCustomPlan, type CustomMealPlan } from '@/lib/queries/custom-meal-plans';
 import {
+  nextDeliveryDate,
   useMealPlans,
   useMySubscriptions,
   useSkipDelivery,
+  useSubscribeToPlan,
   useUpdateSubscription,
   type DeliveryDay,
   type MealPlan,
+  type MySubscription,
 } from '@/lib/queries/meal-plans';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -30,10 +32,11 @@ const ORANGE = Palette.brand;
 const INK = Palette.ink;
 const money = (n: number) => `$${n.toLocaleString('en-US')}`;
 
-function CustomPlanCard({ plan, onUpdate, busy }: { plan: CustomMealPlan; onUpdate: (status: 'active' | 'paused' | 'cancelled') => void; busy: boolean }) {
+function CustomPlanCard({ plan, onView, onUpdate, onCancel, busy }: { plan: CustomMealPlan; onView: () => void; onUpdate: (status: 'active' | 'paused' | 'cancelled') => void; onCancel: () => void; busy: boolean }) {
   const mealCount = plan.items.length;
   return (
-    <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 10 }}>
+    <PressableScale onPress={onView} accessibilityRole="button" accessibilityLabel={`View ${plan.name}`}
+      style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
           <ChefHat size={18} color={ORANGE} />
@@ -47,20 +50,21 @@ function CustomPlanCard({ plan, onUpdate, busy }: { plan: CustomMealPlan; onUpda
         <View style={{ backgroundColor: plan.status === 'active' ? Palette.success + '1A' : Palette.amber + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: plan.status === 'active' ? Palette.success : Palette.amber, textTransform: 'capitalize' }}>{plan.status}</Text>
         </View>
+        <ChevronRight size={16} color={Palette.textMuted} />
       </View>
       <View style={{ flexDirection: 'row', gap: 8 }}>
-        <PressableScale onPress={() => onUpdate(plan.status === 'active' ? 'paused' : 'active')} disabled={busy}
+        <PressableScale onPress={(e) => { e.stopPropagation?.(); onUpdate(plan.status === 'active' ? 'paused' : 'active'); }} disabled={busy}
           accessibilityRole="button" accessibilityLabel={plan.status === 'active' ? 'Pause plan' : 'Resume plan'}
           style={{ flex: 1, height: 38, borderRadius: Radius.sm, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: INK }}>{plan.status === 'active' ? 'Pause' : 'Resume'}</Text>
         </PressableScale>
-        <PressableScale onPress={() => { feedback.warning(); onUpdate('cancelled'); }} disabled={busy}
+        <PressableScale onPress={(e) => { e.stopPropagation?.(); feedback.tap(); onCancel(); }} disabled={busy}
           accessibilityRole="button" accessibilityLabel="Cancel plan"
           style={{ flex: 1, height: 38, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.danger }}>Cancel</Text>
         </PressableScale>
       </View>
-    </View>
+    </PressableScale>
   );
 }
 
@@ -100,22 +104,22 @@ function LivePlanCard({ plan, onSubscribe, busy, subscribed }: { plan: MealPlan;
   );
 }
 
-function FeaturedCard({ plan }: { plan: MealPlanCard }) {
+function FeaturedCard({ plan, onSubscribe }: { plan: MealPlan; onSubscribe: () => void }) {
   return (
-    <View style={{ width: 230, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
-      <Image source={plan.image} style={{ width: '100%', height: 120 }} contentFit="cover" transition={200} />
+    <PressableScale onPress={onSubscribe} accessibilityRole="button" accessibilityLabel={`Subscribe to ${plan.name}`} style={{ width: 230, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+      {plan.image_url ? <Image source={plan.image_url} style={{ width: '100%', height: 120 }} contentFit="cover" transition={200} /> : null}
       <View style={{ padding: 14 }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{plan.name}</Text>
         <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>by {plan.prepper}</Text>
         <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
-          <Meta Icon={CalendarCheck} text={`${plan.mealsPerCycle} meals`} />
+          <Meta Icon={CalendarCheck} text={`${plan.meals_per_cycle} meals`} />
           <Meta Icon={Users} text={`serves ${plan.serves}`} />
         </View>
         <Text style={{ fontFamily: Font.body, fontSize: 13, color: INK, marginTop: 8 }}>
           <Text style={{ fontFamily: Font.display, fontSize: 17, color: ORANGE }}>{money(plan.price)}</Text> /{plan.frequency}
         </Text>
       </View>
-    </View>
+    </PressableScale>
   );
 }
 
@@ -128,9 +132,12 @@ export default function MealPlansScreen() {
   const updateSub = useUpdateSubscription(user?.id);
   const updateCustomPlan = useUpdateCustomPlan(user?.id);
   const skipDelivery = useSkipDelivery(user?.id);
+  const subscribeToPlan = useSubscribeToPlan();
 
   // Subscribe sheet — the chosen plan (null = closed).
   const [sheetPlan, setSheetPlan] = useState<MealPlan | null>(null);
+  // Cancel confirmation
+  const [cancelTarget, setCancelTarget] = useState<{ id: string; name: string; isCustom?: boolean } | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPlans(), refetchSubs(), refetchCustom()]); setRefreshing(false); }
 
@@ -183,7 +190,9 @@ export default function MealPlansScreen() {
                 {customPlans.filter((p) => p.status !== 'cancelled').map((p, i) => (
                   <MotiView key={p.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 45 }}>
                     <CustomPlanCard plan={p} busy={updateCustomPlan.isPending}
-                      onUpdate={(status) => updateCustomPlan.mutate({ id: p.id, status })} />
+                      onView={() => { feedback.tap(); router.push(`/custom-plan?id=${p.id}`); }}
+                      onUpdate={(status) => updateCustomPlan.mutate({ id: p.id, status })}
+                      onCancel={() => setCancelTarget({ id: p.id, name: p.name, isCustom: true })} />
                   </MotiView>
                 ))}
               </View>
@@ -191,11 +200,13 @@ export default function MealPlansScreen() {
           ) : null}
 
           {/* My subscriptions */}
-          {subs && subs.length > 0 ? (
+          {subs && subs.filter((s) => s.status !== 'cancelled').length > 0 ? (
             <View style={{ marginBottom: 8 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.5, paddingHorizontal: 20, marginBottom: 12 }}>your plans</Text>
               <View style={{ paddingHorizontal: 20, gap: 10 }}>
-                {subs.filter((s) => s.status !== 'cancelled').map((s, i) => (
+                {subs.filter((s) => s.status !== 'cancelled').map((s, i) => {
+                  const nextDate = s.next_billing_at ? new Date(s.next_billing_at) : s.delivery_day ? nextDeliveryDate(s.delivery_day) : null;
+                  return (
                   <MotiView key={s.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: i * 45 }}>
                   <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 10 }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -209,6 +220,11 @@ export default function MealPlansScreen() {
                           {s.qty > 1 ? ` · ×${s.qty} servings` : ''}
                           {s.delivery_day ? ` · ${DAY_LABEL[s.delivery_day]}` : ''}
                         </Text>
+                        {nextDate && s.status === 'active' ? (
+                          <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: ORANGE, marginTop: 2 }}>
+                            Next delivery {nextDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                          </Text>
+                        ) : null}
                       </View>
                       <View style={{ backgroundColor: s.status === 'active' ? Palette.success + '1A' : Palette.amber + '26', borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                         <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: s.status === 'active' ? Palette.success : Palette.amber, textTransform: 'capitalize' }}>{s.status}</Text>
@@ -234,7 +250,7 @@ export default function MealPlansScreen() {
                         <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: INK }}>{s.status === 'active' ? 'Pause' : 'Resume'}</Text>
                       </PressableScale>
                       <PressableScale
-                        onPress={() => { feedback.warning(); updateSub.mutate({ id: s.id, status: 'cancelled' }); }}
+                        onPress={() => { feedback.tap(); setCancelTarget({ id: s.id, name: s.plan_name }); }}
                         disabled={updateSub.isPending}
                         accessibilityRole="button"
                         accessibilityLabel="Cancel plan"
@@ -244,7 +260,8 @@ export default function MealPlansScreen() {
                     </View>
                   </View>
                   </MotiView>
-                ))}
+                  );
+                })}
               </View>
             </View>
           ) : null}
@@ -270,22 +287,66 @@ export default function MealPlansScreen() {
             </View>
           )}
 
-          {/* Featured showcase (illustrative) */}
-          <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 80 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginTop: 20, marginBottom: 10 }}>featured plans</Text>
-          </MotiView>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {featuredMealPlans.map((p, i) => (
-              <MotiView key={p.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 120 + i * 55 }}>
-                <FeaturedCard plan={p} />
+          {/* Featured plans — real data from live plans */}
+          {(livePlans ?? []).length > 0 ? (
+            <>
+              <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 80 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginTop: 20, marginBottom: 10 }}>featured plans</Text>
               </MotiView>
-            ))}
-          </ScrollView>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
+                {(livePlans ?? []).slice(0, 4).map((p, i) => (
+                  <MotiView key={p.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 120 + i * 55 }}>
+                    <FeaturedCard plan={p} onSubscribe={() => onSubscribe(p)} />
+                  </MotiView>
+                ))}
+              </ScrollView>
+            </>
+          ) : null}
         </ScrollView>
       </SafeAreaView>
 
       {/* Subscribe sheet — servings + delivery-day schedule (shared component) */}
       {user ? <SubscribePlanSheet plan={sheetPlan} userId={user.id} onClose={() => setSheetPlan(null)} /> : null}
+
+      {/* Cancel confirmation modal */}
+      <Modal visible={!!cancelTarget} transparent animationType="fade" onRequestClose={() => setCancelTarget(null)}>
+        <Pressable onPress={() => setCancelTarget(null)} style={{ flex: 1, backgroundColor: Palette.overlay, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <Pressable onPress={(e) => e.stopPropagation()}
+            style={{ backgroundColor: Palette.surface, borderRadius: 24, padding: 24, width: '100%', maxWidth: 360, gap: 16, alignItems: 'center' }}>
+            <View style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: '#FEF2F2', alignItems: 'center', justifyContent: 'center' }}>
+              <AlertTriangle size={24} color={Palette.danger} />
+            </View>
+            <View style={{ alignItems: 'center', gap: 6 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 19, color: INK, letterSpacing: -0.4, textAlign: 'center' }}>Cancel this plan?</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, textAlign: 'center', lineHeight: 19 }}>
+                "<Text style={{ fontFamily: Font.semibold }}>{cancelTarget?.name}</Text>" will be cancelled immediately. You won't be charged again.
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', gap: 10, width: '100%' }}>
+              <PressableScale onPress={() => setCancelTarget(null)} accessibilityRole="button" accessibilityLabel="Keep plan"
+                style={{ flex: 1, height: 48, borderRadius: Radius.pill, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: Palette.border }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Keep plan</Text>
+              </PressableScale>
+              <PressableScale
+                onPress={() => {
+                  if (!cancelTarget) return;
+                  feedback.warning();
+                  if (cancelTarget.isCustom) {
+                    updateCustomPlan.mutate({ id: cancelTarget.id, status: 'cancelled' });
+                  } else {
+                    updateSub.mutate({ id: cancelTarget.id, status: 'cancelled' });
+                  }
+                  setCancelTarget(null);
+                }}
+                disabled={updateSub.isPending || updateCustomPlan.isPending}
+                accessibilityRole="button" accessibilityLabel="Confirm cancel"
+                style={{ flex: 1, height: 48, borderRadius: Radius.pill, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>Yes, cancel</Text>
+              </PressableScale>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

@@ -4,8 +4,9 @@ import { Text, View } from 'react-native';
 import { FavoriteButton } from '@/components/ui/favorite-button';
 import { feedback } from '@/lib/feedback';
 import { PressableScale } from '@/components/ui/pressable-scale';
-import type { Cuisine } from '@/constants/mock';
 import { Font } from '@/constants/fonts';
+
+type Cuisine = { id: string; name: string; meals?: number; image: string };
 
 /** Cuisine tile — image with gradient scrim, name + meal count, heart. */
 export function CuisineCard({ cuisine, onPress }: { cuisine: Cuisine; onPress?: () => void }) {
@@ -18,7 +19,7 @@ export function CuisineCard({ cuisine, onPress }: { cuisine: Cuisine; onPress?: 
       </View>
       <View style={{ position: 'absolute', left: 12, bottom: 12 }}>
         <Text style={{ fontFamily: Font.display, fontSize: 17, color: '#fff', letterSpacing: -0.3 }}>{cuisine.name}</Text>
-        <Text style={{ fontFamily: Font.medium, fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>{cuisine.meals} meals</Text>
+        <Text style={{ fontFamily: Font.medium, fontSize: 12, color: 'rgba(255,255,255,0.9)' }}>explore →</Text>
       </View>
     </PressableScale>
   );

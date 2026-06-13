@@ -8,12 +8,10 @@ import {
   Crown,
   GraduationCap,
   HandPlatter,
-  MapPin,
   MessageSquareQuote,
   PartyPopper,
   Plus,
   Sparkles,
-  Star,
   UtensilsCrossed,
   Wine,
   type LucideIcon,
@@ -26,8 +24,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { feedback } from '@/lib/feedback';
 import { Font } from '@/constants/fonts';
-import { useBreakpoint } from '@/lib/layout';
-import { experienceTypes, featuredExperiences, type Experience } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { useMyExperienceRequests } from '@/lib/queries/experiences';
 import { useAuth } from '@/providers/auth-provider';
@@ -36,39 +32,23 @@ const ORANGE = Palette.brand;
 const INK = Palette.ink;
 
 const TYPE_ICONS: Record<string, LucideIcon> = { UtensilsCrossed, ChefHat, GraduationCap, Wine, HandPlatter, Sparkles };
+const EXPERIENCE_TYPES = [
+  { key: 'catering', label: 'Catering', icon: 'UtensilsCrossed', blurb: 'Feed your event' },
+  { key: 'private_chef', label: 'Private chef', icon: 'ChefHat', blurb: 'Cooked at home' },
+  { key: 'food_service', label: 'Food service', icon: 'HandPlatter', blurb: 'Servers & staff' },
+  { key: 'cleaning', label: 'Cleaning', icon: 'Sparkles', blurb: 'Before & after' },
+  { key: 'class', label: 'Cooking class', icon: 'GraduationCap', blurb: 'Learn hands-on' },
+  { key: 'tasting', label: 'Tasting menu', icon: 'Wine', blurb: 'Chef's selection' },
+] as const;
 const STEPS: { Icon: LucideIcon; title: string; body: string }[] = [
   { Icon: ClipboardList, title: 'Post a request', body: 'Tell us your event, date and budget' },
   { Icon: MessageSquareQuote, title: 'Compare bids', body: 'Local preppers send quotes to you' },
   { Icon: PartyPopper, title: 'Book & enjoy', body: 'Pick your favourite and confirm' },
 ];
 
-function ExperienceCard({ exp, onPress, width = 260 }: { exp: Experience; onPress: () => void; width?: number }) {
-  return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${exp.title} by ${exp.host}, from $${exp.from} ${exp.per}`} style={{ width, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
-      <Image source={exp.image} style={{ width: '100%', height: 150 }} contentFit="cover" transition={200} />
-      <View style={{ padding: 14 }}>
-        <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{exp.title}</Text>
-        <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>by {exp.host}</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 }}>
-          <Star size={13} color={Palette.amber} fill={Palette.amber} />
-          <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK }}>{exp.rating.toFixed(1)}</Text>
-          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>({exp.reviews})</Text>
-          <MapPin size={12} color={Palette.textMuted} style={{ marginLeft: 6 }} />
-          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }} numberOfLines={1}>{exp.location}</Text>
-        </View>
-        <Text style={{ fontFamily: Font.body, fontSize: 13, color: INK, marginTop: 8 }}>
-          <Text style={{ fontFamily: Font.display, fontSize: 16, color: ORANGE }}>${exp.from}</Text> {exp.per}
-        </Text>
-      </View>
-    </PressableScale>
-  );
-}
-
 export default function ExperiencesScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const isDesktop = useBreakpoint() === 'desktop';
-  // Live feedback loop: posted requests show their bid count right on the tab.
   const { data: myRequests, refetch } = useMyExperienceRequests(user?.id);
   const activeRequests = (myRequests ?? []).filter((r) => r.status === 'open').slice(0, 2);
   const [refreshing, setRefreshing] = useState(false);
@@ -179,7 +159,7 @@ export default function ExperiencesScreen() {
 
           {/* Experience types — 3-per-row wrap grid */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
-            {experienceTypes.map((t, i) => {
+            {EXPERIENCE_TYPES.map((t, i) => {
               const Icon = TYPE_ICONS[t.icon] ?? UtensilsCrossed;
               return (
                 <MotiView key={t.key} from={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'timing', duration: 200, delay: 160 + i * 35 }} style={{ flexBasis: '30%', flexGrow: 1 }}>
@@ -212,26 +192,6 @@ export default function ExperiencesScreen() {
               </MotiView>
             ))}
           </View>
-
-          {/* Featured */}
-          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginTop: 22, marginBottom: 10 }}>featured experiences</Text>
-          {isDesktop ? (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 14 }}>
-              {featuredExperiences.map((e, i) => (
-                <MotiView key={e.id} from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
-                  <ExperienceCard exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
-                </MotiView>
-              ))}
-            </View>
-          ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-              {featuredExperiences.map((e, i) => (
-                <MotiView key={e.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
-                  <ExperienceCard exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
-                </MotiView>
-              ))}
-            </ScrollView>
-          )}
 
           {/* My requests entry */}
           <PressableScale onPress={() => { feedback.tap(); router.push('/experience-request'); }} accessibilityRole="button" accessibilityLabel="View my requests" style={{ marginHorizontal: 20, marginTop: 24, alignItems: 'center', paddingVertical: 15, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border, backgroundColor: Palette.surface }}>

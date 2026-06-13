@@ -140,7 +140,7 @@ export default function DietaryPreferencesScreen() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } else {
-      feedback.error?.();
+      feedback.error();
     }
   }
 

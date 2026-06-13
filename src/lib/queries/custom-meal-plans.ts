@@ -7,7 +7,13 @@ export type CustomPlanItem = {
   plan_id: string;
   meal_id: string;
   qty: number;
-  meal: { title: string; base_price: number; images: { url: string }[] } | null;
+  meal: {
+    id: string;
+    title: string;
+    base_price: number;
+    prepper: { id: string; display_name: string; image_url: string | null } | null;
+    images: { url: string }[];
+  } | null;
 };
 
 export type CustomMealPlan = {
@@ -23,7 +29,7 @@ export type CustomMealPlan = {
 
 const PLAN_SELECT =
   'id,name,frequency,delivery_day,status,next_billing_at,created_at,' +
-  'items:customer_meal_plan_items(id,plan_id,meal_id,qty,meal:meals(title,base_price,images:meal_images(url)))';
+  'items:customer_meal_plan_items(id,plan_id,meal_id,qty,meal:meals(id,title,base_price,prepper:prepper_profiles(id,display_name,image_url),images:meal_images(url)))';
 
 /** All non-cancelled custom plans for the signed-in customer. */
 export function useMyCustomPlans(userId?: string | null) {
@@ -38,6 +44,24 @@ export function useMyCustomPlans(userId?: string | null) {
         .order('created_at', { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as CustomMealPlan[];
+    },
+  });
+}
+
+/** Single custom plan by ID — used by the plan detail screen. */
+export function useCustomPlan(planId?: string | null) {
+  return useQuery({
+    queryKey: ['custom-meal-plans', 'single', planId ?? 'none'],
+    enabled: !!planId,
+    staleTime: 60_000,
+    queryFn: async (): Promise<CustomMealPlan | null> => {
+      const { data, error } = await supabase
+        .from('customer_meal_plans')
+        .select(PLAN_SELECT)
+        .eq('id', planId!)
+        .single();
+      if (error) throw error;
+      return data as unknown as CustomMealPlan;
     },
   });
 }

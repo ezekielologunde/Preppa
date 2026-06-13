@@ -50,6 +50,8 @@ interface FormErrors {
   postalCode?: string;
 }
 
+const cleanLine = (s: string) => s.replace(/[\x00-\x1F\x7F]/g, '');
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 export const PRESET_LABELS = ['Home', 'Work', 'Other'];
@@ -204,7 +206,16 @@ export function AddressSheet({
       setErrors(errs);
       return;
     }
-    onSave(form);
+    onSave({
+      ...form,
+      customLabel: cleanLine(form.customLabel).trim(),
+      street1: cleanLine(form.street1).trim(),
+      street2: cleanLine(form.street2).trim(),
+      city: cleanLine(form.city).trim(),
+      state: cleanLine(form.state).trim(),
+      postalCode: cleanLine(form.postalCode).trim(),
+      country: cleanLine(form.country).trim(),
+    });
     setErrors({});
   };
 

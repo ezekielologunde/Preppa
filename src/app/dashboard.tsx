@@ -40,7 +40,7 @@ import { greeting } from '@/lib/greeting';
 import { useBreakpoint } from '@/lib/layout';
 import { usePrepperMembership } from '@/lib/queries/memberships';
 import { useAdvanceOrder, usePrepperOrders, type OrderSummary } from '@/lib/queries/orders';
-import { useMyPrepperApplication, usePrepperBadges, usePrepperProfile, useToggleAvailability } from '@/lib/queries/preppers';
+import { useMyPrepperApplication, usePrepperBadges, usePrepperProfile, useToggleAvailability, useToggleHomeCookAvailability } from '@/lib/queries/preppers';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -134,10 +134,13 @@ export default function DashboardScreen() {
   const { data: reviews, refetch: refetchReviews } = usePrepperReviews(prepper?.id);
   const advance = useAdvanceOrder();
   const toggleAvailability = useToggleAvailability(prepper?.id);
+  const toggleHomeCook = useToggleHomeCookAvailability(prepper?.id);
   const [accepting, setAccepting] = useState<boolean | null>(null);
+  const [homeCook, setHomeCook] = useState<boolean | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   async function handleRefresh() { setRefreshing(true); await Promise.all([refetchPrepper(), refetchMembership(), refetchBadges(), refetchOrders(), refetchReviews()]); setRefreshing(false); }
   const isOpen = accepting !== null ? accepting : ((prepper as unknown as { accepting_orders?: boolean })?.accepting_orders !== false);
+  const isHomeCookAvailable = homeCook !== null ? homeCook : (prepperProfile?.homeCookAvailable ?? false);
 
   const list: OrderSummary[] = orders ?? [];
   const newCount = list.filter((o) => o.status === 'pending').length;
@@ -150,6 +153,12 @@ export default function DashboardScreen() {
   const active = list.filter((o) => o.status === 'pending' || o.status === 'confirmed' || o.status === 'preparing' || o.status === 'ready');
   const next = active.length ? active[active.length - 1] : null;
   const step = next ? NEXT[next.status] : undefined;
+
+  // Start of current ISO week (Monday 00:00:00).
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - (weekStart.getDay() === 0 ? 6 : weekStart.getDay() - 1));
+  weekStart.setHours(0, 0, 0, 0);
+  const weekCount = list.filter((o) => new Date(o.created_at) >= weekStart).length;
 
   // Today's-goal ring: completed revenue toward a $2,000 day (display-only target).
   const goalPct = Math.min(Math.round((revenue / 2000) * 100), 100);
@@ -195,6 +204,25 @@ export default function DashboardScreen() {
                       transition={{ type: 'timing', duration: 200 }}
                       style={{ width: 8, height: 8, borderRadius: 4 }} />
                     <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : Palette.textSecondary }}>{isOpen ? 'Open' : 'Closed'}</Text>
+                  </PressableScale>
+                </MotiView>
+                <MotiView
+                  animate={{ backgroundColor: isHomeCookAvailable ? '#EDE9FE' : Palette.chip }}
+                  transition={{ type: 'timing', duration: 200 }}
+                  style={{ borderRadius: Radius.pill, overflow: 'hidden' }}>
+                  <PressableScale
+                    onPress={() => {
+                      feedback.tap();
+                      const next = !isHomeCookAvailable;
+                      setHomeCook(next);
+                      toggleHomeCook.mutate(next, { onError: () => setHomeCook(!next) });
+                    }}
+                    accessibilityRole="switch"
+                    accessibilityState={{ checked: isHomeCookAvailable }}
+                    accessibilityLabel={isHomeCookAvailable ? 'Home cooking on — tap to disable' : 'Home cooking off — tap to enable'}
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4 }}>
+                    <ChefHat size={11} color={isHomeCookAvailable ? '#5B21B6' : Palette.textSecondary} />
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isHomeCookAvailable ? '#5B21B6' : Palette.textSecondary }}>Home cook</Text>
                   </PressableScale>
                 </MotiView>
               </View>
@@ -303,7 +331,7 @@ export default function DashboardScreen() {
                 <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: MUTED }}>of $2k</Text>
               </View>
               <View style={{ alignItems: 'center', gap: 2 }}>
-                <Text style={{ fontFamily: Font.display, fontSize: 26, color: ORANGE, letterSpacing: -0.5, fontVariant: ['tabular-nums'] }}>{Math.min(list.length, 30)}</Text>
+                <Text style={{ fontFamily: Font.display, fontSize: 26, color: ORANGE, letterSpacing: -0.5, fontVariant: ['tabular-nums'] }}>{weekCount}</Text>
                 <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: MUTED }}>this week</Text>
               </View>
             </View>

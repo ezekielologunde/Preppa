@@ -14,6 +14,8 @@ import { pickAndUploadImage } from '@/lib/upload';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
 import { useAuth } from '@/providers/auth-provider';
 
+const cleanBlock = (s: string) => s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
 const ORANGE = Palette.brand;
 const CARD = Palette.prepperCard;
 const BG = Palette.prepperBg;
@@ -75,7 +77,7 @@ export default function PostVideoScreen() {
     try {
       const { error } = await supabase.from('feed_posts').insert({
         prepper_id: prepper!.id,
-        caption: caption.trim() || null,
+        caption: cleanBlock(caption).trim() || null,
         thumbnail_url: thumb,
         tags,
       });

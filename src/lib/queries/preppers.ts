@@ -86,6 +86,7 @@ export type PrepperProfile = {
   delivers: boolean;
   pickup: boolean;
   acceptingOrders: boolean;
+  homeCookAvailable: boolean;
   rating: number;
   reviews: number;
   fiveStar: number;
@@ -102,7 +103,7 @@ export function usePrepperProfile(prepperId?: string | null) {
       const [profileRes, mealsRes, statsRes] = await Promise.all([
         supabase
           .from('prepper_profiles')
-          .select('id,display_name,bio,avatar_url,city,verified,specialties,certifications,price_from,delivers,pickup,accepting_orders,rating:prepper_rating_summary(average_rating,total_reviews,five_star)')
+          .select('id,display_name,bio,avatar_url,city,verified,specialties,certifications,price_from,delivers,pickup,accepting_orders,home_cook_available,rating:prepper_rating_summary(average_rating,total_reviews,five_star)')
           .eq('id', prepperId!)
           .single(),
         supabase
@@ -149,6 +150,7 @@ export function usePrepperProfile(prepperId?: string | null) {
         delivers: !!p.delivers,
         pickup: !!p.pickup,
         acceptingOrders: p.accepting_orders !== false,
+        homeCookAvailable: !!p.home_cook_available,
         rating: rating?.average_rating ?? 0,
         reviews: rating?.total_reviews ?? 0,
         fiveStar: rating?.five_star ?? 0,
@@ -366,6 +368,26 @@ export function useToggleAvailability(prepperId?: string | null) {
       qc.invalidateQueries({ queryKey: ['prepper', 'mine'] });
       if (prepperId) qc.invalidateQueries({ queryKey: ['prepper', 'profile', prepperId] });
       qc.invalidateQueries({ queryKey: ['preppers'] });
+    },
+  });
+}
+
+/** Toggle whether the signed-in prepper offers cook-at-home / private chef services. */
+export function useToggleHomeCookAvailability(prepperId?: string | null) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (available: boolean) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not signed in');
+      const { error } = await supabase
+        .from('prepper_profiles')
+        .update({ home_cook_available: available })
+        .eq('user_id', user.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      if (prepperId) qc.invalidateQueries({ queryKey: ['prepper', 'profile', prepperId] });
+      qc.invalidateQueries({ queryKey: ['prepper', 'mine'] });
     },
   });
 }

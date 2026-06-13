@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, ChevronRight, MessageCircle, Phone, Receipt, Send } from 'lucide-react-native';
+import { CalendarCheck, ChefHat, ChevronLeft, ChevronRight, MessageCircle, Phone, Receipt, Send, Users, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Linking, Platform, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Linking, Modal, Platform, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -11,8 +11,14 @@ import { feedback } from '@/lib/feedback';
 import { BP } from '@/lib/layout';
 import { Palette, Radius } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
+import { useConfirmHomeCookBooking, useProposeHomeCookTerms } from '@/lib/queries/home-cook';
 import { useChatContext, useMessages, useSendMessage } from '@/lib/queries/messages';
 import { useAuth } from '@/providers/auth-provider';
+
+const cleanBlock = (s: string) => s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
+const HC = '#5B21B6';
+const HC_TINT = '#EDE9FE';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -45,8 +51,14 @@ export default function ChatScreen() {
   const { data: messages, isLoading } = useMessages(id, user?.id);
   const { data: ctx } = useChatContext(id, user?.id);
   const send = useSendMessage();
+  const proposeTerms = useProposeHomeCookTerms();
+  const confirmBooking = useConfirmHomeCookBooking();
   const [text, setText] = useState('');
   const scrollRef = useRef<ScrollView>(null);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [cookingFeeInput, setCookingFeeInput] = useState('');
+  const [travelFeeInput, setTravelFeeInput] = useState('');
+  const [termsErr, setTermsErr] = useState<string | null>(null);
 
   function call() {
     if (!ctx?.otherPhone) {
@@ -68,11 +80,35 @@ export default function ChatScreen() {
   }, [messages?.length]);
 
   function submit() {
-    const body = text.trim();
+    const body = cleanBlock(text).trim();
     if (!body || !id || !user) return;
     feedback.tap();
     setText('');
     send.mutate({ conversationId: id, senderId: user.id, body });
+  }
+
+  function submitTerms() {
+    if (!ctx?.homeCookRequest) return;
+    const cooking = parseFloat(cookingFeeInput.replace(/[^0-9.]/g, ''));
+    const travel = parseFloat(travelFeeInput.replace(/[^0-9.]/g, '') || '0');
+    if (!cooking || cooking <= 0) return setTermsErr('Enter a valid cooking fee.');
+    setTermsErr(null);
+    proposeTerms.mutate(
+      { requestId: ctx.homeCookRequest.id, cookingFee: cooking, travelFee: travel || 0 },
+      {
+        onSuccess: () => { feedback.success(); setShowTermsModal(false); setCookingFeeInput(''); setTravelFeeInput(''); },
+        onError: (e) => setTermsErr(e instanceof Error ? e.message : 'Could not send proposal.'),
+      },
+    );
+  }
+
+  function handleConfirmBooking() {
+    if (!ctx?.homeCookRequest) return;
+    feedback.tap();
+    confirmBooking.mutate(ctx.homeCookRequest.id, {
+      onSuccess: () => { feedback.success(); },
+      onError: () => feedback.error(),
+    });
   }
 
   function goBack() {
@@ -96,6 +132,81 @@ export default function ChatScreen() {
             </PressableScale>
           ) : null}
         </View>
+
+        {/* Home cook negotiation card — shown while terms are being negotiated */}
+        {ctx?.homeCookRequest ? (() => {
+          const hc = ctx.homeCookRequest!;
+          const total = hc.ingredientBudget + (hc.cookingFee ?? 0) + (hc.travelFee ?? 0);
+          const termsReady = hc.status === 'negotiating' && hc.cookingFee != null;
+          return (
+            <MotiView from={{ opacity: 0, translateY: -6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240 }}
+              style={{ marginHorizontal: 16, marginTop: 10, backgroundColor: HC_TINT, borderRadius: Radius.md, borderWidth: 1.5, borderColor: HC + '30', overflow: 'hidden' }}>
+              {/* Title row */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 8 }}>
+                <View style={{ width: 30, height: 30, borderRadius: 9, backgroundColor: HC + '22', alignItems: 'center', justifyContent: 'center' }}>
+                  <ChefHat size={15} color={HC} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 13, color: HC }}>Home cook booking</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: '#4C1D95' }}>
+                    {hc.status === 'pending' ? 'Awaiting terms from prepper' : termsReady ? 'Terms proposed — review and confirm' : 'Negotiating…'}
+                  </Text>
+                </View>
+                <View style={{ backgroundColor: hc.status === 'negotiating' ? HC : '#7C3AED66', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: '#fff', textTransform: 'capitalize' }}>{hc.status}</Text>
+                </View>
+              </View>
+              {/* Details */}
+              <View style={{ marginHorizontal: 12, marginBottom: 10, backgroundColor: HC + '12', borderRadius: 10, padding: 10, gap: 5 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <CalendarCheck size={13} color={HC} />
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: INK }}>{hc.requestedDate} · {hc.requestedTime.replace('_', ' ')}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Users size={13} color={HC} />
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: INK }}>{hc.guestCount} guest{hc.guestCount !== 1 ? 's' : ''}{hc.cuisine ? ` · ${hc.cuisine}` : ''}</Text>
+                </View>
+                <View style={{ height: 1, backgroundColor: HC + '20', marginVertical: 3 }} />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#4C1D95' }}>Ingredients budget</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK }}>${hc.ingredientBudget}</Text>
+                </View>
+                {hc.cookingFee != null ? (
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#4C1D95' }}>Cooking fee</Text>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK }}>${hc.cookingFee}</Text>
+                  </View>
+                ) : null}
+                {hc.travelFee != null && hc.travelFee > 0 ? (
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#4C1D95' }}>Travel</Text>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: INK }}>${hc.travelFee}</Text>
+                  </View>
+                ) : null}
+                {termsReady ? (
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: HC + '20', paddingTop: 5, marginTop: 2 }}>
+                    <Text style={{ fontFamily: Font.heading, fontSize: 12.5, color: HC }}>Total</Text>
+                    <Text style={{ fontFamily: Font.heading, fontSize: 12.5, color: HC }}>${total}</Text>
+                  </View>
+                ) : null}
+              </View>
+              {/* CTA */}
+              {hc.iAmPrepper && hc.status === 'pending' ? (
+                <PressableScale onPress={() => { feedback.tap(); setShowTermsModal(true); }} accessibilityRole="button" accessibilityLabel="Propose terms"
+                  style={{ marginHorizontal: 12, marginBottom: 12, height: 40, borderRadius: 11, backgroundColor: HC, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>Propose terms</Text>
+                </PressableScale>
+              ) : !hc.iAmPrepper && termsReady ? (
+                <PressableScale onPress={handleConfirmBooking} disabled={confirmBooking.isPending} accessibilityRole="button" accessibilityLabel="Accept terms and confirm booking"
+                  style={{ marginHorizontal: 12, marginBottom: 12, height: 40, borderRadius: 11, backgroundColor: HC, alignItems: 'center', justifyContent: 'center', opacity: confirmBooking.isPending ? 0.7 : 1 }}>
+                  {confirmBooking.isPending ? <ActivityIndicator color="#fff" size="small" /> : (
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>Accept & confirm booking</Text>
+                  )}
+                </PressableScale>
+              ) : null}
+            </MotiView>
+          );
+        })() : null}
 
         {/* Shared-order context — the conversation's order details, always in view */}
         {ctx?.order ? (
@@ -191,6 +302,74 @@ export default function ChatScreen() {
         </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
+
+      {/* Propose terms modal — prepper sets cooking fee + travel fee */}
+      <Modal visible={showTermsModal} transparent animationType="fade" onRequestClose={() => setShowTermsModal(false)}>
+        <Pressable onPress={() => setShowTermsModal(false)} style={{ flex: 1, backgroundColor: Palette.overlay, alignItems: 'center', justifyContent: 'center', padding: 28 }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 360, backgroundColor: Palette.surface, borderRadius: 22, padding: 22, gap: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: 44, height: 44, borderRadius: 13, backgroundColor: HC_TINT, alignItems: 'center', justifyContent: 'center' }}>
+                <ChefHat size={20} color={HC} />
+              </View>
+              <PressableScale onPress={() => { feedback.tap(); setShowTermsModal(false); }} accessibilityRole="button" accessibilityLabel="Close"
+                style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
+                <X size={17} color={Palette.textMuted} />
+              </PressableScale>
+            </View>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, letterSpacing: -0.4 }}>Propose terms</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textSecondary, lineHeight: 19 }}>
+              Set your cooking fee and travel costs. The customer will see the full breakdown before confirming.
+            </Text>
+            <View style={{ gap: 10 }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: INK }}>Cooking fee ($)</Text>
+              <TextInput
+                value={cookingFeeInput}
+                onChangeText={setCookingFeeInput}
+                placeholder="e.g. 120"
+                placeholderTextColor={Palette.textMuted}
+                keyboardType="numeric"
+                style={{ height: 50, borderRadius: 13, backgroundColor: Palette.canvas, paddingHorizontal: 14, fontFamily: Font.body, fontSize: 15, color: INK, borderWidth: 1, borderColor: Palette.border }}
+                accessibilityLabel="Cooking fee"
+              />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: INK }}>Travel / transport ($) <Text style={{ fontFamily: Font.body, color: Palette.textMuted }}>optional</Text></Text>
+              <TextInput
+                value={travelFeeInput}
+                onChangeText={setTravelFeeInput}
+                placeholder="e.g. 15"
+                placeholderTextColor={Palette.textMuted}
+                keyboardType="numeric"
+                style={{ height: 50, borderRadius: 13, backgroundColor: Palette.canvas, paddingHorizontal: 14, fontFamily: Font.body, fontSize: 15, color: INK, borderWidth: 1, borderColor: Palette.border }}
+                accessibilityLabel="Travel fee"
+              />
+            </View>
+            {ctx?.homeCookRequest && cookingFeeInput ? (
+              <View style={{ backgroundColor: HC_TINT, borderRadius: 11, padding: 12, gap: 4 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: '#4C1D95' }}>Ingredients (customer's)</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: INK }}>${ctx.homeCookRequest.ingredientBudget}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: '#4C1D95' }}>Cooking fee</Text>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: INK }}>${parseFloat(cookingFeeInput) || 0}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 13, color: HC }}>Customer pays total</Text>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 13, color: HC }}>
+                    ${ctx.homeCookRequest.ingredientBudget + (parseFloat(cookingFeeInput) || 0) + (parseFloat(travelFeeInput) || 0)}
+                  </Text>
+                </View>
+              </View>
+            ) : null}
+            {termsErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.danger }}>{termsErr}</Text> : null}
+            <PressableScale onPress={submitTerms} disabled={proposeTerms.isPending} accessibilityRole="button" accessibilityLabel="Send proposal to customer"
+              style={{ height: 52, borderRadius: Radius.pill, backgroundColor: HC, alignItems: 'center', justifyContent: 'center', opacity: proposeTerms.isPending ? 0.7 : 1 }}>
+              {proposeTerms.isPending ? <ActivityIndicator color="#fff" /> : (
+                <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Send proposal to customer</Text>
+              )}
+            </PressableScale>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }

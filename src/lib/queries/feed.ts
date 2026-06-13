@@ -53,6 +53,66 @@ type PostRow = {
   prepper: { id: string; display_name: string; verified: boolean } | { id: string; display_name: string; verified: boolean }[] | null;
 };
 
+async function buildFeedItems(
+  mealItems: FeedItem[],
+  postItems: FeedItem[],
+): Promise<FeedItem[]> {
+  const result: FeedItem[] = [];
+  let pi = 0;
+  for (let i = 0; i < mealItems.length; i++) {
+    result.push(mealItems[i]);
+    if ((i + 1) % 4 === 0 && pi < postItems.length) result.push(postItems[pi++]);
+  }
+  while (pi < postItems.length) result.push(postItems[pi++]);
+  return result;
+}
+
+function mapMealRows(rows: Row[]): FeedItem[] {
+  return (rows as unknown as Row[])
+    .map((r): FeedItem => {
+      const prepper = one(r.prepper as never) as { id?: string; display_name?: string; verified?: boolean; rating?: unknown } | undefined;
+      const rating = one(prepper?.rating as never) as { average_rating: number; total_reviews: number } | undefined;
+      const video = one(r.videos);
+      return {
+        id: r.id,
+        title: r.title,
+        price: r.base_price,
+        prepper: prepper?.display_name ?? 'preppa',
+        prepper_id: prepper?.id,
+        verified: !!prepper?.verified,
+        rating: rating?.average_rating ?? 0,
+        reviews: rating?.total_reviews ?? 0,
+        image: r.images?.[0]?.url ?? '',
+        videoUrl: video?.video_url ?? null,
+        thumbnail: video?.thumbnail_url ?? null,
+        isPost: false,
+      };
+    })
+    .filter((i) => i.image || i.thumbnail);
+}
+
+function mapPostRows(rows: PostRow[]): FeedItem[] {
+  return rows
+    .filter((p) => p.thumbnail_url || p.video_url)
+    .map((p): FeedItem => {
+      const prepper = one(p.prepper as never) as { id?: string; display_name: string; verified: boolean } | undefined;
+      return {
+        id: `post:${p.id}`,
+        title: p.caption ?? '',
+        price: 0,
+        prepper: prepper?.display_name ?? 'preppa',
+        prepper_id: prepper?.id,
+        verified: !!prepper?.verified,
+        rating: 0,
+        reviews: 0,
+        image: p.thumbnail_url ?? '',
+        videoUrl: p.video_url ?? null,
+        thumbnail: p.thumbnail_url ?? null,
+        isPost: true,
+      };
+    });
+}
+
 /**
  * The vertical "feeds" stream — published meal drops + standalone prepper posts,
  * newest first. Prepper posts from feed_posts are merged in and labelled isPost=true
@@ -63,74 +123,43 @@ export function useFeed(limit = 30) {
     queryKey: ['feed', limit],
     queryFn: async (): Promise<FeedItem[]> => {
       const [mealsRes, postsRes] = await Promise.all([
-        supabase
-          .from('meals')
-          .select(SELECT)
-          .eq('status', 'published')
-          .order('created_at', { ascending: false })
-          .limit(limit),
-        supabase
-          .from('feed_posts')
-          .select(POST_SELECT)
-          .order('created_at', { ascending: false })
-          .limit(Math.floor(limit / 3)),
+        supabase.from('meals').select(SELECT).eq('status', 'published').order('created_at', { ascending: false }).limit(limit),
+        supabase.from('feed_posts').select(POST_SELECT).order('created_at', { ascending: false }).limit(Math.floor(limit / 3)),
       ]);
       if (mealsRes.error) throw mealsRes.error;
+      return buildFeedItems(
+        mapMealRows(mealsRes.data as unknown as Row[]),
+        mapPostRows((postsRes.data ?? []) as unknown as PostRow[]),
+      );
+    },
+  });
+}
 
-      const mealItems = ((mealsRes.data ?? []) as unknown as Row[])
-        .map((r): FeedItem => {
-          const prepper = one(r.prepper as never) as { id?: string; display_name?: string; verified?: boolean; rating?: unknown } | undefined;
-          const rating = one(prepper?.rating as never) as { average_rating: number; total_reviews: number } | undefined;
-          const video = one(r.videos);
-          return {
-            id: r.id,
-            title: r.title,
-            price: r.base_price,
-            prepper: prepper?.display_name ?? 'preppa',
-            prepper_id: prepper?.id,
-            verified: !!prepper?.verified,
-            rating: rating?.average_rating ?? 0,
-            reviews: rating?.total_reviews ?? 0,
-            image: r.images?.[0]?.url ?? '',
-            videoUrl: video?.video_url ?? null,
-            thumbnail: video?.thumbnail_url ?? null,
-            isPost: false,
-          };
-        })
-        .filter((i) => i.image || i.thumbnail);
-
-      const postItems: FeedItem[] = ((postsRes.data ?? []) as unknown as PostRow[])
-        .filter((p) => p.thumbnail_url || p.video_url)
-        .map((p): FeedItem => {
-          const prepper = one(p.prepper as never) as { id?: string; display_name: string; verified: boolean } | undefined;
-          return {
-            id: `post:${p.id}`,
-            title: p.caption ?? '',
-            price: 0,
-            prepper: prepper?.display_name ?? 'preppa',
-            prepper_id: prepper?.id,
-            verified: !!prepper?.verified,
-            rating: 0,
-            reviews: 0,
-            image: p.thumbnail_url ?? '',
-            videoUrl: p.video_url ?? null,
-            thumbnail: p.thumbnail_url ?? null,
-            isPost: true,
-          };
-        });
-
-      // Interleave: every 4th item is a post (if available)
-      const result: FeedItem[] = [];
-      let pi = 0;
-      for (let i = 0; i < mealItems.length; i++) {
-        result.push(mealItems[i]);
-        if ((i + 1) % 4 === 0 && pi < postItems.length) {
-          result.push(postItems[pi++]);
-        }
-      }
-      // Append remaining posts
-      while (pi < postItems.length) result.push(postItems[pi++]);
-      return result;
+/**
+ * Personalized feed: drops only from kitchens the signed-in user follows.
+ * Returns an empty array (not an error) when the user follows nobody yet.
+ */
+export function useFollowingFeed(userId?: string | null, limit = 30) {
+  return useQuery({
+    queryKey: ['feed', 'following', userId ?? 'anon', limit],
+    enabled: !!userId,
+    queryFn: async (): Promise<FeedItem[]> => {
+      const { data: follows, error: followsErr } = await supabase
+        .from('follows')
+        .select('prepper_id')
+        .eq('follower_id', userId!);
+      if (followsErr) throw followsErr;
+      const ids = (follows ?? []).map((f: { prepper_id: string }) => f.prepper_id);
+      if (!ids.length) return [];
+      const [mealsRes, postsRes] = await Promise.all([
+        supabase.from('meals').select(SELECT).eq('status', 'published').in('prepper_id', ids).order('created_at', { ascending: false }).limit(limit),
+        supabase.from('feed_posts').select(POST_SELECT).in('prepper_id', ids).order('created_at', { ascending: false }).limit(Math.floor(limit / 3)),
+      ]);
+      if (mealsRes.error) throw mealsRes.error;
+      return buildFeedItems(
+        mapMealRows(mealsRes.data as unknown as Row[]),
+        mapPostRows((postsRes.data ?? []) as unknown as PostRow[]),
+      );
     },
   });
 }

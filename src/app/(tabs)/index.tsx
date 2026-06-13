@@ -27,16 +27,17 @@ import { Avatar } from '@/components/ui/avatar';
 import { MealCard } from '@/components/meal-card';
 import { PrepperCard } from '@/components/prepper-card';
 import { Font } from '@/constants/fonts';
-import { recommendedMeals } from '@/constants/mock';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { CardRowSkeleton } from '@/components/ui/skeleton';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { greeting } from '@/lib/greeting';
 import { useFeaturedMeals } from '@/lib/queries/meals';
+import { useAddresses } from '@/lib/queries/addresses';
 import { useMealPlans, useMySubscriptions } from '@/lib/queries/meal-plans';
 import { useMyOrders } from '@/lib/queries/orders';
 import { useNotifications } from '@/lib/queries/notifications';
-import { useTopPreppers } from '@/lib/queries/preppers';
+import { useFollowedPreppers, useTopPreppers } from '@/lib/queries/preppers';
+import { usePersonalizedMeals } from '@/lib/queries/recommend';
 import { BP, useCarouselCardWidth, useContentWidth, usePagePadding, gridCardWidth, useHomeColumns } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 import { feedback } from '@/lib/feedback';
@@ -85,7 +86,7 @@ function CategoryIconsRow() {
       {HOME_CATS.map((c, i) => (
         <MotiView key={c.key} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: 80 + i * 28 }}>
           <PressableScale
-            onPress={() => { feedback.tap(); router.push(`/category?key=${c.key}&label=${c.label}`); }}
+            onPress={() => { feedback.tap(); router.push(c.key === 'more' ? '/explore' : `/category?key=${c.key}&label=${c.label}`); }}
             accessibilityRole="button"
             accessibilityLabel={`Browse ${c.label}`}
             style={{ alignItems: 'center', gap: 6 }}>
@@ -213,6 +214,24 @@ function MyPlansSection({ userId }: { userId: string }) {
   );
 }
 
+function FollowingKitchensSection({ userId }: { userId: string }) {
+  const router = useRouter();
+  const { data: preppers } = useFollowedPreppers(userId);
+  if (!preppers?.length) return null;
+  return (
+    <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 100 }}>
+      <SectionHeader title="kitchens you follow" linkLabel="see all →" onLink={() => { feedback.tap(); router.push('/following'); }} />
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 4 }}>
+        {preppers.map((prepper, i) => (
+          <MotiView key={prepper.id} from={{ opacity: 0, translateX: 10 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
+            <PrepperCard prepper={prepper} />
+          </MotiView>
+        ))}
+      </ScrollView>
+    </MotiView>
+  );
+}
+
 function NearbyPreppersSection() {
   const router = useRouter();
   const { data: preppers, isLoading } = useTopPreppers(8);
@@ -240,6 +259,8 @@ function FeaturedMealsSection({ meals, isLoading, isTablet }: { meals: ReturnTyp
   const contentWidth = useContentWidth();
   const pad = usePagePadding();
   const carouselCardWidth = useCarouselCardWidth();
+  const list = meals ?? [];
+  const [hero, ...rest] = list;
 
   return (
     <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 180 }}>
@@ -248,20 +269,29 @@ function FeaturedMealsSection({ meals, isLoading, isTablet }: { meals: ReturnTyp
         <CardRowSkeleton count={3} />
       ) : isTablet ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: pad, paddingBottom: 4 }}>
-          {(meals ?? []).map((m, i) => (
+          {list.map((m, i) => (
             <MotiView key={m.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200, delay: i * 28 }}>
               <MealCard meal={m} width={gridCardWidth(contentWidth, pad)} />
             </MotiView>
           ))}
         </View>
       ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 4 }}>
-          {(meals ?? []).map((m, i) => (
-            <MotiView key={m.id} from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 28 }}>
-              <MealCard meal={m} width={carouselCardWidth} />
+        <>
+          {hero ? (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240 }} style={{ paddingHorizontal: 20, marginBottom: 12 }}>
+              <MealCard meal={hero} width={null} variant="big" />
             </MotiView>
-          ))}
-        </ScrollView>
+          ) : null}
+          {rest.length > 0 ? (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 4 }}>
+              {rest.map((m, i) => (
+                <MotiView key={m.id} from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 28 }}>
+                  <MealCard meal={m} width={carouselCardWidth} />
+                </MotiView>
+              ))}
+            </ScrollView>
+          ) : null}
+        </>
       )}
     </MotiView>
   );
@@ -407,7 +437,14 @@ export default function HomeScreen() {
   const firstName = rawFirst ? rawFirst.toLowerCase() : null;
 
   const { data: liveMeals, isLoading: mealsLoading, refetch: refetchMeals } = useFeaturedMeals();
-  const meals = liveMeals && liveMeals.length > 0 ? liveMeals : recommendedMeals;
+  const rankedMeals = usePersonalizedMeals(liveMeals ?? [], user?.id, user?.user_metadata ?? null).map((s) => s.meal);
+  const meals = rankedMeals.length > 0 ? rankedMeals : (liveMeals ?? []);
+
+  const { data: addresses = [] } = useAddresses(user?.id);
+  const defaultAddress = addresses.find((a) => a.isDefault) ?? addresses[0];
+  const locationLabel = defaultAddress
+    ? [defaultAddress.city, defaultAddress.state].filter(Boolean).join(', ')
+    : 'Set location';
 
   const { data: myOrders, refetch: refetchOrders } = useMyOrders(user?.id);
   const activeOrder = (myOrders ?? []).find((o) => o.status !== 'completed' && o.status !== 'cancelled');
@@ -457,9 +494,13 @@ export default function HomeScreen() {
                     </View>
                   ) : null}
                 </PressableScale>
-                <PressableScale style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }} accessibilityRole="button" accessibilityLabel="Location">
+                <PressableScale
+                  onPress={() => { feedback.tap(); router.push('/addresses'); }}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Delivery location: ${locationLabel}`}>
                   <MapPin size={12} color={ORANGE} />
-                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary }}>New York, NY</Text>
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12, color: defaultAddress ? Palette.textSecondary : ORANGE }}>{locationLabel}</Text>
                 </PressableScale>
               </View>
             </View>
@@ -489,6 +530,9 @@ export default function HomeScreen() {
   const activeOrderBlock = activeOrder ? <ActiveOrderBanner order={activeOrder} /> : null;
   const plansBlock = user?.id ? (
     <View style={{ marginTop: 24 }}><MyPlansSection userId={user.id} /></View>
+  ) : null;
+  const followingBlock = user?.id ? (
+    <View style={{ marginTop: 24 }}><FollowingKitchensSection userId={user.id} /></View>
   ) : null;
   const nearbyBlock = (
     <View style={{ marginTop: 24 }}><NearbyPreppersSection /></View>
@@ -521,6 +565,7 @@ export default function HomeScreen() {
                 <CategoryIconsRow />
                 {rushBlock}
                 {activeOrderBlock}
+                {followingBlock}
                 {nearbyBlock}
                 {featuredBlock}
               </ScrollView>
@@ -555,6 +600,7 @@ export default function HomeScreen() {
           {rushBlock}
           {activeOrderBlock}
           {plansBlock}
+          {followingBlock}
           {nearbyBlock}
           {featuredBlock}
           {rewardsBlock}

@@ -30,6 +30,8 @@ async function uploadReviewPhoto(localUri: string, userId: string): Promise<stri
   return publicUrl;
 }
 
+const cleanBlock = (s: string) => s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
 
@@ -79,7 +81,7 @@ export default function ReviewScreen() {
     setErr(null);
     const photoUrls = photos.filter((p) => p.publicUrl).map((p) => p.publicUrl!);
     submit.mutate(
-      { orderId, authorId: user.id, prepperId, mealId: mealId || null, rating, body, photos: photoUrls },
+      { orderId, authorId: user.id, prepperId, mealId: mealId || null, rating, body: cleanBlock(body).trim(), photos: photoUrls },
       { onSuccess: () => setDone(true), onError: (e) => setErr(e instanceof Error ? e.message : 'Could not submit review.') },
     );
   }

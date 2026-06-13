@@ -17,6 +17,8 @@ import { useCreateCustomPlan } from '@/lib/queries/custom-meal-plans';
 import { useFeaturedMeals, useMealSearch } from '@/lib/queries/meals';
 import { useAuth } from '@/providers/auth-provider';
 
+const cleanLine = (s: string) => s.replace(/[\x00-\x1F\x7F]/g, '');
+
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
 const FREQ = ['weekly', 'biweekly', 'monthly'] as const;
@@ -73,6 +75,7 @@ export default function CreateMealPlanScreen() {
   const [day, setDay] = useState<Day>('fri');
   const [search, setSearch] = useState('');
   const [selectedMeals, setSelectedMeals] = useState<Map<string, Meal>>(new Map());
+  const [err, setErr] = useState<string | null>(null);
 
   const { data: featured, isLoading: loadingFeatured } = useFeaturedMeals(40);
   const { data: searchResults, isFetching: searching } = useMealSearch(search);
@@ -95,31 +98,39 @@ export default function CreateMealPlanScreen() {
     if (!user) { router.push('/auth?mode=signup'); return; }
     if (!canCreate) return;
     feedback.tap();
+    setErr(null);
+    let planId: string;
     try {
-      const planId = await createPlan.mutateAsync({
+      planId = await createPlan.mutateAsync({
         userId: user.id,
-        name: name.trim(),
+        name: cleanLine(name).trim(),
         frequency: freq,
         deliveryDay: day,
         mealIds: [...selectedMeals.keys()],
       });
-      // Set up recurring billing via Stripe; plan stays active either way for MVP.
+    } catch {
+      feedback.error();
+      setErr('Could not create your plan. Please try again.');
+      return;
+    }
+    feedback.success();
+    // Attempt Stripe billing — navigate to the plan regardless of outcome.
+    try {
       const { data } = await supabase.functions.invoke('stripe-subscribe', {
         body: { type: 'custom_plan', planId },
       });
-      feedback.success();
       if (data?.url) {
         if (Platform.OS === 'web' && typeof window !== 'undefined') {
           window.location.href = data.url;
+          return;
         } else {
           Linking.openURL(data.url);
         }
-      } else {
-        router.replace('/meal-plans');
       }
     } catch {
-      feedback.error?.();
+      // Stripe unavailable — plan exists, navigate anyway.
     }
+    router.replace(`/custom-plan?id=${planId}`);
   }
 
   return (
@@ -236,6 +247,9 @@ export default function CreateMealPlanScreen() {
 
         {/* Sticky create button */}
         <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: Palette.canvas, paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20 }}>
+          {err ? (
+            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.danger, textAlign: 'center', marginBottom: 8 }}>{err}</Text>
+          ) : null}
           <PressableScale onPress={handleCreate} disabled={!canCreate}
             accessibilityRole="button" accessibilityLabel="Create meal plan"
             style={{ height: 56, borderRadius: Radius.pill, backgroundColor: canCreate ? ORANGE : Palette.chip, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>

@@ -209,18 +209,21 @@ export default function MealScreen() {
             <Text style={{ fontFamily: Font.medium, fontSize: 15, color: Palette.danger }}>Couldn&apos;t load this meal. Please try again.</Text>
           ) : (
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
-              {meal.isLimited ? (
-                <MotiView
-                  from={{ opacity: 0, translateY: -4 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ type: 'timing', duration: 240 }}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: '#f5f3ff', borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 6 }}>
-                  <Zap size={13} color="#8b5cf6" fill="#8b5cf6" />
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#8b5cf6' }}>
-                    limited drop{dropTimeLeft(meal.expiresAt) ? ` · ${dropTimeLeft(meal.expiresAt)}` : ''}
-                  </Text>
-                </MotiView>
-              ) : null}
+              {meal.isLimited ? (() => {
+                const timeLeft = dropTimeLeft(meal.expiresAt);
+                return (
+                  <MotiView
+                    from={{ opacity: 0, translateY: -4 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 240 }}
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: '#f5f3ff', borderRadius: Radius.pill, paddingHorizontal: 12, paddingVertical: 6 }}>
+                    <Zap size={13} color="#8b5cf6" fill="#8b5cf6" />
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: '#8b5cf6' }}>
+                      limited drop{timeLeft ? ` · ${timeLeft}` : ''}
+                    </Text>
+                  </MotiView>
+                );
+              })() : null}
 
               <Text style={{ fontFamily: Font.display, fontSize: 28, color: INK, letterSpacing: -0.6 }}>{meal.title}</Text>
 
@@ -275,17 +278,6 @@ export default function MealScreen() {
                   <Text style={{ fontFamily: Font.body, fontSize: 13.5, lineHeight: 20, color: Palette.inkSoft }}>{meal.prepperBio}</Text>
                 </View>
               ) : null}
-
-              <View style={{ gap: 8, marginTop: 4 }}>
-                <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.6 }}>pairs well with</Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-                  {['Fresh lemonade', 'Ginger beer', 'Hibiscus punch', 'Sparkling water'].map((d) => (
-                    <View key={d} style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: Radius.pill, backgroundColor: Palette.canvas, borderWidth: 1, borderColor: Palette.border }}>
-                      <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.inkSoft }}>{d}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
 
               {reviews && reviews.length > 0 ? (
                 <View>

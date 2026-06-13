@@ -50,7 +50,7 @@ import { useMySubscriptions } from '@/lib/queries/meal-plans';
 import { useNotifications } from '@/lib/queries/notifications';
 import { useMyOrders } from '@/lib/queries/orders';
 import { usePaymentMethods } from '@/lib/queries/payment-methods';
-import { useCustomerBadges, useMyPrepperApplication } from '@/lib/queries/preppers';
+import { useCustomerBadges, useFollowedPreppers, useMyPrepperApplication } from '@/lib/queries/preppers';
 import { useRewards } from '@/lib/queries/rewards';
 import { useDarkMode } from '@/lib/theme-mode';
 import { useAuth } from '@/providers/auth-provider';
@@ -74,7 +74,8 @@ export default function ProfileScreen() {
   const addrCount = addresses?.length ?? 0;
   const defaultCard = pmData?.methods.find((m) => m.isDefault);
   const favMeals = useFavoritesCount('meal:');
-  const followed = useFavoritesCount('prepper:');
+  const { data: followedPreppers, refetch: refetchFollowed } = useFollowedPreppers(user?.id);
+  const followed = followedPreppers?.length ?? 0;
   const orderCount = orders?.length ?? 0;
 
   const rewards = useRewards(user?.id);
@@ -93,7 +94,7 @@ export default function ProfileScreen() {
 
   async function handleRefresh() {
     setRefreshing(true);
-    await Promise.all([refetchSubs(), refetchMembership(), refetchBadges(), refetchPrepper(), refetchAddresses(), refetchPm(), refetchOrders()]);
+    await Promise.all([refetchSubs(), refetchMembership(), refetchBadges(), refetchPrepper(), refetchAddresses(), refetchPm(), refetchOrders(), refetchFollowed(), rewards.refetch()]);
     setRefreshing(false);
   }
 
@@ -115,7 +116,7 @@ export default function ProfileScreen() {
 
   const prefsRows: RowItem[] = [
     { label: 'dietary preferences', sub: 'manage', Icon: Leaf, onPress: () => { feedback.tap(); go('/dietary-preferences'); } },
-    { label: 'notifications', sub: 'email, sms, push', Icon: Bell, onPress: () => { feedback.tap(); go('/messages'); } },
+    { label: 'notifications', sub: 'email, sms, push', Icon: Bell, onPress: () => { feedback.tap(); go('/notification-settings'); } },
   ];
 
   const accountRows: RowItem[] = [

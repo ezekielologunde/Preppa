@@ -114,7 +114,7 @@ export function useSubmitBid() {
   });
 }
 
-/** Accept a bid (books the request). */
+/** Accept a bid — atomically accepts bid, declines others, books request, creates order. */
 export function useAcceptBid() {
   const qc = useQueryClient();
   return useMutation({
@@ -122,6 +122,9 @@ export function useAcceptBid() {
       const { error } = await supabase.rpc('accept_experience_bid', { p_bid: bidId });
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['experiences', 'mine'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['experiences', 'mine'] });
+      qc.invalidateQueries({ queryKey: ['prepper-orders'] });
+    },
   });
 }

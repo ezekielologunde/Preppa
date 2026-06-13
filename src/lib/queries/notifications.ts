@@ -17,6 +17,7 @@ export function useNotifications(userId?: string | null) {
   return useQuery({
     queryKey: ['notifications', userId ?? 'anon'],
     enabled: !!userId,
+    refetchInterval: 30_000,
     queryFn: async (): Promise<AppNotification[]> => {
       const { data, error } = await supabase
         .from('notifications')
