@@ -63,7 +63,12 @@ function CardGallery({ images, hovered, height }: { images: string[]; hovered: b
       {images.length > 1 ? (
         <View style={{ position: 'absolute', bottom: 8, alignSelf: 'center', flexDirection: 'row', gap: 4 }}>
           {images.map((_, i) => (
-            <View key={i} style={{ width: i === idx ? 14 : 5, height: 5, borderRadius: 3, backgroundColor: i === idx ? '#fff' : 'rgba(255,255,255,0.6)' }} />
+            <MotiView
+              key={i}
+              animate={{ width: i === idx ? 14 : 5, backgroundColor: i === idx ? '#fff' : 'rgba(255,255,255,0.6)' }}
+              transition={{ type: 'timing', duration: 200 }}
+              style={{ height: 5, borderRadius: 3 }}
+            />
           ))}
         </View>
       ) : null}
