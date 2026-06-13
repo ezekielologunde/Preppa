@@ -55,7 +55,7 @@ const MUTED = Palette.textMuted;
 const ORDER_STATUS_LABEL: Record<string, string> = {
   pending: 'Order placed — awaiting the kitchen',
   confirmed: 'Order confirmed',
-  preparing: 'Your food is being prepared',
+  preparing: 'Being prepped in the kitchen',
   ready: 'Your order is ready',
   out_for_delivery: 'On the way to you',
 };
@@ -229,7 +229,7 @@ export default function HomeScreen() {
                 animate={{ opacity: 1 }}
                 transition={{ type: 'timing', duration: 900, loop: true, repeatReverse: true }}
                 style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-                <Bike size={19} color="#fff" />
+                {activeOrder.fulfillment === 'meetup' ? <MapPin size={19} color="#fff" /> : (activeOrder.fulfillment === 'pickup' || activeOrder.fulfillment === 'in_home') ? <UtensilsCrossed size={19} color="#fff" /> : <Bike size={19} color="#fff" />}
               </MotiView>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }} numberOfLines={1}>{ORDER_STATUS_LABEL[activeOrder.status]}</Text>
@@ -420,7 +420,7 @@ export default function HomeScreen() {
                   <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{lastDone.items[0]?.title ?? 'Your order'}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: MUTED, marginTop: 2 }}>by {lastDone.prepper}</Text>
                   <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary, marginTop: 4 }}>
-                    ${lastDone.total.toFixed(2)} · delivered {new Date(lastDone.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    ${lastDone.total.toFixed(2)} · prepped {new Date(lastDone.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 14, paddingVertical: 9 }}>
