@@ -79,7 +79,7 @@ export default function CustomersScreen() {
               <Users size={28} color="#5b6170" />
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No customers yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 280 }}>Every customer who orders from your kitchen shows up here, with their order history.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 280 }}>Every customer who preorders from your kitchen shows up here, with their preorder history.</Text>
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 10, paddingBottom: 40 }}>
@@ -111,7 +111,7 @@ export default function CustomersScreen() {
                     ) : null}
                   </View>
                   <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textMuted }}>
-                    {c.orders} order{c.orders === 1 ? '' : 's'} · last {fmtDate(c.lastOrder)}
+                    {c.orders} preorder{c.orders === 1 ? '' : 's'} · last {fmtDate(c.lastOrder)}
                   </Text>
                 </View>
                 <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#fff', fontVariant: ['tabular-nums'] }}>{money(c.paidTotal)}</Text>

@@ -65,10 +65,10 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
 }
 
 const INSIGHTS = [
-  { icon: Flame, color: Palette.danger, text: 'Your lunch slot (11am–2pm) drives the most orders. Batch-prepping by 10:30 am can cut your fulfilment time by 25%.' },
-  { icon: TrendingUp, color: ORANGE, text: 'Your average order value ($18.40) is 12% above the platform average. Upsell dessert add-ons to push it further.' },
+  { icon: Flame, color: Palette.danger, text: 'Your lunch slot (11am–2pm) drives the most preorders. Batch-prepping by 10:30 am can cut your fulfillment time by 25%.' },
+  { icon: TrendingUp, color: ORANGE, text: 'Your average preorder value ($18.40) is 12% above the platform average. Upsell dessert add-ons to push it further.' },
   { icon: Award, color: '#8b5cf6', text: 'Thursday is your highest-earning day this month. Consider adding a "Thursday special" to capitalise on demand.' },
-  { icon: Clock, color: '#0891b2', text: 'Orders placed after 9 pm arrive late — consider setting a daily cut-off time to protect your on-time rate.' },
+  { icon: Clock, color: '#0891b2', text: 'Preorders placed after 9 pm arrive late — consider setting a daily cut-off time to protect your on-time rate.' },
 ];
 
 export default function PrepperAnalyticsScreen() {
@@ -112,8 +112,8 @@ export default function PrepperAnalyticsScreen() {
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
           <View style={{ flexDirection: 'row', gap: 10 }}>
             {[
-              { label: 'total orders', value: completed.length.toString(), color: '#06b6d4' },
-              { label: 'avg order', value: `$${avgOrder.toFixed(0)}`, color: ORANGE },
+              { label: 'total preorders', value: completed.length.toString(), color: '#06b6d4' },
+              { label: 'avg preorder', value: `$${avgOrder.toFixed(0)}`, color: ORANGE },
               { label: 'repeat rate', value: `${repeatRate}%`, color: Palette.success },
             ].map(({ label, value, color }) => (
               <View key={label} style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4 }}>
@@ -127,7 +127,7 @@ export default function PrepperAnalyticsScreen() {
           {/* Orders by day of week */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 60 }}>
           <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16 }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK, marginBottom: 14 }}>orders by day of week</Text>
+            <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK, marginBottom: 14 }}>preorders by day of week</Text>
             <View style={{ flexDirection: 'row', gap: 4, alignItems: 'flex-end', height: 68 }}>
               {dayBars.map(({ day, count }, i) => {
                 const isToday = i === todayIdx;
@@ -145,7 +145,7 @@ export default function PrepperAnalyticsScreen() {
           {/* Orders by time slot */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 100 }}>
           <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, padding: 16 }}>
-            <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK, marginBottom: 14 }}>orders by rush window</Text>
+            <Text style={{ fontFamily: Font.heading, fontSize: 14.5, color: INK, marginBottom: 14 }}>preorders by rush window</Text>
             <View style={{ gap: 8 }}>
               {slotBars.map(({ slot, count }) => {
                 const pct = maxSlot > 0 ? (count / maxSlot) * 100 : 0;
