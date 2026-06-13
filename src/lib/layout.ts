@@ -20,6 +20,7 @@ export type WidthClass = 'form' | 'content' | 'browse' | 'business' | 'feed';
 
 // Longest-prefix wins; anything unlisted is a focused 'form' flow.
 const ROUTE_CLASS: [string, WidthClass][] = [
+  ['/profile', 'feed'],
   ['/dashboard', 'business'],
   ['/prepper-orders', 'business'],
   ['/earnings', 'business'],
@@ -109,21 +110,36 @@ export function gridCardWidth(contentWidth: number, pad = 20): number {
 }
 
 /**
- * Two-column geometry for the desktop Home ("feed" surface). On web ≥ desktop
- * the home renders a primary feed column + a fixed right rail; everywhere else
- * it stays a single column. Widths are derived from the centred frame minus the
- * sidebar so the screen never has to know about the frame chrome.
+ * Two-column geometry for wide (desktop) surfaces. On web ≥ desktop a screen can
+ * render a primary column + a fixed-width companion rail; everywhere else it
+ * stays a single column (`twoCol: false`). Widths are derived from a centred
+ * frame minus the sidebar, so the screen never has to know about frame chrome.
+ *
+ * Used by Home (feed + rail) and any content screen that wants a summary/detail
+ * split on desktop while collapsing to one column on phone/tablet.
  */
-export function useHomeColumns(): { twoCol: boolean; main: number; rail: number; gap: number } {
+export function useTwoPane(opts?: { rail?: number; minMain?: number }): {
+  twoCol: boolean;
+  main: number;
+  rail: number;
+  gap: number;
+} {
   const { width } = useWindowDimensions();
+  const pathname = usePathname();
   const twoCol = Platform.OS === 'web' && width >= BP.desktop;
-  if (!twoCol) return { twoCol: false, main: 0, rail: 0, gap: 0 };
-
-  const frame = Math.min(width, MAX.feed.desktop);
   const gap = 28;
-  const rail = 320;
+  if (!twoCol) return { twoCol: false, main: 0, rail: 0, gap };
+
+  // Derive columns from the ACTUAL route frame (route class → max width) so the
+  // screen always fits inside whatever the ResponsiveFrame gives it. A screen
+  // that wants two panes must have a wide-enough width class (feed/browse/business).
+  const frame = maxWidthFor(pathname ?? '/', width);
+  const rail = opts?.rail ?? 320;
   const outerPad = 24; // horizontal breathing room inside the content area
   const contentArea = frame - SIDEBAR.desktop;
-  const main = Math.max(560, contentArea - rail - gap - outerPad);
+  const main = Math.max(opts?.minMain ?? 520, contentArea - rail - gap - outerPad);
   return { twoCol: true, main, rail, gap };
 }
+
+/** @deprecated use useTwoPane() — kept as the Home alias. */
+export const useHomeColumns = useTwoPane;

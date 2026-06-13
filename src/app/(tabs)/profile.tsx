@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
   BadgeCheck,
@@ -41,6 +42,7 @@ import { Font } from '@/constants/fonts';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { useFavoritesCount } from '@/lib/favorites';
 import { feedback } from '@/lib/feedback';
+import { useTwoPane } from '@/lib/layout';
 import { useAddresses } from '@/lib/queries/addresses';
 import { useConversations } from '@/lib/queries/messages';
 import { useCustomerMembership } from '@/lib/queries/memberships';
@@ -122,14 +124,10 @@ export default function ProfileScreen() {
     { label: 'help center', sub: 'faq & support', Icon: HelpCircle, onPress: () => { feedback.tap(); Linking.openURL('mailto:support@preppa.live?subject=Preppa%20support').catch(() => soon('Help center')); } },
   ];
 
-  return (
-    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
-      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />}
-          contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 32, gap: 16 }}>
+  const pane = useTwoPane({ rail: 360 });
 
-          {/* Header */}
+  // ─── Header ─────────────────────────────────────────────────────────────────
+  const headerEl = (
           <MotiView from={{ opacity: 0, translateY: -6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 10 }}>
             <Text style={{ flex: 1, fontFamily: Font.display, fontSize: 26, color: Palette.ink, letterSpacing: -0.6 }}>profile</Text>
@@ -150,11 +148,16 @@ export default function ProfileScreen() {
           </View>
           </MotiView>
 
-          {/* Identity */}
+  );
+
+  // ─── Identity ───────────────────────────────────────────────────────────────
+  const identityEl = (
           <MotiView from={{ opacity: 0, translateY: 14 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 320 }}>
             <View style={{ alignItems: 'center', paddingHorizontal: 20 }}>
-              <View style={{ width: 96, height: 96, borderRadius: 48, borderWidth: 3, borderColor: Palette.brand, padding: 3 }}>
-                <Avatar name={displayName} url={user?.user_metadata?.avatar_url as string | undefined} size={84} />
+              <View style={{ position: 'relative' }}>
+                <LinearGradient colors={['#FF9A5A', Palette.brand]} style={{ width: 96, height: 96, borderRadius: 48, padding: 3, alignItems: 'center', justifyContent: 'center' }}>
+                  <Avatar name={displayName} url={user?.user_metadata?.avatar_url as string | undefined} size={84} />
+                </LinearGradient>
                 <PressableScale onPress={() => soon('Change photo')} accessibilityRole="button" accessibilityLabel="Change photo"
                   style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderRadius: 15, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Palette.canvas }}>
                   <Camera size={14} color={Palette.surface} />
@@ -186,8 +189,10 @@ export default function ProfileScreen() {
               {earnedBadges?.length ? <View style={{ marginTop: 14, maxWidth: '100%' }}><CustomerBadgeShelf badges={earnedBadges} /></View> : null}
             </View>
           </MotiView>
+  );
 
-          {/* Stats row */}
+  // ─── Stats row ──────────────────────────────────────────────────────────────
+  const statsEl = (
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
             <View style={{ flexDirection: 'row', marginHorizontal: 20, gap: 10 }}>
               <StatChip value={orderCount} label="preorders" onPress={() => { feedback.tap(); go('/orders'); }} />
@@ -195,26 +200,32 @@ export default function ProfileScreen() {
               <StatChip value={followed} label="following" onPress={() => { feedback.tap(); go('/following'); }} />
             </View>
           </MotiView>
+  );
 
-          {/* Rewards card */}
+  // ─── Rewards card ───────────────────────────────────────────────────────────
+  const rewardsEl = (
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
             <RewardsCard rewards={rewards} onPress={() => { feedback.tap(); go('/rewards'); }} />
           </MotiView>
+  );
 
-          {/* Meal plans */}
+  // ─── Meal plans ─────────────────────────────────────────────────────────────
+  const mealPlansEl = (
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 200 }}>
             <MealPlansSection subs={subs} onViewAll={() => { feedback.tap(); go('/meal-plans'); }} onPress={() => { feedback.tap(); go('/meal-plans'); }} />
           </MotiView>
+  );
 
-          {/* My Kitchen */}
-          {isApprovedPrepper ? (
+  // ─── My Kitchen ─────────────────────────────────────────────────────────────
+  const myKitchenEl = isApprovedPrepper ? (
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 240 }}>
               <DarkCard Icon={ChefHat} title="my kitchen" sub="meals, preorders, earnings & go live"
                 onPress={() => { feedback.tap(); router.push('/dashboard'); }} accessibilityLabel="Open my kitchen" />
             </MotiView>
-          ) : null}
+          ) : null;
 
-          {/* Account sections */}
+  // ─── Account sections ───────────────────────────────────────────────────────
+  const accountSectionsEl = (
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 260 }}>
             <View style={{ marginHorizontal: 20, gap: 12 }}>
               <View>
@@ -238,17 +249,18 @@ export default function ProfileScreen() {
               </View>
             </View>
           </MotiView>
+  );
 
-          {/* Admin console */}
-          {isAdmin ? (
+  // ─── Admin console ──────────────────────────────────────────────────────────
+  const adminEl = isAdmin ? (
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
               <DarkCard Icon={ShieldCheck} title="admin console" sub="approvals, orders, earnings & features"
                 onPress={() => { feedback.tap(); router.push('/admin'); }} accessibilityLabel="Open admin console" />
             </MotiView>
-          ) : null}
+          ) : null;
 
-          {/* Become a prepper / pending */}
-          {!isApprovedPrepper && !isPendingPrepper ? (
+  // ─── Become a prepper / pending ─────────────────────────────────────────────
+  const prepperCtaEl = !isApprovedPrepper && !isPendingPrepper ? (
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
               <DarkCard Icon={ChefHat} title="become a prepper" sub="start earning with your cooking"
                 onPress={() => { feedback.tap(); router.push('/become-prepper'); }} accessibilityLabel="Become a prepper, start earning with your cooking" />
@@ -265,27 +277,80 @@ export default function ProfileScreen() {
                 </View>
               </View>
             </MotiView>
-          ) : null}
+          ) : null;
 
-          {/* Sign out / Sign in */}
+  // ─── Sign out / Sign in ─────────────────────────────────────────────────────
+  const signOutEl = (
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 300 }}>
           <PressableScale onPress={() => { feedback.tap(); user ? signOut() : router.push('/auth?mode=signin'); }}
             accessibilityRole="button" accessibilityLabel={user ? 'Sign out' : 'Sign in or create account'}
-            style={{ marginHorizontal: 20, alignItems: 'center', paddingVertical: 15, borderRadius: 16, backgroundColor: user ? Palette.surface : Palette.brand }}>
+            style={{ marginHorizontal: 20, alignItems: 'center', paddingVertical: 15, borderRadius: Radius.pill, backgroundColor: user ? Palette.surface : Palette.brand }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 15, color: user ? Palette.danger : Palette.surface }}>
               {user ? 'sign out' : 'sign in / create account'}
             </Text>
           </PressableScale>
           </MotiView>
+  );
 
-        </ScrollView>
-
-        {toast ? (
+  const toastEl = toast ? (
           <MotiView from={{ opacity: 0, translateY: 14 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200 }}
             style={{ position: 'absolute', left: 20, right: 20, bottom: 24, backgroundColor: Palette.ink, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13, ...Shadow.floating }}>
             <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.surface, textAlign: 'center' }}>{toast}</Text>
           </MotiView>
-        ) : null}
+        ) : null;
+
+  const refresh = <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />;
+
+  // ─── Desktop: summary column (left) + settings column (right) ────────────────
+  if (pane.twoCol) {
+    return (
+      <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
+        <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={refresh}
+            contentContainerStyle={{ paddingTop: 16, paddingBottom: 40 }}>
+            {headerEl}
+            <View style={{ flexDirection: 'row', gap: pane.gap, paddingHorizontal: 12, paddingTop: 16, justifyContent: 'center' }}>
+              {/* Left: identity + summary */}
+              <View style={{ width: pane.rail, gap: 16 }}>
+                {identityEl}
+                {statsEl}
+                {rewardsEl}
+                {myKitchenEl}
+                {prepperCtaEl}
+                {signOutEl}
+              </View>
+              {/* Right: plans + settings */}
+              <View style={{ width: pane.main, gap: 16 }}>
+                {mealPlansEl}
+                {accountSectionsEl}
+                {adminEl}
+              </View>
+            </View>
+          </ScrollView>
+          {toastEl}
+        </SafeAreaView>
+      </View>
+    );
+  }
+
+  // ─── Mobile / iPad: single column (unchanged order) ─────────────────────────
+  return (
+    <View style={{ flex: 1, backgroundColor: Palette.canvas }}>
+      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+        <ScrollView showsVerticalScrollIndicator={false} refreshControl={refresh}
+          contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 16 : 8, paddingBottom: 32, gap: 16 }}>
+          {headerEl}
+          {identityEl}
+          {statsEl}
+          {rewardsEl}
+          {mealPlansEl}
+          {myKitchenEl}
+          {accountSectionsEl}
+          {adminEl}
+          {prepperCtaEl}
+          {signOutEl}
+        </ScrollView>
+        {toastEl}
       </SafeAreaView>
     </View>
   );

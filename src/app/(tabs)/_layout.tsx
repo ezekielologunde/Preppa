@@ -1,9 +1,8 @@
 import { Tabs } from 'expo-router';
-import { CircleUser, Compass, House, MonitorPlay, Menu, Ticket, X } from 'lucide-react-native';
+import { CircleUser, Compass, House, MonitorPlay, Ticket } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import { Platform, Text, useWindowDimensions, View, ScrollView } from 'react-native';
+import { Platform, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState } from 'react';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
@@ -39,7 +38,7 @@ function TabBarIcon({ tab, focused }: { tab: (typeof TABS)[number]; focused: boo
   );
 }
 
-function TabBarLabel({ label, focused }: { label: string; focused: boolean }) {
+function TabBarLabel({ label, focused, compact }: { label: string; focused: boolean; compact?: boolean }) {
   const color = focused ? Palette.brand : Palette.textSecondary;
 
   return (
@@ -47,9 +46,9 @@ function TabBarLabel({ label, focused }: { label: string; focused: boolean }) {
       numberOfLines={1}
       style={{
         fontFamily: focused ? Font.semibold : Font.medium,
-        fontSize: 12,
+        fontSize: compact ? 10.5 : 11.5,
         color,
-        letterSpacing: 0.2,
+        letterSpacing: 0,
       }}>
       {label}
     </Text>
@@ -59,192 +58,53 @@ function TabBarLabel({ label, focused }: { label: string; focused: boolean }) {
 function PreppaTabBar({ state, navigation }: TabBarProps) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Desktop/tablet web uses the WebSidebar; hide the bottom bar there.
   if (Platform.OS === 'web' && width >= 768) return null;
 
-  // Extra small mobile (< 340px) - icon only with hamburger menu
-  const isExtraSmall = width < 340;
-  // Small mobile (340-480px) - vertical scrollable tabs
-  const isSmall = width < 480;
+  // One clean bar: 5 equal-width tabs that fit any phone from 320px up.
+  // (No hamburger / horizontal-scroll — those pushed tabs off-screen.)
+  const compact = width < 360; // tighten spacing on the smallest phones
 
-  if (isExtraSmall) {
-    return (
-      <>
-        {/* Hamburger menu for extra small screens */}
-        <View style={{
-          backgroundColor: Palette.surface,
-          borderTopWidth: 1,
-          borderTopColor: Palette.border,
-          paddingBottom: Math.max(insets.bottom + 4, 16),
-          paddingHorizontal: 16,
-          paddingTop: 12,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.ink }}>Preppa</Text>
-          <PressableScale
-            onPress={() => { feedback.tap(); setMobileMenuOpen(!mobileMenuOpen); }}
-            accessibilityRole="button"
-            accessibilityLabel={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            style={{ padding: 8 }}>
-            {mobileMenuOpen ? (
-              <X size={24} color={Palette.ink} strokeWidth={2} />
-            ) : (
-              <Menu size={24} color={Palette.ink} strokeWidth={2} />
-            )}
-          </PressableScale>
-        </View>
-
-        {/* Dropdown menu for extra small screens */}
-        {mobileMenuOpen && (
-          <View style={{
-            backgroundColor: Palette.canvas,
-            borderTopWidth: 1,
-            borderTopColor: Palette.border,
-            paddingBottom: insets.bottom,
-          }}>
-            {TABS.map((tab) => {
-              const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
-              const focused = routeIndex >= 0 && state.index === routeIndex;
-              const color = focused ? Palette.brand : Palette.textSecondary;
-
-              return (
-                <PressableScale
-                  key={tab.name}
-                  onPress={() => { feedback.tap(); navigation.navigate(tab.name); setMobileMenuOpen(false); }}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: focused }}
-                  accessibilityLabel={tab.label}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: 12,
-                    paddingHorizontal: 16,
-                    paddingVertical: 12,
-                    borderBottomWidth: 1,
-                    borderBottomColor: Palette.border,
-                  }}>
-                  <tab.Icon size={22} color={color} strokeWidth={focused ? 2.2 : 1.6} />
-                  <Text style={{
-                    fontFamily: focused ? Font.semibold : Font.medium,
-                    fontSize: 16,
-                    color,
-                    letterSpacing: 0.2,
-                  }}>
-                    {tab.label}
-                  </Text>
-                </PressableScale>
-              );
-            })}
-          </View>
-        )}
-      </>
-    );
-  }
-
-  if (isSmall) {
-    // Scrollable tab bar for small screens
-    return (
-      <View style={{
-        backgroundColor: Palette.surface,
-        borderTopWidth: 1,
-        borderTopColor: Palette.border,
-        paddingBottom: Math.max(insets.bottom + 4, 16),
-      }}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 8 }}>
-          <View style={{ flexDirection: 'row', gap: 4 }}>
-            {TABS.map((tab) => {
-              const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
-              const focused = routeIndex >= 0 && state.index === routeIndex;
-              const color = focused ? Palette.brand : Palette.textSecondary;
-
-              return (
-                <PressableScale
-                  key={tab.name}
-                  onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: focused }}
-                  accessibilityLabel={tab.label}
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    paddingHorizontal: 16,
-                    paddingTop: 12,
-                    minWidth: 100,
-                    gap: 6,
-                  }}>
-
-                  <MotiView
-                    animate={{ width: focused ? 28 : 0, opacity: focused ? 1 : 0 }}
-                    transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      height: 3,
-                      borderBottomLeftRadius: 2,
-                      borderBottomRightRadius: 2,
-                      backgroundColor: Palette.brand,
-                    }}
-                  />
-
-                  <TabBarIcon tab={tab} focused={focused} />
-                  <TabBarLabel label={tab.label} focused={focused} />
-                </PressableScale>
-              );
-            })}
-          </View>
-        </ScrollView>
-      </View>
-    );
-  }
-
-  // Standard tab bar for medium+ screens
   return (
     <View style={{
       backgroundColor: Palette.surface,
       borderTopWidth: 1,
       borderTopColor: Palette.border,
-      paddingBottom: Math.max(insets.bottom + 4, 16),
+      paddingBottom: Math.max(insets.bottom + 4, 12),
+      flexDirection: 'row',
     }}>
-      <View style={{ flexDirection: 'row', flex: 1, width: '100%' }}>
-        {TABS.map((tab) => {
-          const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
-          const focused = routeIndex >= 0 && state.index === routeIndex;
-          const color = focused ? Palette.brand : Palette.textSecondary;
+      {TABS.map((tab) => {
+        const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
+        const focused = routeIndex >= 0 && state.index === routeIndex;
 
-          return (
-            <PressableScale
-              key={tab.name}
-              onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
-              accessibilityRole="button"
-              accessibilityState={{ selected: focused }}
-              accessibilityLabel={tab.label}
-              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 12, gap: 5 }}>
+        return (
+          <PressableScale
+            key={tab.name}
+            onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
+            accessibilityRole="button"
+            accessibilityState={{ selected: focused }}
+            accessibilityLabel={tab.label}
+            style={{ flex: 1, minWidth: 0, alignItems: 'center', justifyContent: 'center', paddingTop: 10, paddingHorizontal: 2, gap: 4 }}>
 
-              <MotiView
-                animate={{ width: focused ? 28 : 0, opacity: focused ? 1 : 0 }}
-                transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  height: 3,
-                  borderBottomLeftRadius: 2,
-                  borderBottomRightRadius: 2,
-                  backgroundColor: Palette.brand,
-                }}
-              />
+            <MotiView
+              animate={{ width: focused ? 26 : 0, opacity: focused ? 1 : 0 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                height: 3,
+                borderBottomLeftRadius: 2,
+                borderBottomRightRadius: 2,
+                backgroundColor: Palette.brand,
+              }}
+            />
 
-              <TabBarIcon tab={tab} focused={focused} />
-              <TabBarLabel label={tab.label} focused={focused} />
-            </PressableScale>
-          );
-        })}
-      </View>
+            <TabBarIcon tab={tab} focused={focused} />
+            <TabBarLabel label={tab.label} focused={focused} compact={compact} />
+          </PressableScale>
+        );
+      })}
     </View>
   );
 }
