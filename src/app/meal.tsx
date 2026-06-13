@@ -18,6 +18,7 @@ import { useAddToCart, useCart } from '@/lib/queries/cart';
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { useMeal } from '@/lib/queries/meals';
 import { useStartConversation } from '@/lib/queries/messages';
+import { getCurrentRush, getRushUrgency } from '@/lib/rush-hour';
 import { usePrepperReviews } from '@/lib/queries/reviews';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -67,6 +68,8 @@ export default function MealScreen() {
   const { data: cart } = useCart(user?.id);
   const { data: reviews } = usePrepperReviews(meal?.prepperId);
   const orderingOn = useFeatureEnabled('ordering');
+  const nowHour = new Date().getHours();
+  const liveRush = getRushUrgency(nowHour, new Date().getMinutes()) === 'live' ? getCurrentRush(nowHour) : null;
 
   async function handleShare() {
     feedback.tap();
@@ -320,6 +323,18 @@ export default function MealScreen() {
       {/* Sticky CTA */}
       {meal ? (
         <SafeAreaView edges={['bottom']} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: Palette.surface, borderTopWidth: 1, borderTopColor: Palette.border }}>
+          {liveRush ? (
+            <MotiView
+              from={{ opacity: 0, translateY: 6 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: 'timing', duration: 220 }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 20, paddingTop: 10 }}>
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: liveRush.color }} />
+              <Text numberOfLines={1} style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary, flex: 1 }}>
+                {liveRush.buyerTip}
+              </Text>
+            </MotiView>
+          ) : null}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 20, paddingVertical: 12 }}>
             <View>
               <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>price</Text>
