@@ -29,7 +29,10 @@ type Day = (typeof DAYS)[number];
 function MealPickerRow({ meal, selected, onToggle }: { meal: Meal; selected: boolean; onToggle: () => void }) {
   const img = meal.images?.[0] ?? meal.image;
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 12, borderWidth: selected ? 1.5 : 0, borderColor: selected ? ORANGE : 'transparent' }}>
+    <MotiView
+      animate={{ borderColor: selected ? ORANGE : Palette.surface }}
+      transition={{ type: 'timing', duration: 180 }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 12, borderWidth: 1.5 }}>
       {img ? (
         <Image source={{ uri: img }} style={{ width: 56, height: 56, borderRadius: Radius.sm }} contentFit="cover" transition={200} />
       ) : (
@@ -40,12 +43,22 @@ function MealPickerRow({ meal, selected, onToggle }: { meal: Meal; selected: boo
         <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary }}>{meal.prepper}</Text>
         <Text style={{ fontFamily: Font.heading, fontSize: 13, color: ORANGE, marginTop: 2 }}>{money(meal.price)}</Text>
       </View>
-      <PressableScale onPress={() => { feedback.tap(); onToggle(); }}
-        accessibilityRole="button" accessibilityLabel={selected ? `Remove ${meal.title}` : `Add ${meal.title}`}
-        style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: selected ? Palette.brandTint : Palette.chip, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: selected ? ORANGE : 'transparent' }}>
-        {selected ? <X size={15} color={ORANGE} strokeWidth={2.5} /> : <Plus size={15} color={Palette.textMuted} strokeWidth={2.5} />}
-      </PressableScale>
-    </View>
+      <MotiView
+        animate={{
+          backgroundColor: selected ? Palette.brandTint : Palette.chip,
+          borderColor: selected ? ORANGE : Palette.chip,
+        }}
+        transition={{ type: 'timing', duration: 180 }}
+        style={{ width: 34, height: 34, borderRadius: 17, borderWidth: 1.5, overflow: 'hidden' }}>
+        <PressableScale
+          onPress={() => { feedback.tap(); onToggle(); }}
+          accessibilityRole="button"
+          accessibilityLabel={selected ? `Remove ${meal.title}` : `Add ${meal.title}`}
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          {selected ? <X size={15} color={ORANGE} strokeWidth={2.5} /> : <Plus size={15} color={Palette.textMuted} strokeWidth={2.5} />}
+        </PressableScale>
+      </MotiView>
+    </MotiView>
   );
 }
 
@@ -147,11 +160,19 @@ export default function CreateMealPlanScreen() {
               <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary }}>frequency</Text>
               <View style={{ flexDirection: 'row', gap: 8 }}>
                 {FREQ.map((f) => (
-                  <PressableScale key={f} onPress={() => { feedback.tap(); setFreq(f); }}
-                    accessibilityRole="button" accessibilityState={{ selected: freq === f }}
-                    style={{ flex: 1, height: 44, borderRadius: Radius.sm, backgroundColor: freq === f ? ORANGE : Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, textTransform: 'capitalize', color: freq === f ? '#fff' : Palette.textSecondary }}>{f}</Text>
-                  </PressableScale>
+                  <MotiView
+                    key={f}
+                    animate={{ backgroundColor: freq === f ? ORANGE : Palette.surface }}
+                    transition={{ type: 'timing', duration: 180 }}
+                    style={{ flex: 1, borderRadius: Radius.sm, overflow: 'hidden' }}>
+                    <PressableScale
+                      onPress={() => { feedback.tap(); setFreq(f); }}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: freq === f }}
+                      style={{ height: 44, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13, textTransform: 'capitalize', color: freq === f ? '#fff' : Palette.textSecondary }}>{f}</Text>
+                    </PressableScale>
+                  </MotiView>
                 ))}
               </View>
             </View>
@@ -163,11 +184,22 @@ export default function CreateMealPlanScreen() {
               <Text style={{ fontFamily: Font.heading, fontSize: 13, color: Palette.textSecondary }}>fulfillment day</Text>
               <View style={{ flexDirection: 'row', gap: 6 }}>
                 {DAYS.map((d) => (
-                  <PressableScale key={d} onPress={() => { feedback.tap(); setDay(d); }}
-                    accessibilityRole="button" accessibilityState={{ selected: day === d }}
-                    style={{ flex: 1, height: 40, borderRadius: Radius.sm, backgroundColor: day === d ? Palette.brandTint : Palette.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: day === d ? ORANGE : 'transparent' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: day === d ? ORANGE : Palette.textSecondary }}>{DAY_LABEL[d]}</Text>
-                  </PressableScale>
+                  <MotiView
+                    key={d}
+                    animate={{
+                      backgroundColor: day === d ? Palette.brandTint : Palette.surface,
+                      borderColor: day === d ? ORANGE : Palette.surface,
+                    }}
+                    transition={{ type: 'timing', duration: 180 }}
+                    style={{ flex: 1, height: 40, borderRadius: Radius.sm, borderWidth: 1.5, overflow: 'hidden' }}>
+                    <PressableScale
+                      onPress={() => { feedback.tap(); setDay(d); }}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: day === d }}
+                      style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: day === d ? ORANGE : Palette.textSecondary }}>{DAY_LABEL[d]}</Text>
+                    </PressableScale>
+                  </MotiView>
                 ))}
               </View>
             </View>
