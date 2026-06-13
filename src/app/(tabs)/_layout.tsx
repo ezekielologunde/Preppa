@@ -30,10 +30,6 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
   return (
     <View
       style={{
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        bottom: 0,
         backgroundColor: Palette.surface,
         paddingTop: 8,
         paddingBottom: Math.max(insets.bottom, 10),
@@ -43,7 +39,7 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
         borderTopColor: Palette.border,
         ...Shadow.navBar,
       }}>
-      <View style={{ flexDirection: 'row', maxWidth: isTablet ? 560 : undefined, alignSelf: isTablet ? 'center' : undefined, width: '100%' }}>
+      <View style={{ flexDirection: 'row', maxWidth: isTablet ? 560 : undefined, alignSelf: isTablet ? 'center' : undefined }}>
         {TABS.map((tab) => {
           const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
           const focused = routeIndex >= 0 && state.index === routeIndex;
