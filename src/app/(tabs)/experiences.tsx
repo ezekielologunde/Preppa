@@ -38,7 +38,7 @@ const EXPERIENCE_TYPES = [
   { key: 'food_service', label: 'Food service', icon: 'HandPlatter', blurb: 'Servers & staff' },
   { key: 'cleaning', label: 'Cleaning', icon: 'Sparkles', blurb: 'Before & after' },
   { key: 'class', label: 'Cooking class', icon: 'GraduationCap', blurb: 'Learn hands-on' },
-  { key: 'tasting', label: 'Tasting menu', icon: 'Wine', blurb: 'Chef's selection' },
+  { key: 'tasting', label: 'Tasting menu', icon: 'Wine', blurb: "Chef's selection" },
 ] as const;
 const STEPS: { Icon: LucideIcon; title: string; body: string }[] = [
   { Icon: ClipboardList, title: 'Post a request', body: 'Tell us your event, date and budget' },
