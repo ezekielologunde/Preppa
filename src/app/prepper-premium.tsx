@@ -129,21 +129,31 @@ export default function PrepperPremiumScreen() {
           {/* Billing toggle */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
             <View style={{ flexDirection: 'row', backgroundColor: CARD, borderRadius: Radius.md, padding: 4, gap: 4 }}>
-              <PressableScale onPress={() => { feedback.tap(); setYearly(false); }}
-                accessibilityRole="button" accessibilityState={{ selected: !yearly }}
-                style={{ flex: 1, height: 44, borderRadius: Radius.sm, backgroundColor: !yearly ? ORANGE : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: !yearly ? '#fff' : MUTED }}>Monthly</Text>
-              </PressableScale>
-              <PressableScale onPress={() => { feedback.tap(); setYearly(true); }}
-                accessibilityRole="button" accessibilityState={{ selected: yearly }}
-                style={{ flex: 1, height: 44, borderRadius: Radius.sm, backgroundColor: yearly ? ORANGE : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: yearly ? '#fff' : MUTED }}>Yearly</Text>
-                {!yearly ? (
-                  <View style={{ backgroundColor: Palette.success, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 2 }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>save {YEARLY_SAVING}%</Text>
-                  </View>
-                ) : null}
-              </PressableScale>
+              <MotiView
+                animate={{ backgroundColor: !yearly ? ORANGE : CARD }}
+                transition={{ type: 'timing', duration: 200 }}
+                style={{ flex: 1, borderRadius: Radius.sm, overflow: 'hidden' }}>
+                <PressableScale onPress={() => { feedback.tap(); setYearly(false); }}
+                  accessibilityRole="button" accessibilityState={{ selected: !yearly }}
+                  style={{ flex: 1, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: !yearly ? '#fff' : MUTED }}>Monthly</Text>
+                </PressableScale>
+              </MotiView>
+              <MotiView
+                animate={{ backgroundColor: yearly ? ORANGE : CARD }}
+                transition={{ type: 'timing', duration: 200 }}
+                style={{ flex: 1, borderRadius: Radius.sm, overflow: 'hidden' }}>
+                <PressableScale onPress={() => { feedback.tap(); setYearly(true); }}
+                  accessibilityRole="button" accessibilityState={{ selected: yearly }}
+                  style={{ flex: 1, height: 44, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: yearly ? '#fff' : MUTED }}>Yearly</Text>
+                  {!yearly ? (
+                    <View style={{ backgroundColor: Palette.success, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 2 }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>save {YEARLY_SAVING}%</Text>
+                    </View>
+                  ) : null}
+                </PressableScale>
+              </MotiView>
             </View>
           </MotiView>
 

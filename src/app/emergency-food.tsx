@@ -95,14 +95,23 @@ export default function EmergencyFoodScreen() {
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260 }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textSecondary, marginBottom: 10 }}>how urgent?</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
-            {URGENCY_OPTIONS.map((u, i) => (
-              <PressableScale key={u.label} onPress={() => { feedback.tap(); setUrgencyIdx(i); }} accessibilityRole="button" accessibilityLabel={`${u.label} urgency`}
-                style={{ flex: 1, backgroundColor: urgencyIdx === i ? u.color : Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4, borderWidth: urgencyIdx === i ? 0 : 1, borderColor: Palette.border }}>
-                <Clock size={17} color={urgencyIdx === i ? '#fff' : u.color} />
-                <Text style={{ fontFamily: Font.heading, fontSize: 14, color: urgencyIdx === i ? '#fff' : INK }}>{u.label}</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 11, color: urgencyIdx === i ? 'rgba(255,255,255,0.8)' : Palette.textMuted, textAlign: 'center' }}>{u.sub}</Text>
-              </PressableScale>
-            ))}
+            {URGENCY_OPTIONS.map((u, i) => {
+              const sel = urgencyIdx === i;
+              return (
+                <MotiView
+                  key={u.label}
+                  animate={{ backgroundColor: sel ? u.color : Palette.surface, borderColor: sel ? u.color : Palette.border }}
+                  transition={{ type: 'timing', duration: 180 }}
+                  style={{ flex: 1, borderRadius: 14, borderWidth: 1, overflow: 'hidden' }}>
+                  <PressableScale onPress={() => { feedback.tap(); setUrgencyIdx(i); }} accessibilityRole="button" accessibilityLabel={`${u.label} urgency`}
+                    style={{ padding: 12, alignItems: 'center', gap: 4 }}>
+                    <Clock size={17} color={sel ? '#fff' : u.color} />
+                    <Text style={{ fontFamily: Font.heading, fontSize: 14, color: sel ? '#fff' : INK }}>{u.label}</Text>
+                    <Text style={{ fontFamily: Font.body, fontSize: 11, color: sel ? 'rgba(255,255,255,0.8)' : Palette.textMuted, textAlign: 'center' }}>{u.sub}</Text>
+                  </PressableScale>
+                </MotiView>
+              );
+            })}
           </View>
           </MotiView>
 
@@ -110,12 +119,21 @@ export default function EmergencyFoodScreen() {
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 60 }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textSecondary, marginBottom: 10 }}>cuisine preference</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-            {CUISINE_QUICK.map((c) => (
-              <PressableScale key={c} onPress={() => { feedback.tap(); setCuisine(c); }} accessibilityRole="button" accessibilityLabel={`${c} cuisine`}
-                style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: cuisine === c ? ORANGE : Palette.surface, borderWidth: cuisine === c ? 0 : 1, borderColor: Palette.border }}>
-                <Text style={{ fontFamily: Font.medium, fontSize: 13, color: cuisine === c ? '#fff' : INK }}>{c}</Text>
-              </PressableScale>
-            ))}
+            {CUISINE_QUICK.map((c) => {
+              const sel = cuisine === c;
+              return (
+                <MotiView
+                  key={c}
+                  animate={{ backgroundColor: sel ? ORANGE : Palette.surface, borderColor: sel ? ORANGE : Palette.border }}
+                  transition={{ type: 'timing', duration: 180 }}
+                  style={{ borderRadius: Radius.pill, borderWidth: 1, overflow: 'hidden' }}>
+                  <PressableScale onPress={() => { feedback.tap(); setCuisine(c); }} accessibilityRole="button" accessibilityLabel={`${c} cuisine`}
+                    style={{ paddingHorizontal: 14, paddingVertical: 9 }}>
+                    <Text style={{ fontFamily: Font.medium, fontSize: 13, color: sel ? '#fff' : INK }}>{c}</Text>
+                  </PressableScale>
+                </MotiView>
+              );
+            })}
           </View>
           </MotiView>
 

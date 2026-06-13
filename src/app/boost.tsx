@@ -128,32 +128,38 @@ export default function BoostScreen() {
             {BOOST_PLANS.map(({ id, name, desc, Icon, color, perks, impressions }) => {
               const active = plan === id;
               return (
-                <PressableScale key={id} onPress={() => { feedback.tap(); setPlan(id); }} accessibilityRole="button" accessibilityLabel={`${name} boost`}
-                  style={{ backgroundColor: Palette.surface, borderRadius: 16, padding: 14, gap: 10, borderWidth: active ? 1.5 : 1, borderColor: active ? color : Palette.border }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                    <View style={{ width: 36, height: 36, borderRadius: 11, backgroundColor: color + '18', alignItems: 'center', justifyContent: 'center' }}>
-                      <Icon size={17} color={color} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ fontFamily: Font.heading, fontSize: 14, color: active ? color : INK }}>{name}</Text>
-                      <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>{desc}</Text>
-                    </View>
-                  </View>
-                  {active ? (
-                    <View style={{ gap: 6 }}>
-                      {perks.map((p) => (
-                        <View key={p} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                          <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: color }} />
-                          <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, flex: 1 }}>{p}</Text>
-                        </View>
-                      ))}
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
-                        <Eye size={13} color={Palette.textMuted} />
-                        <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textMuted }}>est. {impressions} per period</Text>
+                <MotiView
+                  key={id}
+                  animate={{ borderColor: active ? color : Palette.border }}
+                  transition={{ type: 'timing', duration: 180 }}
+                  style={{ borderRadius: 16, borderWidth: 1.5, overflow: 'hidden' }}>
+                  <PressableScale onPress={() => { feedback.tap(); setPlan(id); }} accessibilityRole="button" accessibilityLabel={`${name} boost`}
+                    style={{ backgroundColor: Palette.surface, padding: 14, gap: 10 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                      <View style={{ width: 36, height: 36, borderRadius: 11, backgroundColor: color + '18', alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon size={17} color={color} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontFamily: Font.heading, fontSize: 14, color: active ? color : INK }}>{name}</Text>
+                        <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>{desc}</Text>
                       </View>
                     </View>
-                  ) : null}
-                </PressableScale>
+                    {active ? (
+                      <View style={{ gap: 6 }}>
+                        {perks.map((p) => (
+                          <View key={p} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                            <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: color }} />
+                            <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, flex: 1 }}>{p}</Text>
+                          </View>
+                        ))}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
+                          <Eye size={13} color={Palette.textMuted} />
+                          <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textMuted }}>est. {impressions} per period</Text>
+                        </View>
+                      </View>
+                    ) : null}
+                  </PressableScale>
+                </MotiView>
               );
             })}
           </View>
@@ -163,14 +169,23 @@ export default function BoostScreen() {
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 80 }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textSecondary, marginBottom: 10 }}>boost duration</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
-            {DURATIONS.map(({ label, price, tag }, i) => (
-              <PressableScale key={label} onPress={() => { feedback.tap(); setDuration(i); }} accessibilityRole="button" accessibilityLabel={`${label} for $${price}`}
-                style={{ flex: 1, backgroundColor: duration === i ? ORANGE : Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 4, borderWidth: duration === i ? 0 : 1, borderColor: Palette.border }}>
-                {tag ? <View style={{ position: 'absolute', top: -6, right: -6, backgroundColor: duration === i ? '#fff' : ORANGE, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 2 }}><Text style={{ fontFamily: Font.semibold, fontSize: 9, color: duration === i ? ORANGE : '#fff' }}>{tag}</Text></View> : null}
-                <Text style={{ fontFamily: Font.heading, fontSize: 17, color: duration === i ? '#fff' : INK }}>${price}</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: duration === i ? 'rgba(255,255,255,0.85)' : Palette.textSecondary }}>{label}</Text>
-              </PressableScale>
-            ))}
+            {DURATIONS.map(({ label, price, tag }, i) => {
+              const sel = duration === i;
+              return (
+                <MotiView
+                  key={label}
+                  animate={{ backgroundColor: sel ? ORANGE : Palette.surface, borderColor: sel ? ORANGE : Palette.border }}
+                  transition={{ type: 'timing', duration: 180 }}
+                  style={{ flex: 1, borderRadius: 14, borderWidth: 1, overflow: 'hidden' }}>
+                  <PressableScale onPress={() => { feedback.tap(); setDuration(i); }} accessibilityRole="button" accessibilityLabel={`${label} for $${price}`}
+                    style={{ padding: 12, alignItems: 'center', gap: 4 }}>
+                    {tag ? <View style={{ position: 'absolute', top: -6, right: -6, backgroundColor: sel ? '#fff' : ORANGE, borderRadius: Radius.pill, paddingHorizontal: 6, paddingVertical: 2 }}><Text style={{ fontFamily: Font.semibold, fontSize: 9, color: sel ? ORANGE : '#fff' }}>{tag}</Text></View> : null}
+                    <Text style={{ fontFamily: Font.heading, fontSize: 17, color: sel ? '#fff' : INK }}>${price}</Text>
+                    <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: sel ? 'rgba(255,255,255,0.85)' : Palette.textSecondary }}>{label}</Text>
+                  </PressableScale>
+                </MotiView>
+              );
+            })}
           </View>
           </MotiView>
 
