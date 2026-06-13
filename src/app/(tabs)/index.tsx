@@ -16,7 +16,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { MealCard } from '@/components/meal-card';
 import { PrepperCard } from '@/components/prepper-card';
-import { PreppaLogo } from '@/components/preppa-logo';
 import { Font } from '@/constants/fonts';
 import { recommendedMeals } from '@/constants/mock';
 import { PressableScale } from '@/components/ui/pressable-scale';
@@ -201,8 +200,10 @@ function FeaturedMealsSection({ meals, isLoading, isTablet }: { meals: ReturnTyp
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 4 }}>
-          {(meals ?? []).map((m) => (
-            <MealCard key={m.id} meal={m} width={carouselCardWidth} />
+          {(meals ?? []).map((m, i) => (
+            <MotiView key={m.id} from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 28 }}>
+              <MealCard meal={m} width={carouselCardWidth} />
+            </MotiView>
           ))}
         </ScrollView>
       )}
@@ -222,9 +223,9 @@ function MealPlansDiscoverySection() {
         <CardRowSkeleton count={3} />
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 12, paddingBottom: 4 }}>
-          {(plans ?? []).map((plan) => (
+          {(plans ?? []).map((plan, i) => (
+            <MotiView key={plan.id} from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
             <PressableScale
-              key={plan.id}
               onPress={() => { feedback.tap(); router.push('/meal-plans'); }}
               accessibilityRole="button"
               accessibilityLabel={`${plan.name} by ${plan.prepper}, $${plan.price} per week`}
@@ -249,6 +250,7 @@ function MealPlansDiscoverySection() {
                 </View>
               </View>
             </PressableScale>
+            </MotiView>
           ))}
         </ScrollView>
       )}

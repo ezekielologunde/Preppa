@@ -322,8 +322,10 @@ export default function ExploreScreen() {
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 120 }}>
             <SectionHeader title="explore by cuisine" onSeeAll={() => router.push('/cuisine-explorer')} />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: pad, gap: 12, paddingBottom: 20 }}>
-              {cuisines.map((c) => (
-                <CuisineCard key={c.id} cuisine={c} onPress={() => { feedback.tap(); router.push(`/category?cuisine=${encodeURIComponent(c.name)}`); }} />
+              {cuisines.map((c, i) => (
+                <MotiView key={c.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 35 }}>
+                  <CuisineCard cuisine={c} onPress={() => { feedback.tap(); router.push(`/category?cuisine=${encodeURIComponent(c.name)}`); }} />
+                </MotiView>
               ))}
             </ScrollView>
           </MotiView>
