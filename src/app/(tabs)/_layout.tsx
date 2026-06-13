@@ -51,11 +51,15 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
               accessibilityLabel={tab.label}
               style={{ flex: 1, alignItems: 'center', gap: 6 }}>
 
-              <tab.Icon
-                size={28}
-                color={color}
-                strokeWidth={focused ? 2.2 : 1.6}
-              />
+              <MotiView
+                animate={{ scale: focused ? 1.08 : 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+                <tab.Icon
+                  size={28}
+                  color={color}
+                  strokeWidth={focused ? 2.2 : 1.6}
+                />
+              </MotiView>
 
               <Text
                 numberOfLines={1}
@@ -71,8 +75,11 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
               </Text>
 
               <MotiView
-                animate={{ backgroundColor: focused ? Palette.brand : Palette.surface }}
-                transition={{ type: 'timing', duration: 200 }}
+                animate={{
+                  backgroundColor: focused ? Palette.brand : Palette.surface,
+                  scaleX: focused ? 3.5 : 1,
+                }}
+                transition={{ type: 'spring', stiffness: 320, damping: 24 }}
                 style={{ width: 5, height: 5, borderRadius: 3 }}
               />
             </PressableScale>
