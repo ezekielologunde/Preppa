@@ -142,7 +142,7 @@ export default function CartScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: Palette.surface }}>
         <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 14 }}>
-          <MotiView from={{ opacity: 0, scale: 0.75 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 10, stiffness: 150 }}>
+          <MotiView from={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 12, stiffness: 160 }}>
             <View style={{ width: 76, height: 76, borderRadius: 24, backgroundColor: Palette.success + '1F', alignItems: 'center', justifyContent: 'center' }}>
               <Check size={36} color={Palette.success} strokeWidth={3} />
             </View>

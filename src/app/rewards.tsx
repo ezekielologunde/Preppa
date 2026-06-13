@@ -95,7 +95,12 @@ export default function RewardsScreen() {
               {r.nextTier ? (
                 <View style={{ marginTop: 12, gap: 6 }}>
                   <View style={{ height: 8, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.28)', overflow: 'hidden' }}>
-                    <View style={{ width: `${Math.round(r.progress * 100)}%`, height: 8, borderRadius: 4, backgroundColor: '#fff' }} />
+                    <MotiView
+                      from={{ width: '0%' }}
+                      animate={{ width: `${Math.round(r.progress * 100)}%` }}
+                      transition={{ type: 'timing', duration: 700, delay: 300 }}
+                      style={{ height: 8, borderRadius: 4, backgroundColor: '#fff' }}
+                    />
                   </View>
                   <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: 'rgba(255,255,255,0.92)' }}>
                     {money(r.toNext)} more to {r.nextTier.name}
@@ -177,6 +182,7 @@ export default function RewardsScreen() {
             </MotiView>
 
             {/* Refer CTA */}
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 400 }}>
             <PressableScale onPress={() => { feedback.tap(); router.push('/referral'); }} accessibilityRole="button" accessibilityLabel="Refer friends to earn 500 points each"
               style={{ backgroundColor: Palette.ink, borderRadius: Radius.lg, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
               <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: ORANGE + '22', alignItems: 'center', justifyContent: 'center' }}>
@@ -188,10 +194,13 @@ export default function RewardsScreen() {
               </View>
               <Sparkles size={18} color={ORANGE} />
             </PressableScale>
+            </MotiView>
 
+            <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 460 }}>
             <PressableScale onPress={() => { feedback.tap(); router.push('/'); }} accessibilityRole="button" accessibilityLabel="Browse meals to earn points" style={{ height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4 }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Preorder to earn points</Text>
             </PressableScale>
+            </MotiView>
           </ScrollView>
         )}
       </SafeAreaView>
