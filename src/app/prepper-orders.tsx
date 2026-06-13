@@ -23,8 +23,8 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 
 // The next legal step a prepper takes, with the CTA label. null = terminal/no action.
 const NEXT: Partial<Record<OrderStatus, { next: OrderStatus; cta: string }>> = {
-  pending: { next: 'confirmed', cta: 'Confirm order' },
-  confirmed: { next: 'preparing', cta: 'Start preparing' },
+  pending: { next: 'confirmed', cta: 'Confirm preorder' },
+  confirmed: { next: 'preparing', cta: 'Start prepping' },
   preparing: { next: 'ready', cta: 'Mark ready' },
   ready: { next: 'completed', cta: 'Mark complete' },
   out_for_delivery: { next: 'completed', cta: 'Mark complete' },
@@ -89,7 +89,7 @@ function OrderCard({
       {step ? (
         <View style={{ flexDirection: 'row', gap: 10 }}>
           {canCancel ? (
-            <PressableScale onPress={onCancel} disabled={busy} accessibilityRole="button" accessibilityLabel="Decline order" style={{ height: 46, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.5 : 1 }}>
+            <PressableScale onPress={onCancel} disabled={busy} accessibilityRole="button" accessibilityLabel="Decline preorder" style={{ height: 46, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.5 : 1 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.textMuted }}>Decline</Text>
             </PressableScale>
           ) : null}
@@ -122,7 +122,7 @@ export default function PrepperOrdersScreen() {
   const verify = useVerifyHandoff();
   const busyId = advance.isPending ? advance.variables?.orderId : cancel.isPending ? cancel.variables : undefined;
   const [actionErr, setActionErr] = useState<string | null>(null);
-  const onErr = (e: unknown) => setActionErr(e instanceof Error ? e.message : 'Could not update the order. Try again.');
+  const onErr = (e: unknown) => setActionErr(e instanceof Error ? e.message : 'Could not update the preorder. Try again.');
   // Declining is destructive (refunds the customer) → confirm first.
   const [declineOrder, setDeclineOrder] = useState<OrderSummary | null>(null);
   function doDecline(o: OrderSummary) {
@@ -156,7 +156,7 @@ export default function PrepperOrdersScreen() {
           <PressableScale onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/dashboard'); } }} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color="#fff" />
           </PressableScale>
-          <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>incoming orders</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>incoming preorders</Text>
         </View>
 
         {actionErr ? (
@@ -168,7 +168,7 @@ export default function PrepperOrdersScreen() {
         {!prepperId ? (
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <ShoppingBag size={28} color="#5b6170" />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>This is your kitchen&apos;s order queue. Approved preppers see incoming orders here.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>This is your kitchen&apos;s preorder queue. Approved preppers see incoming preorders here.</Text>
           </MotiView>
         ) : isLoading ? (
           <ListSkeleton count={4} rowHeight={110} />
@@ -177,8 +177,8 @@ export default function PrepperOrdersScreen() {
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
               <ShoppingBag size={28} color="#5b6170" />
             </View>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No orders yet</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New orders from customers will appear here in real time.</Text>
+            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No preorders yet</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center' }}>New preorders from customers will appear here in real time.</Text>
           </MotiView>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
@@ -204,15 +204,15 @@ export default function PrepperOrdersScreen() {
             <View style={{ width: 50, height: 50, borderRadius: 15, backgroundColor: '#7f1d1d', alignItems: 'center', justifyContent: 'center' }}>
               <X size={24} color="#fca5a5" strokeWidth={2.6} />
             </View>
-            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.4 }}>Decline this order?</Text>
+            <Text style={{ fontFamily: Font.display, fontSize: 20, color: '#fff', letterSpacing: -0.4 }}>Decline this preorder?</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 13.5, color: Palette.textMuted, lineHeight: 19 }}>
-              {declineOrder ? `${declineOrder.customer}'s order (${money(declineOrder.total)}) will be cancelled and the customer refunded automatically.` : ''}
+              {declineOrder ? `${declineOrder.customer}'s preorder (${money(declineOrder.total)}) will be cancelled and the customer refunded automatically.` : ''}
             </Text>
-            <PressableScale onPress={() => { feedback.tap(); if (declineOrder) doDecline(declineOrder); }} accessibilityRole="button" accessibilityLabel="Yes, decline the order" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); if (declineOrder) doDecline(declineOrder); }} accessibilityRole="button" accessibilityLabel="Yes, decline the preorder" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Yes, decline</Text>
             </PressableScale>
-            <PressableScale onPress={() => { feedback.tap(); setDeclineOrder(null); }} accessibilityRole="button" accessibilityLabel="Keep the order" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textMuted }}>Keep the order</Text>
+            <PressableScale onPress={() => { feedback.tap(); setDeclineOrder(null); }} accessibilityRole="button" accessibilityLabel="Keep the preorder" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textMuted }}>Keep the preorder</Text>
             </PressableScale>
           </Pressable>
         </Pressable>
