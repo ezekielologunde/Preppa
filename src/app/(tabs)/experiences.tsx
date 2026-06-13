@@ -177,15 +177,17 @@ export default function ExperiencesScreen() {
 
           {/* Experience types — 3-per-row wrap grid */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 10, marginTop: 22 }}>
-            {experienceTypes.map((t) => {
+            {experienceTypes.map((t, i) => {
               const Icon = TYPE_ICONS[t.icon] ?? UtensilsCrossed;
               return (
-                <PressableScale key={t.key} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${t.key}`); }} accessibilityRole="button" accessibilityLabel={t.label} style={{ flexBasis: '30%', flexGrow: 1, alignItems: 'center', gap: 8, backgroundColor: Palette.surface, borderRadius: Radius.md, paddingVertical: 14 }}>
-                  <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-                    <Icon size={20} color={ORANGE} />
-                  </View>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: INK, textAlign: 'center' }} numberOfLines={2}>{t.label}</Text>
-                </PressableScale>
+                <MotiView key={t.key} from={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'timing', duration: 200, delay: 160 + i * 35 }} style={{ flexBasis: '30%', flexGrow: 1 }}>
+                  <PressableScale onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${t.key}`); }} accessibilityRole="button" accessibilityLabel={t.label} style={{ alignItems: 'center', gap: 8, backgroundColor: Palette.surface, borderRadius: Radius.md, paddingVertical: 14 }}>
+                    <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={20} color={ORANGE} />
+                    </View>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: INK, textAlign: 'center' }} numberOfLines={2}>{t.label}</Text>
+                  </PressableScale>
+                </MotiView>
               );
             })}
           </View>
@@ -212,8 +214,10 @@ export default function ExperiencesScreen() {
           {/* Featured */}
           <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginTop: 22, marginBottom: 10 }}>featured experiences</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {featuredExperiences.map((e) => (
-              <ExperienceCard key={e.id} exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
+            {featuredExperiences.map((e, i) => (
+              <MotiView key={e.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
+                <ExperienceCard exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
+              </MotiView>
             ))}
           </ScrollView>
 
