@@ -110,14 +110,16 @@ export default function PrepperHubScreen() {
               { label: 'preorders filled', value: completedOrders.length.toString(), Icon: Package, color: '#06b6d4' },
               { label: 'total earned', value: `$${totalEarnings.toFixed(0)}`, Icon: DollarSign, color: '#22c55e' },
               { label: 'avg preorder', value: `$${avgOrder.toFixed(0)}`, Icon: TrendingUp, color: ORANGE },
-            ].map(({ label, value, Icon, color }) => (
-              <View key={label} style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 6 }}>
+            ].map(({ label, value, Icon, color }, i) => (
+              <MotiView key={label} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 100 + i * 50 }} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: Palette.surface, borderRadius: 14, padding: 12, alignItems: 'center', gap: 6 }}>
                 <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: color + '18', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon size={15} color={color} />
                 </View>
                 <Text style={{ fontFamily: Font.display, fontSize: 19, color: INK, fontVariant: ['tabular-nums'] }}>{value}</Text>
                 <Text style={{ fontFamily: Font.body, fontSize: 10.5, color: Palette.textMuted, textAlign: 'center' }}>{label}</Text>
               </View>
+              </MotiView>
             ))}
           </View>
           </MotiView>
@@ -127,7 +129,8 @@ export default function PrepperHubScreen() {
           <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, marginBottom: 12 }}>market insights</Text>
           <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden' }}>
             {WEEKLY_INSIGHTS.map(({ label, trend, note }, i) => (
-              <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 13, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.divider }}>
+              <MotiView key={label} from={{ opacity: 0, translateX: -6 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: 160 + i * 40 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 13, borderTopWidth: i === 0 ? 0 : 1, borderTopColor: Palette.divider }}>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>{label}</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }}>{note}</Text>
@@ -136,6 +139,7 @@ export default function PrepperHubScreen() {
                   <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: ORANGE }}>{trend}</Text>
                 </View>
               </View>
+              </MotiView>
             ))}
           </View>
           </MotiView>
