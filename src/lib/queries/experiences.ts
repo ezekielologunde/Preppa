@@ -128,3 +128,33 @@ export function useAcceptBid() {
     },
   });
 }
+
+/** Cancel an open request — sets status to 'cancelled'. */
+export function useCancelExperienceRequest() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (requestId: string) => {
+      const { error } = await supabase
+        .from('experience_requests')
+        .update({ status: 'cancelled' })
+        .eq('id', requestId);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['experiences', 'mine'] }),
+  });
+}
+
+/** Update a request's details / food-preference text. */
+export function useUpdateRequestDetails() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ requestId, details }: { requestId: string; details: string }) => {
+      const { error } = await supabase
+        .from('experience_requests')
+        .update({ details: details || null })
+        .eq('id', requestId);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['experiences', 'mine'] }),
+  });
+}
