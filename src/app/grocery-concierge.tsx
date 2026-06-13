@@ -114,7 +114,7 @@ export default function GroceryConciergeScreen() {
             {[
               { value: '40%', label: 'less food waste vs supermarket' },
               { value: '2×', label: 'cheaper than meal-kit brands' },
-              { value: '30min', label: 'avg delivery time nearby' },
+              { value: 'same day', label: 'local pickup or delivery' },
             ].map(({ value, label }) => (
               <View key={label} style={{ flex: 1, backgroundColor: Palette.surface, borderRadius: 12, padding: 10, alignItems: 'center', gap: 3 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 18, color: ORANGE }}>{value}</Text>

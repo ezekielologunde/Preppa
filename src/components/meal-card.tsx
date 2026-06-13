@@ -126,7 +126,7 @@ export function MealCard({ meal, width = 200, variant = 'normal' }: { meal: Meal
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: big ? 0 : 4, gap: 6 }}>
             <Star size={13} color={Palette.amber} fill={Palette.amber} />
             <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.inkSoft }}>{meal.rating.toFixed(1)}</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>· {meal.time} · ${meal.price.toFixed(2)}</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>· {meal.time} prep · ${meal.price.toFixed(2)}</Text>
           </View>
         </View>
       </View>

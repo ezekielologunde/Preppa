@@ -242,7 +242,7 @@ export default function MealScreen() {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                   <Clock size={15} color={Palette.textMuted} />
-                  <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>{meal.time}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>{meal.time} prep</Text>
                 </View>
               </View>
 
