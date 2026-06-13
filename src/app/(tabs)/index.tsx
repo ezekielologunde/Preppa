@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import {
   Bell,
   ChevronRight,
+  Flame,
   Search,
   Sparkles,
   UtensilsCrossed,
@@ -30,6 +31,7 @@ import { useTopPreppers } from '@/lib/queries/preppers';
 import { useCarouselCardWidth, useBreakpoint, useContentWidth, usePagePadding, gridCardWidth } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 import { feedback } from '@/lib/feedback';
+import { getCurrentRush, getNextRush, getRushUrgency } from '@/lib/rush-hour';
 
 const ORANGE = Palette.brand;
 const INK = Palette.ink;
@@ -280,6 +282,53 @@ function ExperiencesBanner() {
   );
 }
 
+function RushBanner() {
+  const router = useRouter();
+  const hour = new Date().getHours();
+  const minute = new Date().getMinutes();
+  const urgency = getRushUrgency(hour, minute);
+  if (urgency === 'quiet' || urgency === 'upcoming') return null;
+
+  const rush = getCurrentRush(hour);
+  const next = rush ? null : getNextRush(hour);
+  const win = rush ?? next?.window ?? null;
+  if (!win) return null;
+
+  const isLive = urgency === 'live';
+  const minsAway = next ? Math.max(0, next.inMins - minute) : 0;
+  const accent = win.color;
+  const tip = isLive
+    ? win.buyerTip
+    : `${win.label} starts in ~${minsAway} min — browse kitchens ahead of the rush.`;
+
+  return (
+    <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 40 }}>
+      <PressableScale
+        onPress={() => { feedback.tap(); router.push('/search'); }}
+        accessibilityRole="button"
+        accessibilityLabel={isLive ? `${win.label} is on now — preorder now` : `${win.label} starting soon`}
+        style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: accent + '12', borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1, borderColor: accent + '28' }}>
+        <MotiView
+          from={isLive ? { opacity: 0.55, scale: 0.9 } : { opacity: 1, scale: 1 }}
+          animate={isLive ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
+          transition={isLive ? { type: 'timing', duration: 900, loop: true, repeatReverse: true } : { type: 'timing', duration: 0 }}
+          style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: accent + '20', alignItems: 'center', justifyContent: 'center' }}>
+          <Flame size={18} color={accent} />
+        </MotiView>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>
+            {isLive ? `${win.label} is on now` : `${win.label} soon`}
+          </Text>
+          <Text numberOfLines={2} style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2, lineHeight: 17 }}>
+            {tip}
+          </Text>
+        </View>
+        <ChevronRight size={16} color={accent} />
+      </PressableScale>
+    </MotiView>
+  );
+}
+
 // ─── Main screen ─────────────────────────────────────────────────────────────
 
 export default function HomeScreen() {
@@ -355,32 +404,35 @@ export default function HomeScreen() {
             </View>
           </MotiView>
 
-          {/* 2. Active Order Tracker */}
+          {/* 2. Rush Banner (only when no active preorder in flight) */}
+          {!activeOrder ? <RushBanner /> : null}
+
+          {/* 3. Active Order Tracker */}
           {activeOrder ? <ActiveOrderBanner order={activeOrder} /> : null}
 
-          {/* 3. My Meal Plans */}
+          {/* 4. My Meal Plans */}
           {user?.id ? (
             <View style={{ marginTop: 24 }}>
               <MyPlansSection userId={user.id} />
             </View>
           ) : null}
 
-          {/* 4. Nearby Preppers */}
+          {/* 5. Nearby Preppers */}
           <View style={{ marginTop: 24 }}>
             <NearbyPreppersSection />
           </View>
 
-          {/* 5. Featured Meals */}
+          {/* 6. Featured Meals */}
           <View style={{ marginTop: 24 }}>
             <FeaturedMealsSection meals={meals} isLoading={mealsLoading} isTablet={isTablet} />
           </View>
 
-          {/* 6. Meal Plans Discovery */}
+          {/* 7. Meal Plans Discovery */}
           <View style={{ marginTop: 24 }}>
             <MealPlansDiscoverySection />
           </View>
 
-          {/* 7. Experiences Teaser */}
+          {/* 8. Experiences Teaser */}
           <View style={{ marginTop: 24 }}>
             <ExperiencesBanner />
           </View>
