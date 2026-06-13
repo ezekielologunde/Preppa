@@ -169,7 +169,7 @@ export default function ExperiencesScreen() {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 13.5, color: INK }}>meal plans & subscriptions</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }}>weekly, monthly & family — delivered on repeat</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }}>weekly, monthly & family — prepped on repeat</Text>
             </View>
             <ChevronRight size={18} color={Palette.textMuted} />
           </PressableScale>

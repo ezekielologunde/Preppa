@@ -61,8 +61,8 @@ const NEXT: Partial<Record<OrderStatus, { next: OrderStatus; cta: string }>> = {
   pending: { next: 'confirmed', cta: 'confirm order' },
   confirmed: { next: 'preparing', cta: 'start preparing' },
   preparing: { next: 'ready', cta: 'mark ready' },
-  ready: { next: 'completed', cta: 'mark delivered' },
-  out_for_delivery: { next: 'completed', cta: 'mark delivered' },
+  ready: { next: 'completed', cta: 'mark complete' },
+  out_for_delivery: { next: 'completed', cta: 'mark complete' },
 };
 
 function Sparkline({ color, data, w = 116, h = 30 }: { color: string; data: number[]; w?: number; h?: number }) {

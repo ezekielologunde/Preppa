@@ -194,7 +194,7 @@ export default function SpecialsScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontFamily: Font.display, fontSize: 16, color: '#c7d2fe', letterSpacing: -0.3 }}>Father's Day picks</Text>
                   <Text style={{ fontFamily: Font.body, fontSize: 12, color: '#6366f1', marginTop: 1 }}>
-                    {fathersDayDaysLeft === 0 ? 'Today — treat dad to something special' : `${fathersDayDaysLeft} day${fathersDayDaysLeft !== 1 ? 's' : ''} away — order ahead`}
+                    {fathersDayDaysLeft === 0 ? 'Today — treat dad to something special' : `${fathersDayDaysLeft} day${fathersDayDaysLeft !== 1 ? 's' : ''} away — preorder now`}
                   </Text>
                 </View>
               </View>
