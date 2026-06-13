@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { Check, ChevronLeft, Inbox, Lock, MapPin, Users, Wallet } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ListSkeleton } from '@/components/ui/skeleton';
@@ -131,7 +131,7 @@ export default function OpportunitiesScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {Header}
         {appLoading ? (
-          <ActivityIndicator color={ORANGE} style={{ marginTop: 40 }} />
+          <ListSkeleton count={4} />
         ) : !user || !application ? (
           <Gate title="For preppers only" body="Apply to become a prepper to view and bid on customer experience requests." />
         ) : !approved ? (

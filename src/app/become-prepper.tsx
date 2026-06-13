@@ -9,6 +9,7 @@ import { ActivityIndicator, Image, Linking, ScrollView, Text, TextInput, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { ListSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
@@ -151,7 +152,10 @@ export default function BecomePrepperScreen() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: Palette.surface }}>
-        <SafeAreaView style={{ flex: 1 }}>{Header}<Centered><ActivityIndicator color={ORANGE} /></Centered></SafeAreaView>
+        <SafeAreaView style={{ flex: 1 }}>
+          {Header}
+          <ListSkeleton count={4} rowHeight={60} />
+        </SafeAreaView>
       </View>
     );
   }
