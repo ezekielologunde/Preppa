@@ -130,11 +130,15 @@ export default function GroceryConciergeScreen() {
             const isOpen = selected === kit.id;
             return (
               <MotiView key={kit.id} from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 80 + i * 40 }}>
+              <MotiView
+                animate={{ borderColor: isOpen ? kit.color : Palette.surface }}
+                transition={{ type: 'timing', duration: 200 }}
+                style={{ borderRadius: 16, borderWidth: 1.5, overflow: 'hidden' }}>
               <PressableScale
                 onPress={() => { feedback.tap(); setSelected(isOpen ? null : kit.id); }}
                 accessibilityRole="button"
                 accessibilityLabel={`${kit.name}, $${kit.price}, serves ${kit.serves}`}
-                style={{ backgroundColor: Palette.surface, borderRadius: 16, overflow: 'hidden', borderWidth: isOpen ? 1.5 : 0, borderColor: kit.color }}>
+                style={{ backgroundColor: Palette.surface }}>
                 <View style={{ padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   <Text style={{ fontSize: 28 }}>{kit.flag}</Text>
                   <View style={{ flex: 1 }}>
@@ -173,6 +177,7 @@ export default function GroceryConciergeScreen() {
                   </View>
                 ) : null}
               </PressableScale>
+              </MotiView>
               </MotiView>
             );
           })}
