@@ -99,7 +99,7 @@ export default function ProfileScreen() {
   const soon = (label: string) => { feedback.warning(); flash(`${label} — coming soon`); };
 
   const activityRows: RowItem[] = [
-    { label: 'orders & history', sub: 'track & repeat', Icon: Receipt, onPress: () => { feedback.tap(); go('/orders'); } },
+    { label: 'preorders & history', sub: 'track & repeat', Icon: Receipt, onPress: () => { feedback.tap(); go('/orders'); } },
     { label: 'meal plans', sub: 'subscriptions', Icon: CalendarCheck, onPress: () => { feedback.tap(); go('/meal-plans'); } },
     { label: 'messages', sub: 'chat with preppers', Icon: MessageCircle, onPress: () => { feedback.tap(); go('/messages?tab=messages'); } },
     { label: 'my stats', sub: 'food insights & trends', Icon: TrendingUp, onPress: () => { feedback.tap(); go('/insights'); } },
@@ -188,7 +188,7 @@ export default function ProfileScreen() {
           {/* Stats row */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
             <View style={{ flexDirection: 'row', marginHorizontal: 20, gap: 10 }}>
-              <StatChip value={orderCount} label="orders" onPress={() => { feedback.tap(); go('/orders'); }} />
+              <StatChip value={orderCount} label="preorders" onPress={() => { feedback.tap(); go('/orders'); }} />
               <StatChip value={favMeals} label="favorites" onPress={() => { feedback.tap(); go('/favorites'); }} />
               <StatChip value={followed} label="following" onPress={() => { feedback.tap(); go('/following'); }} />
             </View>
@@ -206,7 +206,7 @@ export default function ProfileScreen() {
 
           {/* My Kitchen */}
           {isApprovedPrepper ? (
-            <DarkCard Icon={ChefHat} title="my kitchen" sub="meals, orders, earnings & go live"
+            <DarkCard Icon={ChefHat} title="my kitchen" sub="meals, preorders, earnings & go live"
               onPress={() => { feedback.tap(); router.push('/dashboard'); }} accessibilityLabel="Open my kitchen" />
           ) : null}
 
