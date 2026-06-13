@@ -39,7 +39,7 @@ const ORDER_STATUS_LABEL: Record<string, string> = {
   pending: 'Preorder placed — awaiting kitchen',
   confirmed: 'Preorder confirmed',
   preparing: 'Being prepped now',
-  ready: 'Your order is ready for pickup',
+  ready: 'Your preorder is ready for pickup',
   out_for_delivery: 'On the way to you',
 };
 
@@ -68,13 +68,13 @@ function SectionHeader({
 
 function ActiveOrderBanner({ order }: { order: NonNullable<ReturnType<typeof useMyOrders>['data']>[number] }) {
   const router = useRouter();
-  const label = ORDER_STATUS_LABEL[order.status] ?? 'Order in progress';
+  const label = ORDER_STATUS_LABEL[order.status] ?? 'Preorder in progress';
   return (
     <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
       <PressableScale
         onPress={() => { feedback.tap(); router.push('/orders'); }}
         accessibilityRole="button"
-        accessibilityLabel={`Track your order — ${label}`}
+        accessibilityLabel={`Track your preorder — ${label}`}
         style={{ marginHorizontal: 20, marginTop: 16, backgroundColor: INK, borderRadius: Radius.lg, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <MotiView
           from={{ opacity: 0.5 }}
