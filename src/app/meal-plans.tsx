@@ -35,9 +35,10 @@ const money = (n: number) => `$${n.toLocaleString('en-US')}`;
 function CustomPlanCard({ plan, onView, onUpdate, onCancel, busy }: { plan: CustomMealPlan; onView: () => void; onUpdate: (status: 'active' | 'paused' | 'cancelled') => void; onCancel: () => void; busy: boolean }) {
   const mealCount = plan.items.length;
   return (
-    <PressableScale onPress={onView} accessibilityRole="button" accessibilityLabel={`View ${plan.name}`}
-      style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, padding: 14, gap: 10 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+    <View style={{ backgroundColor: Palette.surface, borderRadius: Radius.md, overflow: 'hidden' }}>
+      {/* Header row is the only pressable — avoids nested-Pressable pointer-capture on web */}
+      <PressableScale onPress={onView} accessibilityRole="button" accessibilityLabel={`View ${plan.name}`}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, paddingBottom: 10 }}>
         <View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
           <ChefHat size={18} color={ORANGE} />
         </View>
@@ -51,20 +52,20 @@ function CustomPlanCard({ plan, onView, onUpdate, onCancel, busy }: { plan: Cust
           <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: plan.status === 'active' ? Palette.success : Palette.amber, textTransform: 'capitalize' }}>{plan.status}</Text>
         </View>
         <ChevronRight size={16} color={Palette.textMuted} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        <PressableScale onPress={(e) => { e.stopPropagation?.(); onUpdate(plan.status === 'active' ? 'paused' : 'active'); }} disabled={busy}
+      </PressableScale>
+      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 14, paddingBottom: 12 }}>
+        <PressableScale onPress={() => { feedback.tap(); onUpdate(plan.status === 'active' ? 'paused' : 'active'); }} disabled={busy}
           accessibilityRole="button" accessibilityLabel={plan.status === 'active' ? 'Pause plan' : 'Resume plan'}
           style={{ flex: 1, height: 38, borderRadius: Radius.sm, backgroundColor: Palette.canvas, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: INK }}>{plan.status === 'active' ? 'Pause' : 'Resume'}</Text>
         </PressableScale>
-        <PressableScale onPress={(e) => { e.stopPropagation?.(); feedback.tap(); onCancel(); }} disabled={busy}
+        <PressableScale onPress={() => { feedback.tap(); onCancel(); }} disabled={busy}
           accessibilityRole="button" accessibilityLabel="Cancel plan"
           style={{ flex: 1, height: 38, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.danger }}>Cancel</Text>
         </PressableScale>
       </View>
-    </PressableScale>
+    </View>
   );
 }
 
