@@ -71,35 +71,40 @@ export const MaxContentWidth = 800;
  * from `Palette` instead so a rebrand is a one-file edit.
  */
 export const Palette = {
+  // ── WARM v3 palette (from "Preppa Design.html") ──
+  // Warm cream surfaces + warm near-black ink + amber-leaning flame orange. A
+  // rebrand is a one-file edit: every screen imports from Palette, so swapping
+  // these values re-skins the whole app.
+
   // Brand — used sparingly: CTAs, active nav, key accents. Never a full-screen fill.
-  brand: '#F15F22',
-  brandTint: '#FDEDE4', // flat orange wash (replaces peach gradients); icon-chip backgrounds
-  brandPressed: '#D9430F', // pressed CTA + AA-safe orange for text/links on white
+  brand: '#E8611A', // v3 flame orange (warmer than the old #F15F22)
+  brandTint: '#FAE5D3', // warm peach wash — chip bg, icon wells, soft brand washes
+  brandPressed: '#C84E10', // pressed CTA + AA-safe orange for text/links on white
 
-  // Neutral ink ramp
-  ink: '#111827', // primary text, headings, dark buttons
-  inkSoft: '#374151', // labels and emphasized secondary text (between ink and textSecondary)
-  textSecondary: '#6B7280', // real secondary copy — AA on white
-  textMuted: '#9CA3AF', // DECORATIVE/disabled only — never load-bearing text
+  // Neutral ink ramp — warm (taupe-leaning) instead of cool slate
+  ink: '#1C1A18', // primary text, headings, dark buttons (warm near-black)
+  inkSoft: '#44403C', // labels and emphasized secondary text
+  textSecondary: '#8A8480', // real secondary copy — warm grey
+  textMuted: '#B8B0A8', // DECORATIVE/disabled only — never load-bearing text
 
-  // Customer (light) surfaces
+  // Customer (light) surfaces — warm cream canvas framing white cards
   surface: '#FFFFFF',
-  canvas: '#F7F7F8',
-  border: '#E5E7EB',
-  chip: '#F3F4F6', // light icon-chip / inset background on white cards
-  divider: '#D1D5DB', // hairlines on tinted surfaces; disabled outlines
+  canvas: '#F7F3EE',
+  border: '#EDE8E2',
+  chip: '#F2ECE6', // light icon-chip / inset background on white cards
+  divider: '#DDD6CE', // hairlines on tinted surfaces; disabled outlines
 
   // Semantic accents — used with a text/icon pairing, never color alone
   success: '#16A34A', // verified, healthy, positive deltas, confirmed status
   amber: '#F59E0B', // star ratings, "popular" badges, gentle warnings
   danger: '#EF4444', // destructive actions, errors, favorites heart
 
-  // Prepper (dark) app — intentionally an operations tool
+  // Prepper (dark) app — intentionally an operations tool (kept dark by mandate)
   prepperBg: '#0C0E13',
   prepperCard: '#13161D',
 
-  // Modal and sheet backdrop
-  overlay: 'rgba(17,24,39,0.55)',
+  // Modal and sheet backdrop — warm-tinted to match the new ink
+  overlay: 'rgba(28,26,24,0.55)',
 } as const;
 
 export type PaletteToken = keyof typeof Palette;
