@@ -142,15 +142,20 @@ function Empty({ Icon, title, sub }: { Icon: LucideIcon; title: string; sub: str
 
 function TabButton({ active, label, count, onPress }: { active: boolean; label: string; count?: number; onPress: () => void }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: active }} accessibilityLabel={label}
-      style={{ flex: 1, height: 40, borderRadius: Radius.pill, backgroundColor: active ? ORANGE : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
-      <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: active ? '#fff' : Palette.textSecondary }}>{label}</Text>
-      {count ? (
-        <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 5, backgroundColor: active ? 'rgba(255,255,255,0.25)' : Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: active ? '#fff' : ORANGE }}>{count}</Text>
-        </View>
-      ) : null}
-    </PressableScale>
+    <MotiView
+      animate={{ backgroundColor: active ? ORANGE : Palette.canvas }}
+      transition={{ type: 'timing', duration: 200 }}
+      style={{ flex: 1, borderRadius: Radius.pill, overflow: 'hidden' }}>
+      <PressableScale onPress={onPress} accessibilityRole="button" accessibilityState={{ selected: active }} accessibilityLabel={label}
+        style={{ flex: 1, height: 40, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: active ? '#fff' : Palette.textSecondary }}>{label}</Text>
+        {count ? (
+          <View style={{ minWidth: 18, height: 18, borderRadius: 9, paddingHorizontal: 5, backgroundColor: active ? 'rgba(255,255,255,0.25)' : Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: active ? '#fff' : ORANGE }}>{count}</Text>
+          </View>
+        ) : null}
+      </PressableScale>
+    </MotiView>
   );
 }
 
