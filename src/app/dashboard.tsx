@@ -264,7 +264,7 @@ export default function DashboardScreen() {
           {desktop ? (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
               <StatCard Icon={ShoppingBag} value={money(revenue)} label="total sales" trend={revenue > 0 ? 'earned' : '—'} color={ORANGE} spark={[3, 5, 4, 6, 5, 8, 7, 9]} onPress={() => router.push('/earnings')} />
-              <StatCard Icon={Boxes} value={String(list.length)} label="orders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} />
+              <StatCard Icon={Boxes} value={String(list.length)} label="preorders" trend={`${newCount} new`} color={GREEN} spark={[2, 3, 3, 4, 6, 5, 7, 8]} onPress={() => router.push('/prepper-orders')} />
               <StatCard Icon={Users} value={String(subscribers)} label="customers" trend="unique" color={PURPLE} spark={[1, 2, 2, 3, 4, 4, 5, 6]} onPress={() => router.push('/customers')} />
               <StatCard Icon={Star} value={avgRating ? avgRating.toFixed(1) : '—'} label="rating" trend={`${reviewCount} reviews`} color={YELLOW} spark={[4, 4, 5, 5, 4, 5, 5, 5]} onPress={() => router.push('/prepper-analytics')} />
             </View>
@@ -353,7 +353,7 @@ export default function DashboardScreen() {
         {/* Prepper tab nav (dark) */}
         <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: Math.max(insets.bottom, 16), borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
           <NavTab Icon={Home} label="home" onPress={() => router.push('/')} />
-          <NavTab Icon={ShoppingBag} label="orders" badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
+          <NavTab Icon={ShoppingBag} label="preorders" badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
           <NavTab Icon={ChefHat} label="kitchen" active />
           <NavTab Icon={MessageSquare} label="messages" onPress={() => router.push('/messages')} />
           <NavTab Icon={User} label="profile" onPress={() => router.push('/profile')} />

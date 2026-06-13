@@ -35,7 +35,7 @@ const SECTIONS: { key: SectionKey; label: string; Icon: LucideIcon }[] = [
   { key: 'overview', label: 'Overview', Icon: LayoutDashboard },
   { key: 'preppers', label: 'Preppers', Icon: Store },
   { key: 'customers', label: 'Customers', Icon: Users },
-  { key: 'orders', label: 'Orders', Icon: Receipt },
+  { key: 'orders', label: 'Preorders', Icon: Receipt },
   { key: 'earnings', label: 'Earnings', Icon: Wallet },
   { key: 'features', label: 'Features', Icon: ToggleLeft },
   { key: 'disputes', label: 'Disputes', Icon: AlertTriangle },
