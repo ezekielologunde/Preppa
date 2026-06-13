@@ -139,50 +139,49 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 12 : 0, paddingBottom: 130 }}>
           {/* Header */}
           <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, gap: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 20, gap: 12 }}>
             <PressableScale
               onPress={() => { feedback.tap(); router.push('/profile'); }}
               accessibilityRole="button"
               accessibilityLabel="Your profile"
-              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+              style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center', marginTop: 2 }}>
               <PreppaLogo size={40} glow />
             </PressableScale>
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, paddingTop: 2 }}>
               <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>{greeting()}{firstName ? `, ${firstName}` : ''}</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 14.5, color: INK, letterSpacing: -0.3, lineHeight: 18 }}>
                 what are you <Text style={{ color: ORANGE }}>craving?</Text>
               </Text>
             </View>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-              <Bell size={20} color={INK} />
-              {badgeCount > 0 ? (
-                <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>{badgeCount}</Text>
-                </View>
-              ) : null}
-            </PressableScale>
+            <View style={{ alignItems: 'flex-end', gap: 6 }}>
+              <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel={badgeCount ? `Inbox, ${badgeCount} updates` : 'Inbox'} style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+                <Bell size={20} color={INK} />
+                {badgeCount > 0 ? (
+                  <View style={{ position: 'absolute', top: 8, right: 9, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>{badgeCount}</Text>
+                  </View>
+                ) : null}
+              </PressableScale>
+              <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 10, paddingHorizontal: 9, paddingVertical: 5 }}>
+                <MapPin size={11} color={ORANGE} />
+                <Text style={{ fontFamily: Font.medium, fontSize: 11.5, color: Palette.textSecondary }}>{location.split(',')[0]}</Text>
+                <ChevronDown size={10} color={Palette.textSecondary} />
+              </PressableScale>
+            </View>
           </View>
-
           </MotiView>
 
-          {/* Search + location */}
+          {/* Search bar — full width now that location is in header */}
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 60 }}>
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 6, gap: 8, alignItems: 'center' }}>
-            <PressableScale
-              onPress={() => { feedback.tap(); router.push('/search'); }}
-              accessibilityRole="search"
-              accessibilityLabel="Search meals, cuisines, or preppers"
-              style={{ flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 46, gap: 10 }}>
-              <Search size={19} color={MUTED} />
-              <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 14.5, color: MUTED }}>Search meals, cuisines…</Text>
-              <SlidersHorizontal size={18} color={ORANGE} />
-            </PressableScale>
-            <PressableScale onPress={() => { feedback.tap(); setLocationOpen(true); }} accessibilityRole="button" accessibilityLabel={`Change location, ${location}`} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.surface, borderRadius: 14, paddingHorizontal: 11, height: 46 }}>
-              <MapPin size={13} color={ORANGE} />
-              <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: Palette.inkSoft }}>{location.split(',')[0]}</Text>
-              <ChevronDown size={12} color={Palette.textSecondary} />
-            </PressableScale>
-          </View>
+          <PressableScale
+            onPress={() => { feedback.tap(); router.push('/search'); }}
+            accessibilityRole="search"
+            accessibilityLabel="Search meals, cuisines, or preppers"
+            style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 10, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 46, gap: 10 }}>
+            <Search size={19} color={MUTED} />
+            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 14.5, color: MUTED }}>Search meals, cuisines…</Text>
+            <SlidersHorizontal size={18} color={ORANGE} />
+          </PressableScale>
           </MotiView>
 
           {/* Rush hour / specials entry — only when rush is active, replaces MarketingBanner for that moment */}

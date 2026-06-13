@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, ImageIcon, Plus, Upload, UtensilsCrossed } from 'lucide-react-native';
+import { ChevronLeft, Plus, UtensilsCrossed, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -28,7 +28,7 @@ const STATUS_STYLE: Record<MealStatus, { label: string; color: string }> = {
   archived: { label: 'archived', color: Palette.textSecondary },
 };
 
-const EMPTY: MealDraft = { title: '', description: '', base_price: 0, prep_time_min: null, category_id: null, imageUrl: '', is_limited: false };
+const EMPTY: MealDraft = { title: '', description: '', base_price: 0, prep_time_min: null, category_id: null, imageUrls: [], is_limited: false };
 
 const DROP_DURATIONS = [
   { key: '24h', label: '24 hours', hours: 24 },
@@ -131,11 +131,12 @@ export default function MealEditorScreen() {
 
   async function pickPhoto() {
     if (!prepperId || !user?.id) return;
+    if ((draft?.imageUrls.length ?? 0) >= 5) { setFormErr('Max 5 photos per meal.'); return; }
     setFormErr(null);
     setUploading(true);
     try {
       const url = await pickAndUploadImage('meal-images', user.id);
-      if (url) { setDraft((d) => d && { ...d, imageUrl: url }); feedback.success(); }
+      if (url) { setDraft((d) => d && { ...d, imageUrls: [...d.imageUrls, url] }); feedback.success(); }
     } catch (e) {
       feedback.error();
       setFormErr(e instanceof Error ? e.message : 'Could not upload the photo.');
@@ -151,7 +152,7 @@ export default function MealEditorScreen() {
     setFormErr(null);
   }
   function openEdit(m: MyMeal) {
-    setDraft({ id: m.id, title: m.title, description: m.description ?? '', base_price: m.base_price, prep_time_min: m.prep_time_min, category_id: m.category_id, imageUrl: m.image ?? '', is_limited: m.is_limited, expires_at: m.expires_at });
+    setDraft({ id: m.id, title: m.title, description: m.description ?? '', base_price: m.base_price, prep_time_min: m.prep_time_min, category_id: m.category_id, imageUrls: m.images, is_limited: m.is_limited, expires_at: m.expires_at });
     setPriceText(String(m.base_price));
     setTimeText(m.prep_time_min ? String(m.prep_time_min) : '');
     setFormErr(null);
@@ -257,26 +258,29 @@ export default function MealEditorScreen() {
               <Field label="DESCRIPTION">
                 <TextInput value={draft?.description ?? ''} onChangeText={(t) => setDraft((d) => d && { ...d, description: t })} placeholder="What makes this meal great?" placeholderTextColor="#4b5563" multiline style={[inputStyle, { height: 84, paddingTop: 12, textAlignVertical: 'top' }]} maxLength={500} />
               </Field>
-              <Field label="PHOTO">
-                <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                  {draft?.imageUrl ? (
-                    <Image source={draft.imageUrl} style={{ width: 64, height: 64, borderRadius: 13 }} contentFit="cover" accessibilityLabel="Meal photo preview" />
-                  ) : (
-                    <View style={{ width: 64, height: 64, borderRadius: 13, backgroundColor: '#1d2129', alignItems: 'center', justifyContent: 'center' }}>
-                      <ImageIcon size={22} color="#5b6170" />
+              <Field label={`PHOTOS (${draft?.imageUrls.length ?? 0}/5)`}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+                  {(draft?.imageUrls ?? []).map((url, i) => (
+                    <View key={`${url}-${i}`} style={{ position: 'relative' }}>
+                      <Image source={url} style={{ width: 72, height: 72, borderRadius: 12 }} contentFit="cover" accessibilityLabel={`Meal photo ${i + 1}`} />
+                      <PressableScale
+                        onPress={() => { feedback.tap(); setDraft((d) => d && { ...d, imageUrls: d.imageUrls.filter((_, j) => j !== i) }); }}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Remove photo ${i + 1}`}
+                        style={{ position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#ef4444', alignItems: 'center', justifyContent: 'center' }}>
+                        <X size={12} color="#fff" strokeWidth={3} />
+                      </PressableScale>
                     </View>
-                  )}
-                  {uploadSupported ? (
-                    <PressableScale onPress={() => { feedback.tap(); pickPhoto(); }} disabled={uploading} accessibilityRole="button" accessibilityLabel="Upload a photo" style={{ flex: 1, height: 48, borderRadius: 12, borderWidth: 1, borderColor: '#3f4451', flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', opacity: uploading ? 0.6 : 1 }}>
-                      {uploading ? <ActivityIndicator color="#fff" /> : <Upload size={17} color={Palette.textMuted} />}
-                      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textMuted }}>{uploading ? 'Uploading…' : draft?.imageUrl ? 'Change photo' : 'Upload photo'}</Text>
+                  ))}
+                  {(draft?.imageUrls.length ?? 0) < 5 && uploadSupported ? (
+                    <PressableScale onPress={() => { feedback.tap(); pickPhoto(); }} disabled={uploading} accessibilityRole="button" accessibilityLabel="Add photo" style={{ width: 72, height: 72, borderRadius: 12, borderWidth: 1.5, borderColor: '#3f4451', alignItems: 'center', justifyContent: 'center', opacity: uploading ? 0.5 : 1 }}>
+                      {uploading ? <ActivityIndicator color="#fff" size="small" /> : <Plus size={22} color="#5b6170" />}
                     </PressableScale>
-                  ) : (
-                    <View style={{ flex: 1 }}>
-                      <TextInput value={draft?.imageUrl ?? ''} onChangeText={(t) => setDraft((d) => d && { ...d, imageUrl: t })} placeholder="Paste image URL" placeholderTextColor="#4b5563" autoCapitalize="none" style={inputStyle} />
-                    </View>
-                  )}
-                </View>
+                  ) : null}
+                  {(draft?.imageUrls.length ?? 0) < 5 && !uploadSupported ? (
+                    <TextInput value={draft?.imageUrls[0] ?? ''} onChangeText={(t) => setDraft((d) => d && { ...d, imageUrls: t ? [t] : [] })} placeholder="Paste image URL" placeholderTextColor="#4b5563" autoCapitalize="none" style={[inputStyle, { minWidth: 200 }]} />
+                  ) : null}
+                </ScrollView>
               </Field>
               {/* Limited drop toggle */}
               <PressableScale

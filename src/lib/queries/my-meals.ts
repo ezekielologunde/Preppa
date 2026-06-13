@@ -12,11 +12,12 @@ export type MyMeal = {
   category_id: number | null;
   status: MealStatus;
   image: string | null;
+  images: string[];
   is_limited: boolean;
   expires_at: string | null;
 };
 
-type Row = Omit<MyMeal, 'image'> & { images: { url: string }[] | null };
+type Row = Omit<MyMeal, 'image' | 'images'> & { images: { url: string; order_index: number }[] | null };
 
 /** Every meal in the signed-in prepper's kitchen, all statuses (RLS-scoped). */
 export function useMyMeals(prepperId?: string | null) {
@@ -26,11 +27,14 @@ export function useMyMeals(prepperId?: string | null) {
     queryFn: async (): Promise<MyMeal[]> => {
       const { data, error } = await supabase
         .from('meals')
-        .select('id,title,description,base_price,prep_time_min,category_id,status,is_limited,expires_at,images:meal_images(url)')
+        .select('id,title,description,base_price,prep_time_min,category_id,status,is_limited,expires_at,images:meal_images(url,order_index)')
         .eq('prepper_id', prepperId!)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return ((data ?? []) as unknown as Row[]).map((r) => ({ ...r, image: r.images?.[0]?.url ?? null }));
+      return ((data ?? []) as unknown as Row[]).map((r) => {
+        const sorted = [...(r.images ?? [])].sort((a, b) => a.order_index - b.order_index).map((i) => i.url);
+        return { ...r, image: sorted[0] ?? null, images: sorted };
+      });
     },
   });
 }
@@ -42,7 +46,7 @@ export type MealDraft = {
   base_price: number;
   prep_time_min: number | null;
   category_id: number | null;
-  imageUrl: string;
+  imageUrls: string[];
   is_limited?: boolean;
   expires_at?: string | null;
 };
@@ -75,11 +79,12 @@ export function useSaveMeal(prepperId?: string | null) {
         if (error) throw error;
         mealId = (data as { id: string }).id;
       }
-      const url = v.imageUrl.trim();
-      if (url) {
-        // Replace the primary photo (order_index 0) without touching extras.
-        await supabase.from('meal_images').delete().eq('meal_id', mealId).eq('order_index', 0);
-        const { error } = await supabase.from('meal_images').insert({ meal_id: mealId, url, order_index: 0 });
+      const urls = v.imageUrls.map((u) => u.trim()).filter(Boolean);
+      if (urls.length > 0) {
+        await supabase.from('meal_images').delete().eq('meal_id', mealId!);
+        const { error } = await supabase
+          .from('meal_images')
+          .insert(urls.map((url, i) => ({ meal_id: mealId!, url, order_index: i })));
         if (error) throw error;
       }
       return mealId;
