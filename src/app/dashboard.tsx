@@ -175,20 +175,28 @@ export default function DashboardScreen() {
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: MUTED }}>{greeting()}, chef</Text>
               <Text style={{ fontFamily: Font.display, fontSize: 22, color: INK, letterSpacing: -0.6 }}>my kitchen</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 }}>
-                <PressableScale
-                  onPress={() => {
-                    feedback.tap();
-                    const next = !isOpen;
-                    setAccepting(next);
-                    toggleAvailability.mutate(next, { onError: () => setAccepting(!next) });
-                  }}
-                  accessibilityRole="switch"
-                  accessibilityState={{ checked: isOpen }}
-                  accessibilityLabel={isOpen ? 'Kitchen is open — tap to close' : 'Kitchen is closed — tap to open'}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: isOpen ? GREEN + '22' : Palette.chip, borderRadius: Radius.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
-                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isOpen ? GREEN : MUTED }} />
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : Palette.textSecondary }}>{isOpen ? 'Open' : 'Closed'}</Text>
-                </PressableScale>
+                <MotiView
+                  animate={{ backgroundColor: isOpen ? GREEN + '22' : Palette.chip }}
+                  transition={{ type: 'timing', duration: 200 }}
+                  style={{ borderRadius: Radius.pill, overflow: 'hidden' }}>
+                  <PressableScale
+                    onPress={() => {
+                      feedback.tap();
+                      const next = !isOpen;
+                      setAccepting(next);
+                      toggleAvailability.mutate(next, { onError: () => setAccepting(!next) });
+                    }}
+                    accessibilityRole="switch"
+                    accessibilityState={{ checked: isOpen }}
+                    accessibilityLabel={isOpen ? 'Kitchen is open — tap to close' : 'Kitchen is closed — tap to open'}
+                    style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4 }}>
+                    <MotiView
+                      animate={{ backgroundColor: isOpen ? GREEN : MUTED }}
+                      transition={{ type: 'timing', duration: 200 }}
+                      style={{ width: 8, height: 8, borderRadius: 4 }} />
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: isOpen ? GREEN : Palette.textSecondary }}>{isOpen ? 'Open' : 'Closed'}</Text>
+                  </PressableScale>
+                </MotiView>
               </View>
             </View>
             <PressableScale onPress={() => { feedback.tap(); router.push('/search'); }} accessibilityRole="button" accessibilityLabel="Search" style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center', ...Shadow.card }}>

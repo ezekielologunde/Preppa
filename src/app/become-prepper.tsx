@@ -246,10 +246,23 @@ export default function BecomePrepperScreen() {
               {SPECIALTIES.map((s) => {
                 const on = picked.includes(s);
                 return (
-                  <PressableScale key={s} onPress={() => { feedback.tap(); toggle(s); }} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={s}
-                    style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : Palette.chip, borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{s}</Text>
-                  </PressableScale>
+                  <MotiView
+                    key={s}
+                    animate={{
+                      backgroundColor: on ? Palette.brandTint : Palette.chip,
+                      borderColor: on ? ORANGE : Palette.chip,
+                    }}
+                    transition={{ type: 'timing', duration: 180 }}
+                    style={{ borderRadius: Radius.pill, borderWidth: 1, overflow: 'hidden' }}>
+                    <PressableScale
+                      onPress={() => { feedback.tap(); toggle(s); }}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: on }}
+                      accessibilityLabel={s}
+                      style={{ paddingHorizontal: 14, paddingVertical: 9 }}>
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{s}</Text>
+                    </PressableScale>
+                  </MotiView>
                 );
               })}
             </View>
