@@ -31,7 +31,7 @@ const ROUTE_CLASS: [string, WidthClass][] = [
   ['/search', 'browse'],
   ['/category', 'browse'],
   ['/explore', 'browse'],
-  ['/orders', 'content'],
+  ['/orders', 'browse'],
   ['/messages', 'content'],
   ['/meal-plans', 'content'],
   ['/experiences', 'content'],

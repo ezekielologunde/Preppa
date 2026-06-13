@@ -4,7 +4,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { AlertTriangle, Check, ChevronLeft, Lock, Receipt, RotateCcw, Star, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HandoffCard } from '@/components/handoff-card';
@@ -17,6 +17,7 @@ import { useAddToCart, useEmbeddedCheckout, useRefundOrder, useStripeCheckout, t
 import { useFeatureEnabled } from '@/lib/queries/feature-flags';
 import { feedback } from '@/lib/feedback';
 import { useCancelOrder, useMyOrders, useOrdersRealtime, useReportDispute, type OrderSummary } from '@/lib/queries/orders';
+import { BP } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
 
@@ -174,7 +175,7 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
             disabled={paying}
             accessibilityRole="button"
             accessibilityLabel={`Complete payment, ${money(order.total)}`}
-            style={{ height: 46, borderRadius: Radius.sm, backgroundColor: ORANGE, flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center', opacity: paying ? 0.7 : 1 }}>
+            style={{ height: 46, borderRadius: Radius.pill, backgroundColor: ORANGE, flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center', opacity: paying ? 0.7 : 1 }}>
             {paying ? <ActivityIndicator color="#fff" /> : (
               <>
                 <Lock size={15} color="#fff" />
@@ -217,7 +218,7 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
             disabled={reordering}
             accessibilityRole="button"
             accessibilityLabel="Preorder these meals again"
-            style={{ flex: 1, height: 44, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6, opacity: reordering ? 0.7 : 1 }}>
+            style={{ flex: 1, height: 44, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6, opacity: reordering ? 0.7 : 1 }}>
             {reordering ? <ActivityIndicator color="#fff" /> : <RotateCcw size={15} color="#fff" />}
             <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>Preorder again</Text>
           </PressableScale>
@@ -249,6 +250,8 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
 export default function OrdersScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { width } = useWindowDimensions();
+  const twoCol = Platform.OS === 'web' && width >= BP.desktop;
   const { data: orders, isLoading, refetch } = useMyOrders(user?.id);
   useOrdersRealtime('customer_id', user?.id);
   const [refreshing, setRefreshing] = useState(false);
@@ -384,7 +387,7 @@ export default function OrdersScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Receipt size={28} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to see your preorders.</Text>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>
@@ -397,7 +400,7 @@ export default function OrdersScreen() {
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>No preorders yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>When you preorder a meal it&apos;ll show up here.</Text>
-            <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
             </PressableScale>
           </MotiView>
@@ -428,22 +431,25 @@ export default function OrdersScreen() {
                 </MotiView>
               );
             })()}
-            {orders.map((o, i) => (
-              <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 50 }}>
-                <OrderCard
-                  order={o}
-                  needsPayment={paymentsOn && o.status === 'pending' && o.paymentStatus !== 'succeeded' && o.paymentStatus !== 'refunded'}
-                  paying={payingId === o.id}
-                  onPay={() => payOrder(o.id)}
-                  cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
-                  onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
-                  onReview={() => { feedback.tap(); router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`); }}
-                  onReorder={() => reorder(o)}
-                  onReport={() => { feedback.tap(); setReportReason(''); setReportErr(null); setReportModal(o); }}
-                  reordering={reorderingId === o.id}
-                />
-              </MotiView>
-            ))}
+            <View style={twoCol ? { flexDirection: 'row', flexWrap: 'wrap', gap: 12 } : { gap: 12 }}>
+              {orders.map((o, i) => (
+                <MotiView key={o.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 50 }}
+                  style={twoCol ? { width: '48.5%' } : undefined}>
+                  <OrderCard
+                    order={o}
+                    needsPayment={paymentsOn && o.status === 'pending' && o.paymentStatus !== 'succeeded' && o.paymentStatus !== 'refunded'}
+                    paying={payingId === o.id}
+                    onPay={() => payOrder(o.id)}
+                    cancelling={cancelOrder.isPending && cancelOrder.variables === o.id}
+                    onCancel={() => { feedback.warning(); setConfirmCancel(o); }}
+                    onReview={() => { feedback.tap(); router.push(`/review?orderId=${o.id}&prepperId=${o.prepperId}&mealId=${o.firstMealId ?? ''}&prepper=${encodeURIComponent(o.prepper)}`); }}
+                    onReorder={() => reorder(o)}
+                    onReport={() => { feedback.tap(); setReportReason(''); setReportErr(null); setReportModal(o); }}
+                    reordering={reorderingId === o.id}
+                  />
+                </MotiView>
+              ))}
+            </View>
           </ScrollView>
         )}
       </SafeAreaView>
@@ -478,7 +484,7 @@ export default function OrdersScreen() {
               disabled={reportDispute.isPending}
               accessibilityRole="button"
               accessibilityLabel="Submit report"
-              style={{ height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: reportDispute.isPending ? 0.7 : 1 }}>
+              style={{ height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: reportDispute.isPending ? 0.7 : 1 }}>
               {reportDispute.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Submit report</Text>}
             </PressableScale>
             <PressableScale onPress={() => { feedback.tap(); setReportModal(null); }} accessibilityRole="button" accessibilityLabel="Cancel" style={{ height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
