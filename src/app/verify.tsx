@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { useVerifyHandoffToken } from '@/lib/queries/orders';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -70,7 +70,7 @@ export default function VerifyScreen() {
               </Text>
             </MotiView>
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
-              <PressableScale onPress={() => { feedback.tap(); router.replace(`/auth?mode=signin`); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+              <PressableScale onPress={() => { feedback.tap(); router.replace(`/auth?mode=signin`); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 24, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
               </PressableScale>
             </MotiView>
@@ -93,7 +93,7 @@ export default function VerifyScreen() {
               </Text>
             </MotiView>
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
-              <PressableScale onPress={() => { feedback.tap(); router.replace('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="Back to orders" style={{ marginTop: 6, paddingHorizontal: 24, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+              <PressableScale onPress={() => { feedback.tap(); router.replace('/prepper-orders'); }} accessibilityRole="button" accessibilityLabel="Back to orders" style={{ marginTop: 6, paddingHorizontal: 24, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Back to orders</Text>
               </PressableScale>
             </MotiView>

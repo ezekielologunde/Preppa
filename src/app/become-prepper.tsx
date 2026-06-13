@@ -186,7 +186,7 @@ export default function BecomePrepperScreen() {
             {map.cta ? (
               <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
                 <PressableScale onPress={() => { feedback.tap(); map.cta!.onPress(); }} accessibilityRole="button" accessibilityLabel={map.cta.label}
-                  style={{ marginTop: 8, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                  style={{ marginTop: 8, paddingHorizontal: 24, height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{map.cta.label}</Text>
                 </PressableScale>
               </MotiView>
@@ -312,7 +312,7 @@ export default function BecomePrepperScreen() {
 
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
             <PressableScale onPress={() => { feedback.tap(); submit(); }} disabled={apply.isPending} accessibilityRole="button" accessibilityLabel="Submit application"
-              style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 24, opacity: apply.isPending ? 0.7 : 1 }}>
+              style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 24, opacity: apply.isPending ? 0.7 : 1 }}>
               {apply.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Submit application</Text>}
             </PressableScale>
             <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, textAlign: 'center', marginTop: 12 }}>

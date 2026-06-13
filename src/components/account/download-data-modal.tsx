@@ -2,7 +2,7 @@ import { Modal, Text, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 
 interface DownloadDataModalProps {
   visible: boolean;
@@ -81,7 +81,7 @@ export function DownloadDataModal({ visible, onClose, onConfirm }: DownloadDataM
               style={{
                 flex: 2,
                 height: 48,
-                borderRadius: 14,
+                borderRadius: Radius.pill,
                 backgroundColor: Palette.brand,
                 alignItems: 'center',
                 justifyContent: 'center',

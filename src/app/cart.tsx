@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
-import { Bike, Check, ChefHat, ChevronLeft, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2, Heart } from 'lucide-react-native';
+import { Bike, Check, ChefHat, ChevronLeft, ChevronRight, Lock, MapPin, Minus, Plus, ShoppingBag, Store, Trash2, Heart } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState, type ComponentType } from 'react';
 import { ActivityIndicator, Platform, RefreshControl, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
@@ -285,6 +285,7 @@ export default function CartScreen() {
 
   const cartSummary = (
     <>
+      {/* Line items */}
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
         <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Subtotal</Text>
         <Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, fontVariant: ['tabular-nums'] }}>{money(subtotal)}</Text>
@@ -293,17 +294,58 @@ export default function CartScreen() {
         <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>{method === 'delivery' ? 'Delivery fee' : method === 'in_home' ? 'In-home prep' : 'Pickup / meet up'}</Text>
         <Text style={{ fontFamily: Font.medium, fontSize: 13, color: method === 'in_home' ? Palette.textSecondary : deliveryFee ? INK : Palette.success, fontVariant: ['tabular-nums'] }}>{method === 'in_home' ? 'Quoted' : deliveryFee ? money(deliveryFee) : 'Free'}</Text>
       </View>
-      {tip > 0 ? <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}><Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Tip</Text><Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, fontVariant: ['tabular-nums'] }}>{money(tip)}</Text></View> : null}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 }}>
-        <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Total</Text>
-        <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, fontVariant: ['tabular-nums'] }}>{money(total)}</Text>
+      {tip > 0 ? (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+          <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>Tip</Text>
+          <Text style={{ fontFamily: Font.medium, fontSize: 13, color: INK, fontVariant: ['tabular-nums'] }}>{money(tip)}</Text>
+        </View>
+      ) : null}
+
+      {/* Total — big and scannable */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', borderTopWidth: 1, borderTopColor: Palette.border, marginTop: 8, paddingTop: 14, marginBottom: 20 }}>
+        <Text style={{ fontFamily: Font.heading, fontSize: 14, color: Palette.textSecondary }}>Total due</Text>
+        <Text style={{ fontFamily: Font.display, fontSize: 28, color: INK, letterSpacing: -0.8, fontVariant: ['tabular-nums'] }}>{money(total)}</Text>
       </View>
-      <PressableScale onPress={checkout} disabled={busy || mixed} accessibilityRole="button" accessibilityLabel={paymentsOn ? 'Pay and place preorder' : 'Place preorder'} style={{ height: 54, borderRadius: Radius.pill, backgroundColor: mixed ? Palette.textMuted : ORANGE, flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.7 : 1 }}>
-        {busy ? <ActivityIndicator color="#fff" /> : (
-          <>{paymentsOn && !mixed ? <Lock size={16} color="#fff" /> : null}<Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{mixed ? 'Pick one kitchen above' : method === 'in_home' ? 'Request in-home prep →' : paymentsOn ? `Pay · ${money(total)}` : `Preorder · ${money(total)}`}</Text></>
-        )}
-      </PressableScale>
-      <Text style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, textAlign: 'center', marginTop: 8 }}>{paymentsOn ? 'Secure card payment via Stripe. Auto-refunded if your preorder is declined.' : 'Payment is collected when the prepper confirms.'}</Text>
+
+      {/* CTA — spring in, orange glow, two-line layout prevents text overflow */}
+      <MotiView from={{ scale: 0.97, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', damping: 16, stiffness: 200, delay: 80 }}>
+        <PressableScale
+          onPress={checkout}
+          disabled={busy || mixed}
+          accessibilityRole="button"
+          accessibilityLabel={mixed ? 'Pick one kitchen to continue' : paymentsOn ? `Pay ${money(total)} securely` : `Place preorder for ${money(total)}`}
+          style={{
+            minHeight: 62, borderRadius: Radius.lg, paddingVertical: 12, paddingHorizontal: 20,
+            backgroundColor: mixed ? Palette.chip : ORANGE,
+            flexDirection: 'row', gap: 10, alignItems: 'center', justifyContent: 'center',
+            opacity: busy ? 0.72 : 1,
+            ...(mixed ? {} : { shadowColor: ORANGE, shadowOpacity: 0.28, shadowRadius: 14, shadowOffset: { width: 0, height: 6 }, elevation: 8 }),
+          }}>
+          {busy ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : mixed ? (
+            <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary, textAlign: 'center' }}>Pick one kitchen above ↑</Text>
+          ) : (
+            <>
+              {paymentsOn ? <Lock size={18} color="rgba(255,255,255,0.88)" /> : <ShoppingBag size={18} color="rgba(255,255,255,0.88)" />}
+              <View style={{ alignItems: 'center', flex: 1 }}>
+                <Text style={{ fontFamily: Font.heading, fontSize: 17, color: '#fff', letterSpacing: -0.2 }}>
+                  {method === 'in_home' ? 'Request in-home prep' : paymentsOn ? 'Pay securely' : 'Place preorder'}
+                </Text>
+                {method !== 'in_home' ? (
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 2 }}>
+                    {money(total)}{paymentsOn ? ' · secured by Stripe' : ' · pay when confirmed'}
+                  </Text>
+                ) : null}
+              </View>
+              <ChevronRight size={20} color="rgba(255,255,255,0.55)" />
+            </>
+          )}
+        </PressableScale>
+      </MotiView>
+      <Text style={{ fontFamily: Font.body, fontSize: 11, color: Palette.textMuted, textAlign: 'center', marginTop: 10 }}>
+        {paymentsOn ? 'Auto-refunded if your preorder is declined.' : 'Payment collected when the prepper confirms.'}
+      </Text>
     </>
   );
 

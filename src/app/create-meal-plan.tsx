@@ -238,7 +238,7 @@ export default function CreateMealPlanScreen() {
         <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: Palette.canvas, paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20 }}>
           <PressableScale onPress={handleCreate} disabled={!canCreate}
             accessibilityRole="button" accessibilityLabel="Create meal plan"
-            style={{ height: 56, borderRadius: Radius.md, backgroundColor: canCreate ? ORANGE : Palette.chip, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
+            style={{ height: 56, borderRadius: Radius.pill, backgroundColor: canCreate ? ORANGE : Palette.chip, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
             {createPlan.isPending ? (
               <ActivityIndicator color="#fff" />
             ) : selCount > 0 ? (

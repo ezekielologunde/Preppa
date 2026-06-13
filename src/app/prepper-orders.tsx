@@ -93,7 +93,7 @@ function OrderCard({
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.textMuted }}>Decline</Text>
             </PressableScale>
           ) : null}
-          <PressableScale onPress={() => { feedback.tap(); if (needsHandoff) onVerify(); else onAdvance(step.next); }} disabled={busy} accessibilityRole="button" accessibilityLabel={needsHandoff ? 'Verify handoff and complete' : step.cta} style={{ flex: 1, height: 46, borderRadius: 14, backgroundColor: ORANGE, flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.6 : 1 }}>
+          <PressableScale onPress={() => { feedback.tap(); if (needsHandoff) onVerify(); else onAdvance(step.next); }} disabled={busy} accessibilityRole="button" accessibilityLabel={needsHandoff ? 'Verify handoff and complete' : step.cta} style={{ flex: 1, height: 46, borderRadius: Radius.pill, backgroundColor: ORANGE, flexDirection: 'row', gap: 7, alignItems: 'center', justifyContent: 'center', opacity: busy ? 0.6 : 1 }}>
             {busy ? <ActivityIndicator color="#fff" /> : (
               <>
                 {needsHandoff ? <QrCode size={16} color="#fff" /> : null}
@@ -245,7 +245,7 @@ export default function PrepperOrdersScreen() {
               style={{ height: 64, borderRadius: 16, backgroundColor: '#1d2129', textAlign: 'center', fontSize: 30, letterSpacing: 16, fontFamily: Font.display, color: '#fff' }}
             />
             {verifyMsg ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5', textAlign: 'center' }}>{verifyMsg}</Text> : null}
-            <PressableScale onPress={() => { feedback.tap(); submitPin(); }} disabled={verify.isPending} accessibilityRole="button" accessibilityLabel="Confirm handoff" style={{ height: 52, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: verify.isPending ? 0.7 : 1 }}>
+            <PressableScale onPress={() => { feedback.tap(); submitPin(); }} disabled={verify.isPending} accessibilityRole="button" accessibilityLabel="Confirm handoff" style={{ height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: verify.isPending ? 0.7 : 1 }}>
               {verify.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Confirm & complete</Text>}
             </PressableScale>
           </Pressable>

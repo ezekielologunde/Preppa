@@ -402,7 +402,7 @@ export function AddressSheet({
               accessibilityLabel="Save address"
               style={{
                 backgroundColor: Palette.brand,
-                borderRadius: Radius.md,
+                borderRadius: Radius.pill,
                 paddingVertical: 16,
                 alignItems: 'center',
                 marginBottom: Spacing.four,

@@ -200,7 +200,7 @@ export default function PrepperPremiumScreen() {
         <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: BG, paddingTop: 12, paddingBottom: 32, paddingHorizontal: 20, gap: 8 }}>
           <PressableScale onPress={handleUpgrade} disabled={loading}
             accessibilityRole="button" accessibilityLabel="Upgrade to Pro"
-            style={{ height: 56, borderRadius: Radius.md, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: loading ? 0.7 : 1 }}>
+            style={{ height: 56, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: loading ? 0.7 : 1 }}>
             {loading ? <ActivityIndicator color="#fff" /> : (
               <>
                 <Crown size={18} color="#fff" />

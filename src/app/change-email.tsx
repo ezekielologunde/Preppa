@@ -123,7 +123,7 @@ export default function ChangeEmailScreen() {
                 accessibilityRole="button"
                 accessibilityLabel="Send confirmation"
                 accessibilityState={{ disabled: saving || !email.trim() }}
-                style={{ height: 52, borderRadius: Radius.sm, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', opacity: saving || !email.trim() ? 0.6 : 1 }}>
+                style={{ height: 52, borderRadius: Radius.pill, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', opacity: saving || !email.trim() ? 0.6 : 1 }}>
                 <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>{saving ? 'sending…' : 'send confirmation'}</Text>
               </PressableScale>
             </View>

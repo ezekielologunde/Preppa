@@ -107,7 +107,7 @@ export default function ReferralScreen() {
                 onPress={handleShare}
                 accessibilityRole="button"
                 accessibilityLabel="Share referral link"
-                style={{ flex: 1, height: 50, borderRadius: Radius.md, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
+                style={{ flex: 1, height: 50, borderRadius: Radius.pill, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
                 <Share2 size={16} color="#fff" />
                 <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>share</Text>
               </PressableScale>

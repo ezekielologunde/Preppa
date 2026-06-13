@@ -168,7 +168,7 @@ export default function InsightsScreen() {
               </Text>
             )}
             <PressableScale onPress={() => { feedback.tap(); router.push('/explore'); }} accessibilityRole="button" accessibilityLabel="Explore meals"
-              style={{ backgroundColor: ORANGE, borderRadius: 10, paddingVertical: 11, alignItems: 'center' }}>
+              style={{ backgroundColor: ORANGE, borderRadius: Radius.pill, paddingVertical: 11, alignItems: 'center' }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{completed.length > 0 ? 'try something new' : 'explore meals'}</Text>
             </PressableScale>
           </View>

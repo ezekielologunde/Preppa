@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Award, BadgeCheck, Bike, CalendarCheck, Check, ChevronLeft, MapPin, MessageSquare, RefreshCw, Share2, ShieldCheck, ShoppingBag, Star, Store, UserPlus, Users } from 'lucide-react-native';
 import { useState } from 'react';
@@ -112,9 +113,9 @@ export default function PrepperScreen() {
               {isLoading ? (
                 <Skeleton width={84} height={84} radius={42} />
               ) : (
-                <View style={{ borderWidth: 3, borderColor: ORANGE, borderRadius: 46, padding: 3 }}>
+                <LinearGradient colors={['#FF9A5A', ORANGE]} style={{ width: 90, height: 90, borderRadius: 45, padding: 3, alignItems: 'center', justifyContent: 'center' }}>
                   <Avatar name={p?.name ?? 'preppa'} url={p?.avatar ?? undefined} size={78} />
-                </View>
+                </LinearGradient>
               )}
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 7 }}>
                 <Text style={{ fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.5 }}>{p?.name ?? '…'}</Text>
@@ -277,7 +278,7 @@ export default function PrepperScreen() {
                       disabled={subscribed}
                       accessibilityRole="button"
                       accessibilityLabel={subscribed ? `Subscribed to ${plan.name}` : `Subscribe to ${plan.name}`}
-                      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 40, paddingHorizontal: 16, borderRadius: 12, backgroundColor: subscribed ? Palette.success : ORANGE }}>
+                      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, height: 40, paddingHorizontal: 16, borderRadius: Radius.pill, backgroundColor: subscribed ? Palette.success : ORANGE }}>
                       {subscribed ? <Check size={15} color="#fff" strokeWidth={3} /> : null}
                       <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{subscribed ? 'Subscribed' : 'Subscribe'}</Text>
                     </PressableScale>
@@ -358,7 +359,7 @@ export default function PrepperScreen() {
             <MessageSquare size={17} color={INK} />
             <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Message</Text>
           </PressableScale>
-          <PressableScale onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(p.name)}`); }} accessibilityRole="button" accessibilityLabel={`Preorder from ${p.name}`} style={{ flex: 1, height: 50, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+          <PressableScale onPress={() => { feedback.tap(); router.push(`/search?q=${encodeURIComponent(p.name)}`); }} accessibilityRole="button" accessibilityLabel={`Preorder from ${p.name}`} style={{ flex: 1, height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
             <ShoppingBag size={17} color="#fff" />
             <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: '#fff' }}>Preorder from {p.name.split(' ')[0]}</Text>
           </PressableScale>

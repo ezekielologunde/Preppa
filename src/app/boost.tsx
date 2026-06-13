@@ -93,7 +93,7 @@ export default function BoostScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 21 }}>
               Your listing is now boosted for {selectedDuration.label}. You can expect {estimatedViews} over this period.
             </Text>
-            <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Back to kitchen hub" style={{ paddingHorizontal: 24, height: 48, borderRadius: 12, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Back to kitchen hub" style={{ paddingHorizontal: 24, height: 48, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>back to kitchen hub</Text>
             </PressableScale>
           </MotiView>

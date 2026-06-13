@@ -90,7 +90,7 @@ function LivePlanCard({ plan, onSubscribe, busy, subscribed }: { plan: MealPlan;
             <Text style={{ fontFamily: Font.display, fontSize: 22, color: ORANGE }}>{money(plan.price)}</Text> /{plan.frequency}
           </Text>
           <PressableScale onPress={onSubscribe} disabled={busy || subscribed} accessibilityRole="button" accessibilityLabel={`Subscribe to ${plan.name}`}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 18, height: 44, borderRadius: Radius.sm, backgroundColor: subscribed ? Palette.success : ORANGE, opacity: busy ? 0.7 : 1 }}>
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 18, height: 44, borderRadius: Radius.pill, backgroundColor: subscribed ? Palette.success : ORANGE, opacity: busy ? 0.7 : 1 }}>
             {subscribed ? <Check size={16} color="#fff" strokeWidth={3} /> : null}
             <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>{subscribed ? 'Subscribed' : 'Subscribe'}</Text>
           </PressableScale>

@@ -349,7 +349,7 @@ export default function AddressesScreen() {
               accessibilityLabel="Add your first address"
               style={{
                 backgroundColor: Palette.brand,
-                borderRadius: Radius.md,
+                borderRadius: Radius.pill,
                 paddingHorizontal: Spacing.four,
                 paddingVertical: 14,
                 flexDirection: 'row',

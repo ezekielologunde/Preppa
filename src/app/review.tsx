@@ -102,7 +102,7 @@ export default function ReviewScreen() {
             </Text>
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
-            <PressableScale onPress={() => { feedback.tap(); router.replace('/orders'); }} accessibilityRole="button" accessibilityLabel="Back to preorders" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.replace('/orders'); }} accessibilityRole="button" accessibilityLabel="Back to preorders" style={{ marginTop: 6, paddingHorizontal: 24, height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Back to preorders</Text>
             </PressableScale>
           </MotiView>
@@ -210,7 +210,7 @@ export default function ReviewScreen() {
               disabled={rating < 1 || submit.isPending}
               accessibilityRole="button"
               accessibilityLabel="Submit review"
-              style={{ height: 54, borderRadius: 16, backgroundColor: rating < 1 ? Palette.textMuted : ORANGE, alignItems: 'center', justifyContent: 'center', opacity: submit.isPending ? 0.7 : 1 }}>
+              style={{ height: 54, borderRadius: Radius.pill, backgroundColor: rating < 1 ? Palette.textMuted : ORANGE, alignItems: 'center', justifyContent: 'center', opacity: submit.isPending ? 0.7 : 1 }}>
               {submit.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Submit review</Text>}
             </PressableScale>
           </MotiView>

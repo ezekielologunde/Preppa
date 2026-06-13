@@ -430,7 +430,7 @@ export function AddCardSheet({
               accessibilityLabel="Save card"
               style={{
                 backgroundColor: Palette.brand,
-                borderRadius: Radius.md,
+                borderRadius: Radius.pill,
                 paddingVertical: 16,
                 alignItems: 'center',
                 marginTop: Spacing.two,

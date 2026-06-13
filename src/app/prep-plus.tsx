@@ -191,7 +191,7 @@ export default function PrepPlusScreen() {
           ) : (
             <PressableScale onPress={handleJoin} disabled={loading}
               accessibilityRole="button" accessibilityLabel="Join Prep+"
-              style={{ height: 56, borderRadius: Radius.md, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: loading ? 0.7 : 1 }}>
+              style={{ height: 56, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: loading ? 0.7 : 1 }}>
               {loading ? <ActivityIndicator color="#fff" /> : (
                 <>
                   <Crown size={18} color="#fff" />

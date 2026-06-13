@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PreppaLogo } from '@/components/preppa-logo';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { useAuth } from '@/providers/auth-provider';
 
@@ -246,7 +246,7 @@ export default function AuthScreen() {
               </MotiView>
             ) : null}
 
-            <PressableScale onPress={submit} disabled={busy} accessibilityRole="button" accessibilityLabel={mode === 'signup' ? 'Create account' : 'Sign in'} style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
+            <PressableScale onPress={submit} disabled={busy} accessibilityRole="button" accessibilityLabel={mode === 'signup' ? 'Create account' : 'Sign in'} style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
               {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{mode === 'signup' ? 'Create account' : 'Sign in'}</Text>}
             </PressableScale>
 
@@ -303,7 +303,7 @@ export default function AuthScreen() {
               </MotiView>
             ) : null}
 
-            <PressableScale onPress={() => verify()} disabled={busy} accessibilityRole="button" accessibilityLabel={intent === 'recovery' ? 'Reset and sign in' : 'Verify and continue'} style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
+            <PressableScale onPress={() => verify()} disabled={busy} accessibilityRole="button" accessibilityLabel={intent === 'recovery' ? 'Reset and sign in' : 'Verify and continue'} style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
               {busy ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{intent === 'recovery' ? 'Reset & sign in' : 'Verify & continue'}</Text>}
             </PressableScale>
             <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 18, marginTop: 8 }}>

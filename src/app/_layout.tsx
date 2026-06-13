@@ -3,7 +3,7 @@ import '@/global.css';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider, usePathname, useRouter } from 'expo-router';
-import { CircleUser, Compass, House, MonitorPlay, Ticket } from 'lucide-react-native';
+import { CircleUser, Compass, House, MonitorPlay, ShoppingBag, Ticket } from 'lucide-react-native';
 import { MotiView, MotiText } from 'moti';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, Text, useColorScheme, useWindowDimensions, View } from 'react-native';
@@ -16,6 +16,7 @@ import { feedback } from '@/lib/feedback';
 import { BP, contentWidthFor, shouldCenter } from '@/lib/layout';
 import { useDarkMode } from '@/lib/theme-mode';
 
+import { FloatingCartBar } from '@/components/floating-cart-bar';
 import { LoadingSplash } from '@/components/loading-splash';
 import { Onboarding } from '@/components/onboarding';
 import { AppProviders } from '@/providers/app-providers';
@@ -32,6 +33,7 @@ const SIDEBAR_ITEMS = [
   { href: '/explore',      label: 'Explore',     Icon: Compass },
   { href: '/feeds',        label: 'Feeds',       Icon: MonitorPlay },
   { href: '/experiences',  label: 'Experiences', Icon: Ticket },
+  { href: '/cart',         label: 'Cart',        Icon: ShoppingBag },
   { href: '/profile',      label: 'Profile',     Icon: CircleUser },
 ] as const;
 
@@ -210,6 +212,7 @@ export default function RootLayout() {
             <Stack.Screen name="dietary-preferences" options={{ presentation: 'modal' }} />
             <Stack.Screen name="boost" options={{ presentation: 'modal' }} />
           </Stack>
+          <FloatingCartBar />
           {ready && !onboarded && (
             <Onboarding onGetStarted={() => goToAuth('signup')} onSignIn={() => goToAuth('signin')} />
           )}

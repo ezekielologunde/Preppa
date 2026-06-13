@@ -62,7 +62,7 @@ export default function EmergencyFoodScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 21 }}>
               Nearby preppers have been notified. You'll hear back within minutes. Check your messages.
             </Text>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/messages?tab=messages'); }} accessibilityRole="button" accessibilityLabel="Go to messages" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: ORANGE, borderRadius: 12, paddingHorizontal: 22, paddingVertical: 13 }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/messages?tab=messages'); }} accessibilityRole="button" accessibilityLabel="Go to messages" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 22, paddingVertical: 13 }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>open messages</Text>
               <ChevronRight size={16} color="#fff" />
             </PressableScale>

@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Camera, Check, ChevronLeft, Globe, MapPin, User } from 'lucide-react-native';
 import { MotiView } from 'moti';
@@ -8,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/ui/avatar';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { supabase } from '@/lib/supabase';
 import { pickAndUploadImage } from '@/lib/upload';
@@ -144,13 +145,13 @@ export default function EditProfileScreen() {
             {/* Avatar */}
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}
               style={{ alignItems: 'center', marginBottom: 28 }}>
-              <View style={{ width: 92, height: 92, borderRadius: 46, borderWidth: 3, borderColor: Palette.brand, padding: 3 }}>
+              <LinearGradient colors={['#FF9A5A', Palette.brand]} style={{ width: 92, height: 92, borderRadius: 46, padding: 3, alignItems: 'center', justifyContent: 'center' }}>
                 <Avatar name={displayName} url={avatarUrl} size={80} />
                 <PressableScale onPress={() => { feedback.tap(); handlePickAvatar(); }} accessibilityRole="button" accessibilityLabel="Change photo"
                   style={{ position: 'absolute', bottom: 0, right: 0, width: 30, height: 30, borderRadius: 15, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: Palette.canvas }}>
                   <Camera size={14} color="#fff" />
                 </PressableScale>
-              </View>
+              </LinearGradient>
               {uploadError ? <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.danger, marginTop: 8, textAlign: 'center', paddingHorizontal: 24 }}>{uploadError}</Text> : null}
             </MotiView>
 
@@ -161,6 +162,7 @@ export default function EditProfileScreen() {
               <ProfileField label="full name" icon={<User size={14} color={Palette.textSecondary} />} error={errors.full_name} delay={80}>
                 <TextInput value={fields.full_name} onChangeText={(v) => set('full_name', v)} onBlur={() => onBlur('full_name')}
                   placeholder="Your full name" placeholderTextColor={Palette.textMuted} accessibilityLabel="Full name"
+                  returnKeyType="next" textContentType="name"
                   style={inputStyle(!!errors.full_name)} />
               </ProfileField>
 
@@ -168,6 +170,7 @@ export default function EditProfileScreen() {
                 hint={fields.username.length >= 3 && !errors.username ? `preppa.live/@${fields.username.toLowerCase()}` : undefined}>
                 <TextInput value={fields.username} onChangeText={(v) => set('username', v.toLowerCase())} onBlur={() => onBlur('username')}
                   placeholder="your_handle" placeholderTextColor={Palette.textMuted} autoCapitalize="none" autoCorrect={false}
+                  returnKeyType="next" textContentType="username"
                   accessibilityLabel="Username" style={inputStyle(!!errors.username)} />
               </ProfileField>
 
@@ -182,6 +185,7 @@ export default function EditProfileScreen() {
               <ProfileField label="location" icon={<MapPin size={14} color={Palette.textSecondary} />} delay={200}>
                 <TextInput value={fields.location} onChangeText={(v) => set('location', v.slice(0, 80))}
                   placeholder="City, State" placeholderTextColor={Palette.textMuted} accessibilityLabel="Location"
+                  returnKeyType="next" textContentType="location"
                   style={inputStyle()} />
               </ProfileField>
 
@@ -189,6 +193,7 @@ export default function EditProfileScreen() {
                 <TextInput value={fields.website} onChangeText={(v) => set('website', v)} onBlur={() => onBlur('website')}
                   placeholder="https://yoursite.com" placeholderTextColor={Palette.textMuted}
                   autoCapitalize="none" autoCorrect={false} keyboardType="url" accessibilityLabel="Website URL"
+                  returnKeyType="done" textContentType="URL"
                   style={inputStyle(!!errors.website)} />
               </ProfileField>
             </MotiView>
@@ -198,7 +203,7 @@ export default function EditProfileScreen() {
               style={{ marginHorizontal: 20, marginTop: 24 }}>
               <PressableScale onPress={handleSave} disabled={!hasChanges || hasErrors || saving}
                 accessibilityRole="button" accessibilityLabel="Save profile changes" accessibilityState={{ disabled: !hasChanges || hasErrors || saving }}
-                style={{ height: 52, borderRadius: 16, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', opacity: !hasChanges || hasErrors || saving ? 0.5 : 1 }}>
+                style={{ height: 52, borderRadius: Radius.pill, backgroundColor: Palette.brand, alignItems: 'center', justifyContent: 'center', opacity: !hasChanges || hasErrors || saving ? 0.5 : 1 }}>
                 {saving ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <ActivityIndicator size="small" color="#fff" />

@@ -128,7 +128,7 @@ export default function ExperienceRequestScreen() {
 
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
           <PressableScale onPress={submit} disabled={create.isPending} accessibilityRole="button" accessibilityLabel="Post request"
-            style={{ height: 52, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 18, opacity: create.isPending ? 0.7 : 1 }}>
+            style={{ height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 18, opacity: create.isPending ? 0.7 : 1 }}>
             {create.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Post request</Text>}
           </PressableScale>
           </MotiView>
@@ -177,7 +177,7 @@ export default function ExperienceRequestScreen() {
                         </View>
                       ) : r.status === 'open' && b.status === 'pending' ? (
                         <PressableScale onPress={() => { feedback.tap(); accept.mutate(b.id); }} disabled={accept.isPending} accessibilityRole="button" accessibilityLabel={`Accept bid from ${b.prepper?.display_name ?? 'prepper'}`}
-                          style={{ paddingHorizontal: 14, height: 38, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                          style={{ paddingHorizontal: 14, height: 38, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
                           <Text style={{ fontFamily: Font.heading, fontSize: 13, color: '#fff' }}>Accept</Text>
                         </PressableScale>
                       ) : (

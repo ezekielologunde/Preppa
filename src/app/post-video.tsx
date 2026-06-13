@@ -43,7 +43,7 @@ export default function PostVideoScreen() {
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 80 }}>
             <PressableScale onPress={() => { feedback.tap(); router.replace('/become-prepper'); }} accessibilityRole="button" accessibilityLabel="Apply to become a prepper"
-              style={{ height: 50, borderRadius: Radius.sm, backgroundColor: ORANGE, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' }}>
+              style={{ height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Apply now</Text>
             </PressableScale>
           </MotiView>
@@ -179,13 +179,13 @@ export default function PostVideoScreen() {
           {/* Post / success */}
           {posted ? (
             <MotiView from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', damping: 15, stiffness: 220 }}
-              style={{ height: 54, borderRadius: 16, backgroundColor: Palette.success, alignItems: 'center', justifyContent: 'center' }}>
+              style={{ height: 54, borderRadius: Radius.pill, backgroundColor: Palette.success, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Posted! Redirecting…</Text>
             </MotiView>
           ) : (
             <PressableScale onPress={handlePost} disabled={uploading || (!caption.trim() && !thumb)}
               accessibilityRole="button" accessibilityLabel="Post video"
-              style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center',
+              style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center',
                 opacity: uploading || (!caption.trim() && !thumb) ? 0.5 : 1 }}>
               {uploading ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>post to feed</Text>}
             </PressableScale>

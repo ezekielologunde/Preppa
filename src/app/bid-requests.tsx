@@ -57,7 +57,7 @@ function RequestCard({ r, isPrepper, onBid }: { r: Request; isPrepper: boolean; 
         <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>from {r.poster}{r.cuisine ? ` · ${r.cuisine}` : ''}</Text>
         {isPrepper ? (
           <PressableScale onPress={() => onBid(r)} accessibilityRole="button" accessibilityLabel={`Bid on ${r.title}`}
-            style={{ height: 38, paddingHorizontal: 18, borderRadius: 12, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            style={{ height: 38, paddingHorizontal: 18, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>place bid</Text>
           </PressableScale>
         ) : null}
@@ -177,7 +177,7 @@ export default function BidRequestsScreen() {
                   style={{ flex: 1, height: 50, backgroundColor: Palette.canvas, borderRadius: 14, paddingHorizontal: 14, fontFamily: Font.body, fontSize: 15, color: INK }} />
               </View>
               <PressableScale onPress={submitRequest} disabled={postRequest.isPending || !reqTitle.trim()} accessibilityRole="button" accessibilityLabel="Submit request"
-                style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: postRequest.isPending || !reqTitle.trim() ? 0.6 : 1 }}>
+                style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: postRequest.isPending || !reqTitle.trim() ? 0.6 : 1 }}>
                 {postRequest.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>post request</Text>}
               </PressableScale>
             </Pressable>
@@ -205,7 +205,7 @@ export default function BidRequestsScreen() {
               <TextInput value={bidNote} onChangeText={setBidNote} placeholder="Message to the customer (optional)" placeholderTextColor={Palette.textMuted} multiline
                 style={{ minHeight: 70, backgroundColor: Palette.canvas, borderRadius: 14, padding: 14, fontFamily: Font.body, fontSize: 14, color: INK, textAlignVertical: 'top' }} />
               <PressableScale onPress={submitBid} disabled={placeBid.isPending || !bidPrice} accessibilityRole="button" accessibilityLabel="Submit bid"
-                style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: placeBid.isPending || !bidPrice ? 0.6 : 1 }}>
+                style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: placeBid.isPending || !bidPrice ? 0.6 : 1 }}>
                 {placeBid.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>submit bid</Text>}
               </PressableScale>
             </Pressable>

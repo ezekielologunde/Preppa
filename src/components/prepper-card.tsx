@@ -64,20 +64,20 @@ export function PrepperCard({ prepper, showRank = false }: { prepper: TopPrepper
   const router = useRouter();
   const ranked = showRank && prepper.rank != null && prepper.rank <= 3;
   return (
-    <PressableScale onPress={() => { feedback.tap(); router.push(`/prepper?id=${prepper.id}`); }} style={{ width: 210 }} accessibilityRole="button" accessibilityLabel={`${ranked ? `Ranked number ${prepper.rank}, ` : ''}${prepper.name}, ${prepper.rating.toFixed(1)} stars — view kitchen`}>
+    <PressableScale onPress={() => { feedback.tap(); router.push(`/prepper?id=${prepper.id}`); }} style={{ width: 210 }} accessibilityLabel={`${ranked ? `Ranked number ${prepper.rank}, ` : ''}${prepper.name}, ${prepper.rating.toFixed(1)} stars — view kitchen`}>
       <View style={{ borderRadius: 20, overflow: 'hidden', backgroundColor: Palette.surface, ...Shadow.card }}>
-        <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
+        <View style={{ height: 130, backgroundColor: Palette.brandTint }}>
           {prepper.image ? <Image source={imgUrl(prepper.image, 420)} style={{ flex: 1 }} contentFit="cover" transition={250} /> : null}
           {ranked ? <RankBadge rank={prepper.rank!} /> : null}
           <LiveBadge />
-          <View style={{ position: 'absolute', top: 10, right: 10 }}>
+          <View style={{ position: 'absolute', top: 10, right: 10 }} accessibilityLabel="Save to favorites" accessibilityRole="none">
             <FavoriteButton id={`prepper:${prepper.id}`} />
           </View>
         </View>
         <View style={{ padding: 12, gap: 4 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Text numberOfLines={1} style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.ink, flexShrink: 1 }}>{prepper.name}</Text>
-            {prepper.verified ? <BadgeCheck size={15} color={Palette.brand} fill={Palette.brand} stroke="#fff" /> : null}
+            {prepper.verified ? <View accessibilityLabel="Verified kitchen" accessibilityRole="image"><BadgeCheck size={15} color={Palette.brand} fill={Palette.brand} stroke="#fff" /></View> : null}
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Star size={13} color={Palette.amber} fill={Palette.amber} />

@@ -5,7 +5,7 @@ import { Text, TextInput, View } from 'react-native';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/auth-provider';
@@ -206,7 +206,7 @@ export function ChangePasswordPanel({ onClose }: { onClose: () => void }) {
               style={{
                 flex: 2,
                 height: 44,
-                borderRadius: 12,
+                borderRadius: Radius.pill,
                 backgroundColor: Palette.brand,
                 alignItems: 'center',
                 justifyContent: 'center',

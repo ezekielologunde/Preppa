@@ -76,7 +76,7 @@ export default function RewardsScreen() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Gift size={28} color={Palette.textMuted} />
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to start earning points on every preorder.</Text>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
           </View>
@@ -197,7 +197,7 @@ export default function RewardsScreen() {
             </MotiView>
 
             <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 460 }}>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/'); }} accessibilityRole="button" accessibilityLabel="Browse meals to earn points" style={{ height: 52, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4 }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/'); }} accessibilityRole="button" accessibilityLabel="Browse meals to earn points" style={{ height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', marginTop: 4 }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Preorder to earn points</Text>
             </PressableScale>
             </MotiView>

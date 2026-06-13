@@ -181,7 +181,7 @@ export default function DietaryPreferencesScreen() {
           <MotiView
             animate={{ backgroundColor: saved ? Palette.success : Palette.brand }}
             transition={{ type: 'timing', duration: 300 }}
-            style={{ height: 56, borderRadius: Radius.md, overflow: 'hidden', ...Shadow.floating }}>
+            style={{ height: 56, borderRadius: Radius.pill, overflow: 'hidden', ...Shadow.floating }}>
             <PressableScale
               onPress={handleSave}
               disabled={saving}

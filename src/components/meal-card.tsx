@@ -50,7 +50,7 @@ function CardGallery({ images, hovered, height }: { images: string[]; hovered: b
   const idx = active && images.length > 1 ? cycle % images.length : 0;
 
   return (
-    <View style={{ height, backgroundColor: '#FCE9DD', overflow: 'hidden' }}>
+    <View style={{ height, backgroundColor: Palette.brandTint, overflow: 'hidden' }}>
       {images.map((src, i) => (
         <MotiView
           key={src + i}

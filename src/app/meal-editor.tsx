@@ -184,7 +184,7 @@ export default function MealEditorScreen() {
             <ChevronLeft size={22} color="#fff" />
           </PressableScale>
           <Text style={{ flex: 1, fontFamily: Font.display, fontSize: 24, color: '#fff', letterSpacing: -0.6 }}>my menu</Text>
-          <PressableScale onPress={() => { feedback.tap(); openCreate(); }} accessibilityRole="button" accessibilityLabel="Add a new meal" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, height: 40, borderRadius: 13, backgroundColor: ORANGE }}>
+          <PressableScale onPress={() => { feedback.tap(); openCreate(); }} accessibilityRole="button" accessibilityLabel="Add a new meal" style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, height: 40, borderRadius: Radius.pill, backgroundColor: ORANGE }}>
             <Plus size={17} color="#fff" strokeWidth={2.6} />
             <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>New meal</Text>
           </PressableScale>
@@ -204,7 +204,7 @@ export default function MealEditorScreen() {
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Your menu is empty</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', maxWidth: 280 }}>Add your first meal and publish it — customers see live meals instantly.</Text>
-            <PressableScale onPress={() => { feedback.tap(); openCreate(); }} accessibilityRole="button" accessibilityLabel="Add your first meal" style={{ marginTop: 4, paddingHorizontal: 20, height: 48, borderRadius: 13, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+            <PressableScale onPress={() => { feedback.tap(); openCreate(); }} accessibilityRole="button" accessibilityLabel="Add your first meal" style={{ marginTop: 4, paddingHorizontal: 20, height: 48, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Add your first meal</Text>
             </PressableScale>
           </MotiView>
@@ -356,7 +356,7 @@ export default function MealEditorScreen() {
               ) : null}
 
               {formErr ? <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: '#fca5a5' }}>{formErr}</Text> : null}
-              <PressableScale onPress={() => { feedback.tap(); submit(); }} disabled={save.isPending} accessibilityRole="button" accessibilityLabel="Save meal" style={{ height: 52, borderRadius: 14, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: save.isPending ? 0.7 : 1 }}>
+              <PressableScale onPress={() => { feedback.tap(); submit(); }} disabled={save.isPending} accessibilityRole="button" accessibilityLabel="Save meal" style={{ height: 52, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: save.isPending ? 0.7 : 1 }}>
                 {save.isPending ? <ActivityIndicator color="#fff" /> : <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>{draft?.id ? 'Save changes' : 'Create meal'}</Text>}
               </PressableScale>
               {!draft?.id ? <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, textAlign: 'center' }}>New meals start as drafts — publish when you&apos;re ready.</Text> : null}

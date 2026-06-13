@@ -75,7 +75,7 @@ function RequestCard({ req, prepperId }: { req: OpenRequest; prepperId: string }
           </View>
           {err ? <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.danger }}>{err}</Text> : null}
           <PressableScale onPress={send} disabled={submit.isPending} accessibilityRole="button" accessibilityLabel="Submit bid"
-            style={{ height: 46, borderRadius: 12, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: submit.isPending ? 0.7 : 1 }}>
+            style={{ height: 46, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: submit.isPending ? 0.7 : 1 }}>
             <Text style={{ fontFamily: Font.heading, fontSize: 14, color: '#fff' }}>Submit bid</Text>
           </PressableScale>
         </View>
@@ -93,7 +93,7 @@ function Gate({ title, body }: { title: string; body: string }) {
       </View>
       <Text style={{ fontFamily: Font.display, fontSize: 20, color: INK, textAlign: 'center' }}>{title}</Text>
       <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 300 }}>{body}</Text>
-      <PressableScale onPress={() => { feedback.tap(); router.push('/become-prepper'); }} accessibilityRole="button" accessibilityLabel="Become a prepper" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+      <PressableScale onPress={() => { feedback.tap(); router.push('/become-prepper'); }} accessibilityRole="button" accessibilityLabel="Become a prepper" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Become a prepper</Text>
       </PressableScale>
     </View>

@@ -5,7 +5,7 @@ import { ActivityIndicator, Linking, Modal, Platform, Pressable, Text, View } fr
 
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette } from '@/constants/theme';
+import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { supabase } from '@/lib/supabase';
 import { nextDeliveryDate, type DeliveryDay, type MealPlan } from '@/lib/queries/meal-plans';
@@ -130,7 +130,7 @@ export function SubscribePlanSheet({ plan, userId, onClose }: { plan: MealPlan |
             disabled={loading}
             accessibilityRole="button"
             accessibilityLabel="Start plan"
-            style={{ height: 54, borderRadius: 16, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: loading ? 0.7 : 1 }}>
+            style={{ height: 54, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', opacity: loading ? 0.7 : 1 }}>
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
