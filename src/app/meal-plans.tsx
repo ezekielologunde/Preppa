@@ -270,9 +270,15 @@ export default function MealPlansScreen() {
           )}
 
           {/* Featured showcase (illustrative) */}
+          <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 80 }}>
           <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginTop: 20, marginBottom: 10 }}>featured plans</Text>
+          </MotiView>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {featuredMealPlans.map((p) => <FeaturedCard key={p.id} plan={p} />)}
+            {featuredMealPlans.map((p, i) => (
+              <MotiView key={p.id} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 240, delay: 120 + i * 55 }}>
+                <FeaturedCard plan={p} />
+              </MotiView>
+            ))}
           </ScrollView>
         </ScrollView>
       </SafeAreaView>
