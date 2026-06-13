@@ -98,16 +98,21 @@ export default function AdminScreen() {
           {SECTIONS.map((s) => {
             const active = section === s.key;
             return (
-              <PressableScale
+              <MotiView
                 key={s.key}
-                onPress={() => { feedback.tap(); setSection(s.key); }}
-                accessibilityRole="button"
-                accessibilityState={{ selected: active }}
-                accessibilityLabel={s.label}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, height: 40, borderRadius: Radius.pill, backgroundColor: active ? Admin.brand : Admin.card, borderWidth: 1, borderColor: active ? Admin.brand : Admin.border }}>
-                <s.Icon size={15} color={active ? '#fff' : Admin.textDim} />
-                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : Admin.textDim }}>{s.label}</Text>
-              </PressableScale>
+                animate={{ backgroundColor: active ? Admin.brand : Admin.card, borderColor: active ? Admin.brand : Admin.border }}
+                transition={{ type: 'timing', duration: 180 }}
+                style={{ borderRadius: Radius.pill, borderWidth: 1, overflow: 'hidden' }}>
+                <PressableScale
+                  onPress={() => { feedback.tap(); setSection(s.key); }}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={s.label}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 7, paddingHorizontal: 14, height: 40 }}>
+                  <s.Icon size={15} color={active ? '#fff' : Admin.textDim} />
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : Admin.textDim }}>{s.label}</Text>
+                </PressableScale>
+              </MotiView>
             );
           })}
         </ScrollView>
