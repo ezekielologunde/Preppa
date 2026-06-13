@@ -128,11 +128,19 @@ export function MealCard({ meal, width = 200, variant = 'normal' }: { meal: Meal
               <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted }}>by {meal.prepper}</Text>
             </>
           ) : null}
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: big ? 0 : 4, gap: 6 }}>
-            <Star size={13} color={Palette.amber} fill={Palette.amber} />
-            <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.inkSoft }}>{meal.rating.toFixed(1)}</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, fontVariant: ['tabular-nums'] }}>· {meal.time} prep · ${meal.price.toFixed(2)}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: big ? 0 : 6, justifyContent: big ? undefined : 'space-between' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Star size={12} color={Palette.amber} fill={Palette.amber} />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.inkSoft }}>{meal.rating.toFixed(1)}</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 11.5, color: Palette.textMuted }}>· {meal.time}</Text>
+            </View>
+            {!big ? (
+              <Text style={{ fontFamily: Font.display, fontSize: 15, color: Palette.brand, letterSpacing: -0.2, fontVariant: ['tabular-nums'] }}>${meal.price.toFixed(2)}</Text>
+            ) : null}
           </View>
+          {big ? (
+            <Text style={{ fontFamily: Font.display, fontSize: 14, color: Palette.brand, letterSpacing: -0.2, fontVariant: ['tabular-nums'], marginTop: 2 }}>${meal.price.toFixed(2)}</Text>
+          ) : null}
         </View>
       </View>
     </PressableScale>
