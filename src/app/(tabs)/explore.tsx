@@ -259,7 +259,7 @@ export default function ExploreScreen() {
           ) : null}
 
           {/* Popular (live) */}
-          <SectionHeader title="popular right now" onSeeAll={() => router.push('/category?key=all&label=popular')} />
+          <SectionHeader title="trending this week" onSeeAll={() => router.push('/category?key=all&label=popular')} />
           {mealsLoading ? (
             <View style={{ paddingBottom: 20 }}><CardRowSkeleton count={3} /></View>
           ) : (

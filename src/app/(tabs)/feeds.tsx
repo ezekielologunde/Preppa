@@ -24,7 +24,6 @@ import { toggleFavorite, useFavorite } from '@/lib/favorites';
 import { useFeed, type FeedItem } from '@/lib/queries/feed';
 
 const ORANGE = Palette.brand;
-const TAB_BAR = 88;
 
 // ─── Side action button ───────────────────────────────────────────────────────
 
@@ -106,13 +105,13 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
       ) : null}
 
       {/* Side action panel */}
-      <View style={{ position: 'absolute', right: 14, bottom: bottomInset + TAB_BAR + 56, gap: 18, alignItems: 'center' }}>
+      <View style={{ position: 'absolute', right: 14, bottom: bottomInset + 56, gap: 18, alignItems: 'center' }}>
         <ActionBtn icon={Heart} label={isSaved ? 'Unsave' : 'Save meal'} caption={isSaved ? 'saved' : 'save'} active={isSaved} onPress={handleSave} />
         <ActionBtn icon={Share2} label="Share" caption="share" onPress={handleShare} />
       </View>
 
       {/* Bottom content — right edge reserved for side panel */}
-      <View style={{ position: 'absolute', left: 16, right: 80, bottom: bottomInset + TAB_BAR + 16, gap: 9 }}>
+      <View style={{ position: 'absolute', left: 16, right: 80, bottom: bottomInset + 16, gap: 9 }}>
         {/* Prepper row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <PressableScale onPress={goToPrepper} accessibilityRole="button" accessibilityLabel={`View ${item.prepper}'s kitchen`} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
@@ -164,9 +163,9 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
             <PressableScale
               onPress={() => { feedback.tap(); router.push(`/meal?id=${item.id}`); }}
               accessibilityRole="button"
-              accessibilityLabel={`Order ${item.title}`}
+              accessibilityLabel={`Preorder ${item.title}`}
               style={{ flex: 1, height: 50, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Order now</Text>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>Preorder</Text>
             </PressableScale>
           </View>
         )}
@@ -205,12 +204,13 @@ function PositionDots({ total, current }: { total: number; current: number }) {
 export default function FeedsScreen() {
   const router = useRouter();
   const { data: items, isLoading } = useFeed();
-  const { height } = useWindowDimensions();
+  const { height: windowHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [page, setPage] = useState(0);
+  const [cardHeight, setCardHeight] = useState(windowHeight);
 
   function onScroll(e: NativeSyntheticEvent<NativeScrollEvent>) {
-    const p = Math.round(e.nativeEvent.contentOffset.y / height);
+    const p = Math.round(e.nativeEvent.contentOffset.y / cardHeight);
     setPage(p);
   }
 
@@ -252,17 +252,17 @@ export default function FeedsScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
+    <View style={{ flex: 1, backgroundColor: '#000' }} onLayout={e => setCardHeight(e.nativeEvent.layout.height)}>
       <ScrollView
         pagingEnabled
         showsVerticalScrollIndicator={false}
         decelerationRate="fast"
-        snapToInterval={height}
+        snapToInterval={cardHeight}
         snapToAlignment="start"
         onScroll={onScroll}
-        scrollEventThrottle={height / 2}>
+        scrollEventThrottle={cardHeight / 2}>
         {items.map((item) => (
-          <FeedCard key={item.id} item={item} height={height} bottomInset={insets.bottom} />
+          <FeedCard key={item.id} item={item} height={cardHeight} bottomInset={insets.bottom} />
         ))}
       </ScrollView>
       <PositionDots total={items.length} current={page} />

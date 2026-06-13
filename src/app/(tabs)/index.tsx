@@ -180,7 +180,7 @@ export default function HomeScreen() {
             accessibilityLabel="Search meals, cuisines, or preppers"
             style={{ flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginTop: 10, backgroundColor: Palette.surface, borderRadius: 18, paddingHorizontal: 16, height: 46, gap: 10 }}>
             <Search size={19} color={MUTED} />
-            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 14.5, color: MUTED }}>Search meals, cuisines…</Text>
+            <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 14.5, color: MUTED }}>Search meals, kitchens, preppers…</Text>
             <SlidersHorizontal size={18} color={ORANGE} />
           </PressableScale>
           </MotiView>
@@ -262,7 +262,7 @@ export default function HomeScreen() {
           })()}
 
           {/* More meals — skip [0] which is already the hero above */}
-          <SectionHeader title="more near you" onSeeAll={() => { feedback.tap(); router.push('/category?key=all&label=recommended'); }} />
+          <SectionHeader title="from local kitchens" onSeeAll={() => { feedback.tap(); router.push('/category?key=all&label=recommended'); }} />
           {mealsLoading ? (
             <View style={{ paddingBottom: 20 }}>
               <CardRowSkeleton count={3} />
