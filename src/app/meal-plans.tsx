@@ -154,7 +154,7 @@ export default function MealPlansScreen() {
           </PressableScale>
           <View style={{ flex: 1 }}>
             <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>meal plans</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>weekly, monthly & family — delivered on repeat</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary }}>weekly, monthly & family — prepped on repeat</Text>
           </View>
         </View>
 
@@ -219,7 +219,7 @@ export default function MealPlansScreen() {
                           onPress={() => { feedback.tap(); skipDelivery.mutate(s.id, { onSuccess: (r) => (r.ok ? feedback.success() : feedback.warning()) }); }}
                           disabled={skipDelivery.isPending}
                           accessibilityRole="button"
-                          accessibilityLabel="Skip next delivery"
+                          accessibilityLabel="Skip next batch"
                           style={{ flex: 1, height: 38, borderRadius: Radius.sm, backgroundColor: Palette.brandTint, alignItems: 'center', justifyContent: 'center' }}>
                           <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.brandPressed }}>Skip next</Text>
                         </PressableScale>

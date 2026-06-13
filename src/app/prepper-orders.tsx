@@ -26,8 +26,8 @@ const NEXT: Partial<Record<OrderStatus, { next: OrderStatus; cta: string }>> = {
   pending: { next: 'confirmed', cta: 'Confirm order' },
   confirmed: { next: 'preparing', cta: 'Start preparing' },
   preparing: { next: 'ready', cta: 'Mark ready' },
-  ready: { next: 'completed', cta: 'Mark delivered' },
-  out_for_delivery: { next: 'completed', cta: 'Mark delivered' },
+  ready: { next: 'completed', cta: 'Mark complete' },
+  out_for_delivery: { next: 'completed', cta: 'Mark complete' },
 };
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
@@ -36,7 +36,7 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   preparing: 'Preparing',
   ready: 'Ready',
   out_for_delivery: 'On the way',
-  completed: 'Delivered',
+  completed: 'Complete',
   cancelled: 'Cancelled',
 };
 

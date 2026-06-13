@@ -97,7 +97,7 @@ export default function SurpriseScreen() {
             </PressableScale>
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: Font.display, fontSize: 26, color: INK, letterSpacing: -0.8 }}>surprise me</Text>
-              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 1 }}>let a local chef decide</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 1 }}>let a local kitchen choose</Text>
             </View>
             <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Sparkles size={22} color="#fff" />
