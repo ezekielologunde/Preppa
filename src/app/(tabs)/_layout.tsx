@@ -68,41 +68,47 @@ function PreppaTabBar({ state, navigation }: TabBarProps) {
 
   return (
     <View style={{
+      width: '100%',
+      flexDirection: 'row',
+      alignItems: 'stretch',
       backgroundColor: Palette.surface,
       borderTopWidth: 1,
       borderTopColor: Palette.border,
       paddingBottom: Math.max(insets.bottom + 4, 12),
-      flexDirection: 'row',
     }}>
       {TABS.map((tab) => {
         const routeIndex = state.routes.findIndex((r) => r.name === tab.name);
         const focused = routeIndex >= 0 && state.index === routeIndex;
 
+        // The flex item is THIS wrapper View — each tab gets an equal 1/5 of the
+        // bar. (PressableScale applies its style to an inner MotiView, so putting
+        // `flex:1` on it does nothing; the flex must live on a real flex child.)
         return (
-          <PressableScale
-            key={tab.name}
-            onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
-            accessibilityRole="button"
-            accessibilityState={{ selected: focused }}
-            accessibilityLabel={tab.label}
-            style={{ flex: 1, minWidth: 0, alignItems: 'center', justifyContent: 'center', paddingTop: 10, paddingHorizontal: 2, gap: 4 }}>
+          <View key={tab.name} style={{ flex: 1, minWidth: 0 }}>
+            <PressableScale
+              onPress={() => { feedback.tap(); navigation.navigate(tab.name); }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: focused }}
+              accessibilityLabel={tab.label}
+              style={{ width: '100%', minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingTop: 10, paddingHorizontal: 2, gap: 4 }}>
 
-            <MotiView
-              animate={{ width: focused ? 26 : 0, opacity: focused ? 1 : 0 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 26 }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                height: 3,
-                borderBottomLeftRadius: 2,
-                borderBottomRightRadius: 2,
-                backgroundColor: Palette.brand,
-              }}
-            />
+              <MotiView
+                animate={{ width: focused ? 26 : 0, opacity: focused ? 1 : 0 }}
+                transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  height: 3,
+                  borderBottomLeftRadius: 2,
+                  borderBottomRightRadius: 2,
+                  backgroundColor: Palette.brand,
+                }}
+              />
 
-            <TabBarIcon tab={tab} focused={focused} />
-            <TabBarLabel label={tab.label} focused={focused} compact={compact} />
-          </PressableScale>
+              <TabBarIcon tab={tab} focused={focused} />
+              <TabBarLabel label={tab.label} focused={focused} compact={compact} />
+            </PressableScale>
+          </View>
         );
       })}
     </View>
