@@ -80,14 +80,24 @@ export default function NotificationSettingsScreen() {
             <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, marginTop: 1 }}>{activeCount} of {CATEGORIES.length} active</Text>
           </View>
           <View style={{ flexDirection: 'row', gap: 6 }}>
-            <PressableScale onPress={enableAll} accessibilityRole="button" accessibilityLabel="Enable all notifications"
-              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: activeCount === CATEGORIES.length ? Palette.chip : Palette.brandTint }}>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === CATEGORIES.length ? Palette.textMuted : ORANGE }}>all on</Text>
-            </PressableScale>
-            <PressableScale onPress={disableAll} accessibilityRole="button" accessibilityLabel="Disable all notifications"
-              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: activeCount === 0 ? Palette.chip : Palette.surface }}>
-              <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === 0 ? Palette.textMuted : Palette.textSecondary }}>all off</Text>
-            </PressableScale>
+            <MotiView
+              animate={{ backgroundColor: activeCount === CATEGORIES.length ? Palette.chip : Palette.brandTint }}
+              transition={{ type: 'timing', duration: 200 }}
+              style={{ borderRadius: Radius.pill, overflow: 'hidden' }}>
+              <PressableScale onPress={enableAll} accessibilityRole="button" accessibilityLabel="Enable all notifications"
+                style={{ paddingHorizontal: 12, paddingVertical: 7 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === CATEGORIES.length ? Palette.textMuted : ORANGE }}>all on</Text>
+              </PressableScale>
+            </MotiView>
+            <MotiView
+              animate={{ backgroundColor: activeCount === 0 ? Palette.chip : Palette.surface }}
+              transition={{ type: 'timing', duration: 200 }}
+              style={{ borderRadius: Radius.pill, overflow: 'hidden' }}>
+              <PressableScale onPress={disableAll} accessibilityRole="button" accessibilityLabel="Disable all notifications"
+                style={{ paddingHorizontal: 12, paddingVertical: 7 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: activeCount === 0 ? Palette.textMuted : Palette.textSecondary }}>all off</Text>
+              </PressableScale>
+            </MotiView>
           </View>
         </View>
 
