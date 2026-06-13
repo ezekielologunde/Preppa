@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { feedback } from '@/lib/feedback';
-import { Palette } from '@/constants/theme';
+import { useBreakpoint } from '@/lib/layout';
+import { Palette, Radius } from '@/constants/theme';
 import { useMyEarnings, type EarningsRecent } from '@/lib/queries/earnings';
 
 const ORANGE = Palette.brand;
@@ -62,6 +63,7 @@ function EarningRow({ item }: { item: EarningsRecent }) {
 
 export default function EarningsScreen() {
   const router = useRouter();
+  const isDesktop = useBreakpoint() === 'desktop';
   const { data, isLoading, refetch } = useMyEarnings();
   const [refreshing, setRefreshing] = useState(false);
   async function handleRefresh() { setRefreshing(true); await refetch(); setRefreshing(false); }
@@ -85,12 +87,13 @@ export default function EarningsScreen() {
             </View>
             <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No earnings yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: MUTED, textAlign: 'center' }}>Become a prepper and your sales will show up here.</Text>
-            <PressableScale onPress={() => { feedback.tap(); router.push('/become-prepper'); }} accessibilityRole="button" accessibilityLabel="Become a prepper" style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: 14, paddingHorizontal: 22, paddingVertical: 12 }}>
+            <PressableScale onPress={() => { feedback.tap(); router.push('/become-prepper'); }} accessibilityRole="button" accessibilityLabel="Become a prepper" style={{ marginTop: 6, backgroundColor: ORANGE, borderRadius: Radius.pill, paddingHorizontal: 22, paddingVertical: 12 }}>
               <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>Become a prepper</Text>
             </PressableScale>
           </View>
         ) : (
-          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 48 }}>
+          <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Palette.brand} colors={[Palette.brand]} />} contentContainerStyle={{ paddingBottom: 48 }}>
+            <View style={[{ padding: 20, gap: 14 }, isDesktop ? { maxWidth: 800, alignSelf: 'center', width: '100%' } : null]}>
             {/* Hero: net earnings */}
             <MotiView from={{ opacity: 0, translateY: 12 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 300 }}>
             <View style={{ backgroundColor: CARD, borderRadius: 22, padding: 22, gap: 6 }}>
@@ -171,6 +174,7 @@ export default function EarningsScreen() {
                 ))}
               </View>
             )}
+            </View>
           </ScrollView>
         )}
       </SafeAreaView>

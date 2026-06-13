@@ -253,7 +253,7 @@ export default function DashboardScreen() {
                   disabled={advance.isPending}
                   accessibilityRole="button"
                   accessibilityLabel={step.cta}
-                  style={{ height: 50, borderRadius: 15, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6, opacity: advance.isPending ? 0.7 : 1 }}>
+                  style={{ height: 50, borderRadius: Radius.pill, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6, opacity: advance.isPending ? 0.7 : 1 }}>
                   <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>{step.cta}</Text>
                 </PressableScale>
               ) : null}
@@ -350,7 +350,7 @@ export default function DashboardScreen() {
           from={{ translateY: 80, opacity: 0 }}
           animate={{ translateY: 0, opacity: 1 }}
           transition={{ type: 'spring', damping: 20, stiffness: 220, delay: 300 }}
-          style={[{ position: 'absolute', left: 16, right: 16, bottom: Math.max(insets.bottom, 16) + 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
+          style={[{ position: 'absolute', left: 16, right: 16, bottom: Math.max(insets.bottom, 16) + (desktop ? 0 : 56), flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
           <ActionItem Icon={TrendingUp} label="earnings" color={Palette.inkSoft} onPress={() => router.push('/earnings')} />
           <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/post-video')} />
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => { feedback.tap(); router.push('/meal-editor'); }}>
@@ -362,14 +362,16 @@ export default function DashboardScreen() {
           <ActionItem Icon={Briefcase} label="opportunity" color={ORANGE} onPress={() => router.push('/opportunities')} />
         </MotiView>
 
-        {/* Prepper tab nav (dark) */}
-        <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: Math.max(insets.bottom, 16), borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
-          <NavTab Icon={Home} label="home" onPress={() => router.push('/')} />
-          <NavTab Icon={ShoppingBag} label="preorders" badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
-          <NavTab Icon={ChefHat} label="kitchen" active />
-          <NavTab Icon={MessageSquare} label="messages" onPress={() => router.push('/messages')} />
-          <NavTab Icon={User} label="profile" onPress={() => router.push('/profile')} />
-        </View>
+        {/* Prepper tab nav (dark) — hidden on desktop; sidebar handles nav there */}
+        {!desktop && (
+          <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: Math.max(insets.bottom, 16), borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
+            <NavTab Icon={Home} label="home" onPress={() => router.push('/')} />
+            <NavTab Icon={ShoppingBag} label="preorders" badge={newCount || undefined} onPress={() => router.push('/prepper-orders')} />
+            <NavTab Icon={ChefHat} label="kitchen" active />
+            <NavTab Icon={MessageSquare} label="messages" onPress={() => router.push('/messages')} />
+            <NavTab Icon={User} label="profile" onPress={() => router.push('/profile')} />
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );

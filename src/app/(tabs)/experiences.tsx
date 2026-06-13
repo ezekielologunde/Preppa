@@ -26,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { feedback } from '@/lib/feedback';
 import { Font } from '@/constants/fonts';
+import { useBreakpoint } from '@/lib/layout';
 import { experienceTypes, featuredExperiences, type Experience } from '@/constants/mock';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { useMyExperienceRequests } from '@/lib/queries/experiences';
@@ -41,9 +42,9 @@ const STEPS: { Icon: LucideIcon; title: string; body: string }[] = [
   { Icon: PartyPopper, title: 'Book & enjoy', body: 'Pick your favourite and confirm' },
 ];
 
-function ExperienceCard({ exp, onPress }: { exp: Experience; onPress: () => void }) {
+function ExperienceCard({ exp, onPress, width = 260 }: { exp: Experience; onPress: () => void; width?: number }) {
   return (
-    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${exp.title} by ${exp.host}, from $${exp.from} ${exp.per}`} style={{ width: 260, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
+    <PressableScale onPress={onPress} accessibilityRole="button" accessibilityLabel={`${exp.title} by ${exp.host}, from $${exp.from} ${exp.per}`} style={{ width, backgroundColor: Palette.surface, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.card }}>
       <Image source={exp.image} style={{ width: '100%', height: 150 }} contentFit="cover" transition={200} />
       <View style={{ padding: 14 }}>
         <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }} numberOfLines={1}>{exp.title}</Text>
@@ -66,6 +67,7 @@ function ExperienceCard({ exp, onPress }: { exp: Experience; onPress: () => void
 export default function ExperiencesScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const isDesktop = useBreakpoint() === 'desktop';
   // Live feedback loop: posted requests show their bid count right on the tab.
   const { data: myRequests, refetch } = useMyExperienceRequests(user?.id);
   const activeRequests = (myRequests ?? []).filter((r) => r.status === 'open').slice(0, 2);
@@ -213,13 +215,23 @@ export default function ExperiencesScreen() {
 
           {/* Featured */}
           <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, paddingHorizontal: 20, marginTop: 22, marginBottom: 10 }}>featured experiences</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {featuredExperiences.map((e, i) => (
-              <MotiView key={e.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
-                <ExperienceCard exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
-              </MotiView>
-            ))}
-          </ScrollView>
+          {isDesktop ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 20, gap: 14 }}>
+              {featuredExperiences.map((e, i) => (
+                <MotiView key={e.id} from={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
+                  <ExperienceCard exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
+                </MotiView>
+              ))}
+            </View>
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
+              {featuredExperiences.map((e, i) => (
+                <MotiView key={e.id} from={{ opacity: 0, translateX: 14 }} animate={{ opacity: 1, translateX: 0 }} transition={{ type: 'timing', duration: 220, delay: i * 45 }}>
+                  <ExperienceCard exp={e} onPress={() => { feedback.tap(); router.push(`/experience-request?kind=${e.type}`); }} />
+                </MotiView>
+              ))}
+            </ScrollView>
+          )}
 
           {/* My requests entry */}
           <PressableScale onPress={() => { feedback.tap(); router.push('/experience-request'); }} accessibilityRole="button" accessibilityLabel="View my requests" style={{ marginHorizontal: 20, marginTop: 24, alignItems: 'center', paddingVertical: 15, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border, backgroundColor: Palette.surface }}>
