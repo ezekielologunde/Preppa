@@ -8,7 +8,6 @@ import {
   List,
   MapPin,
   Search,
-  ShoppingBag,
   SlidersHorizontal,
   Sparkles,
   X,
@@ -330,20 +329,20 @@ export default function ExploreScreen() {
             </ScrollView>
           </MotiView>
 
-          {/* ── Grocery Concierge Banner ── */}
+          {/* ── Surprise Me ── */}
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 140 }}>
             <PressableScale
-              onPress={() => { feedback.tap(); router.push('/grocery-concierge'); }}
+              onPress={() => { feedback.tap(); router.push('/surprise'); }}
               accessibilityRole="button"
-              accessibilityLabel="Grocery concierge — ingredient kits"
+              accessibilityLabel="Surprise me — let a chef pick your meal"
               style={{ marginHorizontal: 20, marginBottom: 20 }}>
               <View style={{ backgroundColor: Palette.ink, borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
                 <View style={{ width: 46, height: 46, borderRadius: 14, backgroundColor: Palette.brand + '22', alignItems: 'center', justifyContent: 'center' }}>
-                  <ShoppingBag size={21} color={Palette.brand} />
+                  <Sparkles size={21} color={Palette.brand} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>grocery concierge</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>Pre-portioned ingredient kits from local preppers</Text>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>surprise me</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: 'rgba(255,255,255,0.65)', marginTop: 2 }}>Tell us your vibe — we'll pick the perfect meal</Text>
                 </View>
                 <ChevronRight size={16} color="rgba(255,255,255,0.4)" />
               </View>

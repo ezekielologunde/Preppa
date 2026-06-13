@@ -70,7 +70,7 @@ function RushHourCard() {
         </View>
         {rush.active ? (
           <View style={{ backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#fff' }}>live</Text>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#fff' }}>active</Text>
           </View>
         ) : null}
       </View>
@@ -136,7 +136,7 @@ export default function SpecialsScreen() {
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Palette.brandTint, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 5 }}>
             <Sparkles size={12} color={ORANGE} />
-            <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: ORANGE }}>live</Text>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: ORANGE }}>now</Text>
           </View>
         </View>
 
