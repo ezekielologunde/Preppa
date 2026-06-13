@@ -82,25 +82,24 @@ function CategoryChips({ active, onSelect }: { active: string; onSelect: (key: s
       {CATEGORY_CHIPS.map((chip) => {
         const isActive = chip.key === active;
         return (
-          <PressableScale
+          <MotiView
             key={chip.key}
-            onPress={() => { feedback.tap(); onSelect(chip.key); }}
-            accessibilityRole="button"
-            accessibilityLabel={`Filter by ${chip.label}`}
-            style={{
-              height: 36,
-              borderRadius: 18,
-              paddingHorizontal: 14,
-              alignItems: 'center',
-              justifyContent: 'center',
+            animate={{
               backgroundColor: isActive ? Palette.brand : Palette.surface,
-              borderWidth: 1,
               borderColor: isActive ? Palette.brand : Palette.border,
-            }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: isActive ? '#fff' : Palette.textSecondary }}>
-              {chip.label}
-            </Text>
-          </PressableScale>
+            }}
+            transition={{ type: 'timing', duration: 180 }}
+            style={{ height: 36, borderRadius: 18, borderWidth: 1, overflow: 'hidden' }}>
+            <PressableScale
+              onPress={() => { feedback.tap(); onSelect(chip.key); }}
+              accessibilityRole="button"
+              accessibilityLabel={`Filter by ${chip.label}`}
+              style={{ flex: 1, paddingHorizontal: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: isActive ? '#fff' : Palette.textSecondary }}>
+                {chip.label}
+              </Text>
+            </PressableScale>
+          </MotiView>
         );
       })}
     </ScrollView>

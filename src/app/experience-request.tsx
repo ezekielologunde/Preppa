@@ -85,10 +85,23 @@ export default function ExperienceRequestScreen() {
             {KINDS.map((k) => {
               const on = kind === k.key;
               return (
-                <PressableScale key={k.key} onPress={() => { feedback.tap(); setKind(k.key); }} accessibilityRole="button" accessibilityState={{ selected: on }} accessibilityLabel={k.label}
-                  style={{ paddingHorizontal: 14, paddingVertical: 9, borderRadius: Radius.pill, backgroundColor: on ? Palette.brandTint : Palette.canvas, borderWidth: 1, borderColor: on ? ORANGE : 'transparent' }}>
-                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{k.label}</Text>
-                </PressableScale>
+                <MotiView
+                  key={k.key}
+                  animate={{
+                    backgroundColor: on ? Palette.brandTint : Palette.canvas,
+                    borderColor: on ? ORANGE : Palette.border,
+                  }}
+                  transition={{ type: 'timing', duration: 180 }}
+                  style={{ borderRadius: Radius.pill, borderWidth: 1, overflow: 'hidden' }}>
+                  <PressableScale
+                    onPress={() => { feedback.tap(); setKind(k.key); }}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: on }}
+                    accessibilityLabel={k.label}
+                    style={{ paddingHorizontal: 14, paddingVertical: 9 }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: on ? ORANGE : Palette.inkSoft }}>{k.label}</Text>
+                  </PressableScale>
+                </MotiView>
               );
             })}
           </View>
@@ -106,7 +119,11 @@ export default function ExperienceRequestScreen() {
           </View>
           </MotiView>
 
-          {err ? <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.danger, marginTop: 14 }}>{err}</Text> : null}
+          {err ? (
+            <MotiView from={{ opacity: 0, translateY: -4 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200 }}>
+              <Text style={{ fontFamily: Font.medium, fontSize: 14, color: Palette.danger, marginTop: 14 }}>{err}</Text>
+            </MotiView>
+          ) : null}
 
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 160 }}>
           <PressableScale onPress={submit} disabled={create.isPending} accessibilityRole="button" accessibilityLabel="Post request"
@@ -116,7 +133,9 @@ export default function ExperienceRequestScreen() {
           </MotiView>
 
           {/* My requests */}
-          <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, marginTop: 22, marginBottom: 10 }}>my requests</Text>
+          <MotiView from={{ opacity: 0, translateY: 6 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: 200 }}>
+            <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, marginTop: 22, marginBottom: 10 }}>my requests</Text>
+          </MotiView>
           {isLoading ? (
             <ActivityIndicator color={ORANGE} style={{ marginTop: 12 }} />
           ) : !requests?.length ? (
