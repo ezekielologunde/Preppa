@@ -41,13 +41,13 @@ function notify(o: OrderSummary): { Icon: LucideIcon; color: string; bg: string;
   const item = o.items[0]?.title ?? 'your order';
   const by = o.prepper;
   const map: Partial<Record<OrderStatus, { Icon: LucideIcon; color: string; bg: string; title: string }>> = {
-    pending: { Icon: Package, color: Palette.amber, bg: Palette.amber + '1A', title: 'Order placed' },
-    confirmed: { Icon: CircleCheck, color: Palette.success, bg: Palette.success + '1A', title: `${by} accepted your order` },
-    preparing: { Icon: ChefHat, color: ORANGE, bg: Palette.brandTint, title: 'Your food is being prepared' },
-    ready: { Icon: UtensilsCrossed, color: ORANGE, bg: Palette.brandTint, title: 'Your order is ready' },
+    pending: { Icon: Package, color: Palette.amber, bg: Palette.amber + '1A', title: 'Preorder placed' },
+    confirmed: { Icon: CircleCheck, color: Palette.success, bg: Palette.success + '1A', title: `${by} accepted your preorder` },
+    preparing: { Icon: ChefHat, color: ORANGE, bg: Palette.brandTint, title: 'Your food is being prepped' },
+    ready: { Icon: UtensilsCrossed, color: ORANGE, bg: Palette.brandTint, title: 'Your order is ready for pickup' },
     out_for_delivery: { Icon: Bike, color: '#8b5cf6', bg: '#EDE9FE', title: 'Your order is on the way' },
     completed: { Icon: Star, color: Palette.amber, bg: Palette.amber + '1A', title: 'Complete — leave a review' },
-    cancelled: { Icon: CircleX, color: Palette.danger, bg: Palette.danger + '1A', title: 'Order cancelled & refunded' },
+    cancelled: { Icon: CircleX, color: Palette.danger, bg: Palette.danger + '1A', title: 'Preorder cancelled & refunded' },
   };
   const m = map[o.status] ?? map.pending!;
   return { ...m, sub: `${item} · by ${by}` };
@@ -223,7 +223,7 @@ export default function MessagesScreen() {
               ordersLoading ? (
                 <ListSkeleton count={5} />
               ) : !orders?.length && !notifications?.length ? (
-                <Empty Icon={Bell} title="No updates yet" sub="Order updates, new bids, reviews and renewals will show up here." />
+                <Empty Icon={Bell} title="No updates yet" sub="Preorder updates, new bids, reviews and renewals will show up here." />
               ) : (
                 <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ paddingTop: Platform.OS === 'web' ? 8 : 4, paddingBottom: 32 }}>
                   {(notifications?.length ?? 0) > 0 ? (

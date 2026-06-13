@@ -290,7 +290,7 @@ export default function NotificationsScreen() {
                 maxWidth: 260,
                 lineHeight: 20,
               }}>
-              Order updates, new meal drops, and messages will appear here.
+              Preorder updates, new meal drops, and messages will appear here.
             </Text>
           </MotiView>
         ) : (
