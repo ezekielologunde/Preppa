@@ -13,10 +13,11 @@ import {
 } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
-import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { ListSkeleton } from '@/components/ui/skeleton';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
@@ -254,7 +255,7 @@ export default function NotificationsScreen() {
         ) : null}
 
         {isLoading ? (
-          <ActivityIndicator color={Palette.brand} style={{ marginTop: 40 }} />
+          <ListSkeleton count={5} rowHeight={72} />
         ) : !notifs?.length ? (
           <MotiView
             from={{ opacity: 0, translateY: 10 }}

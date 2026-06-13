@@ -199,7 +199,12 @@ export function RewardsCard({ rewards, onPress }: { rewards: RewardsData; onPres
             )}
           </View>
           <View style={{ height: 7, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.08)', marginTop: 8, overflow: 'hidden' }}>
-            <View style={{ width: `${Math.round(rewards.progress * 100)}%`, height: 7, borderRadius: 4, backgroundColor: Palette.brand }} />
+            <MotiView
+              from={{ width: '0%' }}
+              animate={{ width: `${Math.round(rewards.progress * 100)}%` }}
+              transition={{ type: 'timing', duration: 700, delay: 200 }}
+              style={{ height: 7, borderRadius: 4, backgroundColor: Palette.brand }}
+            />
           </View>
         </View>
         <Gift size={56} color="#d97706" />
