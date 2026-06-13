@@ -66,7 +66,7 @@ const EVENTS: HolidayEvent[] = [
 
 const URGENCY_LABEL: Record<HolidayEvent['urgency'], { label: string; color: string }> = {
   today: { label: 'preorder now', color: '#dc2626' },
-  soon: { label: 'order ahead', color: ORANGE },
+  soon: { label: 'preorder ahead', color: ORANGE },
   upcoming: { label: 'pre-save', color: '#8b5cf6' },
 };
 
@@ -132,7 +132,7 @@ export default function HolidaySpecialsScreen() {
           <View style={{ backgroundColor: INK, borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
             <Flame size={17} color={ORANGE} style={{ marginTop: 1 }} />
             <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 19 }}>
-              Holiday meals sell out fast during rush hours. Order by <Text style={{ fontFamily: Font.semibold, color: '#fff' }}>11 am</Text> for same-day delivery or by <Text style={{ fontFamily: Font.semibold, color: '#fff' }}>4 pm</Text> for evening pickup.
+              Holiday meals sell out fast during rush hours. Preorder by <Text style={{ fontFamily: Font.semibold, color: '#fff' }}>11 am</Text> for same-day fulfillment or by <Text style={{ fontFamily: Font.semibold, color: '#fff' }}>4 pm</Text> for evening pickup.
             </Text>
           </View>
           </MotiView>
