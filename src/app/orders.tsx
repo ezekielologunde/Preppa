@@ -54,6 +54,7 @@ function timelineIdx(status: OrderStatus): number {
 function OrderTimeline({ status }: { status: OrderStatus }) {
   if (status === 'cancelled') return null;
   const curr = timelineIdx(status);
+  const inFlight = status !== 'completed';
   return (
     <View style={{ marginTop: 4, marginBottom: 2 }}>
       {/* Progress track */}
@@ -61,16 +62,26 @@ function OrderTimeline({ status }: { status: OrderStatus }) {
         {TIMELINE_STEPS.map((step, i) => {
           const done = i <= curr;
           const active = i === curr;
+          const nodeStyle = {
+            width: active ? 11 : 8,
+            height: active ? 11 : 8,
+            borderRadius: 6,
+            backgroundColor: done ? Palette.brand : Palette.border,
+            ...(active ? { shadowColor: Palette.brand, shadowRadius: 5, shadowOpacity: 0.55, elevation: 3 } : {}),
+          };
           return (
             <View key={step.key} style={{ flexDirection: 'row', alignItems: 'center', flex: i < TIMELINE_STEPS.length - 1 ? 1 : 0 }}>
-              {/* Node */}
-              <View style={{
-                width: active ? 11 : 8,
-                height: active ? 11 : 8,
-                borderRadius: 6,
-                backgroundColor: done ? Palette.brand : Palette.border,
-                ...(active ? { shadowColor: Palette.brand, shadowRadius: 5, shadowOpacity: 0.55, elevation: 3 } : {}),
-              }} />
+              {/* Node — pulses while this step is the active in-flight step */}
+              {active && inFlight ? (
+                <MotiView
+                  from={{ opacity: 0.55, scale: 0.85 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'timing', duration: 950, loop: true, repeatReverse: true }}>
+                  <View style={nodeStyle} />
+                </MotiView>
+              ) : (
+                <View style={nodeStyle} />
+              )}
               {/* Connector */}
               {i < TIMELINE_STEPS.length - 1 ? (
                 <View style={{ flex: 1, height: 2, backgroundColor: i < curr ? Palette.brand : Palette.border, marginHorizontal: 2, borderRadius: 1 }} />
