@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { BadgeCheck, Star, Trophy } from 'lucide-react-native';
+import { MotiView } from 'moti';
 import { Text, View } from 'react-native';
 
 import { FavoriteButton } from '@/components/ui/favorite-button';
@@ -9,6 +10,7 @@ import { Font } from '@/constants/fonts';
 import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { imgUrl } from '@/lib/img';
+import { getCurrentRush, getRushUrgency } from '@/lib/rush-hour';
 import type { TopPrepper } from '@/lib/queries/preppers';
 
 /** Reputation-rank badge for the "Top kitchens" rail. #1 = Trophy; #2/#3 = chip. */
@@ -28,6 +30,34 @@ function RankBadge({ rank }: { rank: number }) {
   );
 }
 
+/** Shown on the card image during an active rush window (morning / lunch / dinner). */
+function LiveBadge() {
+  const hour = new Date().getHours();
+  const minute = new Date().getMinutes();
+  if (getRushUrgency(hour, minute) !== 'live') return null;
+  const win = getCurrentRush(hour);
+  if (!win) return null;
+  return (
+    <MotiView
+      from={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ type: 'timing', duration: 200 }}
+      style={{ position: 'absolute', bottom: 8, left: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: win.color + 'E6', borderRadius: Radius.pill, paddingHorizontal: 8, paddingVertical: 4 }}>
+        <MotiView
+          from={{ opacity: 0.4 }}
+          animate={{ opacity: 1 }}
+          transition={{ type: 'timing', duration: 750, loop: true, repeatReverse: true }}>
+          <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#fff' }} />
+        </MotiView>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 10.5, color: '#fff', letterSpacing: 0.2 }}>
+          {win.label.toLowerCase()}
+        </Text>
+      </View>
+    </MotiView>
+  );
+}
+
 /** "Top preppers near you" card — chef hero, rating, tags, starting price.
  *  Pass `showRank` to surface the reputation-rank badge (top-kitchens rail). */
 export function PrepperCard({ prepper, showRank = false }: { prepper: TopPrepper; showRank?: boolean }) {
@@ -39,6 +69,7 @@ export function PrepperCard({ prepper, showRank = false }: { prepper: TopPrepper
         <View style={{ height: 130, backgroundColor: '#FCE9DD' }}>
           {prepper.image ? <Image source={imgUrl(prepper.image, 420)} style={{ flex: 1 }} contentFit="cover" transition={250} /> : null}
           {ranked ? <RankBadge rank={prepper.rank!} /> : null}
+          <LiveBadge />
           <View style={{ position: 'absolute', top: 10, right: 10 }}>
             <FavoriteButton id={`prepper:${prepper.id}`} />
           </View>
