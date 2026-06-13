@@ -38,14 +38,22 @@ const VIBE_OPTIONS = [
 
 function Chip({ label, color, active, onPress }: { label: string; color: string; active: boolean; onPress: () => void }) {
   return (
-    <PressableScale
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected: active }}
-      accessibilityLabel={label}
-      style={{ paddingHorizontal: 16, paddingVertical: 10, borderRadius: Radius.pill, backgroundColor: active ? color + '22' : Palette.surface, borderWidth: 1.5, borderColor: active ? color : Palette.border, ...Shadow.card }}>
-      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: active ? color : Palette.textSecondary }}>{label}</Text>
-    </PressableScale>
+    <MotiView
+      animate={{
+        backgroundColor: active ? color + '22' : Palette.surface,
+        borderColor: active ? color : Palette.border,
+      }}
+      transition={{ type: 'timing', duration: 180 }}
+      style={{ borderRadius: Radius.pill, borderWidth: 1.5, overflow: 'hidden', ...Shadow.card }}>
+      <PressableScale
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityState={{ selected: active }}
+        accessibilityLabel={label}
+        style={{ paddingHorizontal: 16, paddingVertical: 10 }}>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: active ? color : Palette.textSecondary }}>{label}</Text>
+      </PressableScale>
+    </MotiView>
   );
 }
 
