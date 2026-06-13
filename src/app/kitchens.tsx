@@ -17,14 +17,22 @@ const INK = Palette.ink;
 
 function TagChip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
-    <PressableScale
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      accessibilityLabel={label}
-      style={{ paddingHorizontal: 15, height: 38, borderRadius: Radius.pill, backgroundColor: selected ? INK : Palette.surface, borderWidth: 1.5, borderColor: selected ? 'transparent' : Palette.border, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
-    </PressableScale>
+    <MotiView
+      animate={{
+        backgroundColor: selected ? INK : Palette.surface,
+        borderColor: selected ? INK : Palette.border,
+      }}
+      transition={{ type: 'timing', duration: 180 }}
+      style={{ borderRadius: Radius.pill, borderWidth: 1.5, overflow: 'hidden' }}>
+      <PressableScale
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityState={{ selected }}
+        accessibilityLabel={label}
+        style={{ paddingHorizontal: 15, height: 38, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
+      </PressableScale>
+    </MotiView>
   );
 }
 
