@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { BadgeCheck, Heart, MonitorPlay, Play, Share2, Star } from 'lucide-react-native';
+import { BadgeCheck, Heart, MonitorPlay, Play, Share2, Star, UserCheck, UserPlus } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import {
@@ -22,6 +22,8 @@ import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { toggleFavorite, useFavorite } from '@/lib/favorites';
 import { useFeed, type FeedItem } from '@/lib/queries/feed';
+import { useIsFollowing, useToggleFollow } from '@/lib/queries/preppers';
+import { useAuth } from '@/providers/auth-provider';
 
 const ORANGE = Palette.brand;
 
@@ -53,6 +55,27 @@ function ActionBtn({
         </Text>
       ) : null}
     </PressableScale>
+  );
+}
+
+function FollowBtn({ prepperId }: { prepperId: string }) {
+  const { user } = useAuth();
+  const { data: isFollowing } = useIsFollowing(prepperId, user?.id);
+  const toggle = useToggleFollow(prepperId, user?.id);
+  const following = isFollowing ?? false;
+  function handlePress() {
+    feedback.tap();
+    toggle.mutate(following);
+  }
+  return (
+    <ActionBtn
+      icon={following ? UserCheck : UserPlus}
+      label={following ? 'Unfollow kitchen' : 'Follow kitchen'}
+      caption={following ? 'following' : 'follow'}
+      active={false}
+      color={following ? ORANGE : '#fff'}
+      onPress={handlePress}
+    />
   );
 }
 
@@ -105,8 +128,9 @@ function FeedCard({ item, height, bottomInset }: { item: FeedItem; height: numbe
       ) : null}
 
       {/* Side action panel */}
-      <View style={{ position: 'absolute', right: 14, bottom: bottomInset + 56, gap: 18, alignItems: 'center' }}>
+      <View style={{ position: 'absolute', right: 14, bottom: bottomInset + 56, gap: 16, alignItems: 'center' }}>
         <ActionBtn icon={Heart} label={isSaved ? 'Unsave' : 'Save meal'} caption={isSaved ? 'saved' : 'save'} active={isSaved} onPress={handleSave} />
+        {item.prepper_id ? <FollowBtn prepperId={item.prepper_id} /> : null}
         <ActionBtn icon={Share2} label="Share" caption="share" onPress={handleShare} />
       </View>
 
