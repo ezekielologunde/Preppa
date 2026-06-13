@@ -338,7 +338,11 @@ export default function DashboardScreen() {
         </ScrollView>
 
         {/* Floating action bar (add meal · go live · + · new drop · opportunity) */}
-        <View style={[{ position: 'absolute', left: 16, right: 16, bottom: Math.max(insets.bottom, 16) + 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
+        <MotiView
+          from={{ translateY: 80, opacity: 0 }}
+          animate={{ translateY: 0, opacity: 1 }}
+          transition={{ type: 'spring', damping: 20, stiffness: 220, delay: 300 }}
+          style={[{ position: 'absolute', left: 16, right: 16, bottom: Math.max(insets.bottom, 16) + 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: CARD, borderRadius: 26, paddingVertical: 12, paddingHorizontal: 18, ...Shadow.floating }, desktop && { left: undefined, right: undefined, alignSelf: 'center', width: 520 }]}>
           <ActionItem Icon={TrendingUp} label="earnings" color={Palette.inkSoft} onPress={() => router.push('/earnings')} />
           <ActionItem Icon={Video} label="go live" color={PINK} onPress={() => router.push('/post-video')} />
           <PressableScale accessibilityRole="button" accessibilityLabel="Add new meal" onPress={() => { feedback.tap(); router.push('/meal-editor'); }}>
@@ -348,7 +352,7 @@ export default function DashboardScreen() {
           </PressableScale>
           <ActionItem Icon={Gift} label="new drop" color={PURPLE} onPress={() => router.push('/meal-editor?drop=1')} />
           <ActionItem Icon={Briefcase} label="opportunity" color={ORANGE} onPress={() => router.push('/opportunities')} />
-        </View>
+        </MotiView>
 
         {/* Prepper tab nav (dark) */}
         <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: Palette.surface, paddingTop: 10, paddingBottom: Math.max(insets.bottom, 16), borderTopLeftRadius: 24, borderTopRightRadius: 24, ...Shadow.navBar }}>
