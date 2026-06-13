@@ -365,15 +365,19 @@ export default function OrdersScreen() {
         </View>
 
         {showPaid ? (
-          <PressableScale onPress={() => { feedback.tap(); setShowPaid(false); }} accessibilityRole="button" accessibilityLabel="Dismiss" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '55', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Check size={16} color={Palette.success} strokeWidth={3} />
-            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.ink, flex: 1 }}>Payment received — your preorder is in. The prepper will confirm shortly.</Text>
-          </PressableScale>
+          <MotiView from={{ opacity: 0, translateY: -8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 220 }}>
+            <PressableScale onPress={() => { feedback.tap(); setShowPaid(false); }} accessibilityRole="button" accessibilityLabel="Dismiss" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.success + '14', borderWidth: 1, borderColor: Palette.success + '55', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <Check size={16} color={Palette.success} strokeWidth={3} />
+              <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.ink, flex: 1 }}>Payment received — your preorder is in. The prepper will confirm shortly.</Text>
+            </PressableScale>
+          </MotiView>
         ) : null}
         {actionErr ? (
-          <PressableScale onPress={() => { feedback.tap(); setActionErr(null); }} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.danger + '14', borderWidth: 1, borderColor: Palette.danger + '40', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
-            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.danger }}>{actionErr} (tap to dismiss)</Text>
-          </PressableScale>
+          <MotiView from={{ opacity: 0, translateY: -4 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200 }}>
+            <PressableScale onPress={() => { feedback.tap(); setActionErr(null); }} accessibilityRole="button" accessibilityLabel="Dismiss error" style={{ marginHorizontal: 16, marginBottom: 8, backgroundColor: Palette.danger + '14', borderWidth: 1, borderColor: Palette.danger + '40', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 10 }}>
+              <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.danger }}>{actionErr} (tap to dismiss)</Text>
+            </PressableScale>
+          </MotiView>
         ) : null}
 
         {!user ? (
@@ -387,7 +391,7 @@ export default function OrdersScreen() {
         ) : isLoading ? (
           <ListSkeleton count={3} rowHeight={120} />
         ) : !orders?.length ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+          <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Receipt size={28} color={Palette.textMuted} />
             </View>
@@ -396,7 +400,7 @@ export default function OrdersScreen() {
             <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
             </PressableScale>
-          </View>
+          </MotiView>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 40 }}>
             {/* Order stats summary */}
