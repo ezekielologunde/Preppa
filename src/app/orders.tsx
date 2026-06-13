@@ -30,7 +30,7 @@ const STATUS_LABEL: Record<OrderStatus, string> = {
   preparing: 'Preparing',
   ready: 'Ready',
   out_for_delivery: 'On the way',
-  completed: 'Delivered',
+  completed: 'Complete',
   cancelled: 'Cancelled',
 };
 

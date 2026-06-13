@@ -25,8 +25,8 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 
 type IconType = ComponentType<{ size?: number; color?: string }>;
 const METHODS: { key: FulfillmentType; label: string; Icon: IconType; fee: string; eta: string }[] = [
-  { key: 'delivery', label: 'Delivery', Icon: Bike, fee: money(DELIVERY_FEE), eta: '30–45 min' },
-  { key: 'pickup', label: 'Pickup', Icon: Store, fee: 'Free', eta: 'ready ~20 min' },
+  { key: 'delivery', label: 'Delivery', Icon: Bike, fee: money(DELIVERY_FEE), eta: 'drop-off scheduled' },
+  { key: 'pickup', label: 'Pickup', Icon: Store, fee: 'Free', eta: 'pickup window' },
   { key: 'meetup', label: 'Meet up', Icon: MapPin, fee: 'Free', eta: 'you pick a spot' },
 ];
 const TIPS = [0, 1, 2, 5];
