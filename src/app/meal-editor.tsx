@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, Plus, UtensilsCrossed, X } from 'lucide-react-native';
+import { ChevronLeft, ImageIcon, Plus, UtensilsCrossed, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -122,7 +122,7 @@ export default function MealEditorScreen() {
 
   useEffect(() => {
     if (drop === '1') {
-      setDraft({ ...EMPTY, is_limited: true });
+      setDraft((d) => ({ ...EMPTY, is_limited: true }));
       setPriceText('');
       setTimeText('');
       setFormErr(null);
