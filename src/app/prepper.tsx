@@ -345,7 +345,11 @@ export default function PrepperScreen() {
 
       {/* Sticky action bar — message + order quick-actions */}
       {p && !isLoading ? (
-        <View style={{ position: 'absolute', bottom: 80, left: 0, right: 0, backgroundColor: Palette.surface, borderTopWidth: 1, borderTopColor: Palette.divider, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', gap: 10, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 16, shadowOffset: { width: 0, height: -4 } }}>
+        <MotiView
+          from={{ translateY: 64, opacity: 0 }}
+          animate={{ translateY: 0, opacity: 1 }}
+          transition={{ type: 'spring', damping: 18, stiffness: 200 }}
+          style={{ position: 'absolute', bottom: 80, left: 0, right: 0, backgroundColor: Palette.surface, borderTopWidth: 1, borderTopColor: Palette.divider, paddingHorizontal: 16, paddingVertical: 12, flexDirection: 'row', gap: 10, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 16, shadowOffset: { width: 0, height: -4 } }}>
           <PressableScale onPress={() => { feedback.tap(); router.push('/messages'); }} accessibilityRole="button" accessibilityLabel="Message this prepper" style={{ height: 50, paddingHorizontal: 18, borderRadius: 14, borderWidth: 1.5, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
             <MessageSquare size={17} color={INK} />
             <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }}>Message</Text>
@@ -354,7 +358,7 @@ export default function PrepperScreen() {
             <ShoppingBag size={17} color="#fff" />
             <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: '#fff' }}>Preorder from {p.name.split(' ')[0]}</Text>
           </PressableScale>
-        </View>
+        </MotiView>
       ) : null}
     </View>
   );
