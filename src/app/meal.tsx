@@ -360,12 +360,6 @@ export default function MealScreen() {
         </SafeAreaView>
       ) : null}
 
-      {isLoading ? (
-        <View style={{ position: 'absolute', bottom: 40, alignSelf: 'center' }}>
-          <ActivityIndicator color={ORANGE} />
-        </View>
-      ) : null}
-
       {/* Fullscreen image lightbox — shows all gallery images with prev/next navigation */}
       <Modal visible={lightboxOpen} transparent animationType="fade" onRequestClose={() => setLightboxOpen(false)}>
         <View style={{ flex: 1, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }}>

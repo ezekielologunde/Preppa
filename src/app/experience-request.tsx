@@ -6,6 +6,7 @@ import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, View } 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PressableScale } from '@/components/ui/pressable-scale';
+import { ListSkeleton } from '@/components/ui/skeleton';
 import { feedback } from '@/lib/feedback';
 import { Font } from '@/constants/fonts';
 import { experienceTypes } from '@/constants/mock';
@@ -137,7 +138,7 @@ export default function ExperienceRequestScreen() {
             <Text style={{ fontFamily: Font.display, fontSize: 15, color: INK, letterSpacing: -0.3, marginTop: 22, marginBottom: 10 }}>my requests</Text>
           </MotiView>
           {isLoading ? (
-            <ActivityIndicator color={ORANGE} style={{ marginTop: 12 }} />
+            <ListSkeleton count={2} rowHeight={100} />
           ) : !requests?.length ? (
             <View style={{ backgroundColor: Palette.canvas, borderRadius: Radius.md, padding: 20, alignItems: 'center' }}>
               <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, textAlign: 'center' }}>
