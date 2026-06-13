@@ -27,7 +27,7 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 const STATUS_LABEL: Record<OrderStatus, string> = {
   pending: 'Pending',
   confirmed: 'Confirmed',
-  preparing: 'Preparing',
+  preparing: 'Prepping',
   ready: 'Ready',
   out_for_delivery: 'On the way',
   completed: 'Complete',
@@ -175,9 +175,9 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
             onPress={onCancel}
             disabled={cancelling}
             accessibilityRole="button"
-            accessibilityLabel="Cancel order"
+            accessibilityLabel="Cancel preorder"
             style={{ height: 40, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center', opacity: cancelling ? 0.6 : 1 }}>
-            <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textSecondary }}>Cancel order</Text>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: Palette.textSecondary }}>Cancel preorder</Text>
           </PressableScale>
         </View>
       ) : order.status === 'pending' ? (
@@ -185,9 +185,9 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
           onPress={onCancel}
           disabled={cancelling}
           accessibilityRole="button"
-          accessibilityLabel="Cancel order"
+          accessibilityLabel="Cancel preorder"
           style={{ height: 42, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border, alignItems: 'center', justifyContent: 'center', opacity: cancelling ? 0.6 : 1 }}>
-          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.textSecondary }}>Cancel order</Text>
+          <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: Palette.textSecondary }}>Cancel preorder</Text>
         </PressableScale>
       ) : order.status === 'completed' ? (
         <View style={{ flexDirection: 'row', gap: 10 }}>
@@ -205,10 +205,10 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
             onPress={onReorder}
             disabled={reordering}
             accessibilityRole="button"
-            accessibilityLabel="Reorder these meals"
+            accessibilityLabel="Preorder these meals again"
             style={{ flex: 1, height: 44, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6, opacity: reordering ? 0.7 : 1 }}>
             {reordering ? <ActivityIndicator color="#fff" /> : <RotateCcw size={15} color="#fff" />}
-            <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>Order again</Text>
+            <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: '#fff' }}>Preorder again</Text>
           </PressableScale>
         </View>
       ) : null}
@@ -224,7 +224,7 @@ function OrderCard({ order, onCancel, onReview, onPay, onReorder, onReport, canc
           <PressableScale
             onPress={onReport}
             accessibilityRole="button"
-            accessibilityLabel="Report an issue with this order"
+            accessibilityLabel="Report an issue with this preorder"
             style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5, height: 36, borderRadius: Radius.sm, borderWidth: 1, borderColor: Palette.border }}>
             <AlertTriangle size={13} color={Palette.textSecondary} />
             <Text style={{ fontFamily: Font.medium, fontSize: 13, color: Palette.textSecondary }}>Report an issue</Text>
@@ -350,7 +350,7 @@ export default function OrdersScreen() {
           <PressableScale onPress={goBack} accessibilityRole="button" accessibilityLabel="Go back" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
             <ChevronLeft size={22} color={INK} />
           </PressableScale>
-          <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>your orders</Text>
+          <Text style={{ fontFamily: Font.display, fontSize: 24, color: INK, letterSpacing: -0.6 }}>your preorders</Text>
         </View>
 
         {showPaid ? (
@@ -368,7 +368,7 @@ export default function OrdersScreen() {
         {!user ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <Receipt size={28} color={Palette.textMuted} />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to see your orders.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to see your preorders.</Text>
             <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
@@ -380,7 +380,7 @@ export default function OrdersScreen() {
             <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
               <Receipt size={28} color={Palette.textMuted} />
             </View>
-            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>No orders yet</Text>
+            <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>No preorders yet</Text>
             <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>When you preorder a meal it&apos;ll show up here.</Text>
             <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Browse meals</Text>
@@ -485,11 +485,11 @@ export default function OrdersScreen() {
               {confirmCancel ? `Your preorder from ${confirmCancel.prepper} (${money(confirmCancel.total)}) will be cancelled.` : ''}
               {confirmCancel?.paymentStatus === 'succeeded' ? ' You’ll be refunded automatically.' : ''}
             </Text>
-            <PressableScale onPress={() => { feedback.tap(); if (confirmCancel) doCancel(confirmCancel); }} accessibilityRole="button" accessibilityLabel="Yes, cancel the order" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Yes, cancel order</Text>
+            <PressableScale onPress={() => { feedback.tap(); if (confirmCancel) doCancel(confirmCancel); }} accessibilityRole="button" accessibilityLabel="Yes, cancel the preorder" style={{ height: 50, borderRadius: 14, backgroundColor: Palette.danger, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: '#fff' }}>Yes, cancel preorder</Text>
             </PressableScale>
-            <PressableScale onPress={() => { feedback.tap(); setConfirmCancel(null); }} accessibilityRole="button" accessibilityLabel="Keep the order" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary }}>Keep my order</Text>
+            <PressableScale onPress={() => { feedback.tap(); setConfirmCancel(null); }} accessibilityRole="button" accessibilityLabel="Keep my preorder" style={{ height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 15, color: Palette.textSecondary }}>Keep my preorder</Text>
             </PressableScale>
           </Pressable>
         </Pressable>

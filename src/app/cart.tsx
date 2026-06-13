@@ -152,7 +152,7 @@ export default function CartScreen() {
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 140 }}>
             <Text style={{ fontFamily: Font.body, fontSize: 15, color: Palette.textSecondary, textAlign: 'center', lineHeight: 22, maxWidth: 300 }}>
-              Your order is in. The prepper will confirm shortly — track it in your orders.
+              Your preorder is in. The prepper will confirm shortly — track it in your preorders.
             </Text>
           </MotiView>
           <MotiView from={{ opacity: 0, translateY: 8 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280, delay: 200 }}>
@@ -183,7 +183,7 @@ export default function CartScreen() {
         {!user ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 12 }}>
             <ShoppingBag size={28} color={Palette.textMuted} />
-            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to start an order.</Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center' }}>Sign in to start a preorder.</Text>
             <PressableScale onPress={() => { feedback.tap(); router.push('/auth?mode=signin'); }} accessibilityRole="button" accessibilityLabel="Sign in" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
               <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Sign in</Text>
             </PressableScale>
@@ -198,9 +198,9 @@ export default function CartScreen() {
             {canceled ? (
               <>
                 <Text style={{ fontFamily: Font.heading, fontSize: 16, color: INK }}>Payment canceled</Text>
-                <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 300 }}>Your order is saved. You can finish paying for it any time in your orders.</Text>
-                <PressableScale onPress={() => { feedback.tap(); router.replace('/orders'); }} accessibilityRole="button" accessibilityLabel="Go to orders" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
-                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Go to orders</Text>
+                <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textSecondary, textAlign: 'center', lineHeight: 20, maxWidth: 300 }}>Your preorder is saved. You can finish paying for it any time in your preorders.</Text>
+                <PressableScale onPress={() => { feedback.tap(); router.replace('/orders'); }} accessibilityRole="button" accessibilityLabel="Go to preorders" style={{ marginTop: 4, paddingHorizontal: 22, height: 48, borderRadius: Radius.sm, backgroundColor: ORANGE, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>Go to preorders</Text>
                 </PressableScale>
                 <PressableScale onPress={() => { feedback.tap(); router.replace('/explore'); }} accessibilityRole="button" accessibilityLabel="Browse meals" style={{ paddingHorizontal: 22, height: 44, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 15, color: Palette.textSecondary }}>Browse meals</Text>
@@ -239,7 +239,7 @@ export default function CartScreen() {
                     <ChefHat size={18} color={ORANGE} />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.textSecondary }}>ordering from</Text>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.textSecondary }}>preordering from</Text>
                     <Text style={{ fontFamily: Font.heading, fontSize: 15, color: INK }}>{prepper}</Text>
                   </View>
                 </View>

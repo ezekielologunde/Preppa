@@ -16,14 +16,14 @@ const ORANGE = Palette.brand;
 const INK = Palette.ink;
 
 const WEEKLY_INSIGHTS = [
-  { label: 'Nigerian cuisine', trend: '+34%', note: 'Jollof rice orders surging this week' },
-  { label: 'Lunch slot orders', trend: '+18%', note: 'Best time to list new items is 10–11 am' },
+  { label: 'Nigerian cuisine', trend: '+34%', note: 'Jollof rice preorders surging this week' },
+  { label: 'Lunch slot preorders', trend: '+18%', note: 'Best time to list new items is 10–11 am' },
   { label: 'Repeat customers', trend: '62%', note: 'Loyal buyers return every 5–7 days' },
-  { label: 'Photo quality', trend: 'Key', note: 'Listings with 3+ photos get 2× orders' },
+  { label: 'Photo quality', trend: 'Key', note: 'Listings with 3+ photos get 2× preorders' },
 ];
 
 const ACTIONS = [
-  { label: 'add a rush-hour special', desc: 'Attract more orders during peak windows', Icon: Flame, color: ORANGE, route: '/specials' },
+  { label: 'add a rush-hour special', desc: 'Attract more preorders during peak windows', Icon: Flame, color: ORANGE, route: '/specials' },
   { label: 'update your menu', desc: 'Keep listings fresh — remove sold-out items', Icon: Package, color: '#06b6d4', route: '/meal-editor' },
   { label: 'reply to reviews', desc: 'Responding boosts your ranking score', Icon: MessageSquare, color: '#8b5cf6', route: '/reviews' },
   { label: 'boost your listing', desc: 'Appear at the top of search during rush', Icon: Zap, color: '#d97706', route: '/boost' },
@@ -31,11 +31,11 @@ const ACTIONS = [
 ];
 
 const TIPS = [
-  'Batch-cook bases (rice, beans, pasta) Sunday night to fulfil Mon–Wed orders faster.',
+  'Batch-cook bases (rice, beans, pasta) Sunday night to fulfil Mon–Wed preorders faster.',
   'Add a "daily special" every morning — novelty drives impulse buys.',
   'Respond to customer messages within 30 minutes — faster replies = higher ratings.',
   'Update your profile photo after big catering events — fresh content signals activity.',
-  'Offer a bundle deal (meal + dessert) to raise average order value by 20–30%.',
+  'Offer a bundle deal (meal + dessert) to raise average preorder value by 20–30%.',
   'Set a prep-time buffer of +10 min during rush to protect your on-time rate.',
 ];
 
