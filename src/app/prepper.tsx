@@ -137,19 +137,23 @@ export default function PrepperScreen() {
                   {` follower${(p?.stats?.followers ?? 0) === 1 ? '' : 's'}`}
                 </Text>
                 {p ? (
-                  <PressableScale
-                    onPress={onToggleFollow}
-                    disabled={toggleFollow.isPending}
-                    accessibilityRole="button"
-                    accessibilityLabel={following ? `Following ${p.name}. Tap to unfollow` : `Follow ${p.name}`}
-                    style={{
-                      flexDirection: 'row', alignItems: 'center', gap: 6, height: 38, paddingHorizontal: 18, borderRadius: 19,
+                  <MotiView
+                    animate={{
                       backgroundColor: following ? 'transparent' : ORANGE,
-                      borderWidth: following ? 1.5 : 0, borderColor: 'rgba(255,255,255,0.35)',
-                    }}>
-                    {following ? <Check size={15} color="#fff" /> : <UserPlus size={15} color="#fff" />}
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{following ? 'Following' : 'Follow'}</Text>
-                  </PressableScale>
+                      borderColor: following ? 'rgba(255,255,255,0.35)' : ORANGE,
+                    }}
+                    transition={{ type: 'timing', duration: 220 }}
+                    style={{ borderWidth: 1.5, borderRadius: 19, overflow: 'hidden' }}>
+                    <PressableScale
+                      onPress={onToggleFollow}
+                      disabled={toggleFollow.isPending}
+                      accessibilityRole="button"
+                      accessibilityLabel={following ? `Following ${p.name}. Tap to unfollow` : `Follow ${p.name}`}
+                      style={{ flexDirection: 'row', alignItems: 'center', gap: 6, height: 36, paddingHorizontal: 18 }}>
+                      {following ? <Check size={15} color="#fff" /> : <UserPlus size={15} color="#fff" />}
+                      <Text style={{ fontFamily: Font.semibold, fontSize: 13.5, color: '#fff' }}>{following ? 'Following' : 'Follow'}</Text>
+                    </PressableScale>
+                  </MotiView>
                 ) : null}
               </View>
             </View>

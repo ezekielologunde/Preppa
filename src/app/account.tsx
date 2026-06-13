@@ -132,13 +132,12 @@ export default function AccountScreen() {
                 icon={<Lock size={17} color={Palette.textSecondary} />}
                 label="change password"
                 right={
-                  <ChevronRight
-                    size={18}
-                    color={Palette.textSecondary}
-                    style={{
-                      transform: [{ rotate: passwordOpen ? '90deg' : '0deg' }],
-                    }}
-                  />
+                  <MotiView
+                    animate={{ rotate: passwordOpen ? '90deg' : '0deg' }}
+                    transition={{ type: 'timing', duration: 200 }}
+                  >
+                    <ChevronRight size={18} color={Palette.textSecondary} />
+                  </MotiView>
                 }
                 onPress={() => { feedback.tap(); setPasswordOpen((v) => !v); }}
                 accessLabel="Change password"
