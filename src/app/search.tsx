@@ -45,23 +45,22 @@ const SORTS: { key: SortKey; label: string }[] = [
 
 function Chip({ label, selected, onPress }: { label: string; selected: boolean; onPress: () => void }) {
   return (
-    <PressableScale
-      onPress={() => { feedback.tap(); onPress(); }}
-      accessibilityRole="button"
-      accessibilityLabel={`Filter: ${label}`}
-      accessibilityState={{ selected }}
-      style={{
-        paddingHorizontal: 14,
-        height: 36,
-        borderRadius: Radius.pill,
+    <MotiView
+      animate={{
         backgroundColor: selected ? INK : Palette.surface,
-        borderWidth: 1.5,
-        borderColor: selected ? 'transparent' : Palette.border,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-      <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
-    </PressableScale>
+        borderColor: selected ? INK : Palette.border,
+      }}
+      transition={{ type: 'timing', duration: 180 }}
+      style={{ borderRadius: Radius.pill, borderWidth: 1.5, overflow: 'hidden' }}>
+      <PressableScale
+        onPress={() => { feedback.tap(); onPress(); }}
+        accessibilityRole="button"
+        accessibilityLabel={`Filter: ${label}`}
+        accessibilityState={{ selected }}
+        style={{ paddingHorizontal: 14, height: 36, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: selected ? '#fff' : Palette.inkSoft }}>{label}</Text>
+      </PressableScale>
+    </MotiView>
   );
 }
 
@@ -157,14 +156,19 @@ export default function SearchScreen() {
             <Chip key={p.key} label={p.label} selected={priceKey === p.key} onPress={() => setPriceKey(priceKey === p.key ? null : p.key)} />
           ))}
           <View style={{ width: 1, height: 22, backgroundColor: Palette.divider, marginHorizontal: 2 }} />
-          <PressableScale
-            onPress={() => { feedback.tap(); setSortOpen(true); }}
-            accessibilityRole="button"
-            accessibilityLabel={`Sort: ${SORTS.find(s => s.key === sortKey)?.label ?? 'Relevance'}`}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, height: 36, borderRadius: Radius.pill, backgroundColor: sortKey !== 'default' ? INK : Palette.surface }}>
-            <ArrowUpDown size={14} color={sortKey !== 'default' ? '#fff' : Palette.inkSoft} />
-            <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: sortKey !== 'default' ? '#fff' : Palette.inkSoft }}>sort</Text>
-          </PressableScale>
+          <MotiView
+            animate={{ backgroundColor: sortKey !== 'default' ? INK : Palette.surface }}
+            transition={{ type: 'timing', duration: 180 }}
+            style={{ borderRadius: Radius.pill, overflow: 'hidden' }}>
+            <PressableScale
+              onPress={() => { feedback.tap(); setSortOpen(true); }}
+              accessibilityRole="button"
+              accessibilityLabel={`Sort: ${SORTS.find(s => s.key === sortKey)?.label ?? 'Relevance'}`}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, height: 36 }}>
+              <ArrowUpDown size={14} color={sortKey !== 'default' ? '#fff' : Palette.inkSoft} />
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: sortKey !== 'default' ? '#fff' : Palette.inkSoft }}>sort</Text>
+            </PressableScale>
+          </MotiView>
         </ScrollView>
 
         {/* Results count — visible when query is active and data has loaded */}
