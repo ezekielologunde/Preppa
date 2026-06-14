@@ -122,6 +122,7 @@ export default function CartScreen() {
     meetup: { label: 'Where & when to meet', placeholder: 'e.g. Park gate, today 6pm' },
     pickup: { label: 'Pickup note (optional)', placeholder: 'Any pickup details?' },
     in_home: null,
+    home_cook: null, // booked via the separate home-cook flow, not cart checkout
   };
 
   const paymentSheet = paySheet ? (

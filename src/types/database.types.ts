@@ -8,7 +8,7 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type OrderStatus =
   | 'pending' | 'confirmed' | 'preparing' | 'ready' | 'out_for_delivery' | 'completed' | 'cancelled';
 export type MealStatus = 'draft' | 'published' | 'paused' | 'archived';
-export type FulfillmentType = 'delivery' | 'pickup' | 'meetup';
+export type FulfillmentType = 'delivery' | 'pickup' | 'meetup' | 'home_cook';
 export type PrepperStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
 export type UserStatus = 'active' | 'suspended' | 'deleted';
 export type PlanFrequency = 'weekly' | 'biweekly' | 'monthly';
