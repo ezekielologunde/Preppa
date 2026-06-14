@@ -34,9 +34,10 @@ export default function EmergencyFoodScreen() {
   const [notes, setNotes] = useState('');
   const [sent, setSent] = useState(false);
 
-  const defaultAddr = addresses?.find((a: any) => a.is_default) ?? addresses?.[0];
+  const defaultAddr = addresses?.find((a) => a.isDefault) ?? addresses?.[0];
   const urgency = URGENCY_OPTIONS[urgencyIdx];
-  const availablePreppers = (preppers ?? []).filter((p) => p.isAvailable !== false).slice(0, 5);
+  // TopPrepper carries no availability flag; show the top kitchens as-is.
+  const availablePreppers = (preppers ?? []).slice(0, 5);
 
   function goBack() { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/'); } }
 
@@ -149,7 +150,7 @@ export default function EmergencyFoodScreen() {
               {defaultAddr ? (
                 <>
                   <Text style={{ fontFamily: Font.semibold, fontSize: 14, color: INK }} numberOfLines={1}>{defaultAddr.label ?? 'Home'}</Text>
-                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }} numberOfLines={1}>{defaultAddr.line1}</Text>
+                  <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textSecondary, marginTop: 2 }} numberOfLines={1}>{defaultAddr.street1}</Text>
                 </>
               ) : (
                 <Text style={{ fontFamily: Font.medium, fontSize: 14, color: ORANGE }}>Add a delivery address</Text>

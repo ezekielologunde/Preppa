@@ -58,7 +58,7 @@ export default function PostVideoScreen() {
     feedback.tap();
     setUploading(true);
     try {
-      const url = await pickAndUploadImage('meal-videos');
+      const url = await pickAndUploadImage('meal-videos', user?.id ?? 'anon');
       if (url) setThumb(url);
     } finally {
       setUploading(false);

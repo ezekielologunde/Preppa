@@ -23,7 +23,7 @@ const INK = Palette.ink;
 function MealByIdCard({ id, width }: { id: string; width: number }) {
   const { data: meal, isLoading } = useMeal(id);
   if (isLoading || !meal) return <CardSkeleton width={width} />;
-  return <MealCard meal={meal} width={width} />;
+  return <MealCard meal={{ ...meal, image: meal.images[0] ?? '' }} width={width} />;
 }
 
 function PrepperByIdRow({ id }: { id: string }) {

@@ -50,9 +50,10 @@ export function useUpsertAddress(userId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (form: Omit<Address, 'id'> & { id?: string }) => {
-      const payload = {
-        user_id: userId!,
-        label: form.label === 'Other' ? undefined : form.label,
+      // Shared editable fields (no user_id — that's set on insert only;
+      // updating it isn't allowed and the Update type rightly omits it).
+      const fields = {
+        label: form.label === 'Other' ? null : form.label,
         line1: form.street1,
         line2: form.street2 || null,
         city: form.city,
@@ -62,10 +63,10 @@ export function useUpsertAddress(userId: string | undefined) {
         is_default: form.isDefault,
       };
       if (form.id) {
-        const { error } = await supabase.from('addresses').update(payload).eq('id', form.id);
+        const { error } = await supabase.from('addresses').update(fields).eq('id', form.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('addresses').insert(payload);
+        const { error } = await supabase.from('addresses').insert({ user_id: userId!, ...fields });
         if (error) throw error;
       }
     },
