@@ -283,6 +283,19 @@ export interface Database {
       accept_experience_bid: { Args: { p_bid: string }; Returns: undefined };
       start_conversation: { Args: { p_other: string }; Returns: string };
       mark_conversation_read: { Args: { p_conversation: string }; Returns: undefined };
+      admin_list_preppers: {
+        Args: { p_status?: string };
+        Returns: { id: string; display_name: string; bio: string | null; verified: boolean; status: string; rejection_note: string | null; created_at: string; user_full_name: string | null; user_email: string | null; user_phone: string | null }[];
+      };
+      create_order_from_meal_bid: { Args: { p_bid_id: string }; Returns: string };
+      create_home_cook_request: {
+        Args: { p_prepper_id: string; p_requested_date: string; p_requested_time: string; p_address: string; p_guest_count: number; p_cuisine?: string | null; p_menu_ideas?: string | null; p_ingredient_budget?: number };
+        Returns: string;
+      };
+      propose_home_cook_terms: { Args: { p_request_id: string; p_cooking_fee: number; p_travel_fee: number }; Returns: undefined };
+      confirm_home_cook_booking: { Args: { p_request_id: string }; Returns: string };
+      cancel_home_cook_request: { Args: { p_request_id: string; p_reason?: string | null }; Returns: undefined };
+      set_home_cook_payment_intent: { Args: { p_request_id: string; p_payment_intent_id: string }; Returns: undefined };
     };
     Enums: {
       order_status: OrderStatus;
