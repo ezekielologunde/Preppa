@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Bell, Bike, CalendarCheck, ChefHat, ChevronLeft, CircleCheck, CircleX, Heart, MessageCircle, MessageSquareQuote, Package, Star, UtensilsCrossed } from 'lucide-react-native';
+import { Bell, Bike, CalendarCheck, ChefHat, ChevronLeft, CircleCheck, CircleX, Handshake, Heart, MessageCircle, MessageSquareQuote, Package, Star, UtensilsCrossed } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useEffect, useState } from 'react';
 import { Platform, RefreshControl, ScrollView, Text, useWindowDimensions, View } from 'react-native';
@@ -106,6 +106,8 @@ const NOTIF_STYLE: Record<AppNotification['type'], { Icon: LucideIcon; color: st
   promotion: { Icon: CalendarCheck, color: ORANGE, bg: Palette.brandTint },
   drop: { Icon: Package, color: ORANGE, bg: Palette.brandTint },
   live: { Icon: Bell, color: Palette.danger, bg: Palette.danger + '1A' },
+  bid: { Icon: Handshake, color: ORANGE, bg: Palette.brandTint },
+  bid_accepted: { Icon: Handshake, color: Palette.success, bg: Palette.success + '1A' },
 };
 
 function NotificationItemRow({ n, onPress }: { n: AppNotification; onPress: () => void }) {
@@ -195,7 +197,9 @@ export default function MessagesScreen() {
 
   function routeNotification(n: AppNotification) {
     feedback.tap();
-    if (n.type === 'order' && n.data?.request_id) return router.push('/experience-request');
+    if (n.type === 'bid') return router.push('/experiences');
+    if (n.type === 'bid_accepted') return router.push('/prepper-orders');
+    if (n.type === 'order' && n.data?.request_id) return router.push('/experiences');
     if (n.type === 'review') return router.push('/dashboard');
     if (n.type === 'follow') return router.push('/dashboard');
     return router.push('/orders');
