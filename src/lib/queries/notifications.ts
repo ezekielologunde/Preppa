@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 
 export type AppNotification = {
   id: string;
-  type: 'order' | 'payment' | 'chat' | 'follow' | 'review' | 'promotion' | 'drop' | 'live';
+  type: 'order' | 'payment' | 'chat' | 'follow' | 'review' | 'promotion' | 'drop' | 'live' | 'bid' | 'bid_accepted';
   title: string;
   body: string | null;
   data: Record<string, unknown> | null;

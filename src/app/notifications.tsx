@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   DollarSign,
   Gift,
+  Handshake,
   MessageSquare,
   ShoppingBag,
   Star,
@@ -38,6 +39,8 @@ const ICON_MAP = {
   promotion: Gift,
   drop: Zap,
   live: Video,
+  bid: Handshake,
+  bid_accepted: Handshake,
 } as const;
 
 const COLOR_MAP = {
@@ -49,6 +52,8 @@ const COLOR_MAP = {
   promotion: '#f472b6',
   drop: Palette.amber,
   live: Palette.danger,
+  bid: Palette.brand,
+  bid_accepted: Palette.success,
 } as const;
 
 function relativeTime(iso: string): string {
@@ -166,6 +171,7 @@ export default function NotificationsScreen() {
     else if (n.type === 'review') router.push('/profile');
     else if (n.type === 'live' || n.type === 'drop') router.push('/explore');
     else if (n.type === 'follow') router.push('/profile');
+    else if (n.type === 'bid' || n.type === 'bid_accepted') router.push('/experiences');
   }
 
   const unread = (notifs ?? []).filter((n) => !n.read).length;

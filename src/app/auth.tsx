@@ -71,7 +71,7 @@ export default function AuthScreen() {
       if (error) return fail(error);
       if (needsConfirmation) return goCode('signup', `We sent a 6-digit code to ${email.trim().toLowerCase()} to confirm your email.`);
       feedback.success();
-      return router.replace('/'); // confirmation disabled — straight in
+      return router.replace('/dietary-preferences?fromOnboarding=true');
     }
     const { error } = await signIn(email.trim().toLowerCase(), password);
     if (error) return fail(/invalid login/i.test(error) ? 'Wrong email or password. Forgot it, or use a sign-in code below.' : error);
@@ -116,7 +116,7 @@ export default function AuthScreen() {
       if (up.error) return fail(up.error);
     }
     feedback.success();
-    router.replace('/');
+    router.replace(intent === 'signup' ? '/dietary-preferences?fromOnboarding=true' : '/');
   }
 
   async function resend() {

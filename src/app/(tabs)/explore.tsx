@@ -52,6 +52,25 @@ const CITIES = [
   'Atlanta, GA', 'Washington, DC', 'Miami, FL', 'London, UK', 'Lagos, NG',
 ];
 
+const DIETARY_TAGS = [
+  { key: 'vegan', label: 'Vegan' },
+  { key: 'vegetarian', label: 'Vegetarian' },
+  { key: 'gluten-free', label: 'Gluten-free' },
+  { key: 'halal', label: 'Halal' },
+  { key: 'dairy-free', label: 'Dairy-free' },
+  { key: 'nut-free', label: 'Nut-free' },
+  { key: 'keto', label: 'Keto' },
+  { key: 'low-carb', label: 'Low-carb' },
+];
+
+const SORT_OPTIONS = [
+  { key: 'default', label: 'Default' },
+  { key: 'rating', label: 'Highest rated' },
+  { key: 'newest', label: 'Newest' },
+] as const;
+
+type SortKey = (typeof SORT_OPTIONS)[number]['key'];
+
 const CATEGORY_CIRCLES = [
   { key: 'all', label: 'all', Icon: LayoutGrid, color: Palette.ink },
   { key: 'breakfast', label: 'breakfast', Icon: Coffee, color: Palette.amber },
@@ -138,8 +157,13 @@ export default function ExploreScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [location, setLocation] = useState('New York, NY');
   const [locationOpen, setLocationOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const [dietaryFilter, setDietaryFilter] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<SortKey>('default');
+  const [pendingDietary, setPendingDietary] = useState<string[]>([]);
+  const [pendingSort, setPendingSort] = useState<SortKey>('default');
 
   const isTabletUp = bp !== 'mobile';
   const isDesktop = bp === 'desktop';
@@ -149,15 +173,28 @@ export default function ExploreScreen() {
     setActiveCategory(key);
   }
 
+  const activeFilterCount = dietaryFilter.length + (sortBy !== 'default' ? 1 : 0);
+
   const categoryFilter = (activeCategory === 'all' || activeCategory === 'trending') ? null : activeCategory;
-  const filteredMeals = activeCategory === 'trending'
-    ? [...(meals ?? [])].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-    : categoryFilter
-      ? (meals ?? []).filter((m) => {
-          const haystack = [m.title, m.category ?? ''].join(' ').toLowerCase();
-          return haystack.includes(categoryFilter.replace('-', ' '));
-        })
-      : (meals ?? []);
+  const categoryFiltered = categoryFilter
+    ? (meals ?? []).filter((m) => {
+        const haystack = [m.title, m.category ?? ''].join(' ').toLowerCase();
+        return haystack.includes(categoryFilter.replace('-', ' '));
+      })
+    : (meals ?? []);
+
+  const dietaryFiltered = dietaryFilter.length === 0
+    ? categoryFiltered
+    : categoryFiltered.filter((m) => {
+        const hay = [m.title, m.category ?? ''].join(' ').toLowerCase();
+        return dietaryFilter.every((d) => hay.includes(d.replace('-', ' ')));
+      });
+
+  const filteredMeals = (activeCategory === 'trending' || sortBy === 'rating')
+    ? [...dietaryFiltered].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    : sortBy === 'newest'
+      ? [...dietaryFiltered].reverse()
+      : dietaryFiltered;
 
   // Prepper grid columns: 2 tablet / 3 desktop
   const prepperCols = bp === 'desktop' ? 3 : bp === 'tablet' ? 2 : 0; // 0 = horizontal scroll
@@ -204,16 +241,22 @@ export default function ExploreScreen() {
             ) : null}
           </View>
 
-          {/* Search bar */}
-          <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
+          {/* Search bar + filter button */}
+          <View style={{ paddingHorizontal: 16, paddingBottom: 4, flexDirection: 'row', gap: 8, alignItems: 'center' }}>
             <PressableScale
               onPress={() => { feedback.tap(); router.push('/search'); }}
               accessibilityRole="search"
               accessibilityLabel="Search meals, cuisines, or preppers"
-              style={{ flexDirection: 'row', alignItems: 'center', height: 48, borderRadius: 24, backgroundColor: Palette.surface, paddingHorizontal: 16, gap: 10, ...Shadow.card }}>
+              style={{ flex: 1, flexDirection: 'row', alignItems: 'center', height: 48, borderRadius: 24, backgroundColor: Palette.surface, paddingHorizontal: 16, gap: 10, ...Shadow.card }}>
               <Search size={18} color={Palette.textMuted} />
               <Text style={{ flex: 1, fontFamily: Font.body, fontSize: 14, color: Palette.textMuted }}>search meals or kitchens</Text>
-              <SlidersHorizontal size={17} color={Palette.brand} />
+            </PressableScale>
+            <PressableScale
+              onPress={() => { feedback.tap(); setPendingDietary(dietaryFilter); setPendingSort(sortBy); setFilterOpen(true); }}
+              accessibilityRole="button"
+              accessibilityLabel={activeFilterCount > 0 ? `Filters (${activeFilterCount} active)` : 'Open filters'}
+              style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: activeFilterCount > 0 ? Palette.brand : Palette.surface, alignItems: 'center', justifyContent: 'center', ...Shadow.card }}>
+              <SlidersHorizontal size={17} color={activeFilterCount > 0 ? '#fff' : Palette.brand} />
             </PressableScale>
           </View>
 
@@ -420,6 +463,79 @@ export default function ExploreScreen() {
 
         </ScrollView>
       </SafeAreaView>
+
+      {/* ── Filter Modal ── */}
+      <Modal visible={filterOpen} transparent animationType="slide" onRequestClose={() => setFilterOpen(false)}>
+        <Pressable onPress={() => setFilterOpen(false)} style={{ flex: 1, backgroundColor: Palette.overlay, justifyContent: 'flex-end' }}>
+          <Pressable onPress={(e) => e.stopPropagation()} style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingBottom: 40, ...(isTabletUp ? { maxWidth: 540, alignSelf: 'center', width: '100%' } : {}) }}>
+            <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: Palette.border, alignSelf: 'center', marginTop: 12, marginBottom: 6 }} />
+            {/* Header */}
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 22, paddingVertical: 14 }}>
+              <Text style={{ fontFamily: Font.display, fontSize: 22, color: Palette.ink, letterSpacing: -0.4 }}>filters</Text>
+              <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                {(pendingDietary.length > 0 || pendingSort !== 'default') ? (
+                  <PressableScale onPress={() => { feedback.tap(); setPendingDietary([]); setPendingSort('default'); }} accessibilityRole="button" accessibilityLabel="Clear filters"
+                    style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: Radius.pill, backgroundColor: Palette.canvas }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 12.5, color: Palette.textSecondary }}>clear all</Text>
+                  </PressableScale>
+                ) : null}
+                <PressableScale onPress={() => { feedback.tap(); setFilterOpen(false); }} accessibilityRole="button" accessibilityLabel="Close"
+                  style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+                  <X size={18} color={Palette.textSecondary} />
+                </PressableScale>
+              </View>
+            </View>
+
+            {/* Sort */}
+            <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.7, paddingHorizontal: 22, marginBottom: 10 }}>sort by</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, marginBottom: 20 }}>
+              {SORT_OPTIONS.map((opt) => {
+                const active = pendingSort === opt.key;
+                return (
+                  <PressableScale key={opt.key} onPress={() => { feedback.tap(); setPendingSort(opt.key); }} accessibilityRole="button" accessibilityLabel={opt.label}
+                    style={{ paddingHorizontal: 14, height: 36, borderRadius: Radius.pill, backgroundColor: active ? Palette.brand : Palette.canvas, borderWidth: 1.5, borderColor: active ? Palette.brand : Palette.border, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : Palette.inkSoft }}>{opt.label}</Text>
+                  </PressableScale>
+                );
+              })}
+            </View>
+
+            {/* Dietary */}
+            <Text style={{ fontFamily: Font.semibold, fontSize: 11.5, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.7, paddingHorizontal: 22, marginBottom: 10 }}>dietary</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, paddingHorizontal: 20, marginBottom: 28 }}>
+              {DIETARY_TAGS.map((tag) => {
+                const active = pendingDietary.includes(tag.key);
+                return (
+                  <PressableScale
+                    key={tag.key}
+                    onPress={() => {
+                      feedback.tap();
+                      setPendingDietary((prev) => active ? prev.filter((k) => k !== tag.key) : [...prev, tag.key]);
+                    }}
+                    accessibilityRole="checkbox"
+                    accessibilityState={{ checked: active }}
+                    accessibilityLabel={tag.label}
+                    style={{ paddingHorizontal: 14, height: 36, borderRadius: Radius.pill, backgroundColor: active ? Palette.brandTint : Palette.canvas, borderWidth: 1.5, borderColor: active ? Palette.brand : Palette.border, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    {active ? <Check size={13} color={Palette.brand} strokeWidth={2.5} /> : null}
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? Palette.brand : Palette.inkSoft }}>{tag.label}</Text>
+                  </PressableScale>
+                );
+              })}
+            </View>
+
+            {/* Apply */}
+            <PressableScale
+              onPress={() => { feedback.tap(); setDietaryFilter(pendingDietary); setSortBy(pendingSort); setFilterOpen(false); }}
+              accessibilityRole="button"
+              accessibilityLabel="Apply filters"
+              style={{ marginHorizontal: 20, height: 52, borderRadius: Radius.pill, backgroundColor: Palette.ink, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
+                {pendingDietary.length === 0 && pendingSort === 'default' ? 'Show all meals' : `Apply filters`}
+              </Text>
+            </PressableScale>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       {/* ── Location Picker Modal ── */}
       <Modal visible={locationOpen} transparent animationType="slide" onRequestClose={() => setLocationOpen(false)}>

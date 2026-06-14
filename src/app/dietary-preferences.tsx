@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { CheckCircle2, ChevronLeft } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
@@ -116,6 +116,8 @@ function SpiceRow({ selected, onSelect }: { selected: SpiceLevel; onSelect: (v: 
 export default function DietaryPreferencesScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { fromOnboarding } = useLocalSearchParams<{ fromOnboarding?: string }>();
+  const isOnboarding = fromOnboarding === 'true';
 
   const meta = user?.user_metadata ?? {};
   const [dietary, setDietary] = useState<string[]>((meta.dietary as string[] | undefined) ?? []);
@@ -137,8 +139,12 @@ export default function DietaryPreferencesScreen() {
     setSaving(false);
     if (!error) {
       feedback.success();
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      if (isOnboarding) {
+        router.replace('/');
+      } else {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
     } else {
       feedback.error();
     }
@@ -149,17 +155,32 @@ export default function DietaryPreferencesScreen() {
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         {/* Header */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 }}>
-          <PressableScale
-            onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/settings'); } }}
-            accessibilityRole="button"
-            accessibilityLabel="Go back"
-            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
-            <ChevronLeft size={22} color={Palette.ink} />
-          </PressableScale>
+          {!isOnboarding ? (
+            <PressableScale
+              onPress={() => { feedback.tap(); if (router.canGoBack()) { router.back(); } else { router.replace('/settings'); } }}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+              style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: Palette.surface, alignItems: 'center', justifyContent: 'center' }}>
+              <ChevronLeft size={22} color={Palette.ink} />
+            </PressableScale>
+          ) : null}
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: Font.display, fontSize: 24, color: Palette.ink, letterSpacing: -0.7 }}>dietary preferences</Text>
-            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 1 }}>we use these to personalise your meal feed</Text>
+            <Text style={{ fontFamily: Font.display, fontSize: 24, color: Palette.ink, letterSpacing: -0.7 }}>
+              {isOnboarding ? 'your food preferences' : 'dietary preferences'}
+            </Text>
+            <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textSecondary, marginTop: 1 }}>
+              {isOnboarding ? 'help us personalise your feed — takes 30 seconds' : 'we use these to personalise your meal feed'}
+            </Text>
           </View>
+          {isOnboarding ? (
+            <PressableScale
+              onPress={() => { feedback.tap(); router.replace('/'); }}
+              accessibilityRole="button"
+              accessibilityLabel="Skip for now"
+              style={{ paddingHorizontal: 12, paddingVertical: 7, borderRadius: Radius.pill, backgroundColor: Palette.surface }}>
+              <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: Palette.textSecondary }}>skip</Text>
+            </PressableScale>
+          ) : null}
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 120 }}>
@@ -196,7 +217,9 @@ export default function DietaryPreferencesScreen() {
                   <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>saved!</Text>
                 </>
               ) : (
-                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>save preferences</Text>
+                <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>
+                  {isOnboarding ? 'save & get started' : 'save preferences'}
+                </Text>
               )}
             </PressableScale>
           </MotiView>
