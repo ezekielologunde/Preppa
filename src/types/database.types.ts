@@ -121,9 +121,9 @@ export interface Database {
         Relationships: [];
       };
       prepper_profiles: {
-        Row: { id: string; user_id: string; display_name: string; bio: string | null; verified: boolean; status: PrepperStatus; reviewed_by: string | null; reviewed_at: string | null; rejection_note: string | null; delivery_radius_km: number | null; specialties: string[] | null; certifications: string[]; accepting_orders: boolean } & Timestamps;
+        Row: { id: string; user_id: string; display_name: string; bio: string | null; verified: boolean; status: PrepperStatus; reviewed_by: string | null; reviewed_at: string | null; rejection_note: string | null; delivery_radius_km: number | null; specialties: string[] | null; certifications: string[]; accepting_orders: boolean; home_cook_available: boolean } & Timestamps;
         Insert: { user_id: string; display_name: string; bio?: string | null; specialties?: string[] | null; certifications?: string[]; accepting_orders?: boolean };
-        Update: Partial<{ display_name: string; bio: string | null; specialties: string[] | null; certifications: string[]; accepting_orders: boolean }>;
+        Update: Partial<{ display_name: string; bio: string | null; specialties: string[] | null; certifications: string[]; accepting_orders: boolean; home_cook_available: boolean }>;
         Relationships: [];
       };
       order_disputes: {
@@ -224,8 +224,8 @@ export interface Database {
       };
       addresses: {
         Row: { id: string; user_id: string; label: string | null; line1: string; line2: string | null; city: string | null; state: string | null; postal_code: string | null; country: string | null; lat: number | null; lng: number | null; is_default: boolean } & Timestamps;
-        Insert: { user_id: string; line1: string; label?: string | null; line2?: string | null; city?: string | null; state?: string | null; postal_code?: string | null; is_default?: boolean };
-        Update: Partial<{ label: string | null; line1: string; line2: string | null; city: string | null; state: string | null; postal_code: string | null; is_default: boolean }>;
+        Insert: { user_id: string; line1: string; label?: string | null; line2?: string | null; city?: string | null; state?: string | null; postal_code?: string | null; country?: string | null; is_default?: boolean };
+        Update: Partial<{ label: string | null; line1: string; line2: string | null; city: string | null; state: string | null; postal_code: string | null; country: string | null; is_default: boolean }>;
         Relationships: [];
       };
       experience_requests: {
@@ -250,6 +250,42 @@ export interface Database {
         Row: { id: string; customer_id: string; prepper_id: string; plan_id: string | null; plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus; qty: number; delivery_day: string | null } & Timestamps;
         Insert: { customer_id: string; prepper_id: string; plan_name: string; frequency: string; plan_id?: string | null; next_billing_at?: string | null; qty?: number; delivery_day?: string | null };
         Update: Partial<{ plan_name: string; frequency: string; next_billing_at: string | null; status: SubscriptionStatus; qty: number; delivery_day: string | null }>;
+        Relationships: [];
+      };
+      meal_requests: {
+        Row: { id: string; customer_id: string; title: string; description: string | null; servings: number; budget_per_serving: number | null; cuisine: string | null; deadline: string | null; status: string } & Timestamps;
+        Insert: { customer_id: string; title: string; description?: string | null; servings?: number; budget_per_serving?: number | null; cuisine?: string | null; deadline?: string | null };
+        Update: Partial<{ title: string; description: string | null; servings: number; budget_per_serving: number | null; cuisine: string | null; deadline: string | null; status: string }>;
+        Relationships: [];
+      };
+      meal_request_bids: {
+        Row: { id: string; request_id: string; prepper_id: string; price_per_serving: number; note: string | null; status: string } & Timestamps;
+        Insert: { request_id: string; prepper_id: string; price_per_serving: number; note?: string | null };
+        Update: Partial<{ price_per_serving: number; note: string | null; status: string }>;
+        Relationships: [];
+      };
+      customer_meal_plans: {
+        Row: { id: string; customer_id: string; name: string; frequency: string; delivery_day: string; status: string; next_billing_at: string | null; stripe_subscription_id: string | null; updated_at: string } & Timestamps;
+        Insert: { customer_id: string; name?: string; frequency?: string; delivery_day?: string; status?: string; next_billing_at?: string | null; stripe_subscription_id?: string | null };
+        Update: Partial<{ name: string; frequency: string; delivery_day: string; status: string; next_billing_at: string | null; stripe_subscription_id: string | null }>;
+        Relationships: [];
+      };
+      customer_meal_plan_items: {
+        Row: { id: string; plan_id: string; meal_id: string; qty: number } & Timestamps;
+        Insert: { plan_id: string; meal_id: string; qty?: number };
+        Update: Partial<{ qty: number }>;
+        Relationships: [];
+      };
+      home_cook_requests: {
+        Row: { id: string; customer_id: string; prepper_id: string; requested_date: string; requested_time: string; address: string; guest_count: number; cuisine: string | null; menu_ideas: string | null; ingredient_budget: number; cooking_fee: number | null; travel_fee: number | null; status: string; order_id: string | null; conversation_id: string | null; updated_at: string } & Timestamps;
+        Insert: { customer_id: string; prepper_id: string; requested_date: string; requested_time?: string; address: string; guest_count?: number; cuisine?: string | null; menu_ideas?: string | null; ingredient_budget: number };
+        Update: Partial<{ requested_time: string; address: string; guest_count: number; cuisine: string | null; menu_ideas: string | null; ingredient_budget: number; cooking_fee: number | null; travel_fee: number | null; status: string; order_id: string | null; conversation_id: string | null }>;
+        Relationships: [];
+      };
+      feed_posts: {
+        Row: { id: string; prepper_id: string; caption: string | null; thumbnail_url: string | null; video_url: string | null; tags: string[] } & Timestamps;
+        Insert: { prepper_id: string; caption?: string | null; thumbnail_url?: string | null; video_url?: string | null; tags?: string[] };
+        Update: Partial<{ caption: string | null; thumbnail_url: string | null; video_url: string | null; tags: string[] }>;
         Relationships: [];
       };
     };
