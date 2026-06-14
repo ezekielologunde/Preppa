@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { CalendarCheck, ChefHat, ChevronLeft, MapPin, QrCode, ShoppingBag, Users, X } from 'lucide-react-native';
+import { CalendarCheck, ChefHat, ChevronLeft, MapPin, QrCode, ShoppingBag, Ticket, Users, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
@@ -14,6 +14,7 @@ import { useRefundOrder } from '@/lib/queries/cart';
 import { useCaptureHomeCookPayment, usePrepperHomeCookRequests, useProposeHomeCookTerms, type HomeCookRequest } from '@/lib/queries/home-cook';
 import { useAdvanceOrder, useCancelOrder, useOrdersRealtime, usePrepperOrders, useVerifyHandoff, type OrderSummary } from '@/lib/queries/orders';
 import { useMyPrepperApplication } from '@/lib/queries/preppers';
+import { usePrepperBookedExperiences, type BookedExperienceJob } from '@/lib/queries/experiences';
 import { useBreakpoint } from '@/lib/layout';
 import { useAuth } from '@/providers/auth-provider';
 import type { OrderStatus } from '@/types/database.types';
@@ -124,9 +125,10 @@ export default function PrepperOrdersScreen() {
   const prepperId = prepper?.id;
   const { data: orders, isLoading, refetch } = usePrepperOrders(prepperId);
   const { data: homeCookJobs, refetch: refetchHC } = usePrepperHomeCookRequests(prepperId);
+  const { data: expJobs, refetch: refetchExp } = usePrepperBookedExperiences(prepperId);
   useOrdersRealtime('prepper_id', prepperId);
   const [refreshing, setRefreshing] = useState(false);
-  async function handleRefresh() { setRefreshing(true); await Promise.all([refetch(), refetchHC()]); setRefreshing(false); }
+  async function handleRefresh() { setRefreshing(true); await Promise.all([refetch(), refetchHC(), refetchExp()]); setRefreshing(false); }
   const advance = useAdvanceOrder();
   const cancel = useCancelOrder();
   const refund = useRefundOrder();
@@ -137,7 +139,7 @@ export default function PrepperOrdersScreen() {
   const [actionErr, setActionErr] = useState<string | null>(null);
   const onErr = (e: unknown) => setActionErr(e instanceof Error ? e.message : 'Could not update the preorder. Try again.');
   const [declineOrder, setDeclineOrder] = useState<OrderSummary | null>(null);
-  const [tab, setTab] = useState<'preorders' | 'homecook'>('preorders');
+  const [tab, setTab] = useState<'preorders' | 'homecook' | 'experiences'>('preorders');
   const [proposeTarget, setProposeTarget] = useState<HomeCookRequest | null>(null);
   const [cookingFee, setCookingFee] = useState('');
   const [travelFee, setTravelFee] = useState('');
@@ -200,16 +202,16 @@ export default function PrepperOrdersScreen() {
 
         {/* Tab bar */}
         <View style={{ flexDirection: 'row', marginHorizontal: 16, marginBottom: 8, backgroundColor: CARD, borderRadius: 14, padding: 4, gap: 4 }}>
-          {([['preorders', 'Preorders'], ['homecook', 'Home Cook']] as const).map(([key, label]) => {
+          {([['preorders', 'Preorders', null], ['homecook', 'Home Cook', homeCookJobs?.length ?? 0], ['experiences', 'Experiences', expJobs?.length ?? 0]] as const).map(([key, label, badge]) => {
             const active = tab === key;
-            const badge = key === 'homecook' ? (homeCookJobs?.length ?? 0) : 0;
+            const accentColor = key === 'homecook' ? HC : ORANGE;
             return (
               <PressableScale key={key} onPress={() => { feedback.tap(); setTab(key); }} accessibilityRole="tab" accessibilityLabel={label}
-                style={{ flex: 1, height: 36, borderRadius: 10, backgroundColor: active ? (key === 'homecook' ? HC : ORANGE) : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}>
-                <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? '#fff' : '#5b6170' }}>{label}</Text>
-                {badge > 0 ? (
-                  <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: active ? 'rgba(255,255,255,0.3)' : HC, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ fontFamily: Font.semibold, fontSize: 10, color: '#fff' }}>{badge}</Text>
+                style={{ flex: 1, height: 36, borderRadius: 10, backgroundColor: active ? accentColor : 'transparent', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}>
+                <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: active ? '#fff' : '#5b6170' }}>{label}</Text>
+                {badge != null && badge > 0 ? (
+                  <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: active ? 'rgba(255,255,255,0.3)' : accentColor, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontFamily: Font.semibold, fontSize: 9, color: '#fff' }}>{badge}</Text>
                   </View>
                 ) : null}
               </PressableScale>
@@ -307,6 +309,73 @@ export default function PrepperOrdersScreen() {
                   </MotiView>
                 );
               })}
+            </ScrollView>
+          )
+        ) : null}
+
+        {/* Experiences tab */}
+        {tab === 'experiences' ? (
+          !prepperId ? null : !expJobs?.length ? (
+            <MotiView from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 280 }}
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 10 }}>
+              <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: CARD, alignItems: 'center', justifyContent: 'center' }}>
+                <Ticket size={28} color="#5b6170" />
+              </View>
+              <Text style={{ fontFamily: Font.heading, fontSize: 16, color: '#fff' }}>No experience jobs yet</Text>
+              <Text style={{ fontFamily: Font.body, fontSize: 14, color: Palette.textMuted, textAlign: 'center', lineHeight: 20 }}>
+                When customers accept your bid on an experience request, the job appears here.
+              </Text>
+            </MotiView>
+          ) : (
+            <ScrollView showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={ORANGE} colors={[ORANGE]} />} contentContainerStyle={{ padding: 20, paddingBottom: 40, gap: 12 }}>
+              {(expJobs ?? []).map((job: BookedExperienceJob, i: number) => (
+                <MotiView key={job.bidId} from={{ opacity: 0, translateY: 10 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 260, delay: i * 45 }}>
+                  <View style={{ backgroundColor: CARD, borderRadius: 20, padding: 16, gap: 10 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                      <View style={{ flex: 1, gap: 4 }}>
+                        <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+                          <View style={{ backgroundColor: ORANGE + '22', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
+                            <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: ORANGE, textTransform: 'capitalize' }}>{job.kind.replace('_', ' ')}</Text>
+                          </View>
+                          <View style={{ backgroundColor: '#16a34a22', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
+                            <Text style={{ fontFamily: Font.semibold, fontSize: 11, color: '#4ade80' }}>Booked</Text>
+                          </View>
+                        </View>
+                        <Text style={{ fontFamily: Font.heading, fontSize: 15, color: '#fff' }}>{job.title}</Text>
+                      </View>
+                      <Text style={{ fontFamily: Font.display, fontSize: 20, color: ORANGE, letterSpacing: -0.4 }}>${job.amount.toLocaleString('en-US')}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                      {job.guests != null ? (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#1d2129', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 }}>
+                          <Users size={12} color={Palette.textMuted} />
+                          <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary }}>{job.guests} guests</Text>
+                        </View>
+                      ) : null}
+                      {job.location ? (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#1d2129', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 }}>
+                          <MapPin size={12} color={Palette.textMuted} />
+                          <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary }} numberOfLines={1}>{job.location}</Text>
+                        </View>
+                      ) : null}
+                      {job.event_date ? (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#1d2129', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 }}>
+                          <CalendarCheck size={12} color={Palette.textMuted} />
+                          <Text style={{ fontFamily: Font.medium, fontSize: 12, color: Palette.textSecondary }}>{job.event_date}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                    {job.details ? (
+                      <Text style={{ fontFamily: Font.body, fontSize: 13, color: Palette.textMuted, lineHeight: 18 }} numberOfLines={3}>{job.details}</Text>
+                    ) : null}
+                    {job.message ? (
+                      <View style={{ backgroundColor: '#1d2129', borderRadius: 10, padding: 10 }}>
+                        <Text style={{ fontFamily: Font.body, fontSize: 12.5, color: Palette.textSecondary, fontStyle: 'italic', lineHeight: 18 }}>&ldquo;{job.message}&rdquo;</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                </MotiView>
+              ))}
             </ScrollView>
           )
         ) : null}

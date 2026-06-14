@@ -144,6 +144,56 @@ export function useCancelExperienceRequest() {
   });
 }
 
+export type BookedExperienceJob = {
+  bidId: string;
+  amount: number;
+  message: string | null;
+  requestId: string;
+  kind: ExperienceKind;
+  title: string;
+  details: string | null;
+  guests: number | null;
+  budget: number | null;
+  event_date: string | null;
+  location: string | null;
+  status: ExperienceStatus;
+  created_at: string;
+};
+
+/** Experience requests where this prepper's bid was accepted. */
+export function usePrepperBookedExperiences(prepperId?: string | null) {
+  return useQuery({
+    queryKey: ['experiences', 'booked-prepper', prepperId ?? 'none'],
+    enabled: !!prepperId,
+    refetchInterval: 30_000,
+    queryFn: async (): Promise<BookedExperienceJob[]> => {
+      const { data, error } = await supabase
+        .from('experience_bids')
+        .select('id,amount,message,experience_requests(id,kind,title,details,guests,budget,event_date,location,status,created_at)')
+        .eq('prepper_id', prepperId!)
+        .eq('status', 'accepted')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      type Row = { id: string; amount: number; message: string | null; experience_requests: { id: string; kind: ExperienceKind; title: string; details: string | null; guests: number | null; budget: number | null; event_date: string | null; location: string | null; status: ExperienceStatus; created_at: string } | null };
+      return ((data ?? []) as unknown as Row[]).map((r) => ({
+        bidId: r.id,
+        amount: r.amount,
+        message: r.message,
+        requestId: r.experience_requests?.id ?? '',
+        kind: r.experience_requests?.kind ?? 'catering',
+        title: r.experience_requests?.title ?? '',
+        details: r.experience_requests?.details ?? null,
+        guests: r.experience_requests?.guests ?? null,
+        budget: r.experience_requests?.budget ?? null,
+        event_date: r.experience_requests?.event_date ?? null,
+        location: r.experience_requests?.location ?? null,
+        status: r.experience_requests?.status ?? 'booked',
+        created_at: r.experience_requests?.created_at ?? '',
+      })).filter((j) => j.requestId);
+    },
+  });
+}
+
 /** Update a request's details / food-preference text. */
 export function useUpdateRequestDetails() {
   const qc = useQueryClient();
