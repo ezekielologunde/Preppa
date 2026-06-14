@@ -10,6 +10,7 @@ import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { usePersistedToggle } from '@/lib/prefs';
 import { useAuth } from '@/providers/auth-provider';
 
 const LEAVE_REASONS = [
@@ -115,10 +116,10 @@ export default function PrivacySecurityScreen() {
   const router = useRouter();
   const { signOut } = useAuth();
 
-  const [chefUpdates, setChefUpdates] = useState(true);
-  const [deliveryTracker, setDeliveryTracker] = useState(true);
-  const [promos, setPromos] = useState(false);
-  const [biometric, setBiometric] = useState(false);
+  const [chefUpdates, toggleChefUpdates] = usePersistedToggle('chef_updates', true);
+  const [deliveryTracker, toggleDeliveryTracker] = usePersistedToggle('delivery_tracker', true);
+  const [promos, togglePromos] = usePersistedToggle('promos', false);
+  const [biometric, toggleBiometric] = usePersistedToggle('biometric', false);
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -140,16 +141,16 @@ export default function PrivacySecurityScreen() {
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 8, paddingBottom: 40, gap: 20 }}>
           {/* Notifications */}
           <SettingsGroup title="notification preferences" delay={0}>
-            <SettingsRow Icon={Bell} label="Chef updates" sub="Cooking, hand-off and menu changes" right={{ type: 'toggle', value: chefUpdates, onToggle: () => setChefUpdates((v) => !v) }} />
-            <SettingsRow Icon={MapPin} label="Delivery tracker" sub="Live status as your meals head over" right={{ type: 'toggle', value: deliveryTracker, onToggle: () => setDeliveryTracker((v) => !v) }} />
-            <SettingsRow Icon={Sparkles} label="Promotional offers" sub="Deals, drops and seasonal specials" right={{ type: 'toggle', value: promos, onToggle: () => setPromos((v) => !v) }} />
+            <SettingsRow Icon={Bell} label="Chef updates" sub="Cooking, hand-off and menu changes" right={{ type: 'toggle', value: chefUpdates, onToggle: toggleChefUpdates }} />
+            <SettingsRow Icon={MapPin} label="Delivery tracker" sub="Live status as your meals head over" right={{ type: 'toggle', value: deliveryTracker, onToggle: toggleDeliveryTracker }} />
+            <SettingsRow Icon={Sparkles} label="Promotional offers" sub="Deals, drops and seasonal specials" right={{ type: 'toggle', value: promos, onToggle: togglePromos }} />
             <SettingsRow Icon={Bell} label="All notification channels" sub="Push, email & SMS, per category" onPress={() => router.push('/notification-settings')} isLast />
           </SettingsGroup>
 
           {/* Security */}
           <SettingsGroup title="security" delay={60}>
             <SettingsRow Icon={Lock} label="Password" sub="Change your account password" onPress={() => router.push('/change-password')} />
-            <SettingsRow Icon={Fingerprint} label="Biometric unlock" sub="Use Face ID / fingerprint to open Preppa" right={{ type: 'toggle', value: biometric, onToggle: () => { setBiometric((v) => !v); flash(biometric ? 'Biometric unlock off' : 'Biometric unlock on'); } }} isLast />
+            <SettingsRow Icon={Fingerprint} label="Biometric unlock" sub="Use Face ID / fingerprint to open Preppa" right={{ type: 'toggle', value: biometric, onToggle: () => { toggleBiometric(); flash(biometric ? 'Biometric unlock off' : 'Biometric unlock on'); } }} isLast />
           </SettingsGroup>
 
           {/* Account management */}
