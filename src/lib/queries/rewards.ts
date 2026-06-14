@@ -50,7 +50,7 @@ export function rewardsFromOrders(orders: OrderSummary[] | undefined): Rewards {
 }
 
 /** Live rewards for the signed-in customer, derived from real completed orders. */
-export function useRewards(userId?: string | null): Rewards {
-  const { data: orders } = useMyOrders(userId);
-  return rewardsFromOrders(orders);
+export function useRewards(userId?: string | null): Rewards & { refetch: ReturnType<typeof useMyOrders>['refetch'] } {
+  const { data: orders, refetch } = useMyOrders(userId);
+  return { ...rewardsFromOrders(orders), refetch };
 }

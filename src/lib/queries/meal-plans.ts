@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { supabase } from '@/lib/supabase';
+import type { PlanFrequency } from '@/types/database.types';
 
 export type MealPlan = {
   id: string;
@@ -194,7 +195,7 @@ export function useCreatePrepperMealPlan(prepperId?: string | null) {
         name: v.name,
         description: v.description || null,
         price: v.price,
-        frequency: v.frequency,
+        frequency: v.frequency as PlanFrequency,
         meals_per_cycle: v.mealsPerCycle,
         serves: v.serves,
         active: true,

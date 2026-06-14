@@ -242,7 +242,7 @@ export interface Database {
       };
       meal_plans: {
         Row: { id: string; prepper_id: string; name: string; description: string | null; frequency: PlanFrequency; price: number; meals_per_cycle: number; serves: number; image_url: string | null; tags: string[] | null; active: boolean } & Timestamps & { updated_at: string };
-        Insert: { prepper_id: string; name: string; price: number; description?: string | null; frequency?: PlanFrequency; meals_per_cycle?: number; serves?: number; image_url?: string | null; tags?: string[] | null };
+        Insert: { prepper_id: string; name: string; price: number; description?: string | null; frequency?: PlanFrequency; meals_per_cycle?: number; serves?: number; image_url?: string | null; tags?: string[] | null; active?: boolean };
         Update: Partial<{ name: string; description: string | null; frequency: PlanFrequency; price: number; meals_per_cycle: number; serves: number; image_url: string | null; tags: string[] | null; active: boolean }>;
         Relationships: [];
       };

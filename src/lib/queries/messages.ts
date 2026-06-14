@@ -134,7 +134,7 @@ export function useChatContext(conversationId?: string, userId?: string | null) 
         .select('user_id')
         .eq('conversation_id', conversationId!);
       const other = (parts ?? []).map((p) => p.user_id).find((u) => u !== userId) ?? null;
-      if (!other) return { otherUserId: null, otherPhone: null, order: null };
+      if (!other) return { otherUserId: null, otherPhone: null, order: null, homeCookRequest: null };
 
       const [{ data: prof }, { data: preps }] = await Promise.all([
         supabase.from('profiles').select('phone').eq('id', other).maybeSingle(),
