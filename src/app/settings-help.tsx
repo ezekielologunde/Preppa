@@ -1,15 +1,20 @@
 import { useRouter } from 'expo-router';
-import { ChevronDown, Headset, MessageCircle, Search } from 'lucide-react-native';
+import { ChevronDown, Headset, MessageCircle, Search, Send, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useMemo, useState } from 'react';
-import { Linking, ScrollView, Text, TextInput, View } from 'react-native';
+import { Modal, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { SettingsHeader } from '@/components/settings-ui';
 import { PressableScale } from '@/components/ui/pressable-scale';
 import { Font } from '@/constants/fonts';
-import { Palette, Shadow } from '@/constants/theme';
+import { Palette, Radius, Shadow } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
+import { supabase } from '@/lib/supabase';
+
+const cleanBlock = (s: string) => s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+
+const SUPPORT_TOPICS = ['Payment issue', 'Technical bug', 'Account', 'Something else'];
 
 type Faq = { q: string; a: string };
 
@@ -64,10 +69,92 @@ function SupportCard({ Icon, tint, title, sub, onPress }: { Icon: typeof Message
   );
 }
 
+/** In-app contact form overlay — a clean alternative to bouncing out to email. */
+function ContactSupportModal({ visible, onClose, onSent }: { visible: boolean; onClose: () => void; onSent: () => void }) {
+  const [topic, setTopic] = useState<string | null>(null);
+  const [message, setMessage] = useState('');
+  const [sending, setSending] = useState(false);
+
+  function close() { setTopic(null); setMessage(''); setSending(false); onClose(); }
+
+  async function send() {
+    if (!topic || message.trim().length < 4) return;
+    setSending(true);
+    feedback.tap();
+    // Fire-and-forget: route the request into analytics so ops can triage it.
+    supabase.rpc('record_event', { p_event: 'support_request', p_props: { topic, message: cleanBlock(message).trim() } }).then(() => {}, () => {});
+    feedback.success();
+    close();
+    onSent();
+  }
+
+  const canSend = !!topic && message.trim().length >= 4;
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={close}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+        <MotiView from={{ translateY: 40, opacity: 0 }} animate={{ translateY: 0, opacity: 1 }} transition={{ type: 'timing', duration: 260 }}
+          style={{ backgroundColor: Palette.surface, borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 22, paddingTop: 18, paddingBottom: Platform.OS === 'ios' ? 40 : 26 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <View style={{ width: 40, height: 40, borderRadius: 13, backgroundColor: '#0EA5E9' + '1A', alignItems: 'center', justifyContent: 'center' }}>
+                <Headset size={19} color="#0EA5E9" />
+              </View>
+              <Text style={{ fontFamily: Font.display, fontSize: 20, color: Palette.ink, letterSpacing: -0.4 }}>Contact Preppa</Text>
+            </View>
+            <PressableScale onPress={() => { feedback.tap(); close(); }} accessibilityRole="button" accessibilityLabel="Close"
+              style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: Palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+              <X size={17} color={Palette.textSecondary} />
+            </PressableScale>
+          </View>
+
+          <Text style={{ fontFamily: Font.semibold, fontSize: 12, color: Palette.textMuted, textTransform: 'uppercase', letterSpacing: 0.6, marginBottom: 8 }}>what’s it about?</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
+            {SUPPORT_TOPICS.map((t) => {
+              const active = topic === t;
+              return (
+                <PressableScale key={t} onPress={() => { feedback.tap(); setTopic(t); }} accessibilityRole="button"
+                  accessibilityState={{ selected: active }} accessibilityLabel={t}
+                  style={{ paddingHorizontal: 14, height: 38, borderRadius: Radius.pill, backgroundColor: active ? Palette.brandTint : Palette.canvas, borderWidth: 1.5, borderColor: active ? Palette.brand : Palette.border, alignItems: 'center', justifyContent: 'center' }}>
+                  <Text style={{ fontFamily: Font.semibold, fontSize: 13, color: active ? Palette.brand : Palette.inkSoft }}>{t}</Text>
+                </PressableScale>
+              );
+            })}
+          </View>
+
+          <TextInput
+            value={message}
+            onChangeText={(t) => setMessage(cleanBlock(t))}
+            placeholder="Tell us what happened…"
+            placeholderTextColor={Palette.textMuted}
+            multiline
+            maxLength={600}
+            textAlignVertical="top"
+            style={{ minHeight: 96, borderRadius: 14, borderWidth: 1, borderColor: Palette.border, backgroundColor: Palette.canvas, padding: 12, fontFamily: Font.body, fontSize: 14, color: Palette.ink }}
+            accessibilityLabel="Describe your issue"
+          />
+
+          <PressableScale onPress={send} disabled={!canSend || sending} accessibilityRole="button" accessibilityLabel="Send to Preppa support"
+            style={{ marginTop: 16, height: 52, borderRadius: Radius.pill, backgroundColor: canSend ? Palette.brand : Palette.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}>
+            <Send size={17} color={canSend ? '#fff' : Palette.textMuted} />
+            <Text style={{ fontFamily: Font.heading, fontSize: 15.5, color: canSend ? '#fff' : Palette.textMuted }}>Send message</Text>
+          </PressableScale>
+          <Text style={{ fontFamily: Font.body, fontSize: 12, color: Palette.textMuted, textAlign: 'center', marginTop: 10 }}>
+            We typically reply by email within one business day.
+          </Text>
+        </MotiView>
+      </View>
+    </Modal>
+  );
+}
+
 export default function HelpKnowledgeScreen() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const flash = (m: string) => { setToast(m); setTimeout(() => setToast((t) => (t === m ? null : t)), 2600); };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -128,12 +215,21 @@ export default function HelpKnowledgeScreen() {
                 tint="#0EA5E9"
                 title="Contact Preppa"
                 sub="Payments or technical bugs"
-                onPress={() => { Linking.openURL('mailto:support@preppa.live?subject=Preppa%20Support').catch(() => {}); }}
+                onPress={() => setContactOpen(true)}
               />
             </View>
           </View>
         </ScrollView>
+
+        {toast ? (
+          <MotiView from={{ opacity: 0, translateY: 14 }} animate={{ opacity: 1, translateY: 0 }} transition={{ type: 'timing', duration: 200 }}
+            style={{ position: 'absolute', left: 20, right: 20, bottom: 24, backgroundColor: Palette.ink, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 13 }}>
+            <Text style={{ fontFamily: Font.medium, fontSize: 13.5, color: Palette.surface, textAlign: 'center' }}>{toast}</Text>
+          </MotiView>
+        ) : null}
       </SafeAreaView>
+
+      <ContactSupportModal visible={contactOpen} onClose={() => setContactOpen(false)} onSent={() => flash('Message sent — we’ll reply by email soon.')} />
     </View>
   );
 }
