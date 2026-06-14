@@ -11,6 +11,7 @@ import { Font } from '@/constants/fonts';
 import { Palette, Radius } from '@/constants/theme';
 import { feedback } from '@/lib/feedback';
 import { usePersistedToggle } from '@/lib/prefs';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/auth-provider';
 
 const LEAVE_REASONS = [
@@ -125,10 +126,11 @@ export default function PrivacySecurityScreen() {
   const [toast, setToast] = useState<string | null>(null);
   const flash = (m: string) => { setToast(m); setTimeout(() => setToast((t) => (t === m ? null : t)), 2600); };
 
-  async function handleDelete(_reason: string, _note: string) {
-    // The exit survey (_reason/_note) would post to support; hard account
-    // deletion runs server-side (service_role). Here we close the session and
-    // confirm the request so the user is signed out immediately.
+  function handleDelete(reason: string, note: string) {
+    // Capture the exit survey (fire-and-forget analytics). Hard account deletion
+    // runs server-side (service_role); here we record the reason, confirm the
+    // request, and end the session so the user is signed out immediately.
+    supabase.rpc('record_event', { p_event: 'account_deletion_requested', p_props: { reason, note: note || null } }).then(() => {}, () => {});
     setDeleteOpen(false);
     flash('Account deletion requested — check your email to confirm.');
     setTimeout(() => { signOut(); }, 1400);
