@@ -162,7 +162,7 @@ export default function ExperiencesScreen() {
                     <Text style={{ fontFamily: Font.heading, fontSize: 14, color: INK }}>Request a chef</Text>
                     <ChevronRight size={16} color={INK} />
                   </View>
-                  <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: 'rgba(255,255,255,0.85)' }}>from $65 / guest</Text>
+                  <Text style={{ fontFamily: Font.medium, fontSize: 12.5, color: 'rgba(255,255,255,0.85)' }}>set your budget · get bids</Text>
                 </View>
               </View>
             </PressableScale>
