@@ -1,0 +1,44 @@
+/* ============================================================
+   PREPPA — Typography tokens
+   Poppins for display, headings, and body/UI copy alike (weight
+   carries the hierarchy — ExtraBold/Bold for display, Regular/
+   Medium/SemiBold for body). Clash Display for the wordmark only
+   (web only; native falls back to Poppins-ExtraBold).
+   Synced from the live app (src/constants/theme.ts + fonts.ts) on 2026-07-03.
+   ============================================================ */
+
+:root {
+  /* ── Font families ── */
+  --font-display:   'Poppins', system-ui, sans-serif;              /* headings — use 700/800 weight */
+  --font-body:      'Poppins', system-ui, sans-serif;               /* UI copy — use 400/500/600 weight */
+  --font-logo:      'Clash Display', 'Poppins', system-ui, sans-serif; /* wordmark only, web only */
+  --font-mono:      ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ── Font weights ── */
+  --fw-regular:     400;
+  --fw-medium:      500;
+  --fw-semibold:    600;
+  --fw-bold:        700;
+  --fw-extrabold:   800;
+
+  /* ── Type scale (mobile-first, in px) — matches Palette.Type exactly ── */
+  --text-hero:         48px;   /* rare — full-bleed hero moments only */
+  --text-hero-lg:      40px;   /* large hero, splash */
+  --text-display-xl:   32px;   /* hero / page title */
+  --text-display-lg:   24px;   /* section hero */
+  --text-display:      22px;   /* section header */
+  --text-title:        18px;   /* card title, modal header */
+  --text-body:         15px;   /* default body copy */
+  --text-label:        13px;   /* supporting labels, captions */
+  --text-micro:        11px;   /* badges, timestamps, fine print */
+
+  /* ── Line heights ── */
+  --lh-display:   1.15;
+  --lh-body:      1.5;
+  --lh-label:     1.4;
+
+  /* ── Letter spacing ── */
+  --ls-tight:    -0.5px;
+  --ls-tighter:  -0.8px;
+  --ls-normal:    0;
+}

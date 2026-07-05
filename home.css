@@ -1,0 +1,124 @@
+/* =========================================================================
+   PREPPA — calmer Home hub + lighter shared header pattern.
+   Generous whitespace, neutral surfaces, orange reserved for the one
+   primary action + price + active states.
+   ========================================================================= */
+
+.hpage{ position:absolute; inset:0; display:flex; flex-direction:column; background:var(--bg); }
+
+/* ---------- calm header ---------- */
+.hhdr{ flex:none; background:linear-gradient(180deg, var(--primary-l) -30%, var(--surface) 62%); padding:calc(8px + var(--safe-top)) 20px 20px; }
+.hhdr-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+
+.hloc{ display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left; min-width:0; }
+.hloc .l{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+.hloc .v{ display:flex; align-items:center; gap:5px; font-size:16px; font-weight:800; letter-spacing:-.02em; color:var(--ink); }
+.hloc .v svg{ color:var(--ink); flex:none; }
+.hloc .v .chev{ color:var(--muted); }
+
+.hpagetitle{ margin:0; font-size:27px; font-weight:900; letter-spacing:-.035em; }
+.hgrad{ background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.mcard .priceline .pr{ color:var(--primary); }
+
+.hicons{ display:flex; gap:9px; }
+.hibtn{ width:44px; height:44px; border-radius:14px; background:var(--bg-2); display:grid; place-items:center;
+  position:relative; color:var(--ink-2); transition:transform .18s var(--spring), background .15s; flex:none; }
+.hibtn:active{ transform:scale(.9); }
+.hibtn:hover{ background:var(--border-2); }
+.hibtn .dot{ position:absolute; top:9px; right:10px; width:9px; height:9px; border-radius:50%;
+  background:var(--primary); border:2px solid var(--bg-2); }
+
+.hgreet{ margin-top:24px; }
+.hgreet h1{ margin:0; font-size:29px; font-weight:900; letter-spacing:-.04em; line-height:1.06; }
+.hgreet p{ margin:7px 0 0; font-size:15.5px; color:var(--soft); font-weight:500; }
+
+.hsearch{ display:flex; align-items:center; gap:11px; width:100%; height:54px; padding:0 17px; margin-top:20px;
+  background:var(--bg-2); border-radius:16px; color:var(--muted); font-size:15px; font-weight:600;
+  transition:background .15s, box-shadow .15s; }
+.hsearch:hover{ background:var(--border-2); }
+.hsearch svg{ color:var(--muted); flex:none; }
+.hsearch input{ flex:1; min-width:0; border:none; background:transparent; outline:none; font-size:15px;
+  font-weight:600; color:var(--ink); font-family:inherit; }
+.hsearch input::placeholder{ color:var(--muted); font-weight:600; }
+
+/* sticky search (pins below status bar while header scrolls away) */
+.hstick{ position:sticky; top:var(--safe-top); z-index:30; padding:6px 20px 10px;
+  background:linear-gradient(180deg, var(--bg) 80%, transparent);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+.hstick .hsearch{ margin-top:0; background:var(--surface); border:1px solid var(--border-2); box-shadow:0 2px 8px rgba(0,0,0,.05); }
+.app.dev-desktop .hstick{ top:0; padding-left:32px; padding-right:32px; }
+.app.dev-tablet .hstick{ padding-left:32px; padding-right:32px; }
+
+.hmode{ display:inline-flex; gap:4px; margin-top:14px; background:var(--bg-2); padding:4px; border-radius:13px; }
+.hmode button{ height:36px; padding:0 18px; border-radius:10px; font-size:13.5px; font-weight:700; color:var(--soft);
+  display:flex; align-items:center; gap:7px; transition:color .2s, background .25s var(--ease), box-shadow .25s; }
+.hmode button svg{ width:15px; height:15px; }
+.hmode button.on{ background:var(--surface); color:var(--ink); box-shadow:0 1px 4px rgba(0,0,0,.1); }
+
+/* ---------- section header (airy) ---------- */
+.hsec{ display:flex; align-items:baseline; justify-content:space-between; padding:30px 20px 14px; }
+.hsec h3{ margin:0; font-size:20px; font-weight:900; letter-spacing:-.035em; }
+.hsec a{ font-size:14px; font-weight:800; color:var(--primary); cursor:pointer; }
+
+/* ---------- Today's drop — clean white card ---------- */
+.hhero{ display:block; width:calc(100% - 40px); margin:0 20px; text-align:left; background:var(--surface);
+  border:1px solid var(--border-2); border-radius:24px; overflow:hidden;
+  box-shadow:0 6px 24px -14px rgba(0,0,0,.18); transition:transform .22s var(--spring), box-shadow .2s; }
+.hhero:active{ transform:scale(.985); }
+.hhero .img{ height:210px; position:relative; }
+.hhero .eyebrow{ position:absolute; top:14px; left:14px; height:30px; padding:0 13px; border-radius:99px;
+  background:rgba(255,255,255,.94); backdrop-filter:blur(8px); display:flex; align-items:center; gap:6px;
+  font-size:11px; font-weight:900; letter-spacing:.4px; text-transform:uppercase; color:var(--ink);
+  box-shadow:0 2px 8px rgba(0,0,0,.08); }
+.hhero .eyebrow svg{ width:13px; height:13px; color:var(--primary); }
+.hhero .heart{ position:absolute; top:13px; right:13px; }
+.hhero-b{ padding:17px 19px 19px; }
+.hhero-b .t{ font-size:21px; font-weight:900; letter-spacing:-.03em; line-height:1.15; }
+.hhero-b .cook{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13.5px; font-weight:700; color:var(--soft); }
+.hhero-b .cook .av{ width:24px; height:24px; border-radius:8px; flex:none; display:grid; place-items:center; color:#fff; font-weight:900; font-size:12px; }
+.hhero-b .cook .vchk{ color:var(--green); flex:none; }
+.hhero-b .meta{ display:flex; align-items:center; gap:16px; margin-top:13px; font-size:13px; font-weight:700; color:var(--soft); }
+.hhero-b .meta span{ display:flex; align-items:center; gap:5px; }
+.hhero-b .meta svg{ width:14px; height:14px; }
+.hhero-b .foot{ display:flex; align-items:center; justify-content:space-between; margin-top:18px; }
+.hhero-b .price{ font-size:23px; font-weight:900; letter-spacing:-.03em; color:var(--primary); }
+.hhero-b .order{ height:46px; padding:0 22px; border-radius:99px; background:var(--primary); color:#fff;
+  font-weight:800; font-size:15px; display:flex; align-items:center; gap:8px;
+  box-shadow:0 10px 22px -10px rgba(242,107,29,.55); transition:transform .18s var(--spring), background .15s; }
+.hhero-b .order:active{ transform:scale(.94); background:var(--primary-d); }
+.hhero-b .order svg{ width:17px; height:17px; }
+
+/* grid + rail gutters tuned to the calmer 20px margin */
+.hpage .mgrid{ padding:4px 20px; }
+.hpage .exprail{ padding:8px 20px 4px; }
+.hpage .chips{ padding:16px 20px 4px; }
+.hpage .sec{ padding:24px 20px 12px; }
+.hpage .sec h3{ font-size:18px; letter-spacing:-.03em; white-space:nowrap; }
+
+/* ---------- quiet private-chef entry ---------- */
+.hchef{ display:flex; align-items:center; gap:14px; width:calc(100% - 40px); margin:8px 20px 0; padding:16px;
+  text-align:left; border-radius:18px; background:var(--surface); border:1px solid var(--border-2);
+  transition:transform .2s var(--spring); }
+.hchef:active{ transform:scale(.985); }
+.hchef .ic{ width:46px; height:46px; border-radius:14px; background:var(--bg-2); color:var(--ink-2);
+  display:grid; place-items:center; flex:none; }
+.hchef .b{ flex:1; min-width:0; }
+.hchef .b b{ font-size:15.5px; font-weight:800; letter-spacing:-.02em; }
+.hchef .b p{ margin:2px 0 0; font-size:12.5px; color:var(--soft); font-weight:500; }
+.hchef .go{ color:var(--muted); flex:none; }
+
+/* footer breathing room before nav */
+.h-end{ height:14px; }
+
+/* hide logo from header when side rail already shows it */
+.app.dev-tablet .hhdr-logo, .app.dev-desktop .hhdr-logo{ display:none !important; }
+/* on tablet/desktop the top row is now empty — collapse it and remove location gap */
+.app.dev-tablet .hhdr-top, .app.dev-desktop .hhdr-top{ display:none !important; }
+.app.dev-tablet .hhdr .hloc, .app.dev-desktop .hhdr .hloc{ margin-top:0 !important; }
+.app.dev-desktop .hhdr, .app.dev-tablet .hhdr{ padding-left:32px; padding-right:32px; }
+.app.dev-desktop .hsec, .app.dev-tablet .hsec{ padding-left:32px; padding-right:32px; }
+.app.dev-desktop .hhero, .app.dev-tablet .hhero{ width:calc(100% - 64px); margin:0 32px; }
+.app.dev-desktop .hpage .mgrid, .app.dev-tablet .hpage .mgrid{ padding-left:32px; padding-right:32px; }
+.app.dev-desktop .hpage .exprail, .app.dev-tablet .hpage .exprail{ padding-left:32px; padding-right:32px; }
+.app.dev-desktop .hchef, .app.dev-tablet .hchef{ width:calc(100% - 64px); margin-left:32px; margin-right:32px; }
+.app.dev-desktop .hhero .img{ height:300px; }

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Preppa — Homemade food, cooked by a local you trust</title>
+<meta name="description" content="Preppa is a marketplace for homemade food. Order fresh meals from vetted local cooks near you — pay online or cash on delivery, with verification and safety built in." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<script src="image-slot.js"></script>
+</head>
+<body>
+
+<!-- ========================= NAV ========================= -->
+<div class="nav-shell">
+  <div class="wrap">
+    <nav class="nav">
+      <a class="brand" href="#top">
+        <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect width="32" height="32" rx="9" fill="#F26B1D"/>
+          <path d="M9 19.5c0-4.5 3-7.5 7-7.5s7 3 7 7.5" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
+          <path d="M7.5 19.5h17" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
+          <path d="M16 12V8.5" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/>
+          <circle cx="16" cy="7" r="1.6" fill="#fff"/>
+        </svg>
+        Preppa
+      </a>
+      <div class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="#safety">Trust &amp; Safety</a>
+        <a href="#preppas">For Cooks</a>
+        <a href="#download">Get the app</a>
+      </div>
+      <div class="nav-right">
+        <a class="nav-login" href="#">Log in</a>
+        <a class="btn btn-orange nav-cta" href="#download">Open app</a>
+        <button class="nav-burger" id="burger" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-card">
+    <div class="mm-top">
+      <span class="brand" style="color:var(--ink)">
+        <svg class="mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="#F26B1D"/><path d="M9 19.5c0-4.5 3-7.5 7-7.5s7 3 7 7.5" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/><path d="M7.5 19.5h17" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/><path d="M16 12V8.5" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/><circle cx="16" cy="7" r="1.6" fill="#fff"/></svg>
+        Preppa
+      </span>
+      <button class="mm-close" id="mmClose" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <a class="mm-link" href="#how">How it works <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="mm-link" href="#safety">Trust &amp; Safety <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="mm-link" href="#preppas">For Cooks <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <a class="mm-link" href="#download">Get the app <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <div class="mm-actions">
+      <a class="btn btn-orange btn-block" href="#download">Open app</a>
+      <a class="btn btn-ghost btn-block" href="#">Log in</a>
+    </div>
+  </div>
+</div>
+
+<span id="top"></span>
+
+<!-- ========================= HERO ========================= -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy reveal">
+        <span class="eyebrow"><span class="dot"></span>Homemade food marketplace</span>
+        <h1 class="display">
+          Home-cooked<svg class="spark" viewBox="0 0 24 24" fill="none"><path d="M12 2v6M12 16v6M2 12h6M16 12h6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><br/>
+          <span class="lite">food from a</span><br/>
+          local you trust
+        </h1>
+        <p class="lead">Preppa connects you with vetted home cooks nearby — order fresh, homemade meals made by a real person, not a restaurant.</p>
+        <div class="hero-cta">
+          <a class="btn btn-orange" href="#download">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.9"/><path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+            Find a cook near you
+          </a>
+          <a class="btn btn-ghost" href="#preppas">Become a Preppa</a>
+        </div>
+        <div class="hero-feats">
+          <div class="feat">
+            <span class="ibadge"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="ftext"><b>Verified local cooks</b><span>ID-checked, every one</span></span>
+          </div>
+          <div class="feat">
+            <span class="ibadge amber"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.8"/></svg></span>
+            <span class="ftext"><b>Pay online or cash</b><span>Your call, every order</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal d2">
+        <div class="hero-blob"></div>
+        <image-slot id="hero-photo" class="hero-photo photo" shape="rounded" radius="28" placeholder="Drop a food hero photo"></image-slot>
+        <!-- phone mockup -->
+        <div class="phone hero-phone">
+          <div class="phone-screen">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="sb-r">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none"><path d="M5 12a10 10 0 0 1 14 0M8 15a6 6 0 0 1 8 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="18.5" r="1.3" fill="currentColor"/></svg>
+                <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="18" height="10" rx="2.4" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor"/><path d="M21 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </span>
+            </div>
+            <div class="app">
+              <div class="app-top">
+                <div class="app-loc">
+                  Deliver to
+                  <b><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg>Hillcrest, San Diego</b>
+                </div>
+                <div class="app-av"></div>
+              </div>
+              <div class="app-search">
+                <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.9"/><path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+                Search meals, cooks, cuisines
+              </div>
+              <div class="app-cats">
+                <span class="cat on"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11h16M6 11V7a3 3 0 0 1 6 0M12 7a3 3 0 0 1 6 0v4M6 11v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6" stroke="currentColor" stroke-width="1.7"/></svg>For You</span>
+                <span class="cat">Meal prep</span>
+                <span class="cat">Halal</span>
+                <span class="cat">Vegan</span>
+              </div>
+              <div class="app-h"><b>Fresh drops near you</b><a>See all</a></div>
+              <div class="meal">
+                <div class="ph photo" style="background-image:repeating-linear-gradient(135deg,#efe7dc 0 12px,#e6dccd 12px 24px)">
+                  <span class="verified"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified cook</span>
+                  <span class="fav"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7-4.4-7-9.3A4 4 0 0 1 12 7a4 4 0 0 1 7 3.7C19 15.6 12 20 12 20z"/></svg></span>
+                  <span class="app-add"><svg viewBox="0 0 24 24" fill="none"><path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+                </div>
+                <div class="meal-body">
+                  <div class="mt">
+                    <div>
+                      <h4>Lemon-herb roast chicken</h4>
+                      <span class="cook"><span class="ck"></span>by Amara&rsquo;s Kitchen</span>
+                    </div>
+                    <span class="price">$11.50</span>
+                  </div>
+                  <div class="meta">
+                    <span class="m star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7L12 3z"/></svg>4.9</span>
+                    <span class="m"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Ready 5:30</span>
+                    <span class="m"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M5 12l4-4M5 12l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>0.6 mi</span>
+                  </div>
+                </div>
+              </div>
+              <div class="app-nav">
+                <span class="on"><svg viewBox="0 0 24 24" fill="none"><path d="M4 11l8-7 8 7M6 10v9h12v-9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span>
+                <span><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                <span><svg viewBox="0 0 24 24" fill="none"><path d="M6 6h15l-1.5 8H8L6 4H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="20" r="1.4" fill="currentColor"/><circle cx="18" cy="20" r="1.4" fill="currentColor"/></svg></span>
+                <span><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="av"><span></span><span></span><span></span></div>
+          <div><b>1,200+ cooks</b><small>verified near you</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= TRUST ROW ========================= -->
+<section class="trustrow">
+  <div class="wrap reveal">
+    <p>Trusted by 1,000+ home cooks across the US</p>
+    <div class="logos">
+      <span class="lg"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="2"/></svg>HomeTable</span>
+      <span class="lg">NeighborEats</span>
+      <span class="lg"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Simmer</span>
+      <span class="lg">CasaCocina</span>
+      <span class="lg"><svg viewBox="0 0 24 24" fill="none"><path d="M5 19l7-14 7 14H5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>FreshPlate</span>
+      <span class="lg">Mealry</span>
+      <span class="lg">Potluck&amp;Co</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= WHY TRUST ========================= -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="why-card reveal">
+      <div class="why-visual">
+        <div class="phone sm">
+          <div class="phone-screen">
+            <div class="statusbar"><span>9:41</span><span class="sb-r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg></span></div>
+            <div class="app" style="padding-top:2px">
+              <div style="height:118px;border-radius:18px;background:repeating-linear-gradient(135deg,#efe7dc 0 12px,#e6dccd 12px 24px);position:relative;margin-bottom:14px">
+                <span class="verified" style="position:absolute;left:10px;bottom:10px"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>Identity verified</span>
+              </div>
+              <h4 style="margin:0;font-size:16px;display:flex;align-items:center;gap:6px">Amara O. <svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="color:var(--green)"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></h4>
+              <p style="margin:4px 0 0;font-size:12px;color:var(--ink-soft)">West African home cook · 312 orders</p>
+              <div style="display:flex;gap:8px;margin-top:14px">
+                <div style="flex:1;background:var(--green-soft);border-radius:12px;padding:11px 12px"><div style="font-size:16px;font-weight:800;color:var(--green)">98</div><div style="font-size:10.5px;color:var(--ink-2);font-weight:600">PrepScore</div></div>
+                <div style="flex:1;background:var(--surface);border-radius:12px;padding:11px 12px"><div style="font-size:16px;font-weight:800">4.9★</div><div style="font-size:10.5px;color:var(--ink-2);font-weight:600">312 reviews</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:12px;background:var(--purple-soft);border-radius:12px;padding:11px 12px">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" style="color:var(--purple)"><rect x="4" y="9" width="16" height="11" rx="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M8 9V7a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.8"/></svg>
+                <span style="font-size:11.5px;font-weight:600;color:var(--ink-2)">Payments secured by Preppa &amp; Stripe</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="why-copy">
+        <span class="eyebrow"><span class="dot"></span>Why people trust us</span>
+        <h2 class="section-title">Know exactly <span class="lite">who cooks your food</span> — and why it&rsquo;s safe</h2>
+        <p class="lead">Every Preppa is identity-verified before they sell a single plate. Payments run through Preppa as the merchant of record, so your money is handled — not passed hand-to-hand with a stranger.</p>
+        <a class="btn btn-dark" href="#safety" style="margin-top:24px">
+          How verification works
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <div class="stats">
+          <div class="stat"><b>100<span class="u">%</span></b><span>ID-checked cooks</span></div>
+          <div class="stat"><b>85k<span class="u">+</span></b><span>homemade meals served</span></div>
+          <div class="stat"><b>4.9<span class="u">★</span></b><span>average cook rating</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= HOW IT WORKS ========================= -->
+<section class="how" id="how">
+  <div class="wrap">
+    <span class="eyebrow reveal" style="justify-content:center;display:flex"><span class="dot"></span>How Preppa works</span>
+    <h2 class="section-title reveal" style="margin-top:14px">From <b>your craving</b> to <span class="lite">a home-cooked plate</span> in four steps</h2>
+    <p class="lead reveal">No restaurants, no mystery kitchens — just a clear path from a verified neighbor&rsquo;s stove to your door.</p>
+
+    <div class="how-stage">
+      <div class="how-col">
+        <div class="how-card reveal">
+          <span class="ibadge"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3.2-3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <div class="num">STEP 01</div>
+          <h3>Discover cooks</h3>
+          <p>Browse local Preppas, fresh meal drops, and a For-You feed tuned to your goals and cuisines.</p>
+        </div>
+        <div class="how-card reveal d1">
+          <span class="ibadge amber"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M3 10h18" stroke="currentColor" stroke-width="1.8"/></svg></span>
+          <div class="num">STEP 02</div>
+          <h3>Order your way</h3>
+          <p>Pay securely online with card, or choose cash on delivery. Tips go 100% to your cook.</p>
+        </div>
+      </div>
+
+      <div class="how-phone-wrap reveal d2">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="statusbar"><span>9:41</span><span class="sb-r"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 17h3v4H2zM7 13h3v8H7zM12 9h3v12h-3zM17 5h3v16h-3z"/></svg></span></div>
+            <div class="app">
+              <div class="app-h" style="margin-top:4px"><b>Your order</b><a>Live</a></div>
+              <div style="border-radius:16px;border:1px solid var(--line);overflow:hidden">
+                <div style="height:100px;background:repeating-linear-gradient(135deg,#efe7dc 0 12px,#e6dccd 12px 24px)"></div>
+                <div style="padding:12px">
+                  <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:13.5px">Jollof &amp; grilled chicken</b><span style="font-weight:800;font-size:14px">$13.00</span></div>
+                  <div style="font-size:11.5px;color:var(--ink-soft);margin-top:2px">by Amara&rsquo;s Kitchen</div>
+                </div>
+              </div>
+              <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:10px"><span style="width:24px;height:24px;border-radius:50%;background:var(--green);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" style="color:#fff"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span style="font-size:12px;font-weight:600">Order confirmed</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span style="width:24px;height:24px;border-radius:50%;background:var(--orange);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" style="color:#fff"><path d="M4 11h16M6 11V7a3 3 0 0 1 6 0M12 7a3 3 0 0 1 6 0v4M6 11v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6" stroke="currentColor" stroke-width="1.8"/></svg></span><span style="font-size:12px;font-weight:700">Amara is cooking now</span></div>
+                <div style="display:flex;align-items:center;gap:10px;opacity:.4"><span style="width:24px;height:24px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="14" height="14" fill="none"><path d="M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11z" stroke="currentColor" stroke-width="1.8"/></svg></span><span style="font-size:12px;font-weight:600">Meet &amp; confirm handoff</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="how-col">
+        <div class="how-card reveal d1">
+          <span class="ibadge purple"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><path d="M14 14h2v2M20 14v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <div class="num">STEP 03</div>
+          <h3>Meet &amp; confirm</h3>
+          <p>For cash orders, a QR scan and 6-digit code confirm the exact amount — no fraud, no awkwardness.</p>
+        </div>
+        <div class="how-card reveal d2">
+          <span class="ibadge"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 13.6-5.7L20 8M20 4v4h-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12a8 8 0 0 1-13.6 5.7L4 16M4 20v-4h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div class="num">STEP 04</div>
+          <h3>Eat &amp; re-order</h3>
+          <p>Track live, leave a review, and earn rewards — free delivery and waived fees as you go.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= TRUST & SAFETY BAND ========================= -->
+<section class="safety" id="safety">
+  <div class="wrap">
+    <div class="safety-inner reveal">
+      <div class="safety-head">
+        <div>
+          <span class="eyebrow"><span class="dot"></span>Trust &amp; safety</span>
+          <h2 class="section-title">Safety isn&rsquo;t a feature. <span class="lite">It&rsquo;s the whole point.</span></h2>
+        </div>
+        <p>Restaurant apps hide the kitchen. We do the opposite — every layer of a Preppa order is built to be handled, verified, and accountable.</p>
+      </div>
+      <div class="pillars">
+        <div class="pillar p1 reveal">
+          <span class="ibadge"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <h3>Verified identity</h3>
+          <p>Every cook passes ID verification before listing. You see real names, real kitchens, real track records.</p>
+          <span class="tag"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>100% ID-checked</span>
+        </div>
+        <div class="pillar p2 reveal d1">
+          <span class="ibadge"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="11" rx="2.4" stroke="currentColor" stroke-width="1.8"/><path d="M8 9V7a4 4 0 0 1 8 0v2" stroke="currentColor" stroke-width="1.8"/></svg></span>
+          <h3>Secure payments</h3>
+          <p>Preppa is the merchant of record. You pay us through Stripe; we pay the cook. Tips are 100% theirs.</p>
+          <span class="tag"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>Powered by Stripe</span>
+        </div>
+        <div class="pillar p3 reveal d2">
+          <span class="ibadge"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="4" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13" width="7" height="7" rx="1.4" stroke="currentColor" stroke-width="1.8"/><path d="M14 14h2v2M20 14v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+          <h3>The cash handoff</h3>
+          <p>Paying cash? A dual QR + 6-digit confirmation locks the exact amount for both sides at handoff.</p>
+          <div class="cod-mini">
+            <svg class="cod-qr" viewBox="0 0 48 48" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="#1b1812" stroke-width="2.4"/><rect x="31" y="3" width="14" height="14" rx="2" stroke="#1b1812" stroke-width="2.4"/><rect x="3" y="31" width="14" height="14" rx="2" stroke="#1b1812" stroke-width="2.4"/><rect x="7" y="7" width="6" height="6" rx="1" fill="#1b1812"/><rect x="35" y="7" width="6" height="6" rx="1" fill="#1b1812"/><rect x="7" y="35" width="6" height="6" rx="1" fill="#1b1812"/><path d="M24 24h6v6M44 24v8M30 44h8M24 38v6" stroke="#F26B1D" stroke-width="2.6" stroke-linecap="round"/></svg>
+            <div class="cod-code">
+              <small>Confirm $13.00</small>
+              <div class="cod-digits"><span>4</span><span>8</span><span>1</span><span>2</span><span>0</span><span>6</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= TESTIMONIAL ========================= -->
+<section class="testi">
+  <div class="wrap">
+    <div class="testi-grid">
+      <div class="testi-copy reveal">
+        <span class="eyebrow"><span class="dot"></span>From our members</span>
+        <h2 class="section-title" style="margin-top:14px">Real food, <span class="lite">real neighbors,</span> real reviews</h2>
+        <div class="quote-card">
+          <div class="qm">&ldquo;</div>
+          <p>I know the person cooking my dinner now. The food tastes like someone actually cared — and paying cash with the QR confirm felt completely safe.</p>
+          <div class="quote-who">
+            <div class="av"></div>
+            <div><b>Ayesha Khan</b><span>Member since 2024 · San Diego</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dish-card reveal d2">
+        <image-slot id="testi-dish" class="photo" style="position:absolute;inset:0" shape="rect" placeholder="Drop a finished dish photo"></image-slot>
+        <div class="dish-overlay">
+          <div>
+            <div class="stars">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7L12 3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7L12 3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7L12 3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7L12 3z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.9 6.7 19.5l1.2-6L3.4 9.3l6-.7L12 3z"/></svg>
+            </div>
+            <b>Slow-braised short rib</b>
+            <small>by Marcus T. · ready in 35 min</small>
+          </div>
+          <a class="btn btn-orange btn-sm" href="#download">Order now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= PREPPAS STRIP ========================= -->
+<section class="preppas" id="preppas">
+  <div class="wrap">
+    <span class="eyebrow reveal" style="justify-content:center;display:flex"><span class="dot"></span>Meet the Preppas</span>
+    <h2 class="section-title reveal" style="margin-top:14px">Real people, <span class="lite">cooking real food</span> in their own kitchens</h2>
+    <p class="lead reveal">Behind every plate is a verified neighbor who loves to cook. Become a Preppa and keep 100% of tips — with 0% platform fees for your first 60 days.</p>
+    <div class="strip">
+      <div class="pc reveal">
+        <image-slot id="cook-1" class="photo" style="aspect-ratio:3/4" shape="rect" placeholder="Cook photo"></image-slot>
+        <div class="pc-name"><b>Amara O. <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></b><span>West African · 312 orders</span></div>
+      </div>
+      <div class="pc reveal d1">
+        <image-slot id="cook-2" class="photo" style="aspect-ratio:3/4" shape="rect" placeholder="Cook photo"></image-slot>
+        <div class="pc-name"><b>Marcus T. <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></b><span>Soul food · 540 orders</span></div>
+      </div>
+      <div class="pc reveal d2">
+        <image-slot id="cook-3" class="photo" style="aspect-ratio:3/4" shape="rect" placeholder="Cook photo"></image-slot>
+        <div class="pc-name"><b>Lucia R. <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></b><span>Oaxacan · 198 orders</span></div>
+      </div>
+    </div>
+    <div class="preppas-cta reveal">
+      <a class="btn btn-dark" href="#download">Become a Preppa</a>
+      <a class="btn btn-ghost" href="#how">See how earnings work</a>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= DOWNLOAD CTA ========================= -->
+<section class="download" id="download">
+  <div class="wrap">
+    <div class="dl-inner reveal">
+      <div class="dl-copy">
+        <span class="eyebrow"><span class="dot"></span>Get the app</span>
+        <h2>Order anywhere, <span class="lite">track every plate live</span></h2>
+        <p>Discover cooks near you, order in a tap, and follow your meal from the stove to your door. Free to download.</p>
+        <div class="dl-badges">
+          <a class="store" href="#">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 2H7a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3zm-5 18.2a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2zM17 16H7V5h10z"/></svg>
+            <span class="st"><small>Download on the</small><b>App Store</b></span>
+          </a>
+          <a class="store" href="#">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 3l11 9L4 21V3z" fill="#F26B1D"/><path d="M4 3l8 6 3-2.5L4 3z" fill="#7C3AED"/><path d="M4 21l8-6 3 2.5L4 21z" fill="#1E8A5B"/></svg>
+            <span class="st"><small>Get it on</small><b>Google Play</b></span>
+          </a>
+        </div>
+      </div>
+      <div class="dl-visual">
+        <div class="dl-price"><small>Tonight&rsquo;s drop</small><b>$11.50</b></div>
+        <image-slot id="dl-dish-1" class="dl-dish d1 photo" shape="circle" placeholder="Dish"></image-slot>
+        <image-slot id="dl-dish-2" class="dl-dish d2 photo" shape="circle" placeholder="Dish"></image-slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= FOOTER ========================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <span class="brand">
+          <svg class="mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="9" fill="#F26B1D"/><path d="M9 19.5c0-4.5 3-7.5 7-7.5s7 3 7 7.5" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/><path d="M7.5 19.5h17" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/><path d="M16 12V8.5" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/><circle cx="16" cy="7" r="1.6" fill="#fff"/></svg>
+          Preppa
+        </span>
+        <p>The marketplace for homemade food. Fresh meals from vetted local cooks — with trust built into every order.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none"><path d="M14 4v9.5a3.5 3.5 0 1 1-3-3.46" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 4a4.5 4.5 0 0 0 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 0 1 4 0v4M11 11v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#how">How it works</a>
+        <a href="#">Browse cooks</a>
+        <a href="#">Rewards</a>
+        <a href="#">PrepPlus membership</a>
+        <a href="#">Catering</a>
+      </div>
+      <div class="foot-col">
+        <h5>For Cooks</h5>
+        <a href="#preppas">Become a Preppa</a>
+        <a href="#">Cook Hub</a>
+        <a href="#">Meal programs</a>
+        <a href="#">PrepScore</a>
+        <a href="#">Payouts</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#safety">Trust &amp; Safety</a>
+        <a href="#">About</a>
+        <a href="#">Help center</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <p>© 2026 Preppa, Inc. · Merchant of record · Payments by Stripe</p>
+      <div class="links">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="22" fill="#F26B1D"/><path d="M34 60c0-9 7-15 16-15s16 6 16 15" stroke="#fff" stroke-width="4.4" stroke-linecap="round"/><path d="M31 60h38" stroke="#fff" stroke-width="4.4" stroke-linecap="round"/><path d="M50 44v-7" stroke="#fff" stroke-width="4.4" stroke-linecap="round"/><circle cx="50" cy="34" r="3.4" fill="#fff"/></svg>
+</template>
+
+<script src="landing.js"></script>
+</body>
+</html>

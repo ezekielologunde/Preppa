@@ -1,0 +1,36 @@
+# Supabase local config. Applied by `supabase start` / `supabase db reset`.
+project_id = "preppa"
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+enabled = true
+site_url = "http://localhost:8081"
+# Email/password + OTP for MVP; the app derives role from profiles, never a client flag.
+enable_signup = true
+
+[auth.email]
+enable_confirmations = false # local dev only; production requires confirmation
+
+[realtime]
+enabled = true
+
+[storage]
+enabled = true
+# Buckets are created in migrations with owner-scoped policies.
+# No bucket holding PII (addresses, KYC docs) is ever public-read.
+
+[edge_runtime]
+enabled = true
+
+# Stripe calls this with its own signature, not a user JWT — so skip JWT verification
+# (the signature check inside the function is the real gate). create-order keeps the
+# default verify_jwt = true so only signed-in users can place orders.
+[functions.stripe-webhook]
+verify_jwt = false

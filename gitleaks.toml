@@ -1,0 +1,35 @@
+# gitleaks config — secrets must never enter the repo.
+# A leaked Supabase service_role key bypasses ALL Row-Level Security; a leaked
+# Stripe secret key drains funds. These live only in Edge Function / EAS env.
+title = "Preppa secret scanning"
+
+[extend]
+# Start from gitleaks' bundled ruleset, then add project-specific detectors.
+useDefault = true
+
+[[rules]]
+id = "supabase-service-role-jwt"
+description = "Supabase service_role key (JWT with role=service_role)"
+# service_role JWTs are long base64url triplets; pair with the tell-tale claim.
+regex = '''eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}'''
+keywords = ["service_role", "SUPABASE_SERVICE_ROLE"]
+
+[[rules]]
+id = "stripe-secret-key"
+description = "Stripe secret / restricted key"
+regex = '''(sk|rk)_(live|test)_[0-9A-Za-z]{16,}'''
+keywords = ["sk_live", "sk_test", "rk_live", "rk_test"]
+
+[[rules]]
+id = "stripe-webhook-secret"
+description = "Stripe webhook signing secret"
+regex = '''whsec_[0-9A-Za-z]{16,}'''
+keywords = ["whsec_"]
+
+[allowlist]
+description = "Ignore examples, lockfiles, and the design prototype"
+paths = [
+  '''\.env\.example$''',
+  '''pnpm-lock\.yaml$''',
+  '''(^|/)uploads/''',
+]

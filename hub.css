@@ -1,0 +1,263 @@
+/* =========================================================================
+   PREPPA — My Hub (prepper / cook side). Calm command center.
+   Reuses app.css tokens. Color reserved for status, money & primary actions.
+   Class prefix: k- (kitchen) to avoid collision with customer app.
+   ========================================================================= */
+
+.kpage{ position:absolute; inset:0; display:flex; flex-direction:column; background:var(--bg); }
+.kscroll{ flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; padding-bottom:96px; }
+
+/* ----------------------------- header ----------------------------- */
+.khdr{ flex:none; background:var(--surface); padding:calc(10px + var(--safe-top)) 20px 16px; border-bottom:1px solid var(--border-2); }
+.khdr-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.khdr .who{ display:flex; align-items:center; gap:11px; min-width:0; flex:1; }
+.khdr .who .t{ min-width:0; }
+.khdr .av{ width:42px; height:42px; border-radius:13px; flex:none; display:grid; place-items:center; color:#fff; font-weight:900; font-size:17px; }
+.khdr .who .t .e{ font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+.khdr .who .t .n{ font-size:18px; font-weight:900; letter-spacing:-.03em; line-height:1.1; display:flex; align-items:center; gap:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.khdr .who .t .n .vchk{ flex:none; }
+.khdr .who .t .n .vchk{ color:var(--green); }
+.khdr .icon{ width:42px; height:42px; border-radius:13px; background:var(--bg-2); display:grid; place-items:center; color:var(--ink-2); position:relative; transition:transform .18s var(--spring), background .15s; flex:none; }
+.khdr .icon:active{ transform:scale(.9); } .khdr .icon:hover{ background:var(--border-2); }
+.khdr .icon .dot{ position:absolute; top:9px; right:10px; width:9px; height:9px; border-radius:50%; background:var(--primary); border:2px solid var(--bg-2); }
+
+/* availability pill toggle (pinned in header) */
+.kavail{ display:inline-flex; align-items:center; gap:9px; height:38px; padding:0 6px 0 14px; border-radius:99px;
+  font-size:13.5px; font-weight:800; letter-spacing:-.01em; transition:background .25s, color .25s, box-shadow .25s; }
+.kavail.on{ background:var(--green-l); color:#0f7a39; }
+.kavail.off{ background:var(--bg-2); color:var(--soft); }
+.kavail .stat{ display:flex; align-items:center; gap:7px; }
+.kavail .blip{ width:9px; height:9px; border-radius:50%; position:relative; }
+.kavail.on .blip{ background:var(--green-2); }
+.kavail.on .blip::after{ content:''; position:absolute; inset:-4px; border-radius:50%; border:2px solid var(--green-2); opacity:.5; animation:kping 1.8s var(--ease) infinite; }
+@keyframes kping{ 0%{ transform:scale(.7); opacity:.6 } 100%{ transform:scale(1.7); opacity:0 } }
+.kavail.off .blip{ background:var(--muted); }
+.kavail .knob{ width:30px; height:30px; border-radius:50%; background:var(--surface); display:grid; place-items:center; box-shadow:0 1px 4px rgba(0,0,0,.16); }
+.kavail.on .knob{ color:var(--green); } .kavail.off .knob{ color:var(--muted); }
+
+/* sub-tabs (segmented) for tablet/desktop within hub — mobile uses bottom nav */
+.ksub{ display:flex; gap:6px; padding:14px 20px 2px; overflow-x:auto; }
+.ksub button{ flex:none; height:34px; padding:0 14px; border-radius:99px; font-size:13px; font-weight:800; color:var(--soft); background:var(--bg-2); transition:background .2s, color .2s; }
+.ksub button.on{ background:var(--primary); color:#fff; }
+
+/* ----------------------------- section label ----------------------------- */
+.ksec{ display:flex; align-items:baseline; justify-content:space-between; padding:26px 20px 12px; }
+.ksec h3{ margin:0; font-size:17px; font-weight:900; letter-spacing:-.03em; }
+.ksec .cnt{ margin-left:8px; font-size:13px; font-weight:800; color:var(--muted); }
+.ksec a{ font-size:13.5px; font-weight:800; color:var(--primary); cursor:pointer; }
+.ksec.tight{ padding-top:18px; }
+
+/* ----------------------------- balance strip ----------------------------- */
+.kbal{ margin:18px 20px 0; padding:18px; border-radius:22px; background:var(--ink); color:#fff; position:relative; overflow:hidden; }
+.kbal::after{ content:''; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%;
+  background:radial-gradient(circle, rgba(242,107,29,.5), transparent 70%); }
+.kbal .l{ font-size:12px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; color:rgba(255,255,255,.6); position:relative; }
+.kbal .v{ font-size:34px; font-weight:900; letter-spacing:-.04em; margin-top:5px; position:relative; }
+.kbal .sub{ display:flex; gap:18px; margin-top:14px; position:relative; }
+.kbal .sub .it{ display:flex; flex-direction:column; gap:2px; }
+.kbal .sub .it b{ font-size:15px; font-weight:900; letter-spacing:-.02em; }
+.kbal .sub .it span{ font-size:11.5px; font-weight:700; color:rgba(255,255,255,.6); }
+.kbal .pay{ position:absolute; right:18px; top:18px; height:36px; padding:0 16px; border-radius:99px; background:var(--primary);
+  color:#fff; font-size:13.5px; font-weight:800; display:flex; align-items:center; gap:6px; box-shadow:0 8px 18px -8px rgba(242,107,29,.7);
+  transition:transform .18s var(--spring); }
+.kbal .pay:active{ transform:scale(.93); }
+
+/* ----------------------------- stat tiles ----------------------------- */
+.ktiles{ display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:4px 20px; }
+.ktile{ background:var(--surface); border:1px solid var(--border-2); border-radius:18px; padding:15px 16px; text-align:left;
+  transition:transform .2s var(--spring), box-shadow .2s; }
+.ktile:active{ transform:scale(.98); }
+.ktile .ic{ width:34px; height:34px; border-radius:11px; display:grid; place-items:center; margin-bottom:11px; }
+.ktile .v{ font-size:23px; font-weight:900; letter-spacing:-.035em; line-height:1; }
+.ktile .l{ font-size:12.5px; font-weight:700; color:var(--soft); margin-top:5px; }
+.ktile .d{ font-size:11.5px; font-weight:800; margin-top:7px; display:inline-flex; align-items:center; gap:3px; }
+.ktile .d.up{ color:var(--green); } .ktile .d.dn{ color:var(--red); } .ktile .d.flat{ color:var(--muted); }
+.ic-amber{ background:#FEF3E2; color:#D97706; } .ic-green{ background:var(--green-l); color:var(--green); }
+.ic-purple{ background:var(--purple-l); color:var(--purple); } .ic-blue{ background:#E6F0FE; color:#2563EB; }
+.ic-ink{ background:var(--bg-2); color:var(--ink); } .ic-red{ background:#FEECEC; color:var(--red); }
+
+/* ----------------------------- action queue ----------------------------- */
+.kqueue{ padding:0 20px; display:flex; flex-direction:column; gap:11px; }
+.kact{ display:flex; align-items:center; gap:13px; background:var(--surface); border:1px solid var(--border-2); border-radius:18px;
+  padding:14px; position:relative; overflow:hidden; transition:transform .2s var(--spring); }
+.kact::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:4px; }
+.kact.new::before{ background:var(--primary); } .kact.cater::before{ background:var(--purple); }
+.kact.win::before{ background:var(--green-2); } .kact.warn::before{ background:var(--star); }
+.kact .ic{ width:44px; height:44px; border-radius:13px; display:grid; place-items:center; flex:none; }
+.kact .b{ flex:1; min-width:0; }
+.kact .b .top{ display:flex; align-items:center; gap:7px; }
+.kact .b .tag{ font-size:10px; font-weight:900; letter-spacing:.05em; text-transform:uppercase; padding:2px 7px; border-radius:6px; }
+.tag-new{ background:var(--primary-l); color:var(--primary-d); } .tag-cater{ background:var(--purple-l); color:var(--purple); }
+.tag-win{ background:var(--green-l); color:#0f7a39; } .tag-warn{ background:#FEF3E2; color:#B45309; }
+.kact .b .ttl{ font-size:14.5px; font-weight:800; letter-spacing:-.02em; margin-top:4px; line-height:1.25; }
+.kact .b .mt{ font-size:12.5px; font-weight:600; color:var(--soft); margin-top:2px; }
+.kact .b .mt b{ color:var(--ink); font-weight:800; }
+.kact .act{ display:flex; flex-direction:column; gap:6px; align-items:flex-end; flex:none; }
+.kact .when{ font-size:11px; font-weight:700; color:var(--muted); }
+.kbtn{ height:36px; padding:0 16px; border-radius:99px; font-size:13px; font-weight:800; display:inline-flex; align-items:center; gap:6px;
+  transition:transform .16s var(--spring), background .15s; white-space:nowrap; }
+.kbtn:active{ transform:scale(.94); }
+.kbtn-pri{ background:var(--primary); color:#fff; box-shadow:0 6px 16px -8px rgba(242,107,29,.6); }
+.kbtn-pri:active{ background:var(--primary-d); }
+.kbtn-dark{ background:var(--ink); color:#fff; }
+.kbtn-ghost{ background:var(--bg-2); color:var(--ink); }
+.kbtn-sm{ height:32px; padding:0 12px; font-size:12.5px; }
+.kbtn-block{ width:100%; justify-content:center; height:48px; font-size:15px; }
+
+/* empty state inside queue */
+.kempty{ text-align:center; padding:34px 24px; color:var(--soft); }
+.kempty .ring{ width:64px; height:64px; border-radius:20px; background:var(--green-l); color:var(--green); display:grid; place-items:center; margin:0 auto 14px; }
+.kempty h4{ margin:0; font-size:16px; font-weight:900; letter-spacing:-.02em; color:var(--ink); }
+.kempty p{ margin:5px 0 0; font-size:13.5px; font-weight:500; }
+
+/* ----------------------------- shortcuts grid ----------------------------- */
+.kgrid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:11px; padding:4px 20px; }
+.kshort{ background:var(--surface); border:1px solid var(--border-2); border-radius:18px; padding:15px 12px; display:flex; flex-direction:column;
+  align-items:flex-start; gap:10px; transition:transform .2s var(--spring), box-shadow .2s; }
+.kshort:active{ transform:scale(.96); }
+.kshort .ic{ width:38px; height:38px; border-radius:12px; display:grid; place-items:center; }
+.kshort .l{ font-size:13px; font-weight:800; letter-spacing:-.02em; text-align:left; line-height:1.2; }
+.kshort .badge{ position:absolute; }
+
+/* ----------------------------- list rows (orders / listings) ----------------------------- */
+.krow{ display:flex; align-items:center; gap:13px; background:var(--surface); border:1px solid var(--border-2); border-radius:16px;
+  padding:13px 14px; margin:0 20px 10px; transition:transform .18s var(--spring); }
+.krow:active{ transform:scale(.99); }
+.krow .ph{ width:50px; height:50px; border-radius:13px; flex:none; }
+.krow .b{ flex:1; min-width:0; }
+.krow .b .nm{ font-size:14.5px; font-weight:800; letter-spacing:-.02em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.krow .b .mt{ font-size:12.5px; font-weight:600; color:var(--soft); margin-top:2px; }
+.krow .r{ text-align:right; flex:none; }
+.krow .r .amt{ font-size:15px; font-weight:900; letter-spacing:-.02em; }
+.kstat{ display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:800; padding:3px 9px; border-radius:99px; margin-top:5px; }
+.kstat.new{ background:var(--primary-l); color:var(--primary-d); }
+.kstat.prep{ background:#FEF3E2; color:#B45309; }
+.kstat.ready{ background:#E6F0FE; color:#2563EB; }
+.kstat.done{ background:var(--bg-2); color:var(--soft); }
+.kstat.live{ background:var(--green-l); color:#0f7a39; }
+.kstat.paused{ background:var(--bg-2); color:var(--muted); }
+.kstat .blip{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+/* day divider */
+.kday{ padding:18px 20px 8px; font-size:12px; font-weight:900; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); }
+
+/* ----------------------------- catering cards ----------------------------- */
+.kreq{ background:var(--surface); border:1px solid var(--border-2); border-radius:20px; padding:16px; margin:0 20px 12px; }
+.kreq .top{ display:flex; align-items:center; gap:10px; }
+.kreq .top .badge{ font-size:10px; font-weight:900; letter-spacing:.05em; text-transform:uppercase; padding:3px 9px; border-radius:7px; background:var(--purple-l); color:var(--purple); }
+.kreq .top .post{ margin-left:auto; font-size:11.5px; font-weight:700; color:var(--muted); }
+.kreq .ttl{ font-size:16.5px; font-weight:900; letter-spacing:-.03em; margin-top:11px; }
+.kreq .host{ font-size:13px; font-weight:700; color:var(--soft); margin-top:3px; }
+.kreq .facts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:13px; }
+.kfact{ display:flex; align-items:center; gap:6px; height:30px; padding:0 11px; border-radius:9px; background:var(--bg-2); font-size:12.5px; font-weight:700; color:var(--ink-2); }
+.kfact svg{ color:var(--muted); }
+.kfact.budget{ background:var(--green-l); color:#0f7a39; } .kfact.budget svg{ color:#0f7a39; }
+.kreq .msg{ font-size:13.5px; font-weight:500; color:var(--soft); line-height:1.5; margin-top:13px; background:var(--bg-2); border-radius:12px; padding:12px 13px; }
+.kreq .foot{ display:flex; align-items:center; gap:10px; margin-top:15px; }
+.kreq .foot .bids{ font-size:12.5px; font-weight:700; color:var(--muted); margin-right:auto; display:flex; align-items:center; gap:6px; }
+.kmybid{ display:flex; align-items:center; gap:8px; margin-top:14px; padding:11px 13px; border-radius:12px; background:var(--bg-2); font-size:13px; font-weight:700; }
+.kmybid .amt{ margin-left:auto; font-weight:900; }
+.kmybid.pending{ color:var(--soft); } .kmybid.accepted{ background:var(--green-l); color:#0f7a39; } .kmybid.declined{ color:var(--muted); }
+
+/* ----------------------------- money / ledger ----------------------------- */
+.kledger{ margin:0 20px; background:var(--surface); border:1px solid var(--border-2); border-radius:18px; overflow:hidden; }
+.kentry{ display:flex; align-items:center; gap:12px; padding:14px; border-bottom:1px solid var(--border-2); }
+.kentry:last-child{ border-bottom:none; }
+.kentry .ic{ width:38px; height:38px; border-radius:11px; display:grid; place-items:center; flex:none; }
+.kentry .b{ flex:1; min-width:0; }
+.kentry .b .nm{ font-size:13.5px; font-weight:800; letter-spacing:-.01em; }
+.kentry .b .mt{ font-size:12px; font-weight:600; color:var(--muted); margin-top:1px; }
+.kentry .amt{ font-size:15px; font-weight:900; letter-spacing:-.02em; flex:none; }
+.kentry .amt.pos{ color:var(--green); } .kentry .amt.neg{ color:var(--ink); }
+
+/* ----------------------------- chart ----------------------------- */
+.kchart{ margin:4px 20px 0; background:var(--surface); border:1px solid var(--border-2); border-radius:20px; padding:18px 18px 14px; }
+.kchart .hd{ display:flex; align-items:baseline; justify-content:space-between; }
+.kchart .hd .v{ font-size:26px; font-weight:900; letter-spacing:-.04em; }
+.kchart .hd .l{ font-size:12px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.kchart .hd .d{ font-size:12.5px; font-weight:800; color:var(--green); display:flex; align-items:center; gap:3px; }
+.kbars{ display:flex; align-items:flex-end; gap:8px; height:120px; margin-top:18px; }
+.kbars .bar{ flex:1; border-radius:7px 7px 3px 3px; background:linear-gradient(180deg,#FFB37A,#F26B1D); position:relative; transition:height .6s var(--ease); min-height:6px; }
+.kbars .bar.dim{ background:var(--border); }
+.kbars .bar:last-child{ background:linear-gradient(180deg,#F26B1D,#C0560F); }
+.kxaxis{ display:flex; gap:8px; margin-top:9px; }
+.kxaxis span{ flex:1; text-align:center; font-size:10.5px; font-weight:700; color:var(--muted); }
+
+/* progress bars (top meals) */
+.kmeal{ padding:13px 20px; }
+.kmeal .top{ display:flex; align-items:center; justify-content:space-between; font-size:13.5px; font-weight:800; }
+.kmeal .top .sold{ color:var(--soft); font-weight:700; font-size:12.5px; }
+.kmeal .track{ height:8px; border-radius:99px; background:var(--bg-2); margin-top:8px; overflow:hidden; }
+.kmeal .fill{ height:100%; border-radius:99px; background:linear-gradient(90deg,#FF8A4C,#F26B1D); }
+
+/* funnel / breakdown rows */
+.kbreak{ margin:0 20px; background:var(--surface); border:1px solid var(--border-2); border-radius:18px; padding:6px 16px; }
+.kbreakrow{ display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--border-2); }
+.kbreakrow:last-child{ border-bottom:none; }
+.kbreakrow .l{ font-size:13.5px; font-weight:700; color:var(--soft); display:flex; align-items:center; gap:9px; }
+.kbreakrow .l .ic{ width:30px; height:30px; border-radius:9px; display:grid; place-items:center; }
+.kbreakrow .v{ font-size:15px; font-weight:900; letter-spacing:-.02em; }
+
+/* ----------------------------- forms (create meal / plan / bid) ----------------------------- */
+.ksheet{ position:absolute; inset:0; background:var(--surface); display:flex; flex-direction:column; }
+.ksheet .body{ flex:1; overflow-y:auto; padding:0 20px 130px; }
+.kfield{ margin-top:20px; }
+.kfield > label{ display:block; font-size:13px; font-weight:800; color:var(--ink); margin-bottom:9px; letter-spacing:-.01em; }
+.kfield .hint{ font-weight:600; color:var(--muted); font-size:12px; margin-left:6px; }
+.kinput{ width:100%; height:50px; padding:0 15px; border-radius:13px; background:var(--bg-2); border:1.5px solid transparent;
+  font-size:15px; font-weight:600; color:var(--ink); font-family:inherit; outline:none; transition:border-color .15s, background .15s; }
+.kinput:focus{ border-color:var(--primary); background:var(--surface); }
+textarea.kinput{ height:auto; min-height:92px; padding:13px 15px; resize:none; line-height:1.5; }
+.kinput.money-in{ padding-left:32px; }
+.kmoneywrap{ position:relative; }
+.kmoneywrap .sign{ position:absolute; left:15px; top:0; height:50px; display:flex; align-items:center; font-size:15px; font-weight:800; color:var(--soft); }
+.kphoto{ width:100%; height:150px; border-radius:16px; border:2px dashed var(--border); background:var(--bg-2); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:9px; color:var(--muted); font-size:13.5px; font-weight:700; transition:border-color .15s, color .15s; }
+.kphoto:active{ border-color:var(--primary); color:var(--primary); }
+.kphoto.filled{ border:none; position:relative; overflow:hidden; color:#fff; }
+.kphoto.filled .cam{ position:absolute; right:12px; bottom:12px; width:38px; height:38px; border-radius:12px; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); display:grid; place-items:center; }
+.kchoices{ display:flex; flex-wrap:wrap; gap:9px; }
+.kchoice{ height:42px; padding:0 16px; border-radius:12px; background:var(--bg-2); border:1.5px solid transparent; font-size:13.5px; font-weight:800; color:var(--soft);
+  display:flex; align-items:center; gap:7px; transition:all .15s; }
+.kchoice.on{ background:var(--primary-l); border-color:var(--primary); color:var(--primary-d); }
+.kseg{ display:flex; gap:5px; background:var(--bg-2); padding:5px; border-radius:14px; }
+.kseg button{ flex:1; height:42px; border-radius:10px; font-size:13.5px; font-weight:800; color:var(--soft); transition:background .25s var(--ease), color .25s, box-shadow .25s; }
+.kseg button.on{ background:var(--surface); color:var(--ink); box-shadow:0 1px 5px rgba(0,0,0,.12); }
+.kstep-h{ display:flex; align-items:center; gap:10px; padding:0 20px 4px; }
+.kstep-h .prog{ flex:1; height:6px; border-radius:99px; background:var(--bg-2); overflow:hidden; }
+.kstep-h .prog i{ display:block; height:100%; border-radius:99px; background:var(--primary); transition:width .4s var(--ease); }
+.kstep-h .num{ font-size:12px; font-weight:800; color:var(--muted); }
+
+/* dock (sticky bottom CTA) */
+.kdock{ position:absolute; left:0; right:0; bottom:0; padding:14px 20px calc(16px + var(--safe-bot,8px)); background:linear-gradient(180deg, transparent, var(--surface) 26%);
+  display:flex; align-items:center; gap:12px; }
+.kdock .tot{ flex:none; } .kdock .tot .l{ font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.kdock .tot .v{ font-size:21px; font-weight:900; letter-spacing:-.03em; }
+
+/* success burst */
+.kburst{ position:absolute; inset:0; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:32px; }
+.kburst .ring{ width:96px; height:96px; border-radius:50%; background:var(--green-l); color:var(--green); display:grid; place-items:center; animation:kpop .5s var(--spring); }
+@keyframes kpop{ 0%{ transform:scale(0) } 60%{ transform:scale(1.12) } 100%{ transform:scale(1) } }
+.kburst h2{ margin:22px 0 0; font-size:23px; font-weight:900; letter-spacing:-.03em; }
+.kburst p{ margin:9px 0 0; font-size:14.5px; color:var(--soft); font-weight:500; line-height:1.5; max-width:300px; }
+
+/* card wrap used in money/menu */
+.kcard{ margin:0 20px 14px; background:var(--surface); border:1px solid var(--border-2); border-radius:20px; padding:16px; }
+.kcard .ct{ font-size:13px; font-weight:900; letter-spacing:-.01em; margin-bottom:13px; display:flex; align-items:center; justify-content:space-between; }
+
+/* plan / subscription card */
+.kplan{ display:flex; align-items:center; gap:13px; }
+.kplan .ic{ width:48px; height:48px; border-radius:14px; display:grid; place-items:center; color:#fff; flex:none; }
+.kplan .b{ flex:1; min-width:0; }
+.kplan .b .nm{ font-size:15px; font-weight:900; letter-spacing:-.02em; }
+.kplan .b .mt{ font-size:12.5px; font-weight:600; color:var(--soft); margin-top:2px; }
+.kplan .pr{ text-align:right; flex:none; } .kplan .pr b{ font-size:16px; font-weight:900; letter-spacing:-.02em; } .kplan .pr span{ display:block; font-size:11px; font-weight:700; color:var(--muted); }
+
+/* desktop / tablet breathing */
+.app.dev-desktop .khdr, .app.dev-tablet .khdr,
+.app.dev-desktop .ksec, .app.dev-tablet .ksec,
+.app.dev-desktop .kqueue, .app.dev-tablet .kqueue,
+.app.dev-desktop .ktiles, .app.dev-tablet .ktiles,
+.app.dev-desktop .kgrid, .app.dev-tablet .kgrid{ padding-left:30px; padding-right:30px; }
+.app.dev-desktop .ktiles, .app.dev-tablet .ktiles{ grid-template-columns:1fr 1fr 1fr 1fr; }
+.app.dev-desktop .kbal, .app.dev-tablet .kbal{ margin-left:30px; margin-right:30px; }

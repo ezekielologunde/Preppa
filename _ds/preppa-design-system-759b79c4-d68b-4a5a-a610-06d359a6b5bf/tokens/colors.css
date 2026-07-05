@@ -1,0 +1,75 @@
+/* ============================================================
+   PREPPA — Color tokens
+   Single source of truth for every color value in the system.
+   Food imagery is the visual hero; surfaces stay neutral.
+   Synced from the live app (src/constants/theme.ts, "WARM v3") on 2026-07-03.
+   ============================================================ */
+
+:root {
+  /* ── Brand (used sparingly: CTAs, active nav, key accents) ── */
+  --color-brand:           #E8611A;  /* v3 flame orange — primary CTA */
+  --color-brand-light:     #FF814A;  /* gradient start, logo glow, warm tint wash */
+  --color-brand-tint:      #FAE5D3;  /* warm peach wash — chip bg, icon wells */
+  --color-brand-pressed:   #C84E10;  /* pressed CTA + AA-safe orange for text/links on white */
+  --color-hero-wash:       #FDF1E4;  /* near-white warm cream — middle stop for hero-card gradient washes */
+
+  /* ── Neutral ink ramp — warm (taupe-leaning), not cool slate ── */
+  --color-ink:             #1C1A18;  /* primary text, headings, dark buttons (warm near-black) */
+  --color-ink-soft:        #44403C;  /* labels and emphasized secondary text */
+  --color-text-secondary:  #78716C;  /* secondary copy — warm grey, ~4.8:1 on white (WCAG AA) */
+  --color-text-muted:      #B8B0A8;  /* DECORATIVE/DISABLED ONLY — never load-bearing (contrast < 3:1) */
+
+  /* ── Customer (light) surfaces — warm cream canvas framing white cards ── */
+  --color-surface:         #FFFFFF;  /* cards, sheets, modals */
+  --color-canvas:          #F7F3EE;  /* page/screen background */
+  --color-border:          #EDE8E2;  /* default card/input borders */
+  --color-chip:            #F2ECE6;  /* icon-chip / inset bg on white cards */
+  --color-chip-off:        #F0EDEA;  /* inactive/unselected chip, toggle-off bg, placeholder wells */
+  --color-divider:         #DDD6CE;  /* hairlines on tinted surfaces; disabled outlines */
+
+  /* ── Semantic accents — pair with a text/icon, never color alone ── */
+  --color-success:         #16A34A;  /* verified, healthy, positive deltas, confirmed status */
+  --color-success-tint:    #DCFCE7;  /* success chip/status background — green-100 wash */
+  --color-success-dark:    #15803D;  /* success text on success-tint — green-700, AA-safe */
+  --color-amber:           #F59E0B;  /* star ratings, "popular" badges, gentle warnings */
+  --color-amber-tint:      #FEF3C7;  /* warning banner background — amber-100 wash */
+  --color-amber-deep:      #92400E;  /* warning message text on amber-tint — amber-900, AA-safe */
+  --color-danger:          #DC2626;  /* destructive actions, errors, favorites heart — 4.5:1 on white */
+  --color-danger-tint:     #FEF2F2;  /* error banner background — red-50 wash */
+  --color-danger-border:   #FECACA; /* error banner border — red-200 outline */
+  --color-danger-deep:     #991B1B; /* error message text on danger-tint — red-800, AA-safe */
+
+  /* ── Home Cook feature accent ── */
+  --color-home-cook:       #5B21B6;  /* Home Cook feature accent — purple-700, 4.5:1 on white */
+  --color-home-cook-tint:  #EDE9FE; /* Home Cook chip/banner background — purple-50 wash */
+  --color-home-cook-deep:  #4C1D95; /* Home Cook label text on home-cook-tint — purple-900, AA-safe */
+
+  /* ── Order-status chip pairs ── */
+  --color-confirmed-tint:  #DBEAFE; /* confirmed order chip bg — blue-100 wash */
+  --color-confirmed-dark:  #1D4ED8; /* confirmed chip text — blue-700, AA-safe */
+  --color-preparing-tint:  #FED7AA; /* preparing order chip bg — orange-200 wash */
+  --color-preparing-dark:  #9A3412; /* preparing chip text — orange-800, AA-safe */
+  --color-cancelled-tint:  #FEE2E2; /* cancelled order chip bg — red-100 wash */
+
+  /* ── Feature accent triad — delivery (cyan), meetup/social (violet), vegan/home-cook (leaf-green) ── */
+  --color-cyan:            #06B6D4;
+  --color-violet:          #A78BFA;
+  --color-leaf-green:      #22C55E;
+
+  /* ── Prepper (dark) app surfaces — intentionally an operations tool, kept dark by mandate ── */
+  --color-prepper-bg:      #0C0E13;  /* dark operations background */
+  --color-prepper-card:    #13161D;  /* dark card surface */
+
+  /* ── Overlay — warm-tinted to match the v3 ink ── */
+  --color-overlay:         rgba(28, 26, 24, 0.55);
+
+  /* ── Landing page palette (marketing site only, not the app) ──
+       Not part of the app's design tokens — kept separate deliberately.
+       Unverified against a live landing-page codebase as of this sync;
+       carried forward from the prior version of this file. ── */
+  --color-landing-ink:     #0B0604;
+  --color-landing-paper:   #FFF7EF;
+  --color-landing-acid:    #D8FF3E;
+  --color-landing-pink:    #FF4D7D;
+  --color-landing-amber:   #FFB43C;
+}

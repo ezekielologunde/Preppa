@@ -1,0 +1,27 @@
+/* ============================================================
+   PREPPA — Shadow tokens
+   Subtle elevation — food imagery is always the visual hero.
+   Values already matched the live app almost exactly; only the
+   brand-glow color below was stale (old brand orange #F15F22).
+   Synced from the live app (src/constants/theme.ts `Shadow`) on 2026-07-03.
+   ============================================================ */
+
+:root {
+  /* ── Card shadow — standard surface lift ── */
+  --shadow-card:
+    0 6px 12px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+
+  /* ── Floating shadow — elevated panels, modals ── */
+  --shadow-floating:
+    0 10px 20px rgba(0, 0, 0, 0.10),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+
+  /* ── Nav bar shadow — bottom nav bar lift ── */
+  --shadow-nav:
+    0 -4px 16px rgba(0, 0, 0, 0.08);
+
+  /* ── Brand glow — used only on PreppaLogo / hero elements ── */
+  --shadow-brand-glow:
+    0 0 32px rgba(232, 97, 26, 0.55);
+}

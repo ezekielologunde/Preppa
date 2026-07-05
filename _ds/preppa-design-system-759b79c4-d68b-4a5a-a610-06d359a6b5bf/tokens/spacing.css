@@ -1,0 +1,43 @@
+/* ============================================================
+   PREPPA — Spacing, radius & layout tokens
+   Spacing scale values were already correct; radius scale below
+   is corrected to match the live app (src/constants/theme.ts
+   `Radius`) on 2026-07-03 — the prior version used an unrelated
+   6-value scale (sm14/md20/lg24/pill999/input16/icon13).
+   ============================================================ */
+
+:root {
+  /* ── Spacing scale ── */
+  --space-half:   2px;
+  --space-1:      4px;
+  --space-2:      8px;
+  --space-3:      16px;
+  --space-4:      24px;
+  --space-5:      32px;
+  --space-6:      64px;
+
+  /* ── Page padding ── */
+  --page-px:      20px;   /* standard horizontal padding */
+  --page-px-lg:   32px;   /* tablet/desktop horizontal padding */
+
+  /* ── Border radii — matches Palette.Radius exactly ── */
+  --radius-sm:      14px;   /* small chips, tags */
+  --radius-md:      12px;   /* compact controls, inputs */
+  --radius-lg:      16px;   /* standard cards, sheet sections */
+  --radius-card:    18px;   /* content cards (meal, kitchen, prepper cards) */
+  --radius-avatar:  20px;   /* avatar corner radius */
+  --radius-pill:    999px;  /* fully rounded pills, FABs */
+
+  /* ── Touch targets ── */
+  --touch-min:    44px;   /* Apple HIG / Material min tap target */
+
+  /* ── Max content width ── */
+  --max-content:  800px;
+
+  /* ── Z-index ladder ── */
+  --z-base:       0;
+  --z-card:       1;
+  --z-overlay:    10;
+  --z-modal:      100;
+  --z-toast:      200;
+}

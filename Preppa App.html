@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Preppa — App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="app.css" />
+<link rel="stylesheet" href="home.css" />
+<link rel="stylesheet" href="hub.css" />
+<link rel="stylesheet" href="exp.css" />
+<link rel="stylesheet" href="onboard.css" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="stage"></div>
+
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="app-core.jsx"></script>
+<script type="text/babel" src="app-home.jsx"></script>
+<script type="text/babel" src="app-order.jsx"></script>
+<script type="text/babel" src="cook-core.jsx"></script>
+<script type="text/babel" src="cook-hub.jsx"></script>
+<script type="text/babel" src="cook-flows.jsx"></script>
+<script type="text/babel" src="cook-create.jsx"></script>
+<script type="text/babel" src="exp-suite.jsx"></script>
+<script type="text/babel" src="plans-suite.jsx"></script>
+<script type="text/babel" src="store-front.jsx"></script>
+<script type="text/babel" src="onboarding.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const LS = 'preppa.v1';
+const load = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch(e){ return {}; } };
+const saved = load();
+const SIZES = { mobile:[402,874], tablet:[834,1112], desktop:[1280,812] };
+
+/* tiny status bar for tablet bezel */
+function StatusBar(){
+  return (
+    <div className="statusbar">
+      <span>9:41</span>
+      <span className="si">
+        <svg width="17" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx=".5"/><rect x="7" y="11" width="3" height="9" rx=".5"/><rect x="12" y="8" width="3" height="12" rx=".5"/><rect x="17" y="5" width="3" height="15" rx=".5"/></svg>
+        <svg width="16" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0z"/></svg>
+        <svg width="24" height="12" viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="18" height="10" rx="2.4" stroke="currentColor" strokeWidth="1.8"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor"/><path d="M21 10v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+      </span>
+    </div>
+  );
+}
+
+/* device chrome */
+function Frame({ device, children }){
+  if(device==='mobile') return <IOSDevice>{children}</IOSDevice>;
+  if(device==='tablet'){
+    const [w,h]=SIZES.tablet;
+    return (
+      <div className="bezel" style={{ width:w, height:h }}>
+        <div className="island"/>
+        <div className="screen" style={{ width:w-24, height:h-24, ['--safe-top']:'26px' }}>
+          <StatusBar/>
+          {children}
+        </div>
+      </div>
+    );
+  }
+  const [w,h]=SIZES.desktop;
+  return (
+    <div className="winframe" style={{ width:w, height:h }}>
+      <div className="wintop">
+        <span className="lights"><i style={{ background:'#FF5F57' }}/><i style={{ background:'#FEBC2E' }}/><i style={{ background:'#28C840' }}/></span>
+        <span className="url"><Icon name="lock" size={13} style={{ color:'var(--green)' }}/>preppa.live/app</span>
+        <span style={{ width:54 }}/>
+      </div>
+      <div style={{ flex:1, position:'relative', overflow:'hidden' }}>{children}</div>
+    </div>
+  );
+}
+
+/* device switcher */
+const DEV_ICONS = {
+  mobile:  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2" strokeLinecap="round"/></svg>,
+  tablet:  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M11 18h2" strokeLinecap="round"/></svg>,
+  desktop: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4" strokeLinecap="round"/></svg>,
+};
+function DevSwitch({ device, setDevice }){
+  return (
+    <div className="devswitch">
+      {[['mobile','Mobile'],['tablet','iPad'],['desktop','Desktop']].map(([id,lbl])=>(
+        <button key={id} className={device===id?'on':''} onClick={()=>setDevice(id)}>{DEV_ICONS[id]}{lbl}</button>
+      ))}
+    </div>
+  );
+}
+
+/* scaler */
+function Scaler({ device, children }){
+  const [scale, setScale] = useState(1);
+  useEffect(()=>{
+    const [W,H]=SIZES[device];
+    const fit = () => setScale(Math.min(1, (window.innerWidth-48)/W, (window.innerHeight-150)/H));
+    fit(); window.addEventListener('resize', fit); return ()=>window.removeEventListener('resize', fit);
+  },[device]);
+  const [W,H]=SIZES[device];
+  return (
+    <div style={{ width:W*scale, height:H*scale, position:'relative' }}>
+      <div style={{ width:W, height:H, transform:`scale(${scale})`, transformOrigin:'top left', position:'absolute', top:0, left:0 }}>{children}</div>
+    </div>
+  );
+}
+
+/* side rail (tablet + desktop) */
+function SideRail({ ctx, tab, cartCount, notifCount }){
+  const items = [
+    { id:'home', ico:'home', lbl:'Home' },
+    { id:'explore', ico:'compass', lbl:'Explore' },
+    { id:'exps', ico:'grid', lbl:'Experiences' },
+    { id:'feed', ico:'video', lbl:'Feed' },
+    { id:'myhub', ico:'chefhat', lbl:'My Hub' },
+    { id:'profile', ico:'user', lbl:'Profile' },
+  ].filter(it=> (ctx.tweaks?.showExplore ?? true) || it.id!=='explore');
+  return (
+    <div className="siderail">
+      <div className="rail-logo"><span className="mk"><Icon name="flame" size={22} color="#fff"/></span><span className="lbl">preppa</span></div>
+      {items.map(it=>(
+        <button key={it.id} className={'railitem'+(tab===it.id?' on':'')} onClick={()=>ctx.nav.tab(it.id)}>
+          <Icon name={it.ico} size={22}/><span className="lbl">{it.lbl}</span>
+        </button>
+      ))}
+      <button className="railitem" onClick={()=>ctx.push({ type:'notifs' })}>
+        <Icon name="bell" size={22}/><span className="lbl">Notifications</span>{notifCount>0 && <span className="rbadge">{notifCount}</span>}
+      </button>
+      <button className="railitem" onClick={()=>ctx.push({ type:'cart' })}>
+        <Icon name="cart" size={22}/><span className="lbl">Cart</span>{cartCount>0 && <span className="rbadge">{cartCount}</span>}
+      </button>
+      <div className="rail-spacer"/>
+      <button className="rail-foot" onClick={()=>ctx.nav.tab('profile')}>
+        <span style={{ width:38, height:38, borderRadius:12, background:'var(--g4)', color:'#fff', display:'grid', placeItems:'center', fontWeight:900, flex:'none' }}>J</span>
+        <span className="lbl"><span className="nm" style={{ display:'block' }}>Jordan</span><span className="rl">View profile</span></span>
+      </button>
+    </div>
+  );
+}
+
+/* ---------- splash ---------- */
+function SplashScreen({ fading }){
+  return (
+    <div style={{
+      position:'absolute', inset:0, zIndex:200,
+      background:'#0E0E10', display:'flex', flexDirection:'column',
+      alignItems:'center', justifyContent:'center', gap:20,
+      animation:'preppa-splash 2.1s cubic-bezier(.4,0,.2,1) forwards',
+      pointerEvents:'none',
+    }}>
+      <div style={{
+        width:80, height:80, borderRadius:26, background:'var(--primary)',
+        display:'grid', placeItems:'center',
+        boxShadow:'0 16px 48px -12px rgba(242,107,29,.7)',
+        animation:'preppa-logo 2.1s cubic-bezier(.34,1.56,.64,1) forwards',
+      }}>
+        <Icon name="flame" size={42} color="#fff"/>
+      </div>
+      <div style={{ fontFamily:'Inter,system-ui,sans-serif', fontWeight:900, fontSize:32,
+        letterSpacing:'-.04em', color:'#fff' }}>preppa</div>
+      <style>{`
+        @keyframes preppa-splash {
+          0%   { opacity:0 }
+          10%  { opacity:1 }
+          72%  { opacity:1 }
+          100% { opacity:0 }
+        }
+        @keyframes preppa-logo {
+          0%   { transform:scale(.7) }
+          22%  { transform:scale(1.08) }
+          38%  { transform:scale(.96) }
+          55%  { transform:scale(1) }
+          100% { transform:scale(1) }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/* ---------- app ---------- */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "showExplore": false,
+  "showNav": true,
+  "showModeToggle": false,
+  "darkMode": false
+}/*EDITMODE-END*/;
+
+function App(){
+  const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [device, setDevice] = useState(saved.device || 'mobile');
+  const [showSplash, setShowSplash] = useState(true);
+  const [splashFading, setSplashFading] = useState(false);
+  useEffect(()=>{
+    const t1 = setTimeout(()=>setSplashFading(true), 1500);
+    const t2 = setTimeout(()=>setShowSplash(false), 2100);
+    return ()=>{ clearTimeout(t1); clearTimeout(t2); };
+  },[]);
+  const [onboarded, setOnboarded] = useState(!!saved.onboarded);
+  const [tab, setTab]   = useState(saved.tab && saved.tab!=='inbox' ? saved.tab : 'home');
+  const [stack, setStack] = useState([]);
+  const [cart, setCart] = useState(saved.cart || []);
+  const [tip, setTip]   = useState(saved.tip ?? 2);
+  const [mode, setMode] = useState(saved.mode || 'delivery');
+  const [fav, setFav]   = useState(new Set(saved.fav || []));
+  const [toasts, setToasts] = useState([]);
+  const [lastOrder, setLastOrder] = useState(saved.lastOrder || null);
+  const [avail, setAvail] = useState(saved.avail!==undefined ? saved.avail : true);
+  const [acted, setActed] = useState([]);
+  const [requests, setRequests] = useState(saved.requests || SEED_REQUESTS);
+  const [subscription, setSubscription] = useState(saved.subscription || null);
+
+  useEffect(()=>{ localStorage.setItem(LS, JSON.stringify({ device, onboarded, tab, cart, tip, mode, fav:[...fav], lastOrder, avail, requests, subscription })); },
+    [device, onboarded, tab, cart, tip, mode, fav, lastOrder, avail, requests, subscription]);
+
+  const toast = useCallback((msg, icon='check', green=false)=>{
+    const id = Math.random(); setToasts(t=>[...t, { id, msg, icon, green }]);
+    setTimeout(()=> setToasts(t=>t.filter(x=>x.id!==id)), 2600);
+  },[]);
+
+  const push    = useCallback(s=> setStack(p=>[...p, { ...s, _k:Math.random() }]), []);
+  const pop     = useCallback(()=> setStack(p=>p.slice(0,-1)), []);
+  const replace = useCallback(s=> setStack(p=>[...p.slice(0,-1), { ...s, _k:Math.random() }]), []);
+  const reset   = useCallback(()=> setStack([]), []);
+  const goTab   = useCallback(name=>{ setStack([]); setTab(name); }, []);
+  const nav = { push, pop, replace, reset, tab:goTab };
+
+  const addToCart = useCallback((line, qty=1)=> setCart(c=>{
+    const i = c.findIndex(l=>l.key===line.key);
+    if(i>=0){ const n=[...c]; n[i]={...n[i], qty:n[i].qty+qty}; return n; }
+    return [...c, { ...line, qty }];
+  }),[]);
+  const setQty = useCallback((key,q)=> setCart(c=> q<=0 ? c.filter(l=>l.key!==key) : c.map(l=>l.key===key?{...l,qty:q}:l)), []);
+  const removeLine = useCallback(key=> setCart(c=>c.filter(l=>l.key!==key)), []);
+  const cartCount = cart.reduce((s,l)=>s+l.qty,0);
+  const toggleFav = useCallback(id=> setFav(f=>{ const n=new Set(f); n.has(id)?n.delete(id):n.add(id); return n; }), []);
+  const placeOrder = useCallback((flow)=>{ setLastOrder(flow); setCart([]); setTip(2); }, []);
+  const resetOnboarding = useCallback(()=>{ setStack([]); setTab('home'); setOnboarded(false); }, []);
+
+  const notifCount = NOTIFS.filter(n=>n.unread).length + CONVERSATIONS.reduce((s,c)=>s+(c.unread?1:0),0);
+
+  const toggleAvail = useCallback(()=> setAvail(a=>{ toast(a?'Kitchen paused':'You’re open for orders', a?'pause':'check', !a); return !a; }), [toast]);
+  const acceptOrder = useCallback(id=> setActed(a=>[...a, id]), []);
+
+  const addRequest = useCallback(req=>{
+    setRequests(rs=>[req, ...rs]);
+    setTimeout(()=>{
+      setRequests(rs=>rs.map(r=> r.id===req.id && r.status==='open' ? { ...r, status:'quoted', quotes:genQuotes(r) } : r));
+      toast('New quotes on your request','tag',true);
+    }, 8000);
+  },[toast]);
+  const acceptQuote = useCallback((id,q)=> setRequests(rs=>rs.map(r=>r.id===id?{ ...r, status:'booked', booked:q }:r)),[]);
+  const subscribe = useCallback(s=> setSubscription(s),[]);
+  const updateSub = useCallback(patch=> setSubscription(s=> s ? { ...s, ...patch } : s),[]);
+  const cancelSub = useCallback(()=> setSubscription(null),[]);
+
+  const ctx = { nav, push, toast, cart, cartCount, addToCart, setQty, removeLine, tip, setTip, mode, setMode,
+    fav, toggleFav, placeOrder, lastOrder, resetOnboarding, notifCount,
+    avail, toggleAvail, acceptOrder, acted, dir:'focus', tweaks:tw,
+    requests, addRequest, acceptQuote, subscription, subscribe, updateSub, cancelSub };
+
+  const BTABS = [
+    { id:'home',    ico:'home',    lbl:'Home' },
+    { id:'explore', ico:'compass', lbl:'Explore' },
+    { id:'exps',    ico:'grid',    lbl:'Experiences' },
+    { id:'feed',    ico:'video',   lbl:'Feed' },
+    { id:'myhub',   ico:'chefhat', lbl:'My Hub' },
+    { id:'profile', ico:'user',    lbl:'Profile' },
+  ];
+  const tabScreen = () => {
+    if(tab==='explore') return <ExploreScreen ctx={ctx}/>;
+    if(tab==='exps')    return <ExperiencesScreen ctx={ctx}/>;
+    if(tab==='feed')    return <FeedScreen ctx={ctx}/>;
+    if(tab==='myhub')   return <HubScreen ctx={ctx}/>;
+    if(tab==='profile') return <ProfileScreen ctx={ctx}/>;
+    return <HomeScreen ctx={ctx}/>;
+  };
+  const renderLayer = (s) => {
+    if(s.type==='meal')     return <MealDetailScreen key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='exp')      return <ExperienceScreen key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='cart')     return <CartScreen key={s._k} ctx={ctx}/>;
+    if(s.type==='checkout') return <CheckoutScreen key={s._k} ctx={ctx}/>;
+    if(s.type==='cod')      return <CODHandoff key={s._k} ctx={ctx}/>;
+    if(s.type==='track')    return <TrackingScreen key={s._k} ctx={ctx} flow={s.flow}/>;
+    if(s.type==='notifs')   return <NotificationsScreen key={s._k} ctx={ctx}/>;
+    if(s.type==='chat')     return <ChatScreen key={s._k} ctx={ctx} cook={s.cook}/>;
+    if(s.type==='orders')    return <OrdersScreen key={s._k} ctx={ctx} back/>;
+    if(s.type==='catering')  return <CateringScreen key={s._k} ctx={ctx} back/>;
+    if(s.type==='money')     return <MoneyScreen key={s._k} ctx={ctx} back/>;
+    if(s.type==='menu')      return <MenuScreen key={s._k} ctx={ctx} back/>;
+    if(s.type==='order')     return <OrderDetail key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='createMeal')return <CreateMealFlow key={s._k} ctx={ctx}/>;
+    if(s.type==='createPlan')return <CreatePlanFlow key={s._k} ctx={ctx}/>;
+    if(s.type==='plans')     return <PlansScreen key={s._k} ctx={ctx}/>;
+    if(s.type==='newRequest')return <ServiceRequestFlow key={s._k} ctx={ctx} svc={s.svc}/>;
+    if(s.type==='quotes')    return <RequestQuotesScreen key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='mealplans') return <MealPlansScreen key={s._k} ctx={ctx}/>;
+    if(s.type==='planDetail')return <PlanDetailScreen key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='buildPlan') return <BuildPlanFlow key={s._k} ctx={ctx}/>;
+    if(s.type==='subscribers')return <SubscribersScreen key={s._k} ctx={ctx}/>;
+    if(s.type==='store')     return <CookStoreScreen key={s._k} ctx={ctx} cook={s.cook}/>;
+    if(s.type==='bid')       return <BidFlow key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='caterReq')  return <CaterRequestDetail key={s._k} ctx={ctx} id={s.id}/>;
+    if(s.type==='payout')    return <PayoutFlow key={s._k} ctx={ctx}/>;
+    if(s.type==='analytics') return <AnalyticsScreen key={s._k} ctx={ctx}/>;
+    return null;
+  };
+
+  const appInner = (
+    <div className={'app dev-'+device+(tw.darkMode?' theme-dark':'')}>
+      {tw.showNav && <SideRail ctx={ctx} tab={tab} cartCount={cartCount} notifCount={notifCount}/>}
+      <div className="content">
+        {tabScreen()}
+        {stack.map(renderLayer)}
+        {stack.length===0 && tw.showNav && (
+          <nav className="bnav">
+            {BTABS.filter(t=>tw.showExplore||t.id!=='explore').map(t=>(
+              <button key={t.id} className={'bni'+(tab===t.id?' on':'')} onClick={()=>goTab(t.id)}>
+                <Icon name={t.ico} size={23}/><span className="lbl">{t.lbl}</span>
+              </button>
+            ))}
+          </nav>
+        )}
+        {toasts.length>0 && (
+          <div className="toast-wrap">
+            {toasts.map(t=>(
+              <div key={t.id} className="toast"><span className={'ti'+(t.green?' green':'')}><Icon name={t.icon} size={15}/></span><span style={{ flex:1 }}>{t.msg}</span></div>
+            ))}
+          </div>
+        )}
+      </div>
+      {showSplash && <SplashScreen fading={splashFading}/>}
+      {!onboarded && <OnboardingFlow onDone={()=>setOnboarded(true)}/>}
+    </div>
+  );
+
+  return (
+    <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:18, padding:'20px 16px' }}>
+      <DevSwitch device={device} setDevice={setDevice}/>
+      <Scaler device={device}><Frame device={device}>{appInner}</Frame></Scaler>
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Appearance"/>
+        <TweakToggle label="Dark mode" value={tw.darkMode} onChange={v=>setTweak('darkMode', v)}/>
+        <TweakSection label="Homepage"/>
+        <TweakToggle label="Delivery / Pickup toggle" value={tw.showModeToggle} onChange={v=>setTweak('showModeToggle', v)}/>
+        <TweakSection label="Navigation"/>
+        <TweakToggle label="Show navigation" value={tw.showNav} onChange={v=>setTweak('showNav', v)}/>
+        <TweakToggle label="Show Explore" value={tw.showExplore} onChange={v=>setTweak('showExplore', v)}/>
+      </TweaksPanel>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('stage')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+/* ============================================================
+   PREPPA — Font-face declarations
+   Self-hosted in assets/fonts/. Referenced by styles.css.
+   Synced from the live app (src/constants/fonts.ts) on 2026-07-03.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/Poppins-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Clash Display — logo wordmark only, web only (native falls back to
+   Poppins-ExtraBold per src/constants/fonts.ts). Loaded from Fontshare CDN. */
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@600,700,800&display=swap');

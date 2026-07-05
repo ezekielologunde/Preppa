@@ -1,0 +1,11 @@
+/* ============================================================
+   PREPPA Design System — root stylesheet
+   This file is @imports only. Each token concern lives in
+   its own file so consumers can cherry-pick.
+   ============================================================ */
+
+@import './tokens/fonts.css';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/shadows.css';

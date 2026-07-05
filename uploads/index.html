@@ -1,0 +1,2929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>preppa — Fresh meals from local home cooks near you</title>
+  <meta name="description" content="Order fresh, home-cooked meals from real local cooks in your neighborhood today. Weekly meal boxes, pickup, and in-home Preppa service — live now in cities across the country." />
+  <meta name="theme-color" content="#F26B1D" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="preppa" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="preppa" />
+
+  <!-- PWA manifest + icons -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+  <link rel="apple-touch-icon" href="/icon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="preppa — Fresh meals from local home cooks near you" />
+  <meta property="og:description" content="Order fresh, home-cooked meals from real local cooks in your neighborhood today. Real food. Real people. Live now." />
+  <meta property="og:url" content="https://preppa.live/" />
+  <meta property="og:image" content="https://preppa.live/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="preppa — Fresh meals from local home cooks near you" />
+  <meta name="twitter:description" content="Order fresh, home-cooked meals from real local cooks in your neighborhood today. Real food. Real people. Live now." />
+  <meta name="twitter:image" content="https://preppa.live/og-image.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design tokens ──────────────────────────────────── */
+    :root {
+      --primary: #F26B1D;
+      --primary-d: #C0560F;
+      --primary-l: #FFF1E6;
+      --ink: #0E0E10;
+      --ink-2: #1F2024;
+      --ink-soft: #6E7079;
+      --ink-muted: #9CA0AB;
+      --surface: #FFFFFF;
+      --surface-2: #F7F7F8;
+      --border: #E5E7EB;
+      --success: #16A34A;
+      --rose: #FF6B9D;
+      --purple: #7C3AED;
+      --grad-aurora: linear-gradient(135deg, #F26B1D 0%, #FF6B9D 60%, #7C3AED 100%);
+      --grad-deep: linear-gradient(180deg, #0E0E10 0%, #18181C 100%);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,.06);
+      --shadow-md: 0 12px 32px -8px rgba(0,0,0,.18);
+      --shadow-lg: 0 24px 60px -16px rgba(0,0,0,.28);
+      --shadow-primary: 0 12px 32px -8px rgba(242,107,29,.5);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { background: rgba(242,107,29,.22); }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ── Nav ──────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+    .nav-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 22px; font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.04em;
+    }
+    .nav-mark {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px -4px rgba(242,107,29,.5);
+    }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-link {
+      padding: 9px 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-2);
+      border-radius: 10px;
+      transition: background 0.15s var(--ease-out), color 0.12s;
+    }
+    .nav-link:hover { background: var(--surface-2); }
+    .nav-cta {
+      padding: 10px 18px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: white;
+      background: var(--ink);
+      border-radius: 99px;
+      transition: transform 0.22s var(--ease-spring), background 0.15s;
+    }
+    .nav-cta:hover { background: var(--ink-2); }
+    .nav-cta:active { transform: scale(0.96); }
+    @media (max-width: 640px) {
+      .nav-link:not(.nav-cta) { display: none; }
+    }
+
+    /* ── Hero ─────────────────────────────────────────── */
+    .hero {
+      padding: 140px 24px 80px;
+      max-width: 1080px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 30% 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(242,107,29,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 60%, rgba(255,107,157,.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-l);
+      color: var(--primary);
+      border: 1px solid rgba(242,107,29,.18);
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      animation: fadeUp 0.5s var(--ease-spring) both;
+    }
+    .hero-badge-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .hero-title {
+      font-size: clamp(36px, 7vw, 62px);
+      font-weight: 900;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      margin-bottom: 18px;
+      animation: fadeUp 0.5s var(--ease-spring) 0.08s both;
+    }
+    .hero-title .accent {
+      background: var(--grad-aurora);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 19px);
+      color: var(--ink-soft);
+      max-width: 580px;
+      margin: 0 auto 36px;
+      line-height: 1.55;
+      animation: fadeUp 0.5s var(--ease-spring) 0.18s both;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      animation: fadeUp 0.5s var(--ease-spring) 0.28s both;
+    }
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 44px;
+      animation: fadeUp 0.5s var(--ease-spring) both;
+    }
+    .hsp-avatars {
+      display: flex;
+    }
+    .hsp-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid white;
+      margin-left: -7px;
+      font-size: 10px;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hsp-avatar:first-child { margin-left: 0; }
+    .hsp-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hsp-stars {
+      display: flex;
+      align-items: center;
+      gap: 1px;
+    }
+    .hsp-label {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.3;
+    }
+    .hsp-label strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .btn-primary, .btn-secondary {
+      padding: 14px 24px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.005em;
+      transition: transform 0.22s var(--ease-spring), background 0.15s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: var(--shadow-primary);
+    }
+    .btn-primary:hover { background: var(--primary-d); transform: translateY(-2px); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--ink);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--surface-2); transform: translateY(-2px); }
+    .btn-secondary:active { transform: scale(0.97); }
+    .btn-arrow {
+      width: 14px; height: 14px;
+      transition: transform 0.22s var(--ease-spring);
+    }
+    .btn-primary:hover .btn-arrow,
+    .btn-secondary:hover .btn-arrow { transform: translateX(3px); }
+
+    /* Phone mockup */
+    .hero-phone {
+      max-width: 280px;
+      margin: 0 auto;
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 8px var(--ink),
+        0 0 0 10px rgba(255,255,255,.06),
+        0 30px 80px -20px rgba(0,0,0,.4);
+      animation: fadeUp 0.6s var(--ease-spring) 0.45s both;
+    }
+    .hero-phone-content {
+      aspect-ratio: 9/19;
+      background: #FAFAFA;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    /* ── Status bar ── */
+    .hpc-status {
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #111;
+      flex-shrink: 0;
+    }
+    .hpc-status-icons {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hpc-status-icons svg { width: 11px; height: 11px; }
+
+    /* ── App header ── */
+    .hpc-header {
+      padding: 6px 14px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+    }
+    .hpc-loc {
+      flex: 1;
+      min-width: 0;
+    }
+    .hpc-loc-label {
+      font-size: 8.5px;
+      color: #8E8E93;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .hpc-loc-val {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #111;
+      margin-top: 1px;
+    }
+    .hpc-loc-val svg { width: 9px; height: 9px; color: var(--primary); }
+    .hpc-icon-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: #F2F2F7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .hpc-icon-btn svg { width: 13px; height: 13px; color: #111; }
+    .hpc-cart-dot {
+      position: absolute;
+      top: -2px; right: -2px;
+      min-width: 12px; height: 12px;
+      background: var(--primary);
+      color: white;
+      border-radius: 99px;
+      font-size: 7.5px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 3px;
+      border: 1.5px solid white;
+    }
+
+    /* ── Greeting ── */
+    .hpc-greeting {
+      padding: 8px 14px 10px;
+      background: white;
+    }
+    .hpc-greeting-line {
+      font-size: 18px;
+      font-weight: 900;
+      color: #111;
+      letter-spacing: -0.4px;
+      line-height: 1.15;
+    }
+    .hpc-greeting-sub {
+      font-size: 10.5px;
+      color: #6B6B70;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ── Mode pills ── */
+    .hpc-modes {
+      display: flex;
+      gap: 5px;
+      padding: 0 14px 10px;
+      background: white;
+    }
+    .hpc-mode {
+      flex: 1;
+      padding: 6px 4px;
+      border-radius: 99px;
+      background: #F2F2F7;
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #6B6B70;
+      text-align: center;
+      letter-spacing: -0.1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+    .hpc-mode.active {
+      background: var(--ink);
+      color: white;
+      box-shadow: 0 3px 8px rgba(0,0,0,.18);
+    }
+    .hpc-mode svg { width: 9px; height: 9px; }
+    /* Smooth transition as the demo auto-cycles Delivery → Pickup → In-Home */
+    .hpc-mode {
+      transition: background 0.34s var(--ease-out), color 0.34s var(--ease-out),
+                  box-shadow 0.34s var(--ease-out);
+    }
+
+    /* ── Interactive phone: scene change + live-order ping ── */
+    @keyframes hpcSceneIn {
+      from { opacity: 0.45; transform: translateY(4px); }
+      to   { opacity: 1;    transform: none; }
+    }
+    .hero-phone-content.hpc-scene-in .hpc-greeting,
+    .hero-phone-content.hpc-scene-in .hpc-featured,
+    .hero-phone-content.hpc-scene-in .hpc-meals {
+      animation: hpcSceneIn 0.42s var(--ease-out) both;
+    }
+    .hpc-live-order {
+      position: absolute;
+      left: 12px; right: 12px;
+      bottom: 54px;
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(20,20,22,.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+      border-radius: 12px;
+      padding: 8px 11px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: -0.1px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.30);
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+      transition: opacity 0.34s var(--ease-spring), transform 0.34s var(--ease-spring);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .hpc-live-order.show { opacity: 1; transform: translateY(0) scale(1); }
+    .hpc-lo-emoji { font-size: 13px; line-height: 1; flex-shrink: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .hpc-live-order { display: none; }
+    }
+
+    /* ── Search ── */
+    .hpc-search {
+      margin: 0 14px 12px;
+      padding: 8px 12px;
+      background: #F2F2F7;
+      border-radius: 99px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      color: #8E8E93;
+      font-weight: 600;
+    }
+    .hpc-search svg { width: 11px; height: 11px; }
+
+    /* ── Featured Preppa card ── */
+    .hpc-featured {
+      margin: 0 14px 12px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg, #FFF1E6 0%, #FFE4D0 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(242,107,29,.18);
+    }
+    .hpc-featured-av {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FF8A4C, var(--primary));
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 900;
+      font-size: 13px;
+      box-shadow: 0 3px 8px rgba(242,107,29,.32);
+    }
+    .hpc-featured-body { flex: 1; min-width: 0; }
+    .hpc-featured-eyebrow {
+      font-size: 8px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hpc-featured-name {
+      font-size: 11.5px;
+      font-weight: 900;
+      color: #111;
+      margin-top: 1px;
+      letter-spacing: -0.2px;
+    }
+    .hpc-featured-stats {
+      font-size: 9px;
+      color: #6B6B70;
+      font-weight: 700;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hpc-featured-stats svg { width: 8px; height: 8px; color: #F59E0B; }
+
+    /* ── Section heading ── */
+    .hpc-section-h {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 14px 8px;
+    }
+    .hpc-section-h-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #111;
+      letter-spacing: -0.3px;
+    }
+    .hpc-section-h-link {
+      font-size: 9.5px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* ── Meal cards row ── */
+    .hpc-meals {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 0 14px 14px;
+    }
+    .hpc-meal {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      border: 1px solid rgba(0,0,0,.04);
+    }
+    .hpc-meal-img {
+      height: 64px;
+      position: relative;
+    }
+    .hpc-meal-img-1 { background: linear-gradient(135deg, #FFB75E 0%, #ED8F03 100%); }
+    .hpc-meal-img-2 { background: linear-gradient(135deg, #A8E063 0%, #56AB2F 100%); }
+    .hpc-meal-price {
+      position: absolute;
+      bottom: 4px; right: 4px;
+      background: rgba(255,255,255,.96);
+      color: #111;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 99px;
+      letter-spacing: -0.2px;
+    }
+    .hpc-meal-match {
+      position: absolute;
+      top: 4px; left: 4px;
+      background: linear-gradient(135deg, #22C55E, #16A34A);
+      color: white;
+      font-size: 7px;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 99px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      box-shadow: 0 2px 5px rgba(34,197,94,.4);
+    }
+    .hpc-meal-match svg { width: 6px; height: 6px; }
+    .hpc-meal-body {
+      padding: 6px 8px 7px;
+    }
+    .hpc-meal-name {
+      font-size: 10px;
+      font-weight: 800;
+      color: #111;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hpc-meal-chef {
+      font-size: 8.5px;
+      color: #6B6B70;
+      font-weight: 600;
+      margin-top: 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .hpc-meal-meta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 8.5px;
+      color: #6B6B70;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+    .hpc-meal-meta svg { width: 8px; height: 8px; color: #F59E0B; }
+    .hpc-meal-meta-dot { color: #C7C7CC; }
+
+    /* ── Bottom nav ── */
+    .hpc-nav {
+      margin-top: auto;
+      padding: 8px 14px 14px;
+      background: white;
+      border-top: 1px solid #E5E5EA;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .hpc-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      color: #8E8E93;
+    }
+    .hpc-nav-item.active { color: var(--primary); }
+    .hpc-nav-item svg { width: 14px; height: 14px; }
+    .hpc-nav-label {
+      font-size: 7.5px;
+      font-weight: 800;
+      letter-spacing: -0.1px;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* ── 3-Mode section ─────────────────────────────── */
+    .modes {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+    .section-eyebrow {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 900;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 720px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: var(--ink-soft);
+      max-width: 580px;
+      margin-bottom: 36px;
+    }
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 720px) {
+      .modes-grid { grid-template-columns: 1fr; }
+    }
+    .mode-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      padding: 28px 24px 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.28s var(--ease-spring), box-shadow 0.24s, border-color 0.18s;
+    }
+    .mode-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(242,107,29,.2);
+    }
+    .mode-card.premium {
+      background: var(--grad-deep);
+      border-color: transparent;
+      color: white;
+    }
+    .mode-card.premium:hover {
+      box-shadow: 0 24px 60px -10px rgba(124,58,237,.4);
+    }
+    .mode-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--primary-l);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
+    .mode-card.premium .mode-icon {
+      background: rgba(255,255,255,.12);
+      color: white;
+    }
+    .mode-title {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .mode-text {
+      font-size: 14px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+    .mode-card.premium .mode-text { color: rgba(255,255,255,.6); }
+    .mode-premium-tag {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: linear-gradient(135deg, #FF8C42, #FF6B9D);
+      color: white;
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 0.7px;
+      padding: 4px 8px;
+      border-radius: 99px;
+      box-shadow: 0 4px 12px rgba(255,107,157,.5);
+    }
+
+    /* ── How it works ───────────────────────────────── */
+    .how-section {
+      background: var(--surface-2);
+      padding: 80px 0;
+    }
+    .how-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    @media (max-width: 720px) {
+      .how-steps { grid-template-columns: 1fr; }
+    }
+    .how-step {
+      position: relative;
+    }
+    .how-step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .how-step-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: white;
+      flex-shrink: 0;
+    }
+    .how-step-icon-1 {
+      background: linear-gradient(135deg, #F26B1D 0%, #FF9A42 100%);
+      box-shadow: 0 6px 20px rgba(242,107,29,.32);
+    }
+    .how-step-icon-2 {
+      background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+      box-shadow: 0 6px 20px rgba(124,58,237,.3);
+    }
+    .how-step-icon-3 {
+      background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+      box-shadow: 0 6px 20px rgba(16,185,129,.3);
+    }
+    .how-step-badge {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 6px;
+    }
+    .how-step-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .how-step-text {
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    /* ── Cook recruitment section ───────────────────── */
+    .cook-section {
+      padding: 80px 0;
+      background: var(--ink);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .cook-section::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(242,107,29,.25) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .cook-section::after {
+      content: '';
+      position: absolute;
+      bottom: -50%; left: -10%;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,.18) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .cook-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 800px) {
+      .cook-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+    .cook-section .section-eyebrow { color: #FF6B9D; }
+    .cook-section .section-title { color: white; }
+    .cook-section .section-sub { color: rgba(255,255,255,.6); }
+    .cook-perks {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .cook-perk {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .cook-perk-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), #FF6B9D);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(242,107,29,.35);
+    }
+    .cook-perk-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      margin-bottom: 3px;
+    }
+    .cook-perk-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.6);
+      line-height: 1.5;
+    }
+    .cook-cta {
+      margin-top: 28px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, var(--primary), #FF6B9D);
+      color: white;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.22s var(--ease-spring), box-shadow 0.2s;
+      box-shadow: 0 12px 32px -6px rgba(242,107,29,.5);
+    }
+    .cook-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -6px rgba(242,107,29,.6); }
+    .cook-cta:active { transform: scale(0.97); }
+    .cook-cohort-note {
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,.5);
+    }
+    .cook-cohort-note strong { color: rgba(255,255,255,.85); }
+
+    /* ── Why preppa ─────────────────────────────────── */
+    .why {
+      padding: 80px 0;
+    }
+    .why-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+    @media (max-width: 720px) {
+      .why-grid { grid-template-columns: 1fr; }
+    }
+    .why-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px 22px;
+    }
+    .why-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: var(--primary-l);
+      color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .why-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      margin-bottom: 8px;
+    }
+    .why-text {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    /* ── Waitlist ───────────────────────────────────── */
+    .waitlist {
+      padding: 80px 0;
+      background: var(--surface-2);
+    }
+    .waitlist-inner {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .waitlist-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 28px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width: 520px) {
+      .waitlist-form { flex-direction: column; }
+    }
+    .waitlist-input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.18s, box-shadow 0.22s;
+    }
+    .waitlist-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(242,107,29,.12);
+    }
+    .waitlist-input::placeholder { color: var(--ink-muted); }
+    .waitlist-submit {
+      padding: 14px 24px;
+      border-radius: 14px;
+      background: var(--ink);
+      color: white;
+      font-size: 14.5px;
+      font-weight: 800;
+      letter-spacing: -0.005em;
+      transition: transform 0.22s var(--ease-spring), background 0.15s;
+    }
+    .waitlist-submit:hover { background: var(--ink-2); transform: translateY(-1px); }
+    .waitlist-submit:active { transform: scale(0.97); }
+    .waitlist-success {
+      display: none;
+      padding: 18px;
+      background: rgba(22,163,74,.08);
+      border: 1px solid rgba(22,163,74,.2);
+      border-radius: 14px;
+      color: var(--success);
+      font-weight: 700;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+    .waitlist-success.show { display: block; animation: fadeUp 0.3s var(--ease-spring) both; }
+    .waitlist-hint {
+      font-size: 12.5px;
+      color: var(--ink-muted);
+      margin-top: 14px;
+    }
+
+    /* ── FAQ ────────────────────────────────────────── */
+    .faq {
+      padding: 80px 0;
+    }
+    .faq-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+    }
+    .faq-toggle {
+      width: 24px; height: 24px;
+      flex-shrink: 0;
+      color: var(--ink-soft);
+      transition: transform 0.28s var(--ease-spring);
+    }
+    .faq-item.open .faq-toggle { transform: rotate(45deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.32s var(--ease-out), padding 0.32s;
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .faq-item.open .faq-a {
+      max-height: 400px;
+      padding-top: 12px;
+    }
+
+    /* ── Stats bar ──────────────────────────────────── */
+    .stats-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0 24px;
+    }
+    .stats-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 22px 44px;
+      flex: 0 0 auto;
+    }
+    .stat-num-row {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+      line-height: 1;
+    }
+    .stat-num {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--ink);
+      letter-spacing: -0.045em;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-unit {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-soft);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .stat-sep {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+      flex-shrink: 0;
+      margin: 16px 0;
+    }
+    @media (max-width: 640px) {
+      .stats-inner { flex-wrap: wrap; }
+      .stat-item { padding: 16px 24px; flex: 1 0 40%; }
+      .stat-sep { display: none; }
+      .stat-num { font-size: 24px; }
+    }
+
+    /* ── Testimonials ───────────────────────────────── */
+    .testimonials {
+      padding: 80px 0;
+      background: var(--surface-2);
+    }
+    .testimonials-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+    @media (max-width: 720px) {
+      .testimonials-grid { grid-template-columns: 1fr; }
+    }
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 26px 24px;
+      transition: transform 0.28s var(--ease-spring), box-shadow 0.24s;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 14px;
+    }
+    .testimonial-stars svg { width: 14px; height: 14px; color: #F59E0B; }
+    .testimonial-text {
+      font-size: 14.5px;
+      color: var(--ink);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .t-av {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      color: white;
+      flex-shrink: 0;
+    }
+    .t-av-1 { background: linear-gradient(135deg, var(--primary), #FF6B9D); }
+    .t-av-2 { background: linear-gradient(135deg, #7C3AED, #A78BFA); }
+    .t-av-3 { background: linear-gradient(135deg, #059669, #34D399); }
+    .t-name {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .t-role {
+      font-size: 12px;
+      color: var(--ink-soft);
+      font-weight: 600;
+      margin-top: 1px;
+    }
+
+    /* ── Cities ──────────────────────────────────────── */
+    .cities {
+      padding: 80px 0;
+    }
+    .cities-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .cities-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .city-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      cursor: default;
+      transition: background 0.18s, border-color 0.18s, transform 0.22s var(--ease-spring);
+    }
+    .city-chip:hover {
+      background: var(--primary-l);
+      border-color: rgba(242,107,29,.28);
+      transform: translateY(-2px);
+    }
+    .city-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--success);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .city-dot.soon {
+      background: var(--ink-muted);
+      animation: none;
+    }
+    .city-soon {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--ink-muted);
+      background: var(--surface-2);
+      padding: 2px 7px;
+      border-radius: 99px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── App CTA ─────────────────────────────────────── */
+    .app-cta-section {
+      padding: 80px 24px;
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .app-cta-section::before {
+      content: '';
+      position: absolute;
+      top: -40%; left: 50%;
+      transform: translateX(-50%);
+      width: 700px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(242,107,29,.22) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .app-cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .app-cta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.8);
+      padding: 7px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+    .app-cta-title {
+      font-size: clamp(26px, 4.5vw, 42px);
+      font-weight: 900;
+      color: white;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+      margin-bottom: 16px;
+    }
+    .app-cta-title .acc {
+      background: linear-gradient(135deg, var(--primary), #FF6B9D);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .app-cta-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,.6);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+    .app-cta-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .app-cta-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 15px 26px;
+      background: var(--primary);
+      color: white;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.005em;
+      box-shadow: 0 12px 32px -6px rgba(242,107,29,.55);
+      transition: transform 0.22s var(--ease-spring), background 0.15s, box-shadow 0.2s;
+    }
+    .app-cta-btn-primary:hover {
+      background: var(--primary-d);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px -6px rgba(242,107,29,.65);
+    }
+    .app-cta-btn-primary:active { transform: scale(0.97); }
+    .app-cta-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 15px 24px;
+      background: rgba(255,255,255,.07);
+      color: rgba(255,255,255,.85);
+      border: 1.5px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform 0.22s var(--ease-spring), background 0.15s;
+    }
+    .app-cta-btn-secondary:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+    .app-cta-btn-secondary:active { transform: scale(0.97); }
+    .app-cta-note {
+      margin-top: 18px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,.35);
+    }
+    .app-cta-note strong { color: rgba(255,255,255,.55); }
+
+    /* ── Scroll animations ───────────────────────────── */
+    [data-anim] {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.58s var(--ease-out), transform 0.58s var(--ease-out);
+    }
+    [data-anim].anim-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    [data-anim][data-delay="1"] { transition-delay: 0.08s; }
+    [data-anim][data-delay="2"] { transition-delay: 0.16s; }
+    [data-anim][data-delay="3"] { transition-delay: 0.24s; }
+    [data-anim][data-delay="4"] { transition-delay: 0.32s; }
+    @media (prefers-reduced-motion: reduce) {
+      [data-anim] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
+
+    /* == MOTION DESIGN SYSTEM ======================================= */
+
+    /* -- Card stagger entrance (why, mode, testimonial, perk) ------- */
+    .why-card, .mode-card, .testimonial-card, .cook-perk {
+      opacity: 0;
+      transform: translateY(28px) scale(0.97);
+      transition: opacity 0.52s var(--ease-out), transform 0.52s var(--ease-spring),
+                  box-shadow 0.24s, border-color 0.18s;
+    }
+    .why-card.card-in, .mode-card.card-in,
+    .testimonial-card.card-in, .cook-perk.card-in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .why-card, .mode-card, .testimonial-card, .cook-perk {
+        opacity: 1 !important; transform: none !important;
+        transition: box-shadow 0.24s, border-color 0.18s !important;
+      }
+    }
+
+    /* -- Hero aurora orbs ------------------------------------------ */
+    .hero-aurora {
+      position: absolute;
+      top: -12%; left: 50%;
+      transform: translateX(-50%);
+      width: 1000px; height: 560px;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(72px);
+    }
+    .orb-orange {
+      width: 560px; height: 380px;
+      background: radial-gradient(circle, rgba(242,107,29,.26) 0%, transparent 68%);
+      top: 0; left: 4%;
+      animation: orbDrift 9s ease-in-out infinite alternate;
+    }
+    .orb-rose {
+      width: 420px; height: 320px;
+      background: radial-gradient(circle, rgba(255,107,157,.2) 0%, transparent 68%);
+      top: 8%; right: 6%;
+      animation: orbDrift 11s ease-in-out infinite alternate-reverse;
+    }
+    .orb-purple {
+      width: 360px; height: 260px;
+      background: radial-gradient(circle, rgba(124,58,237,.16) 0%, transparent 68%);
+      bottom: 5%; left: 20%;
+      animation: orbDrift 13s ease-in-out infinite alternate;
+      animation-delay: -4s;
+    }
+    @keyframes orbDrift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(28px, -18px) scale(1.07); }
+    }
+
+    /* -- Hero phone: gentle bob ------------------------------------- */
+    @keyframes phoneBob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%       { transform: translateY(-9px) rotate(0.5deg); }
+    }
+    .hero-phone {
+      animation: fadeUp 0.6s var(--ease-spring) 0.45s both,
+                 phoneBob 5.5s ease-in-out 1.2s infinite !important;
+    }
+
+    /* -- Hero word-cycle -------------------------------------------- */
+    .hero-cycle {
+      display: inline-block;
+      transition: opacity 0.2s var(--ease-out), transform 0.24s var(--ease-spring);
+    }
+    .hero-cycle.wc-out {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    @keyframes wcIn {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* -- Social proof marquee --------------------------------------- */
+    .proof-marquee {
+      background: var(--ink);
+      overflow: hidden;
+      padding: 11px 0;
+      border-top: 1px solid rgba(255,255,255,.05);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .proof-track {
+      display: flex;
+      width: max-content;
+      animation: marqueeScroll 34s linear infinite;
+    }
+    .proof-track:hover { animation-play-state: paused; }
+    .proof-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 34px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,.62);
+      white-space: nowrap;
+    }
+    .proof-pip {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .proof-pip.green { background: #34C759; }
+    .proof-pip.purple { background: var(--purple); }
+    @keyframes marqueeScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* -- Nav scroll shrink ------------------------------------------ */
+    .nav {
+      transition: background 0.28s var(--ease-out), box-shadow 0.28s;
+    }
+    .nav.nav-scrolled {
+      background: rgba(255,255,255,.97);
+      box-shadow: 0 2px 20px rgba(0,0,0,.08);
+    }
+
+    /* -- Male PREPPA spotlight card --------------------------------- */
+    .preppa-spotlight {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.24s var(--ease-spring), background 0.18s;
+      cursor: default;
+    }
+    .preppa-spotlight::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(242,107,29,.55) 50%, transparent 100%);
+    }
+    .preppa-spotlight:hover {
+      transform: translateX(5px);
+      background: rgba(255,255,255,.07);
+    }
+    .preppa-spot-av {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--primary) 0%, #FF6B9D 100%);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(242,107,29,.38);
+      position: relative;
+    }
+    .preppa-spot-av::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #34C759;
+      border: 2.5px solid #0E0E10;
+    }
+    .preppa-spot-badge {
+      font-size: 8px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: var(--primary);
+      background: rgba(242,107,29,.14);
+      padding: 2px 7px;
+      border-radius: 99px;
+      display: inline-block;
+      margin-bottom: 3px;
+    }
+    .preppa-spot-name {
+      font-size: 15px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .preppa-spot-meta {
+      font-size: 11.5px;
+      color: rgba(255,255,255,.48);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .preppa-spot-right {
+      margin-left: auto;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .preppa-spot-amt {
+      font-size: 18px;
+      font-weight: 900;
+      color: #34D399;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .preppa-spot-period {
+      font-size: 10.5px;
+      color: rgba(255,255,255,.36);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* -- PREPPA all-caps brand mark --------------------------------- */
+    .nav-brand > span:last-child,
+    .footer-word {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* -- Magnetic CTA base ------------------------------------------ */
+    .btn-primary, .cook-cta, .app-cta-btn-primary {
+      will-change: transform;
+    }
+
+    /* -- Reduced motion overrides ----------------------------------- */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-orb { animation: none !important; }
+      .hero-phone { animation: fadeUp 0.6s var(--ease-spring) 0.45s both !important; }
+      .proof-track { animation: none !important; }
+      .hero-cycle { transition: none !important; animation: none !important; }
+    }
+    /* ================================================================ */
+
+    /* ── Footer ─────────────────────────────────────── */
+    .footer {
+      padding: 60px 24px 40px;
+      background: var(--ink);
+      color: rgba(255,255,255,.7);
+    }
+    .footer-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+    }
+    @media (max-width: 640px) {
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 9px;
+      margin-bottom: 12px;
+    }
+    .footer-mark {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .footer-mark svg { width: 18px; height: 18px; }
+    .footer-word {
+      font-size: 19px;
+      font-weight: 900;
+      color: white;
+      letter-spacing: -0.04em;
+    }
+    .footer-tag {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+      max-width: 280px;
+      line-height: 1.55;
+    }
+    .footer-col-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255,255,255,.4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .footer-link {
+      display: block;
+      font-size: 13.5px;
+      color: rgba(255,255,255,.65);
+      padding: 4px 0;
+      transition: color 0.15s;
+    }
+    .footer-link:hover { color: white; }
+    .footer-bottom {
+      max-width: 1080px;
+      margin: 40px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      font-size: 12px;
+      color: rgba(255,255,255,.4);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAV
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#top" class="nav-brand">
+        <span class="nav-mark">
+          <svg width="18" height="18" viewBox="0 0 100 100" fill="none">
+            <path fill="white" d="M35 60 A 10 10 0 0 0 45 50 C 45 44 43 41 39 35 C 34 25 36 17 45 9 C 47 19 53 28 61 34 C 69 41 73 50 73 59 A 28 28 0 1 1 17 59 C 17 54 19 49 22 46 A 10 10 0 0 0 35 60 Z"/>
+          </svg>
+        </span>
+        <span>PREPPA</span>
+      </a>
+      <div class="nav-links">
+        <a href="#how" class="nav-link">How it works</a>
+        <a href="#cooks" class="nav-link">For Preppas</a>
+        <a href="/app" class="nav-cta">Start ordering</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="hero" id="top">
+
+    <!-- Aurora background orbs -->
+    <div class="hero-aurora" aria-hidden="true">
+      <div class="hero-orb orb-orange"></div>
+      <div class="hero-orb orb-rose"></div>
+      <div class="hero-orb orb-purple"></div>
+    </div>
+
+    <span class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Real home cooks, now in your city
+    </span>
+    <h1 class="hero-title">
+      Fresh meals &amp; weekly prep from<br/>
+      <span class="accent hero-cycle">your neighborhood's cooks.</span>
+    </h1>
+    <p class="hero-sub">
+      Real food, made by real people near you — delivered fresh, prepped for your week,
+      or cooked right in your kitchen. One marketplace of local home cooks. Not a ghost kitchen in sight.
+    </p>
+    <div class="hero-ctas">
+      <a href="/app" class="btn-primary">
+        Find Preppas near you
+        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </a>
+      <a href="/app" class="btn-secondary">
+        See what's cooking
+        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+      <a href="#cooks" class="btn-secondary">
+        Become a Preppa
+        <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Social proof row -->
+    <div class="hero-social-proof" data-anim style="animation-delay:0.38s">
+      <div class="hsp-avatars">
+        <div class="hsp-avatar" style="background:linear-gradient(135deg,#F26B1D,#FF9A42)">A</div>
+        <div class="hsp-avatar" style="background:linear-gradient(135deg,#7C3AED,#A855F7)">M</div>
+        <div class="hsp-avatar" style="background:linear-gradient(135deg,#10B981,#34D399)">J</div>
+        <div class="hsp-avatar" style="background:linear-gradient(135deg,#F59E0B,#FCD34D)">T</div>
+        <div class="hsp-avatar" style="background:linear-gradient(135deg,#EF4444,#F87171)">S</div>
+      </div>
+      <div class="hsp-text">
+        <div class="hsp-stars">
+          <svg viewBox="0 0 24 24" fill="#F59E0B" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="#F59E0B" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="#F59E0B" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="#F59E0B" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="#F59E0B" width="13" height="13"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <span class="hsp-label"><strong>2,400+</strong> food lovers already on preppa</span>
+      </div>
+    </div>
+
+    <!-- Phone mockup — mimics the actual app home screen. Tap to open the app. -->
+    <a href="/app" class="hero-phone" aria-label="Open the Preppa app" style="display:block; text-decoration:none; cursor:pointer;">
+      <div class="hero-phone-content">
+
+        <!-- Status bar -->
+        <div class="hpc-status">
+          <span>9:41</span>
+          <div class="hpc-status-icons">
+            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="14" width="3" height="6" rx="0.5"/><rect x="7" y="11" width="3" height="9" rx="0.5"/><rect x="12" y="8" width="3" height="12" rx="0.5"/><rect x="17" y="5" width="3" height="15" rx="0.5"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="18" height="10" rx="2"/><rect x="20" y="10" width="2" height="4" rx="1" fill="currentColor"/><rect x="4" y="9" width="11" height="6" rx="1" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <!-- App header -->
+        <div class="hpc-header">
+          <div class="hpc-loc">
+            <div class="hpc-loc-label">Deliver to</div>
+            <div class="hpc-loc-val">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Atlanta, GA
+              <svg viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+          </div>
+          <div class="hpc-icon-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </div>
+          <div class="hpc-icon-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            <span class="hpc-cart-dot">2</span>
+          </div>
+        </div>
+
+        <!-- Greeting -->
+        <div class="hpc-greeting">
+          <div class="hpc-greeting-line">Good morning, Jordan</div>
+          <div class="hpc-greeting-sub">What are you craving today?</div>
+        </div>
+
+        <!-- Mode pills -->
+        <div class="hpc-modes">
+          <div class="hpc-mode active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            Delivery
+          </div>
+          <div class="hpc-mode">Pickup</div>
+          <div class="hpc-mode">In-Home</div>
+        </div>
+
+        <!-- Search -->
+        <div class="hpc-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Search meals, Preppas, cuisines…
+        </div>
+
+        <!-- Featured Preppa -->
+        <div class="hpc-featured">
+          <div class="hpc-featured-av">A</div>
+          <div class="hpc-featured-body">
+            <div class="hpc-featured-eyebrow">Featured this week</div>
+            <div class="hpc-featured-name">Abuela's Kitchen</div>
+            <div class="hpc-featured-stats">
+              <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.9 · 312 reviews · 1.2 mi
+            </div>
+          </div>
+        </div>
+
+        <!-- Section heading -->
+        <div class="hpc-section-h">
+          <div class="hpc-section-h-title">Trending nearby</div>
+          <div class="hpc-section-h-link">See all</div>
+        </div>
+
+        <!-- Meal cards -->
+        <div class="hpc-meals">
+          <div class="hpc-meal">
+            <div class="hpc-meal-img hpc-meal-img-1">
+              <div class="hpc-meal-match">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Match
+              </div>
+              <div class="hpc-meal-price">$14</div>
+            </div>
+            <div class="hpc-meal-body">
+              <div class="hpc-meal-name">Jollof Power Bowl</div>
+              <div class="hpc-meal-chef">by Ade O.</div>
+              <div class="hpc-meal-meta">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                4.8 <span class="hpc-meal-meta-dot">·</span> 25m
+              </div>
+            </div>
+          </div>
+          <div class="hpc-meal">
+            <div class="hpc-meal-img hpc-meal-img-2">
+              <div class="hpc-meal-price">$12</div>
+            </div>
+            <div class="hpc-meal-body">
+              <div class="hpc-meal-name">Mediterranean Grain</div>
+              <div class="hpc-meal-chef">by Sophia M.</div>
+              <div class="hpc-meal-meta">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                4.9 <span class="hpc-meal-meta-dot">·</span> 30m
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom nav -->
+        <div class="hpc-nav">
+          <div class="hpc-nav-item active">
+            <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <span class="hpc-nav-label">Home</span>
+          </div>
+          <div class="hpc-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="hpc-nav-label">Explore</span>
+          </div>
+          <div class="hpc-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span class="hpc-nav-label">Inbox</span>
+          </div>
+          <div class="hpc-nav-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="hpc-nav-label">Profile</span>
+          </div>
+        </div>
+      </div>
+    </a>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STATS BAR
+       ═══════════════════════════════════════════════════════════ -->
+  <!-- Social proof marquee ticker -->
+  <div class="proof-marquee" aria-hidden="true">
+    <div class="proof-track">
+      <span class="proof-item"><span class="proof-pip"></span>Marcus J. in Houston hit $4,200 this month</span>
+      <span class="proof-item"><span class="proof-pip green"></span>14 new Preppas joined Atlanta this week</span>
+      <span class="proof-item"><span class="proof-pip purple"></span>Ade O. hit 100 subscribers &mdash; first PREPPA milestone</span>
+      <span class="proof-item"><span class="proof-pip"></span>Jollof Power Bowl trending in 6 cities right now</span>
+      <span class="proof-item"><span class="proof-pip green"></span>Dre K. in Dallas made $1,800 his first 30 days</span>
+      <span class="proof-item"><span class="proof-pip"></span>4.9&#9733; average across 12,000+ orders this month</span>
+      <span class="proof-item"><span class="proof-pip purple"></span>Real kitchens. Real people. Not a ghost kitchen in sight.</span>
+      <!-- duplicate for seamless loop -->
+      <span class="proof-item"><span class="proof-pip"></span>Marcus J. in Houston hit $4,200 this month</span>
+      <span class="proof-item"><span class="proof-pip green"></span>14 new Preppas joined Atlanta this week</span>
+      <span class="proof-item"><span class="proof-pip purple"></span>Ade O. hit 100 subscribers &mdash; first PREPPA milestone</span>
+      <span class="proof-item"><span class="proof-pip"></span>Jollof Power Bowl trending in 6 cities right now</span>
+      <span class="proof-item"><span class="proof-pip green"></span>Dre K. in Dallas made $1,800 his first 30 days</span>
+      <span class="proof-item"><span class="proof-pip"></span>4.9&#9733; average across 12,000+ orders this month</span>
+      <span class="proof-item"><span class="proof-pip purple"></span>Real kitchens. Real people. Not a ghost kitchen in sight.</span>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat-item" data-anim>
+        <div class="stat-num-row">
+          <span class="stat-num" data-counter="180000">0</span>
+          <span class="stat-unit">+</span>
+        </div>
+        <span class="stat-label">meals delivered</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item" data-anim data-delay="1">
+        <div class="stat-num-row">
+          <span class="stat-num" data-counter="2400">0</span>
+          <span class="stat-unit">+</span>
+        </div>
+        <span class="stat-label">local Preppas</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item" data-anim data-delay="2">
+        <div class="stat-num-row">
+          <span class="stat-num" data-counter="4.9" data-decimal="1">0</span>
+          <span class="stat-unit">&#9733;</span>
+        </div>
+        <span class="stat-label">average rating</span>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item" data-anim data-delay="3">
+        <div class="stat-num-row">
+          <span class="stat-num" data-counter="12">0</span>
+          <span class="stat-unit">+</span>
+        </div>
+        <span class="stat-label">cities live</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       3 MODES
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="modes">
+    <span class="section-eyebrow">Three ways to eat</span>
+    <h2 class="section-title">However you want your meals — your Preppa delivers.</h2>
+    <p class="section-sub">Most apps give you one option. preppa gives you three. Same trusted local cooks. Different ways to enjoy them.</p>
+
+    <div class="modes-grid">
+      <div class="mode-card">
+        <div class="mode-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <div class="mode-title">Delivered</div>
+        <div class="mode-text">Your Preppa drops off your weekly meal box at your door. Cold-packed, labeled, ready to grab and go.</div>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div class="mode-title">Pickup</div>
+        <div class="mode-text">Skip the delivery fee. Pick up your box from your Preppa's kitchen on the way home from work.</div>
+      </div>
+
+      <div class="mode-card premium">
+        <span class="mode-premium-tag">PREMIUM</span>
+        <div class="mode-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="mode-title">In Your Kitchen</div>
+        <div class="mode-text">For families & fitness clients. A verified Preppa visits your home weekly and preps every meal fresh, in your kitchen.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TESTIMONIALS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="testimonials">
+    <div class="testimonials-inner">
+      <span class="section-eyebrow" data-anim>Real people, real meals</span>
+      <h2 class="section-title" data-anim data-delay="1">The people who already switched.</h2>
+
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card" data-anim data-delay="1">
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="testimonial-text">"I've tried every meal-delivery app out there. preppa is the first one that actually feels personal. I subscribe to Marcus's bowls and honestly I look forward to them more than going out. The food tastes like someone actually cares."</p>
+          <div class="testimonial-author">
+            <div class="t-av t-av-1">S</div>
+            <div>
+              <div class="t-name">Sarah T.</div>
+              <div class="t-role">Atlanta, GA · Customer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card" data-anim data-delay="2">
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="testimonial-text">"I was doing $800 a month in DMs and Cash App. Two months on preppa and I'm at $3,900/month from 14 subscribers. The platform handles everything — payments, scheduling, reviews. I just cook. This is what I've needed for years."</p>
+          <div class="testimonial-author">
+            <div class="t-av t-av-2">M</div>
+            <div>
+              <div class="t-name">Marcus J.</div>
+              <div class="t-role">Houston, TX · Local Preppa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card" data-anim data-delay="3">
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="testimonial-text">"The in-home service is unreal. My Preppa Priya comes Sunday morning and stocks my whole fridge for the week. Macro-tracked, labeled, everything. As a competitive cyclist it's exactly what I needed. I haven't cooked a meal in 3 months."</p>
+          <div class="testimonial-author">
+            <div class="t-av t-av-3">D</div>
+            <div>
+              <div class="t-name">Devon K.</div>
+              <div class="t-role">Nashville, TN · Prep+ Member</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HOW IT WORKS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="how-section" id="how">
+    <div class="how-inner">
+      <span class="section-eyebrow">How it works</span>
+      <h2 class="section-title">Find a Preppa. Subscribe. Eat better, every week.</h2>
+
+      <div class="how-steps">
+        <div class="how-step" data-anim>
+          <div class="how-step-icon how-step-icon-1">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <div class="how-step-badge">Step 1</div>
+          <div class="how-step-title">Find a Preppa you love</div>
+          <div class="how-step-text">Browse verified local meal preppers near you. See their menu, story, reviews, and macros. Follow the ones you like.</div>
+        </div>
+        <div class="how-step" data-anim data-delay="1">
+          <div class="how-step-icon how-step-icon-2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="how-step-badge">Step 2</div>
+          <div class="how-step-title">Subscribe to their weekly box</div>
+          <div class="how-step-text">Lock in 5–10 meals per week from your favorite Preppa. Pay one weekly price. Skip any week, cancel anytime — no contract.</div>
+        </div>
+        <div class="how-step" data-anim data-delay="2">
+          <div class="how-step-icon how-step-icon-3">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+          </div>
+          <div class="how-step-badge">Step 3</div>
+          <div class="how-step-title">Eat real food every week</div>
+          <div class="how-step-text">Your Preppa preps your box on Sunday. You eat well all week. No menus to scroll, no decisions to make, no chain restaurants.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COOK RECRUITMENT
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="cook-section" id="cooks">
+    <div class="cook-inner">
+      <div>
+        <span class="section-eyebrow">For Preppas</span>
+        <h2 class="section-title">Run your meal prep business from one place.</h2>
+        <p class="section-sub">
+          You're already cooking. You're already taking orders.
+          You shouldn't have to do it from Instagram DMs and Cash App receipts.
+        </p>
+        <form class="cook-apply-form" id="cookApplyForm" style="display:flex;gap:10px;flex-wrap:wrap;max-width:460px;margin:0 0 6px;">
+          <input type="email" class="waitlist-input" name="cookEmail" placeholder="your@email.com"
+                 aria-label="Your email to apply as a Preppa" required style="flex:1;min-width:200px;" />
+          <button type="submit" class="cook-cta" style="margin:0;">
+            Apply as a founding Preppa
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </form>
+        <div class="waitlist-success" id="cookApplySuccess" style="margin-top:4px;">
+          ✓ Check your email — we'll walk you through signing up and applying with your food-safety certification.
+        </div>
+        <p class="cook-cohort-note">
+          <strong>Founding Preppa perks.</strong> 0% commission for 60 days · Featured placement · Direct line to the founder.
+        </p>
+      </div>
+
+      <!-- Male PREPPA spotlight -->
+      <div class="preppa-spotlight">
+        <div class="preppa-spot-av">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white" stroke="none" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div>
+          <span class="preppa-spot-badge">PREPPA</span>
+          <div class="preppa-spot-name">Marcus J.</div>
+          <div class="preppa-spot-meta">Houston, TX &middot; 4.9&#9733; &middot; 18 subscribers</div>
+        </div>
+        <div class="preppa-spot-right">
+          <div class="preppa-spot-amt">$4,200</div>
+          <div class="preppa-spot-period">this month</div>
+        </div>
+      </div>
+
+      <div class="preppa-spotlight">
+        <div class="preppa-spot-av" style="background: linear-gradient(135deg, #7C3AED, #A78BFA);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white" stroke="none" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div>
+          <span class="preppa-spot-badge" style="color:var(--purple); background: rgba(124,58,237,.14);">PREPPA</span>
+          <div class="preppa-spot-name">Dre K.</div>
+          <div class="preppa-spot-meta">Dallas, TX &middot; 4.8&#9733; &middot; 11 subscribers</div>
+        </div>
+        <div class="preppa-spot-right">
+          <div class="preppa-spot-amt">$1,800</div>
+          <div class="preppa-spot-period">first 30 days</div>
+        </div>
+      </div>
+
+      <ul class="cook-perks">
+        <li class="cook-perk">
+          <div class="cook-perk-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+            </svg>
+          </div>
+          <div>
+            <div class="cook-perk-title">Keep 100% for 60 days</div>
+            <div class="cook-perk-sub">Founding Preppas pay 0% commission for the first 60 days. After that: 10% per order — half what DoorDash takes.</div>
+          </div>
+        </li>
+        <li class="cook-perk">
+          <div class="cook-perk-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white" stroke="none">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="cook-perk-title">Subscribers, not one-time orders</div>
+            <div class="cook-perk-sub">Customers subscribe to your weekly box. Recurring revenue from day one — no re-marketing, no chasing.</div>
+          </div>
+        </li>
+        <li class="cook-perk">
+          <div class="cook-perk-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <div>
+            <div class="cook-perk-title">Your brand, your rules</div>
+            <div class="cook-perk-sub">Your menu, your prices, your photos, your hours. Leave anytime and take your customer list with you.</div>
+          </div>
+        </li>
+        <li class="cook-perk">
+          <div class="cook-perk-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+              <path d="M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <div>
+            <div class="cook-perk-title">One-on-one onboarding</div>
+            <div class="cook-perk-sub">I'm helping each founding Preppa personally. Photos, menu setup, first orders. When something breaks, you text me.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       WHY PREPPA
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="why">
+    <div class="why-inner">
+      <span class="section-eyebrow">Why preppa</span>
+      <h2 class="section-title">Not DoorDash. Not Uber Eats. Built for weekly meal prep.</h2>
+
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+            </svg>
+          </div>
+          <div class="why-title">Real Preppas, not restaurants</div>
+          <div class="why-text">Every Preppa is an individual home cook — not a franchise, not a ghost kitchen, not a chain. The person who made your food has a name and a face.</div>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="why-title">Weekly, not 30-minute</div>
+          <div class="why-text">DoorDash optimizes for "I want fries in 23 min." preppa optimizes for "I want 7 dinners this week." Different problem, different design.</div>
+        </div>
+
+        <div class="why-card">
+          <div class="why-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <div class="why-title">Trust built in</div>
+          <div class="why-text">Every cook is verified — ID, background check, kitchen inspection. The ones who come to your home for in-kitchen service get an extra round of vetting.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CITIES
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="cities">
+    <div class="cities-inner">
+      <span class="section-eyebrow" data-anim>Available now</span>
+      <h2 class="section-title" data-anim data-delay="1">Live in 12 cities — adding more every week.</h2>
+      <p class="section-sub" data-anim data-delay="2">Open the app and explore Preppas already cooking near you. Drop your email below if your city isn't on the list yet.</p>
+
+      <div class="cities-grid" data-anim data-delay="3">
+        <div class="city-chip"><span class="city-dot"></span> Atlanta, GA</div>
+        <div class="city-chip"><span class="city-dot"></span> Houston, TX</div>
+        <div class="city-chip"><span class="city-dot"></span> Dallas, TX</div>
+        <div class="city-chip"><span class="city-dot"></span> Charlotte, NC</div>
+        <div class="city-chip"><span class="city-dot"></span> Nashville, TN</div>
+        <div class="city-chip"><span class="city-dot"></span> Miami, FL</div>
+        <div class="city-chip"><span class="city-dot"></span> Chicago, IL</div>
+        <div class="city-chip"><span class="city-dot"></span> Los Angeles, CA</div>
+        <div class="city-chip"><span class="city-dot"></span> New York City, NY</div>
+        <div class="city-chip"><span class="city-dot"></span> Phoenix, AZ</div>
+        <div class="city-chip"><span class="city-dot"></span> Orlando, FL</div>
+        <div class="city-chip"><span class="city-dot"></span> Denver, CO</div>
+        <div class="city-chip" style="opacity:.65;"><span class="city-dot soon"></span> Seattle, WA <span class="city-soon">Soon</span></div>
+        <div class="city-chip" style="opacity:.65;"><span class="city-dot soon"></span> Austin, TX <span class="city-soon">Soon</span></div>
+        <div class="city-chip" style="opacity:.65;"><span class="city-dot soon"></span> Philadelphia, PA <span class="city-soon">Soon</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       WAITLIST
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="waitlist" id="waitlist">
+    <div class="waitlist-inner">
+      <span class="section-eyebrow">New neighborhoods</span>
+      <h2 class="section-title" style="margin: 0 auto 16px">Not enough Preppas in your area yet?</h2>
+      <p class="section-sub" style="margin: 0 auto">
+        preppa is live and growing fast. Drop your email and we'll let you know the moment
+        more Preppas come online near you — and bump your neighborhood up the list.
+      </p>
+
+      <form class="waitlist-form" id="waitlistForm">
+        <input type="email" class="waitlist-input" name="email"
+               placeholder="you@email.com" aria-label="Email address" required />
+        <button type="submit" class="waitlist-submit">Keep me posted</button>
+      </form>
+      <div class="waitlist-success" id="waitlistSuccess">
+        ✓ You're on the list. We'll let you know as more Preppas come online near you.
+      </div>
+      <p class="waitlist-hint">No spam. We'll only reach out when there's more for you to order nearby.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FAQ
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="faq">
+    <div class="faq-inner">
+      <span class="section-eyebrow">Frequently asked</span>
+      <h2 class="section-title">Questions you probably have.</h2>
+
+      <div style="margin-top: 32px">
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span>How is this different from DoorDash or Uber Eats?</span>
+            <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="faq-a">
+            DoorDash and Uber Eats are built for "I want food in 30 minutes" — they prioritize chains and restaurants. preppa is built for "I want a week of meals from a cook I trust" — we prioritize independent home cooks and weekly subscriptions. Different problem, different product.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span>Is preppa available where I live?</span>
+            <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="faq-a">
+            preppa is live and adding cooks in new neighborhoods every week. Open the app and set your location to see the Preppas already serving your area. If it's quiet near you for now, leave your email and we'll let you know as more cooks come online — and prioritize neighborhoods with the most interest.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span>What does it cost?</span>
+            <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="faq-a">
+            You pay your cook directly for the meals they make. Weekly subscription prices range from about $60 to $200/week depending on the cook and the box size. preppa takes a small fee (10%) from the cook on each order — there's no extra service fee on your end.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span>Can I cancel my subscription?</span>
+            <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="faq-a">
+            Anytime, no questions asked. You can also skip any week, pause your subscription, or switch to a different cook whenever you want.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span>Are the cooks verified?</span>
+            <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="faq-a">
+            Every cook on preppa goes through ID verification, food-safety review, and a kitchen inspection before they can take orders. Cooks who offer in-home service (a Preppa visits your kitchen) get additional background checks and insurance verification.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false" onclick="toggleFaq(this)">
+            <span>I'm a Preppa. How do I apply?</span>
+            <svg class="faq-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <div class="faq-a">
+            We're onboarding new Preppas in every city we serve. Founding Preppas in a new neighborhood get 0% commission for 60 days, featured placement, and direct support from our founder. Apply at <a href="#cooks" style="color: var(--primary); font-weight: 700;">the Preppa section above</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       APP CTA
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="app-cta-section">
+    <div class="app-cta-inner">
+      <div class="app-cta-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        No download — order right from your phone
+      </div>
+      <h2 class="app-cta-title" data-anim>
+        Your first meal is<br/>
+        <span class="acc">one tap away.</span>
+      </h2>
+      <p class="app-cta-sub" data-anim data-delay="1">
+        Open preppa on your phone right now. Browse real local cooks near you, see their menus, and order in under 2 minutes. No account needed to browse.
+      </p>
+      <div class="app-cta-btns" data-anim data-delay="2">
+        <a href="/app" class="app-cta-btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2"/>
+            <line x1="12" y1="18" x2="12" y2="18"/>
+          </svg>
+          Open the app
+        </a>
+        <a href="#cooks" class="app-cta-btn-secondary">
+          Become a Preppa
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </div>
+      <p class="app-cta-note">Works on iOS &amp; Android &middot; <strong>Add it to your home screen in one tap</strong></p>
+
+      <!-- App Store badges — coming soon -->
+      <div style="margin-top:24px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+          <a href="#" onclick="event.preventDefault();"
+            style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.13);color:#fff;border-radius:12px;padding:11px 18px;text-decoration:none;border:1.5px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);cursor:default;opacity:.85;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            <div style="text-align:left;">
+              <div style="font-size:9px;font-weight:600;opacity:.65;text-transform:uppercase;letter-spacing:.5px;">Coming soon</div>
+              <div style="font-size:15px;font-weight:700;letter-spacing:-0.3px;">App Store</div>
+            </div>
+          </a>
+          <a href="#" onclick="event.preventDefault();"
+            style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.13);color:#fff;border-radius:12px;padding:11px 18px;text-decoration:none;border:1.5px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);cursor:default;opacity:.85;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <div style="text-align:left;">
+              <div style="font-size:9px;font-weight:600;opacity:.65;text-transform:uppercase;letter-spacing:.5px;">Coming soon</div>
+              <div style="font-size:15px;font-weight:700;letter-spacing:-0.3px;">Google Play</div>
+            </div>
+          </a>
+        </div>
+        <p style="font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;">
+          Start ordering on your phone today
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <span class="footer-mark">
+            <svg viewBox="0 0 100 100" fill="none">
+              <path fill="white" d="M35 60 A 10 10 0 0 0 45 50 C 45 44 43 41 39 35 C 34 25 36 17 45 9 C 47 19 53 28 61 34 C 69 41 73 50 73 59 A 28 28 0 1 1 17 59 C 17 54 19 49 22 46 A 10 10 0 0 0 35 60 Z"/>
+            </svg>
+          </span>
+          <span class="footer-word">PREPPA</span>
+        </div>
+        <p class="footer-tag">
+          The marketplace for local meal preppers. Real food, real Preppas, weekly delivery.
+        </p>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Product</div>
+        <a href="#how" class="footer-link">How it works</a>
+        <a href="#cooks" class="footer-link">For Preppas</a>
+        <a href="/app" class="footer-link">Start ordering</a>
+        <a href="#waitlist" class="footer-link">New neighborhoods</a>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <a href="mailto:hello@preppa.live" class="footer-link">hello@preppa.live</a>
+        <a href="https://instagram.com/preppa.live" class="footer-link" target="_blank" rel="noopener">@preppa.live</a>
+        <a href="https://www.tiktok.com/@preppa.live" class="footer-link" target="_blank" rel="noopener">TikTok @preppa.live</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> preppa. Real food. Real local Preppas.</span>
+      <span>Live in your neighborhood · adding Preppas every week.</span>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SCRIPTS
+       ═══════════════════════════════════════════════════════════ -->
+  <script>
+    // Year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // PWA: register service worker so users can install the site as an app
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+
+    // FAQ accordion
+    function toggleFaq(button) {
+      const item = button.parentElement;
+      const isOpen = item.classList.contains('open');
+      // Close all (collapse + reset aria-expanded so screen readers hear the state)
+      document.querySelectorAll('.faq-item').forEach(el => {
+        el.classList.remove('open');
+        const q = el.querySelector('.faq-q'); if (q) q.setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) { item.classList.add('open'); button.setAttribute('aria-expanded', 'true'); }
+    }
+
+    // Waitlist form — writes to Supabase if configured, falls back to
+    // localStorage otherwise so the UI never feels broken in dev.
+    document.getElementById('waitlistForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = (e.target.email.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        const inp = e.target.email;
+        if (inp) { inp.setAttribute('aria-invalid', 'true'); inp.focus(); }
+        return;
+      }
+      if (e.target.email) e.target.email.removeAttribute('aria-invalid');
+      const submitBtn = e.target.querySelector('.waitlist-submit');
+      const originalLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Adding…';
+
+      let success = false;
+      let alreadyOn = false;
+
+      try {
+        // Try Supabase first
+        if (window.preppa && window.preppa.joinWaitlist) {
+          const result = await window.preppa.joinWaitlist(email, { source: 'landing' });
+          if (result.ok) {
+            success = true;
+            alreadyOn = !!result.alreadyOn;
+          } else {
+            console.error('[waitlist] Supabase error:', result.error);
+          }
+        }
+      } catch (err) {
+        console.error('[waitlist]', err);
+      }
+
+      // Always also store locally as a backup record
+      try {
+        const list = JSON.parse(localStorage.getItem('preppa_waitlist') || '[]');
+        list.push({ email, ts: Date.now(), synced: success });
+        localStorage.setItem('preppa_waitlist', JSON.stringify(list));
+      } catch(err) {}
+
+      submitBtn.disabled = false;
+
+      // If the backend is LIVE but the insert failed, do NOT fake success —
+      // surface an error and let the user retry. (When no backend is configured,
+      // the localStorage-only fallback is acceptable and still shows success.)
+      const dbAttempted = !!(window.preppa && window.preppa.joinWaitlist && window.preppa.supabaseReady);
+      if (dbAttempted && !success) {
+        submitBtn.textContent = 'Try again';
+        const hint = document.querySelector('.waitlist-hint');
+        if (hint) {
+          hint.textContent = 'Hmm — that didn’t save. Check your connection and try again.';
+          hint.style.color = '#EF4444';
+        }
+        return;
+      }
+
+      submitBtn.textContent = originalLabel;
+      e.target.style.display = 'none';
+      const successEl = document.getElementById('waitlistSuccess');
+      if (alreadyOn) {
+        successEl.textContent = '✓ You\'re already on the list — we\'ll be in touch.';
+      }
+      successEl.classList.add('show');
+    });
+
+    // ── Founding-cook application — collect email, send the how-to-apply email ──
+    var cookApplyForm = document.getElementById('cookApplyForm');
+    if (cookApplyForm) cookApplyForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var email = (e.target.cookEmail.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        var inp = e.target.cookEmail;
+        if (inp) { inp.setAttribute('aria-invalid', 'true'); inp.focus(); }
+        return;
+      }
+      if (e.target.cookEmail) e.target.cookEmail.removeAttribute('aria-invalid');
+      var btn = e.target.querySelector('.cook-cta');
+      var orig = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+      var recorded = false;
+      try {
+        if (window.preppa && window.preppa.joinWaitlist) {
+          var w = await window.preppa.joinWaitlist(email, { source: 'cook-apply' });
+          recorded = !!(w && w.ok);
+        }
+      } catch (err) { console.error('[cook-apply]', err); }
+      // Best-effort: email them how to sign up + apply with food certification.
+      try {
+        if (window.preppa && window.preppa.notifyCertSubmitted) {
+          await window.preppa.notifyCertSubmitted({ email: email, stage: 'invite' });
+        }
+      } catch (err) {}
+      // Local backup record
+      try {
+        var leads = JSON.parse(localStorage.getItem('preppa_cook_leads') || '[]');
+        leads.push({ email: email, ts: Date.now(), synced: recorded });
+        localStorage.setItem('preppa_cook_leads', JSON.stringify(leads));
+      } catch (err) {}
+
+      if (btn) btn.disabled = false;
+      // If the backend is live but we couldn't record the lead, let them retry.
+      var dbLive = !!(window.preppa && window.preppa.joinWaitlist && window.preppa.supabaseReady);
+      if (dbLive && !recorded) {
+        if (btn) btn.textContent = 'Try again';
+        return;
+      }
+      if (btn) btn.textContent = orig;
+      e.target.style.display = 'none';
+      var cookOk = document.getElementById('cookApplySuccess');
+      if (cookOk) cookOk.classList.add('show');
+    });
+
+    // ── Scroll animations (IntersectionObserver) ───────────────
+    (function() {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('anim-in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('[data-anim]').forEach(el => io.observe(el));
+    })();
+
+    // ── Animated stat counters ───────────────────────────────
+    (function() {
+      const easeOut = t => 1 - Math.pow(1 - t, 3);
+      const counters = document.querySelectorAll('[data-counter]');
+      if (!counters.length) return;
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          const target = parseFloat(el.dataset.counter);
+          const decimals = parseInt(el.dataset.decimal || '0');
+          const duration = 1400;
+          const start = performance.now();
+          function step(now) {
+            const elapsed = Math.min((now - start) / duration, 1);
+            const val = target * easeOut(elapsed);
+            el.textContent = decimals > 0 ? val.toFixed(decimals) : Math.round(val).toLocaleString();
+            if (elapsed < 1) requestAnimationFrame(step);
+            else el.textContent = decimals > 0 ? target.toFixed(decimals) : target.toLocaleString();
+          }
+          requestAnimationFrame(step);
+          io.unobserve(el);
+        });
+      }, { threshold: 0.5 });
+      counters.forEach(el => io.observe(el));
+    })();
+
+    // Smooth-scroll for in-page nav
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ── Nav scroll shrink ──────────────────────────────────────────
+    (function() {
+      const nav = document.querySelector('.nav');
+      if (!nav) return;
+      const onScroll = () => nav.classList.toggle('nav-scrolled', window.scrollY > 50);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    // ── Hero word-cycle ────────────────────────────────────────────
+    (function() {
+      const el = document.querySelector('.hero-cycle');
+      if (!el) return;
+      const phrases = [
+        "your neighborhood's cooks.",
+        'real Preppas near you.',
+        "home chefs you'll love.",
+        'local meal preppers.'
+      ];
+      let idx = 0;
+      setInterval(() => {
+        // fade out
+        el.classList.add('wc-out');
+        setTimeout(() => {
+          idx = (idx + 1) % phrases.length;
+          el.textContent = phrases[idx];
+          el.classList.remove('wc-out');
+          el.style.animation = 'none';
+          el.offsetHeight; // reflow
+          el.style.animation = 'wcIn 0.32s var(--ease-spring) both';
+        }, 220);
+      }, 3200);
+    })();
+
+    // ── Card stagger entrance ──────────────────────────────────────
+    (function() {
+      const selectors = [
+        '.mode-card', '.why-card', '.testimonial-card', '.cook-perk',
+        '.how-step', '.city-chip', '.preppa-spotlight'
+      ];
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (!e.isIntersecting) return;
+          const el = e.target;
+          // find sibling index for stagger delay
+          const siblings = el.parentElement
+            ? Array.from(el.parentElement.children).filter(c => c.tagName === el.tagName || c.className === el.className)
+            : [el];
+          const idx = siblings.indexOf(el);
+          el.style.transitionDelay = `${Math.min(idx * 75, 320)}ms`;
+          el.classList.add('card-in');
+          // also mark how-step and city-chip with anim-in so their base styles apply
+          el.classList.add('anim-in');
+          io.unobserve(el);
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+      document.querySelectorAll(selectors.join(',')).forEach(el => io.observe(el));
+    })();
+
+    // ── Magnetic CTAs (desktop pointer devices only) ───────────────
+    (function() {
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      const btns = document.querySelectorAll('.btn-primary, .cook-cta, .app-cta-btn-primary, .nav-cta');
+      btns.forEach(btn => {
+        btn.addEventListener('mousemove', e => {
+          const r = btn.getBoundingClientRect();
+          const x = ((e.clientX - r.left) / r.width - 0.5) * 10;
+          const y = ((e.clientY - r.top) / r.height - 0.5) * 6;
+          btn.style.transform = `translate(${x}px, ${y}px) translateY(${btn.classList.contains('btn-primary') ? '-2px' : '0'})`;
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = '';
+        });
+      });
+    })();
+
+    // ── Hero phone: spring-smoothed tilt + gentle idle float ───────
+    (function() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const phone = document.querySelector('.hero-phone');
+      if (!phone || reduce) return;
+      const hover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      // target + current tilt (lerped each frame for a natural, springy feel)
+      let tx = 0, ty = 0, cx = 0, cy = 0, t = 0;
+      window.addEventListener('mousemove', e => {
+        if (!hover) return;
+        tx = ((e.clientY - innerHeight / 2) / (innerHeight / 2)) * -5.5;
+        ty = ((e.clientX - innerWidth / 2) / (innerWidth / 2)) * 6.5;
+      }, { passive: true });
+      document.querySelector('.hero')?.addEventListener('mouseleave', () => { tx = 0; ty = 0; });
+      (function frame() {
+        cx += (tx - cx) * 0.08;            // spring lerp toward target
+        cy += (ty - cy) * 0.08;
+        t += 0.018;
+        const floatY = Math.sin(t) * 5;     // idle bob
+        const floatR = Math.sin(t * 0.7) * 0.6;
+        phone.style.transform =
+          `perspective(1000px) rotateX(${cx + floatR}deg) rotateY(${cy}deg) translateY(${floatY}px)`;
+        requestAnimationFrame(frame);
+      })();
+    })();
+
+    // ── Hero phone: auto-cycle modes so the screen tells the 3-format story ──
+    (function() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const modes = [...document.querySelectorAll('.hpc-mode')];
+      if (modes.length < 3) return;
+      const content = document.querySelector('.hero-phone-content');
+      const greetSub = document.querySelector('.hpc-greeting-sub');
+      const eyebrow  = document.querySelector('.hpc-featured-eyebrow');
+      const sectionH = document.querySelector('.hpc-section-h-title');
+      const metas    = [...document.querySelectorAll('.hpc-meal-meta')];
+      // per-mode copy that reframes the same cooks as delivery / prep / in-home
+      const SCENES = [
+        { sub:'What are you craving today?',     eye:'Featured this week', sec:'Trending nearby', m:['4.8','25m','4.9','30m'] },
+        { sub:'Fresh boxes, prepped for your week', eye:'Weekly meal prep', sec:'Prep boxes near you', m:['4.8','5 meals','4.9','7 meals'] },
+        { sub:'Book a Preppa to cook in your kitchen', eye:'Cooks near you', sec:'Available this week', m:['4.8','from $55','4.9','from $45'] },
+      ];
+      let i = 0;
+      function paint(n) {
+        modes.forEach((m, k) => m.classList.toggle('active', k === n));
+        const s = SCENES[n];
+        if (greetSub) greetSub.textContent = s.sub;
+        if (eyebrow)  eyebrow.textContent  = s.eye;
+        if (sectionH) sectionH.textContent = s.sec;
+        metas.forEach((meta, k) => {
+          const star = meta.querySelector('svg');
+          meta.innerHTML = '';
+          if (star) meta.appendChild(star);
+          meta.insertAdjacentHTML('beforeend',
+            ' ' + s.m[k*2] + ' <span class="hpc-meal-meta-dot">·</span> ' + s.m[k*2+1]);
+        });
+        if (content && !reduce) {
+          content.classList.remove('hpc-scene-in'); void content.offsetWidth;
+          content.classList.add('hpc-scene-in');
+        }
+      }
+      if (reduce) return;            // keep the static Delivery scene
+      setInterval(() => { i = (i + 1) % SCENES.length; paint(i); }, 2800);
+    })();
+
+    // ── Hero phone: periodic "live order" ping (social proof in motion) ──
+    (function() {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const content = document.querySelector('.hero-phone-content');
+      if (!content || reduce) return;
+      const PINGS = [
+        ['🔥', 'Ade just sold out of Jollof Bowls'],
+        ['🛎️', 'New order · Mediterranean Grain ×2'],
+        ['⭐', 'Sophia M. earned a new 5-star review'],
+        ['🥡', 'Maya added 6 fresh prep boxes'],
+      ];
+      const el = document.createElement('div');
+      el.className = 'hpc-live-order';
+      content.appendChild(el);
+      let p = 0;
+      function show() {
+        const [emoji, text] = PINGS[p % PINGS.length]; p++;
+        el.innerHTML = '<span class="hpc-lo-emoji">' + emoji + '</span><span>' + text + '</span>';
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 3200);
+      }
+      setTimeout(show, 1800);
+      setInterval(show, 5600);
+    })();
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SUPABASE — auth + db client (loads last so other scripts don't block)
+       ═══════════════════════════════════════════════════════════ -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="/js/supabase-client.js?v=68w"></script>
+</body>
+</html>

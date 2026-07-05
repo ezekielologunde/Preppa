@@ -1,0 +1,40 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+build/
+.expo/
+web-build/
+*.tsbuildinfo
+
+# env / secrets  (service_role + Stripe secrets must NEVER be committed)
+.env
+.env.*
+!.env.example
+supabase/.env
+supabase/.branches/
+supabase/.temp/
+
+# native
+apps/app/ios/
+apps/app/android/
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+
+# os / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# logs
+*.log
+npm-debug.*
+
+# stray npm lockfiles (this is a pnpm workspace)
+package-lock.json
