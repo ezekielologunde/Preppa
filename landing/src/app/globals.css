@@ -24,6 +24,34 @@
   --ease-out: cubic-bezier(.22,.61,.36,1);
 }
 
+/* Help Center (help.preppa.live) runs a warm dark theme — scoped to `.help` on the
+   help shell wrapper so it never touches the bright preppa.live landing that shares
+   this stylesheet. The .prose article styles below resolve through these tokens, so
+   long-form guide/legal text reads light-on-dark automatically. */
+.help {
+  --bg: #14100C;
+  --panel: #1C1712;
+  --panel-2: #241E17;
+  --card: #1C1712;
+  --card-2: #241E17;
+  --ink: #FBF6EF;
+  --ink-2: rgba(251,246,239,.74);
+  --ink-soft: rgba(251,246,239,.5);
+  --line: rgba(251,246,239,.1);
+  --line-2: rgba(251,246,239,.17);
+
+  --orange: #FB8B3E;
+  --orange-soft: rgba(242,107,29,.16);
+  --orange-press: #F26B1D;
+  --lime: #7ED9A0;
+  --lime-soft: rgba(126,217,160,.14);
+  --green: #7ED9A0;
+  --green-soft: rgba(126,217,160,.14);
+
+  background: var(--bg);
+  color: var(--ink);
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-panel: var(--panel);

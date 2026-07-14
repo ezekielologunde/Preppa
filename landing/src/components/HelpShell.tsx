@@ -1,111 +1,36 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { LogoMark } from "./LogoMark";
 
-const NAV = [
-  {
-    section: "Guides",
-    items: [
-      { href: "/guides/post-your-first-meal", label: "Post your first meal" },
-      { href: "/guides/create-a-meal-plan", label: "Create a meal plan" },
-      { href: "/guides/set-up-payout", label: "Set up payout" },
-    ],
-  },
-  {
-    section: "Legal",
-    items: [
-      { href: "/legal/terms", label: "Terms of Service" },
-      { href: "/legal/privacy", label: "Privacy Policy" },
-      { href: "/legal/cook-agreement", label: "Cook Agreement" },
-    ],
-  },
-];
-
 /** help.preppa.live's shell — served from the same Next.js app/Vercel project as
- * preppa.live via middleware.ts host-based rewrite, not a separate deployment. */
+ * preppa.live via middleware.ts host-based rewrite, not a separate deployment. Warm
+ * dark theme scoped via `.help`. The shell is just header + footer; each page owns
+ * its own body layout (the index has a sidebar + rail; articles use a centered
+ * prose column from the guides/legal route-group layouts). */
 export function HelpShell({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
   return (
-    <>
-      <header className="sticky top-0 z-50 bg-bg/90 backdrop-blur-md border-b border-line">
-        <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 font-extrabold text-lg tracking-tight">
-            <LogoMark size={28} /> Preppa Help
+    <div className="help min-h-dvh flex flex-col">
+      <header className="sticky top-0 z-50 bg-bg/85 backdrop-blur-md border-b border-line">
+        <div className="max-w-[1280px] mx-auto px-6 h-[68px] flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 font-display font-bold text-lg tracking-tight text-ink">
+            <LogoMark size={30} /> Preppa
           </Link>
-          <a href="https://preppa.live" className="text-sm font-semibold text-ink-2 hover:text-ink">
-            ← Back to preppa.live
-          </a>
+          <nav className="flex items-center gap-1 text-[13px] font-semibold text-ink-2">
+            <Link href="/" className="px-3 py-2 rounded-full hover:bg-white/5 hover:text-ink transition-colors">Help Center</Link>
+            <a href="/legal/terms" className="hidden sm:block px-3 py-2 rounded-full hover:bg-white/5 hover:text-ink transition-colors">Legal</a>
+            <a href="https://preppa.live" className="px-3 py-2 rounded-full hover:bg-white/5 hover:text-ink transition-colors">preppa.live&nbsp;→</a>
+          </nav>
         </div>
       </header>
-      <details className="md:hidden border-b border-line group">
-        <summary className="max-w-[1200px] mx-auto px-6 py-3 text-sm font-bold text-ink-2 cursor-pointer list-none flex items-center justify-between">
-          Browse guides &amp; legal
-          <span className="text-ink-soft transition-transform group-open:rotate-180">▾</span>
-        </summary>
-        <div className="max-w-[1200px] mx-auto px-6 pb-4 space-y-5">
-          {NAV.map((group) => (
-            <div key={group.section}>
-              <h4 className="text-xs font-bold uppercase tracking-wide text-ink-soft mb-2">
-                {group.section}
-              </h4>
-              <div className="flex flex-col gap-1">
-                {group.items.map((item) => {
-                  const active = pathname === item.href;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`text-sm font-semibold rounded-lg px-3 py-2 transition-colors ${
-                        active ? "bg-orange-soft text-orange" : "text-ink-2"
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      </details>
-      <div className="flex-1 max-w-[1200px] mx-auto w-full px-6 flex gap-12 py-12">
-        <nav className="hidden md:block w-56 shrink-0">
-          <div className="sticky top-24 space-y-8">
-            {NAV.map((group) => (
-              <div key={group.section}>
-                <h4 className="text-xs font-bold uppercase tracking-wide text-ink-soft mb-3">
-                  {group.section}
-                </h4>
-                <div className="flex flex-col gap-1">
-                  {group.items.map((item) => {
-                    const active = pathname === item.href;
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`text-sm font-semibold rounded-lg px-3 py-2 transition-colors ${
-                          active ? "bg-orange-soft text-orange" : "text-ink-2 hover:bg-surface"
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </nav>
-        <main className="flex-1 min-w-0 max-w-2xl">{children}</main>
-      </div>
-      <footer className="border-t border-line py-8">
-        <div className="max-w-[1200px] mx-auto px-6 text-xs text-ink-soft">
-          © 2026 Preppa, Inc. · <a href="https://preppa.live" className="underline">preppa.live</a>
+
+      <div className="flex-1">{children}</div>
+
+      <footer className="border-t border-line">
+        <div className="max-w-[1280px] mx-auto px-6 py-6 flex flex-wrap items-center justify-between gap-3 text-xs text-ink-soft">
+          <p>© 2026 Preppa, Inc. · <a href="https://preppa.live" className="underline hover:text-ink">preppa.live</a></p>
+          <p>Preppers are independent food providers. Requirements vary by location.</p>
         </div>
       </footer>
-    </>
+    </div>
   );
 }
