@@ -61,16 +61,13 @@ export function Nav() {
           ))}
         </div>
         <div className="hidden md:flex items-center gap-1.5 ml-auto">
-          <a href="https://app.preppa.live" className="px-3.5 py-2 text-sm font-semibold text-white/80 hover:text-white rounded-full">
-            Log in
-          </a>
           <motion.a
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.96 }}
-            href="https://app.preppa.live"
+            href="#waitlist"
             className="bg-orange text-white text-sm font-bold px-5 h-[46px] rounded-full flex items-center shadow-[0_10px_26px_rgba(242,107,29,.32)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,107,29,.4)]"
           >
-            Open app
+            Join the waitlist
           </motion.a>
         </div>
         <button
@@ -97,10 +94,11 @@ export function Nav() {
             </a>
           ))}
           <a
-            href="https://app.preppa.live"
+            href="#waitlist"
+            onClick={() => setOpen(false)}
             className="mt-4 bg-orange text-white text-sm font-bold h-12 rounded-full flex items-center justify-center"
           >
-            Open app
+            Join the waitlist
           </a>
         </div>
       ) : null}

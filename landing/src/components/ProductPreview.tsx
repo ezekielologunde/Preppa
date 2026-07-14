@@ -6,27 +6,30 @@ import { PhoneMockup } from "./PhoneMockup";
 
 const CATS = ["For You", "Meal Plans", "Halal", "Vegan"];
 
-export function Hero() {
+/** What used to be the page's hero — now the proof-of-product beat that follows the
+ * cinematic opener: the actual home screen, not just a promise. */
+export function ProductPreview() {
   return (
-    <section id="top" className="relative overflow-hidden pt-16 pb-24 md:pt-20 md:pb-32">
+    <section className="relative overflow-hidden pt-20 pb-24 md:pt-28 md:pb-32">
       <div className="max-w-[1200px] mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
         >
           <span className="inline-flex items-center gap-2 text-[12.5px] font-bold uppercase tracking-wider text-ink-2 mb-6">
             <span className="w-[7px] h-[7px] rounded-full bg-orange" />
-            Homemade food marketplace
+            See it in action
           </span>
-          <h1 className="text-[38px] md:text-[68px] font-extrabold leading-[1.02] tracking-tight mb-6">
-            Home-cooked food from
+          <h2 className="text-[32px] md:text-[52px] font-extrabold leading-[1.05] tracking-tight mb-6">
+            Browse, order, and track
             <br />
-            <span className="font-light text-ink-soft">a local</span> you trust
-          </h1>
+            <span className="font-light text-ink-soft">— all in one app</span>
+          </h2>
           <p className="text-lg text-ink-2 leading-relaxed max-w-md mb-8">
-            Preppa connects you with ID-verified home cooks nearby — order fresh,
-            homemade meals made by a real person, not a restaurant.
+            One tap to find what&rsquo;s cooking near you, one tap to order, and a live
+            status feed from a verified cook&rsquo;s kitchen to your door.
           </p>
           <div className="flex flex-wrap gap-3 mb-10">
             <motion.a
@@ -35,7 +38,7 @@ export function Hero() {
               href="https://app.preppa.live/discover"
               className="bg-orange text-white font-bold px-6 h-13 rounded-2xl flex items-center gap-2 shadow-[0_10px_26px_rgba(242,107,29,.32)] transition-shadow hover:shadow-[0_14px_32px_rgba(242,107,29,.4)]"
             >
-              Find a cook near you
+              Browse today&rsquo;s drops
             </motion.a>
             <motion.a
               whileHover={{ y: -2 }}
@@ -70,8 +73,9 @@ export function Hero() {
         <motion.div
           className="relative min-h-[540px] max-w-[380px] mx-auto w-full"
           initial={{ opacity: 0, scale: 0.94 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 0.61, 0.36, 1] }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 0.61, 0.36, 1] }}
         >
           <div className="absolute -right-[6%] -top-[4%] w-[64%] aspect-square blur-2xl bg-[radial-gradient(circle_at_40%_35%,var(--orange-soft),transparent_68%)]" />
 
@@ -148,21 +152,6 @@ export function Hero() {
               </div>
             </PhoneMockup>
           </div>
-
-          <motion.div
-            className="absolute -right-1 bottom-14 z-[4] bg-white rounded-2xl px-4 py-3.5 shadow-[0_10px_24px_rgba(23,21,15,.08),0_30px_70px_rgba(23,21,15,.12)] border border-line flex items-center gap-3"
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <span className="w-9 h-9 rounded-full bg-ink text-white flex items-center justify-center">
-              <Icon name="pin" size={16} />
-            </span>
-            <div>
-              <b className="block text-[14px]">Live in Atlanta, GA</b>
-              <span className="text-[11px] text-ink-soft font-semibold">More cities soon</span>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>
