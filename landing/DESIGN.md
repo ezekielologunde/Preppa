@@ -4,7 +4,7 @@ Visual system for preppa.live. Modern food-brand energy (Graza / Omsom / Oatly) 
 
 ## Theme
 
-Single-section, cinematic, warm-dark. A licensed food video plays full-bleed under a layered premium overlay (espresso base + an orange glow + an acid-lime glow + a vignette) so the footage reads while text stays ≥ AA. The mood is a moody, appetizing kitchen at night — confident and premium, not corporate.
+Single-section, cinematic, and themeable. The DEFAULT (main) theme is warm orange — a warm near-white/cream wash over the food video with dark ink text. A header toggle switches to a burnt-orange dark mode (espresso overlay, cream text) for a moody night-kitchen feel. Both read from `--hero-*` tokens (light on `:root`, dark on `:root[data-theme="dark"]`); the choice persists in localStorage with a no-flash script. No emoji anywhere — cuisine marks are letter monograms, ticker separators are dots, the toggle uses inline SVG.
 
 ## Color
 

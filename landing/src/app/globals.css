@@ -101,6 +101,40 @@ body {
   color: var(--ink);
 }
 
+/* Landing hero theme. DEFAULT is warm orange (light); `[data-theme="dark"]` on <html>
+   switches to burnt-orange dark mode via the header toggle. Only the hero reads these
+   `--hero-*` tokens, so the toggle re-skins the landing without touching help.preppa.live. */
+:root {
+  --hero-text: #201108;
+  --hero-text-soft: rgba(32, 17, 8, 0.86);
+  --hero-text-mute: rgba(32, 17, 8, 0.6);
+  --hero-accent: #B23A0E;
+  --hero-brand: #F26B1D;
+  --hero-ground: #FFFBF7;
+  --hero-ov: linear-gradient(178deg, rgba(255, 251, 247, 0.9) 0%, rgba(255, 247, 239, 0.6) 42%, rgba(255, 251, 247, 0.94) 100%);
+  --hero-glow: radial-gradient(72% 48% at 12% 10%, rgba(242, 107, 29, 0.26), transparent 60%), radial-gradient(60% 44% at 92% 88%, rgba(242, 107, 29, 0.12), transparent 65%);
+  --hero-panel: rgba(255, 255, 255, 0.62);
+  --hero-panel-border: rgba(32, 17, 8, 0.12);
+  --hero-line: rgba(32, 17, 8, 0.14);
+  --hero-chip-bg: rgba(255, 255, 255, 0.6);
+  --hero-chip-border: rgba(32, 17, 8, 0.14);
+}
+:root[data-theme="dark"] {
+  --hero-text: #FFF3E4;
+  --hero-text-soft: rgba(255, 243, 228, 0.9);
+  --hero-text-mute: rgba(255, 243, 228, 0.6);
+  --hero-accent: #FB8B3E;
+  --hero-brand: #FB8B3E;
+  --hero-ground: #180B05;
+  --hero-ov: linear-gradient(178deg, rgba(24, 11, 5, 0.72) 0%, rgba(42, 15, 7, 0.56) 40%, rgba(18, 8, 4, 0.9) 100%);
+  --hero-glow: radial-gradient(72% 48% at 12% 10%, rgba(242, 107, 29, 0.34), transparent 60%), radial-gradient(60% 44% at 92% 88%, rgba(251, 139, 62, 0.14), transparent 65%);
+  --hero-panel: rgba(255, 255, 255, 0.07);
+  --hero-panel-border: rgba(255, 255, 255, 0.12);
+  --hero-line: rgba(255, 255, 255, 0.1);
+  --hero-chip-bg: rgba(255, 255, 255, 0.08);
+  --hero-chip-border: rgba(255, 255, 255, 0.14);
+}
+
 /* Cuisine ticker marquee (hero). Track is duplicated in markup; -50% loops seamlessly. */
 @keyframes marquee {
   from { transform: translateX(0); }
