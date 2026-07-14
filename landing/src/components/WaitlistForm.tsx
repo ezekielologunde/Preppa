@@ -7,9 +7,15 @@ import { supabase } from "@/lib/supabase";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** The page's primary action — pre-launch email capture. Writes to the real
- * `waitlist` table; ZIP is optional. Never fakes success. `tone="onOrange"` restyles
- * it (cream inputs, ink button) so it reads on the drenched-orange hero. */
-export function WaitlistForm({ tone = "light" }: { tone?: "light" | "onOrange" }) {
+ * `waitlist` table; ZIP is optional. Never fakes success. Tone restyles it for the
+ * light body, the drenched-orange hero, or a dark video background. */
+export function WaitlistForm({
+  tone = "light",
+  cta = "Join the waitlist",
+}: {
+  tone?: "light" | "onOrange" | "onDark";
+  cta?: string;
+}) {
   const [email, setEmail] = useState("");
   const [zip, setZip] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
@@ -28,20 +34,25 @@ export function WaitlistForm({ tone = "light" }: { tone?: "light" | "onOrange" }
   }
 
   const onOrange = tone === "onOrange";
+  const onDark = tone === "onDark";
   const inputCls = onOrange
     ? "bg-cream text-ink placeholder:text-ink/45 border-transparent focus:border-ink"
-    : "bg-white text-ink placeholder:text-ink-soft/70 border-line focus:border-orange";
+    : onDark
+      ? "bg-white/95 text-ink placeholder:text-ink/45 border-transparent focus:border-orange"
+      : "bg-white text-ink placeholder:text-ink-soft/70 border-line focus:border-orange";
   const btnCls = onOrange
     ? "bg-ink text-cream hover:bg-ember"
-    : "bg-orange text-white shadow-[0_10px_26px_rgba(242,107,29,.32)]";
+    : onDark
+      ? "bg-orange text-white hover:bg-orange-deep shadow-[0_10px_30px_rgba(242,107,29,.45)]"
+      : "bg-orange text-white shadow-[0_10px_26px_rgba(242,107,29,.32)]";
 
   if (status === "done") {
     return (
-      <div className={`max-w-md rounded-2xl px-5 py-4 ${onOrange ? "bg-ink" : "bg-green-soft border border-green/30"}`}>
-        <p className={`inline-flex items-center gap-2 text-[15px] font-bold ${onOrange ? "text-cream" : "text-green"}`}>
+      <div className={`max-w-md rounded-2xl px-5 py-4 ${onOrange ? "bg-ink" : onDark ? "bg-white/10 border border-white/20 backdrop-blur-sm" : "bg-green-soft border border-green/30"}`}>
+        <p className={`inline-flex items-center gap-2 text-[15px] font-bold ${onOrange ? "text-cream" : onDark ? "text-acid" : "text-green"}`}>
           <Icon name="check" size={17} /> You&rsquo;re on the list.
         </p>
-        <p className={`mt-1 text-sm ${onOrange ? "text-cream/80" : "text-ink-2"}`}>
+        <p className={`mt-1 text-sm ${onOrange ? "text-cream/80" : onDark ? "text-white/80" : "text-ink-2"}`}>
           We&rsquo;ll email you the second Preppa fires up near you.
         </p>
       </div>
@@ -75,15 +86,15 @@ export function WaitlistForm({ tone = "light" }: { tone?: "light" | "onOrange" }
           disabled={status === "submitting"}
           className={`h-14 px-6 rounded-xl font-bold shrink-0 transition-all hover:-translate-y-0.5 disabled:opacity-60 ${btnCls}`}
         >
-          {status === "submitting" ? "Joining…" : "Join the waitlist"}
+          {status === "submitting" ? "Joining…" : cta}
         </button>
       </div>
       {status === "error" ? (
-        <p role="alert" className={`mt-2 text-sm font-bold ${onOrange ? "text-ink" : "text-orange-press"}`}>
+        <p role="alert" className={`mt-2 text-sm font-bold ${onOrange ? "text-ink" : onDark ? "text-acid" : "text-orange-press"}`}>
           Enter a valid email and try again.
         </p>
       ) : (
-        <p className={`mt-2 text-[12.5px] font-semibold ${onOrange ? "text-ink/80" : "text-ink-soft"}`}>
+        <p className={`mt-2 text-[12.5px] font-semibold ${onOrange ? "text-ink/80" : onDark ? "text-white/70" : "text-ink-soft"}`}>
           No spam — one email when we launch on your block.
         </p>
       )}
