@@ -27,7 +27,7 @@ const ORGANIZATION_JSON_LD = {
   "@type": "Organization",
   name: "Preppa",
   url: "https://preppa.live",
-  logo: "https://preppa.live/icon.svg",
+  logo: "https://preppa.live/icon.png",
   sameAs: ["https://www.instagram.com/preppa.live", "https://www.tiktok.com/@preppa.live"],
 };
 
