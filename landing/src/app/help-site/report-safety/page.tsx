@@ -38,7 +38,7 @@ export default function Page() {
 
       <PublicSupportForm
         reportType="safety"
-        refPrefix="S"
+       
         categories={CATEGORIES}
         showImmediateRisk
         submitLabel="Send safety report"

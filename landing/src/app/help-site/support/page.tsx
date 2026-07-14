@@ -29,7 +29,7 @@ export default function Page() {
         <a href="mailto:support@preppa.live" className="underline">support@preppa.live</a>.
       </p>
 
-      <PublicSupportForm reportType="support" refPrefix="P" categories={CATEGORIES} showRole submitLabel="Send request" />
+      <PublicSupportForm reportType="support" categories={CATEGORIES} showRole submitLabel="Send request" />
     </div>
   );
 }

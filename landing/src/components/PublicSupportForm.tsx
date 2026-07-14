@@ -2,27 +2,18 @@
 
 import { useRef, useState } from "react";
 import { Icon } from "./Icon";
-import { supabase } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const RANDOM = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-
-function makeRef(prefix: string) {
-  let s = "";
-  for (let i = 0; i < 6; i++) s += RANDOM[Math.floor(Math.random() * RANDOM.length)];
-  return `${prefix}-${s}`;
-}
 
 type Field = { name: string; label: string; type?: "text" | "email" | "textarea" | "select"; options?: string[]; required?: boolean; help?: string };
 
-/** Public (unauthenticated) support / safety / abuse intake. Writes to
- * `public_support_requests` via the anon client (same pattern as the waitlist),
- * with a honeypot + minimum-fill-time trap as baseline bot protection. Never fakes
- * success. The recommended production hardening (Cloudflare Turnstile) is documented
- * in docs/email/ — add the key and gate submit on it before heavy promotion. */
+/** Public (unauthenticated) support / safety / abuse intake. Posts to /api/support,
+ * which inserts into `public_support_requests` server-side, emails the reporter a
+ * confirmation with their reference, and notifies the right team alias. Honeypot +
+ * minimum-fill-time trap are baseline bot protection; add Cloudflare Turnstile
+ * (docs/email/) before heavy promotion. Never fakes success. */
 export function PublicSupportForm({
   reportType,
-  refPrefix,
   categories,
   showName = true,
   showRole = false,
@@ -30,7 +21,6 @@ export function PublicSupportForm({
   submitLabel = "Submit",
 }: {
   reportType: "support" | "safety" | "abuse";
-  refPrefix: string;
   categories: string[];
   showName?: boolean;
   showRole?: boolean;
@@ -69,26 +59,35 @@ export function PublicSupportForm({
     }
     setStatus("submitting");
     setErrMsg("");
-    const generated = makeRef(refPrefix);
-    const { error } = await supabase.from("public_support_requests").insert({
-      ref: generated,
-      report_type: reportType,
-      name: showName ? (form.name || "").trim() || null : null,
-      email,
-      role: showRole ? form.role || null : null,
-      category: form.category || null,
-      subject: (form.subject || "").trim() || null,
-      description,
-      related_ref: (form.related_ref || "").trim() || null,
-      immediate_risk: showImmediateRisk ? immediateRisk : false,
-    });
-    if (error) {
+    try {
+      const res = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reportType,
+          hp,
+          name: showName ? (form.name || "").trim() : "",
+          email,
+          role: showRole ? form.role || "" : "",
+          category: form.category || "",
+          subject: (form.subject || "").trim(),
+          related_ref: (form.related_ref || "").trim(),
+          description,
+          immediateRisk: showImmediateRisk ? immediateRisk : false,
+        }),
+      });
+      const json = await res.json().catch(() => ({ ok: false }));
+      if (res.ok && json.ok && json.ref) {
+        setRef(json.ref);
+        setStatus("done");
+      } else {
+        setErrMsg("Something went wrong sending that. Please try again.");
+        setStatus("error");
+      }
+    } catch {
       setErrMsg("Something went wrong sending that. Please try again.");
       setStatus("error");
-      return;
     }
-    setRef(generated);
-    setStatus("done");
   }
 
   if (status === "done") {
