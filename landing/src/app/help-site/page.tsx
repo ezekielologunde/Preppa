@@ -19,7 +19,7 @@ const GUIDES: {
   { href: "/guides/set-up-payout", title: "How to set up payouts", body: "Connect your payout method through Stripe and get paid securely.", icon: "card", cats: ["preppers", "payments"] },
   { href: "/guides/request-a-quote", title: "How to request a quote", body: "Get custom pricing for catering, events, and bulk or in-home orders.", icon: "users", cats: ["customers"] },
   { href: "/guides/order-and-track", title: "How to order and track meals", body: "Place an order, choose delivery or pickup, and message your cook.", icon: "bag", cats: ["customers"] },
-  { href: "/guides/safety-and-food-standards", title: "Safety and food standards", body: "How Preppa verifies cooks and what we ask of every kitchen.", icon: "shield", cats: ["safety"] },
+  { href: "/guides/safety-and-food-standards", title: "Safety and food standards", body: "How Preppa reviews cook applications and what we ask of every kitchen.", icon: "shield", cats: ["safety"] },
   { href: "/guides/community-guidelines", title: "Community guidelines", body: "How we keep Preppa respectful, reliable, and trustworthy.", icon: "chat", cats: ["safety"] },
 ];
 
@@ -105,8 +105,8 @@ export default function HelpHome() {
           </nav>
           <div className="mt-3 rounded-xl border border-line bg-card-2 p-4">
             <p className="text-[13px] font-bold text-ink">Need help?</p>
-            <p className="text-[12px] text-ink-soft mt-1 leading-relaxed">Reach our team any day of the week.</p>
-            <Link href="/contact" className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-orange hover:text-orange-press">
+            <p className="text-[12px] text-ink-soft mt-1 leading-relaxed">Send us the details and we&rsquo;ll reply by email.</p>
+            <Link href="/support" className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-bold text-orange hover:text-orange-press">
               Contact support <Icon name="chevRight" size={13} />
             </Link>
           </div>
@@ -195,9 +195,9 @@ export default function HelpHome() {
             <p className="text-[14px] font-bold text-ink">FAQ</p>
             <p className="text-[12px] text-ink-soft mt-0.5">Answers to common questions</p>
           </Link>
-          <Link href="/contact" className="rounded-xl border border-line bg-card px-4 py-4 hover:border-orange transition-colors">
+          <Link href="/support" className="rounded-xl border border-line bg-card px-4 py-4 hover:border-orange transition-colors">
             <p className="text-[14px] font-bold text-ink">Contact Support</p>
-            <p className="text-[12px] text-ink-soft mt-0.5">Get help from our team</p>
+            <p className="text-[12px] text-ink-soft mt-0.5">Send us a request</p>
           </Link>
           <Link href="/guides/post-your-first-meal" className="rounded-xl border border-line bg-card px-4 py-4 hover:border-orange transition-colors">
             <p className="text-[14px] font-bold text-ink">Creator Tips</p>
@@ -224,11 +224,11 @@ export default function HelpHome() {
           <div className="rounded-2xl border border-line bg-panel p-5">
             <p className="font-bold text-ink flex items-center gap-2"><Icon name="chat" size={16} className="text-orange" /> Need more help?</p>
             <p className="text-[13px] text-ink-soft mt-2 leading-relaxed">We&rsquo;re here to make your Preppa experience easy and successful.</p>
-            <Link href="/contact" className="mt-4 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-orange text-white font-bold text-sm hover:-translate-y-0.5 transition-transform">
+            <Link href="/support" className="mt-4 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-orange text-white font-bold text-sm hover:-translate-y-0.5 transition-transform">
               <Icon name="chat" size={15} /> Contact Support
             </Link>
-            <Link href="/contact" className="mt-2 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-line text-ink font-bold text-sm hover:bg-white/5 transition-colors">
-              <Icon name="shield" size={15} /> Report an Issue
+            <Link href="/report-safety" className="mt-2 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-line text-ink font-bold text-sm hover:bg-white/5 transition-colors">
+              <Icon name="shield" size={15} /> Report a safety issue
             </Link>
           </div>
 

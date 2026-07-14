@@ -15,11 +15,12 @@ export default function Page() {
         <a href="/legal/prepper-standards" className="underline">Independent Prepper Standards</a>.
       </p>
 
-      <h2>Verifying cooks</h2>
+      <h2>Reviewing cook applications</h2>
       <p>
-        Every Prepper goes through identity verification before their kitchen goes live. We review
-        applications, and cooks are approved individually — Preppa can suspend or remove a kitchen
-        if standards aren&rsquo;t met.
+        Every Prepper goes through identity verification and an application review before their
+        kitchen goes live. Cooks are approved individually, and Preppa can suspend or remove a
+        kitchen if standards aren&rsquo;t met. Reviewing an application is not a kitchen inspection
+        or a guarantee of any dish.
       </p>
 
       <h2>What we ask of every kitchen</h2>
