@@ -38,7 +38,7 @@ export function TrustSafety() {
         <div className="grid md:grid-cols-3 gap-6">
           {PILLARS.map((p, i) => (
             <Reveal key={p.title} delay={i * 0.08}>
-              <div className="bg-surface rounded-3xl border border-line-2 p-7 h-full">
+              <div className="bg-surface rounded-3xl border border-line-2 p-7 h-full transition-all hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(23,21,15,.08)]">
                 <span className="w-11 h-11 rounded-2xl bg-orange-soft text-orange flex items-center justify-center mb-5">
                   <Icon name={p.icon} size={20} />
                 </span>

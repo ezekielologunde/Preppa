@@ -39,7 +39,7 @@ export function BecomePreppa() {
           </ul>
           <a
             href="https://app.preppa.live/apply"
-            className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 h-13 rounded-full shadow-[0_10px_26px_rgba(242,107,29,.32)]"
+            className="inline-flex items-center gap-2 bg-orange text-white font-bold px-6 h-13 rounded-full shadow-[0_10px_26px_rgba(242,107,29,.32)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(242,107,29,.4)]"
           >
             Apply to become a Preppa <Icon name="chevRight" size={16} />
           </a>

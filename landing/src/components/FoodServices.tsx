@@ -27,7 +27,7 @@ export function FoodServices() {
         <div className="grid md:grid-cols-3 gap-6">
           {SERVICES.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.08}>
-              <div className="bg-surface rounded-3xl border border-line-2 p-7 h-full">
+              <div className="bg-surface rounded-3xl border border-line-2 p-7 h-full transition-all hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(23,21,15,.08)]">
                 <span className="w-11 h-11 rounded-2xl bg-orange text-white flex items-center justify-center mb-5">
                   <Icon name="chefhat" size={20} />
                 </span>
@@ -40,7 +40,7 @@ export function FoodServices() {
         <Reveal className="text-center mt-10">
           <a
             href="https://app.preppa.live/service-request"
-            className="inline-flex items-center gap-2 border border-line-2 font-bold px-6 h-13 rounded-full"
+            className="inline-flex items-center gap-2 border border-line-2 bg-white font-bold px-6 h-13 rounded-full transition-transform hover:-translate-y-0.5"
           >
             Get a quote <Icon name="chevRight" size={16} />
           </a>
