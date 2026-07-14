@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FadeUp } from "./FadeUp";
 import { Icon } from "./Icon";
 import { Nav } from "./Nav";
@@ -13,20 +14,30 @@ const TRUST = [
 ];
 
 /** The whole homepage, on purpose — a single full-viewport screen instead of a long
- * stack of marketing sections. A fixed video belongs where the gradient div renders
- * (swap it for <video autoPlay muted loop playsInline src="/hero.mp4" .../>); until a
- * real on-brand clip exists, an animated warm gradient stands in — same layout, a
- * one-line swap later. */
+ * stack of marketing sections. Background is a real photo (generated via Higgsfield's
+ * free-tier z_image model — the paid Kling/Soul models 403'd on this account's plan)
+ * with a slow Ken Burns drift, not a placeholder gradient. A fixed video would go in
+ * the same spot (swap the <Image> for <video autoPlay muted loop playsInline
+ * src="/hero.mp4" .../>) if a real clip ever replaces the photo. */
 export function CinematicHero() {
   return (
     <section id="top" className="relative h-[100dvh] min-h-[560px] overflow-hidden bg-ink">
       <Nav />
+      <Image
+        src="/hero-kitchen.png"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover animate-[kenburns_22s_ease-in-out_infinite_alternate]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/55 to-ink/30" />
       <div
-        className="absolute inset-0 opacity-90"
+        className="absolute inset-0 opacity-70"
         style={{
           background:
-            "radial-gradient(60% 50% at 20% 30%, rgba(242,107,29,.35), transparent 65%), radial-gradient(50% 45% at 85% 75%, rgba(124,58,237,.22), transparent 60%), radial-gradient(80% 70% at 50% 100%, rgba(242,107,29,.18), transparent 70%)",
-          backgroundSize: "160% 160%, 160% 160%, 160% 160%",
+            "radial-gradient(60% 50% at 20% 30%, rgba(242,107,29,.25), transparent 65%), radial-gradient(50% 45% at 85% 75%, rgba(124,58,237,.15), transparent 60%)",
+          backgroundSize: "160% 160%, 160% 160%",
           animation: "heroGlow 18s ease-in-out infinite alternate",
         }}
       />
@@ -98,8 +109,13 @@ export function CinematicHero() {
           from { background-position: 0% 0%, 100% 100%, 50% 100%; }
           to { background-position: 10% 10%, 90% 90%, 50% 90%; }
         }
+        @keyframes kenburns {
+          from { transform: scale(1); }
+          to { transform: scale(1.08); }
+        }
         @media (prefers-reduced-motion: reduce) {
           section#top [style*="heroGlow"] { animation: none !important; }
+          section#top img { animation: none !important; }
         }
       `}</style>
     </section>
