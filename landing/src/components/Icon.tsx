@@ -35,6 +35,9 @@ const PATHS: Record<string, string[]> = {
   heart: ["M12 20s-7-4.4-7-9.3A4 4 0 0112 7a4 4 0 017 3.7C19 15.6 12 20 12 20z"],
   plus: ["M12 6v12", "M6 12h12"],
   search: ["M11 18a7 7 0 100-14 7 7 0 000 14z", "M20 20l-3.2-3.2"],
+  spark: ["M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"],
+  x: ["M18 6L6 18", "M6 6l12 12"],
+  arrowUpRight: ["M7 17L17 7", "M8 7h9v9"],
 };
 
 export function Icon({
