@@ -43,31 +43,37 @@ isolation before any feature screen touches data.
 
 ---
 
-## Marketing & help sites (`landing/`, `help/`)
+## Marketing + help site (`landing/`)
 
-Two independent Next.js apps live alongside the workspace (deliberately excluded from
-the pnpm workspace — see `pnpm-workspace.yaml`), each deployed as its own Vercel project:
+One Next.js app, one Vercel project, **two domains** — `preppa.live` and
+`help.preppa.live` are the same deployment, split by `landing/middleware.ts`
+rewriting requests by hostname:
 
-- **`landing/`** → [preppa.live](https://preppa.live) — the public marketing site.
-- **`help/`** → [help.preppa.live](https://help.preppa.live) — training guides, Terms,
-  Privacy Policy, and the Cook Agreement.
+- `preppa.live` → the single-screen marketing homepage (`src/app/page.tsx`).
+- `help.preppa.live` → `src/app/help-site/*` (guides, Terms, Privacy, Cook
+  Agreement), served via a host-based rewrite to `/help-site`. Every link inside
+  `help-site/` uses public paths (`/`, `/guides/x`, `/legal/y`) — the middleware
+  maps those transparently on every request, including client-side navigations,
+  so nothing in there needs to know about the `/help-site` prefix.
+
+`landing/` lives alongside the workspace, deliberately excluded from it — see
+`pnpm-workspace.yaml`.
 
 ```bash
 cd landing && npm install && npm run dev   # http://localhost:3000
-cd help && npm install && npm run dev        # use a different port if running both
+# locally, http://localhost:3000/help-site previews the help site directly
+# (the hostname-based rewrite only fires for host === "help.preppa.live")
 ```
 
-**Vercel setup (one-time, manual):**
-1. **landing** (`preppa.live`) — in the existing Vercel project that owns this domain,
-   go to Project Settings → Git and connect it to this repository, Root Directory
-   `landing`.
-2. **help** (`help.preppa.live`) — create a new Vercel project, import this same
-   repository, Root Directory `help`, then attach the `help.preppa.live` domain.
+**Vercel setup (one-time, manual):** in the existing Vercel project that owns
+`preppa.live`, go to Project Settings → Git and connect it to this repository
+(Root Directory `landing`), then add `help.preppa.live` as a **second domain**
+on that same project under Settings → Domains — no second project needed.
 
-Content notes: `help/src/app/legal/cook-agreement` mirrors the cook-agreement copy from
-the live `preppa-app` repo's approval flow (`src/lib/cookAgreement.ts`) verbatim — keep
-both in sync if it changes; `help/src/app/legal/terms` and `.../privacy` are drafted
-templates, not reviewed legal advice.
+Content notes: `help-site/legal/cook-agreement` mirrors the cook-agreement copy
+from the live `preppa-app` repo's approval flow (`src/lib/cookAgreement.ts`)
+verbatim — keep both in sync if it changes; `help-site/legal/terms` and
+`.../privacy` are drafted templates, not reviewed legal advice.
 
 ---
 
