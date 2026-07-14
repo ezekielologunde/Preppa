@@ -1,5 +1,34 @@
 # Resend — outbound (transactional + marketing) email
 
+## Current status (verified against DNS on 2026-07-14)
+
+- Sending domain **preppa.live is verified**: `resend._domainkey.preppa.live` DKIM is
+  verified, and the Return-Path/SPF live on the **`send.preppa.live`** subdomain
+  (Resend's default — this repo's code sends `from: notifications@preppa.live`).
+  DMARC `_dmarc` is published at `p=none` (monitor, then move to quarantine).
+- **The API key that was exported is invalid.** Resend returns
+  `"API key is invalid"`, and the exported token is ~14 chars (a real key is ~35), so
+  it looks truncated. Generate a fresh **full-access** key in Resend → API Keys and
+  provide the complete value.
+- **Do NOT click "Enable Receiving" in Resend.** That adds an `inbound-smtp` MX on the
+  root, which conflicts with the Cloudflare inbound MX (`route*.mx.cloudflare.net`)
+  already handling `@preppa.live` forwarding — the conflict Resend flagged. Inbound
+  stays on Cloudflare (see `cloudflare-routing.md`); Resend is send-only here.
+
+### To activate outbound email
+
+1. Generate a valid full-access Resend key.
+2. Add it to Vercel as `RESEND_API_KEY` (Production + Preview env, **not** a
+   `NEXT_PUBLIC_` var). Claude Code cannot set Vercel env vars — do this in the Vercel
+   dashboard → Project → Settings → Environment Variables, then redeploy.
+3. That's it — `/api/subscribe` already sends the waitlist confirmation best-effort;
+   it starts sending the moment the key is present. Add Turnstile to the public forms
+   before promoting them (amplification hardening).
+
+---
+
+
+
 This is the setup for **outbound** email the app sends (welcome, order updates,
 payout notices, waitlist confirmation, etc.). It needs a Resend account and DNS
 records added in Cloudflare. Claude Code cannot verify the domain or send real mail
