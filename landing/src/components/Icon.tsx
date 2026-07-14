@@ -38,6 +38,8 @@ const PATHS: Record<string, string[]> = {
   spark: ["M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"],
   x: ["M18 6L6 18", "M6 6l12 12"],
   arrowUpRight: ["M7 17L17 7", "M8 7h9v9"],
+  chevDown: ["M6 9l6 6 6-6"],
+  bag: ["M5 8h14l-1 12a1 1 0 01-1 1H7a1 1 0 01-1-1L5 8z", "M8.5 8V6a3.5 3.5 0 017 0v2"],
 };
 
 export function Icon({

@@ -15,9 +15,9 @@ const baloo = Baloo_2({
   weight: ["600", "700", "800"],
 });
 
-const TITLE = "Preppa | Homemade Food From Real Local Cooks";
+const TITLE = "Preppa | Meal Prep, Local Cooks and Food Experiences";
 const DESCRIPTION =
-  "Skip the chains. Order fresh meals, weekly plans, and local food experiences from real cooks near you.";
+  "Discover weekly meal prep, meal plans, local food services and food experiences from trusted Preppers near you.";
 
 export const metadata: Metadata = {
   title: TITLE,

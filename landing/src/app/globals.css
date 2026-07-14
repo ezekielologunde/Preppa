@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
-/* Default (light, neutral) tokens — used by help.preppa.live, which stays a plain
-   readable content site and must NOT inherit the marketing page's dark palette below.
-   The marketing homepage opts into the warm-dark look via the `.market` class instead
-   of changing these shared :root values, since Tailwind utilities like `bg-surface`
-   are generated once from `@theme inline` but resolve per-DOM-node at paint time. */
+/* Shared bright, neutral tokens — used by both preppa.live and help.preppa.live. */
 :root {
   --bg: #FFFDFB;
   --panel: #FBF7F1;
@@ -26,34 +22,6 @@
   --green-soft: #E2F2EA;
 
   --ease-out: cubic-bezier(.22,.61,.36,1);
-}
-
-/* Warm-dark redesign for the preppa.live marketing homepage: the deep maroon/orange
-   gradient + rounded friendly type + lime accent from the original pre-launch page,
-   applied across the fuller multi-section site built this session (real content
-   stays — meal plans, food services, help links — only the visual language changes). */
-.market {
-  --bg: #1C0D08;
-  --panel: #2B140C;
-  --panel-2: #3A1A10;
-  --card: #3A1A10;
-  --card-2: #4A2415;
-  --ink: #FFFBF6;
-  --ink-2: rgba(255,251,246,.72);
-  --ink-soft: rgba(255,251,246,.52);
-  --line: rgba(255,251,246,.12);
-  --line-2: rgba(255,251,246,.18);
-
-  --orange: #F26B1D;
-  --orange-soft: #4A2415;
-  --orange-press: #D85A12;
-  --lime: #D7F55C;
-  --lime-soft: #38400F;
-  --green: #6FCF97;
-  --green-soft: #1E3323;
-
-  background: var(--bg);
-  color: var(--ink);
 }
 
 @theme inline {
@@ -78,17 +46,6 @@
   --color-green-soft: var(--green-soft);
   --font-sans: var(--font-jakarta);
   --font-display: var(--font-baloo);
-}
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee 22s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
 }
 
 html {
