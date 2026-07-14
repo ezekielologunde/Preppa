@@ -43,6 +43,34 @@ isolation before any feature screen touches data.
 
 ---
 
+## Marketing & help sites (`landing/`, `help/`)
+
+Two independent Next.js apps live alongside the workspace (deliberately excluded from
+the pnpm workspace — see `pnpm-workspace.yaml`), each deployed as its own Vercel project:
+
+- **`landing/`** → [preppa.live](https://preppa.live) — the public marketing site.
+- **`help/`** → [help.preppa.live](https://help.preppa.live) — training guides, Terms,
+  Privacy Policy, and the Cook Agreement.
+
+```bash
+cd landing && npm install && npm run dev   # http://localhost:3000
+cd help && npm install && npm run dev        # use a different port if running both
+```
+
+**Vercel setup (one-time, manual):**
+1. **landing** (`preppa.live`) — in the existing Vercel project that owns this domain,
+   go to Project Settings → Git and connect it to this repository, Root Directory
+   `landing`.
+2. **help** (`help.preppa.live`) — create a new Vercel project, import this same
+   repository, Root Directory `help`, then attach the `help.preppa.live` domain.
+
+Content notes: `help/src/app/legal/cook-agreement` mirrors the cook-agreement copy from
+the live `preppa-app` repo's approval flow (`src/lib/cookAgreement.ts`) verbatim — keep
+both in sync if it changes; `help/src/app/legal/terms` and `.../privacy` are drafted
+templates, not reviewed legal advice.
+
+---
+
 ## Bring it to life
 
 **Prerequisites:** Node ≥ 20, [pnpm](https://pnpm.io) 9, the

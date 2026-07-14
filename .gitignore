@@ -36,5 +36,8 @@ Thumbs.db
 *.log
 npm-debug.*
 
-# stray npm lockfiles (this is a pnpm workspace)
+# stray npm lockfiles (this is a pnpm workspace) — landing/ and help/ are
+# standalone npm apps outside the workspace and keep their own lockfile
 package-lock.json
+!/landing/package-lock.json
+!/help/package-lock.json

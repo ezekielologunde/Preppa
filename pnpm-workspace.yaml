@@ -2,7 +2,8 @@ packages:
   - "apps/*"
   - "packages/*"
 
-# NOTE: the marketing landing page (landing/) and the design prototype (the loose
-# *.jsx / *.css / *.html at the repo root, plus _ds/, screenshots/, uploads/) are
-# deliberately NOT workspace packages. The landing ships on its own Vercel deploy;
+# NOTE: the marketing landing page (landing/), the help/training site (help/), and
+# the design prototype (the loose *.jsx / *.css / *.html at the repo root, plus
+# _ds/, screenshots/, uploads/) are deliberately NOT workspace packages. landing/
+# and help/ each ship on their own Vercel deploy (preppa.live / help.preppa.live);
 # the prototype is kept as a design reference only and is never built or imported.
