@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
-    <>
+    <div className="market">
       <Nav />
       <main>
         <Hero />
@@ -16,6 +16,6 @@ export default function Home() {
         <WaitlistSection />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

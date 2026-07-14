@@ -12,17 +12,17 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="bg-surface py-20 md:py-28 border-y-[3px] border-ink">
+    <section className="bg-panel py-20 md:py-28 border-y border-line">
       <div className="max-w-[1200px] mx-auto px-6">
-        <FadeUp as="h2" className="font-display text-[clamp(30px,5vw,52px)] leading-none text-ink">
-          THREE STEPS. THAT&rsquo;S IT.
+        <FadeUp as="h2" className="font-display font-bold text-[clamp(28px,5vw,44px)] leading-tight text-ink">
+          Three steps. That&rsquo;s it.
         </FadeUp>
 
-        <div className="mt-12 grid md:grid-cols-3 gap-8">
+        <div className="mt-12 grid md:grid-cols-3 gap-6">
           {STEPS.map((s, i) => (
             <FadeUp key={s.title} delay={0.1 * i} y={16} className="relative">
-              <Ticket rotate={i % 2 === 0 ? -1.5 : 1.5} className="p-6 bg-bg h-full">
-                <span className="font-display text-orange text-4xl leading-none">{i + 1}</span>
+              <Ticket className="p-6 h-full">
+                <span className="font-display font-bold text-orange text-4xl leading-none">{i + 1}</span>
                 <span className="w-11 h-11 rounded-xl bg-orange-soft text-orange flex items-center justify-center my-4">
                   <Icon name={s.icon} size={20} />
                 </span>

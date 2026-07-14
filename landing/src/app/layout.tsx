@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Anton } from "next/font/google";
+import { Plus_Jakarta_Sans, Baloo_2 } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
 
@@ -9,10 +9,10 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const anton = Anton({
-  variable: "--font-anton",
+const baloo = Baloo_2({
+  variable: "--font-baloo",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["600", "700", "800"],
 });
 
 const TITLE = "Preppa | Homemade Food From Real Local Cooks";
@@ -60,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${anton.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${baloo.variable}`}>
       <body className="antialiased font-sans">
         <script
           type="application/ld+json"

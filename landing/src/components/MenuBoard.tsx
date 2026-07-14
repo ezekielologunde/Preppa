@@ -13,23 +13,21 @@ const SERVICES = [
   { key: "experiences", label: "Experiences", icon: "spark" as const, body: "Cooking classes and private dining.", href: "https://app.preppa.live/discover" },
 ];
 
-const ROTATIONS = [-2, 1.5, -1, 2, -1.5, 1];
-
 export function MenuBoard() {
   return (
     <section className="bg-bg py-20 md:py-28">
       <div className="max-w-[1200px] mx-auto px-6">
-        <FadeUp as="h2" className="font-display text-[clamp(30px,5vw,52px)] leading-none text-ink">
-          ON THE BOARD TODAY
+        <FadeUp as="h2" className="font-display font-bold text-[clamp(28px,5vw,44px)] leading-tight text-ink">
+          On the board today
         </FadeUp>
         <FadeUp delay={0.1} className="mt-3 max-w-md text-ink-2">
           Six ways to eat well without cooking, delivered by real people in your neighborhood.
         </FadeUp>
 
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-14">
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {SERVICES.map((s, i) => (
             <FadeUp key={s.key} delay={0.05 * i} y={16}>
-              <Ticket rotate={ROTATIONS[i]} className="p-5 h-full">
+              <Ticket className="p-5 h-full">
                 <span className="w-11 h-11 rounded-xl bg-orange-soft text-orange flex items-center justify-center mb-4">
                   <Icon name={s.icon} size={20} />
                 </span>

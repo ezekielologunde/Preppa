@@ -1,36 +1,69 @@
 @import "tailwindcss";
 
-/* Market-board redesign: a bright, saturated poster palette (not the neutral cream
-   system this replaces) — see landing/DESIGN.md-equivalent note in Hero.tsx. */
+/* Default (light, neutral) tokens — used by help.preppa.live, which stays a plain
+   readable content site and must NOT inherit the marketing page's dark palette below.
+   The marketing homepage opts into the warm-dark look via the `.market` class instead
+   of changing these shared :root values, since Tailwind utilities like `bg-surface`
+   are generated once from `@theme inline` but resolve per-DOM-node at paint time. */
 :root {
-  --bg: #FFFDF7;
-  --sun: #FFC53D;
-  --sun-soft: #FFF3D2;
-  --surface: #FFF6E4;
-  --surface-2: #FCECC9;
-  --ink: #1C1206;
-  --ink-2: #4A3B24;
-  --ink-soft: #8A7A5C;
-  --line: #EFE2C0;
-  --line-2: #E6D5A8;
+  --bg: #FFFDFB;
+  --panel: #FBF7F1;
+  --panel-2: #F4F1EC;
+  --card: #F4F1EC;
+  --card-2: #EDE8E0;
+  --ink: #17150F;
+  --ink-2: #45413A;
+  --ink-soft: #8A857C;
+  --line: #ECE7DF;
+  --line-2: #E2DCD2;
 
-  --orange: #E8491D;
-  --orange-soft: #FBE0D3;
-  --orange-press: #C23611;
-  --purple: #7A2048;
-  --purple-soft: #F3E0E8;
-  --green: #2F6A3D;
-  --green-soft: #E1EEE2;
+  --orange: #F26B1D;
+  --orange-soft: #FCE9DC;
+  --orange-press: #D8590F;
+  --lime: #1E8A5B;
+  --lime-soft: #E2F2EA;
+  --green: #1E8A5B;
+  --green-soft: #E2F2EA;
 
   --ease-out: cubic-bezier(.22,.61,.36,1);
 }
 
+/* Warm-dark redesign for the preppa.live marketing homepage: the deep maroon/orange
+   gradient + rounded friendly type + lime accent from the original pre-launch page,
+   applied across the fuller multi-section site built this session (real content
+   stays — meal plans, food services, help links — only the visual language changes). */
+.market {
+  --bg: #1C0D08;
+  --panel: #2B140C;
+  --panel-2: #3A1A10;
+  --card: #3A1A10;
+  --card-2: #4A2415;
+  --ink: #FFFBF6;
+  --ink-2: rgba(255,251,246,.72);
+  --ink-soft: rgba(255,251,246,.52);
+  --line: rgba(255,251,246,.12);
+  --line-2: rgba(255,251,246,.18);
+
+  --orange: #F26B1D;
+  --orange-soft: #4A2415;
+  --orange-press: #D85A12;
+  --lime: #D7F55C;
+  --lime-soft: #38400F;
+  --green: #6FCF97;
+  --green-soft: #1E3323;
+
+  background: var(--bg);
+  color: var(--ink);
+}
+
 @theme inline {
   --color-bg: var(--bg);
-  --color-sun: var(--sun);
-  --color-sun-soft: var(--sun-soft);
-  --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-card: var(--card);
+  --color-card-2: var(--card-2);
+  --color-surface: var(--card);
+  --color-surface-2: var(--card-2);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-soft: var(--ink-soft);
@@ -39,12 +72,23 @@
   --color-orange: var(--orange);
   --color-orange-soft: var(--orange-soft);
   --color-orange-press: var(--orange-press);
-  --color-purple: var(--purple);
-  --color-purple-soft: var(--purple-soft);
+  --color-lime: var(--lime);
+  --color-lime-soft: var(--lime-soft);
   --color-green: var(--green);
   --color-green-soft: var(--green-soft);
   --font-sans: var(--font-jakarta);
-  --font-display: var(--font-anton);
+  --font-display: var(--font-baloo);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 22s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
 }
 
 html {

@@ -1,7 +1,6 @@
-/** The page's one signature device: a pinned order-ticket card — thick ink border,
- * hard drop shadow (no blur, no gradient), a bolt/pin dot at the top, slight rotation.
- * Reused for the hero photo, service cards, and how-it-works steps so the whole page
- * reads as one kitchen corkboard instead of stock SaaS panels. */
+/** Shared soft rounded card — dark warm surface, no hard edges or pins. Used for
+ * cuisine tags, service cards, and how-it-works steps so the page reads as one
+ * consistent soft, friendly system instead of stock SaaS panels. */
 export function Ticket({
   rotate = 0,
   className = "",
@@ -13,10 +12,9 @@ export function Ticket({
 }) {
   return (
     <div
-      style={{ transform: `rotate(${rotate}deg)` }}
-      className={`relative rounded-2xl border-[3px] border-ink bg-surface shadow-[6px_6px_0_0_var(--ink)] ${className}`}
+      style={rotate ? { transform: `rotate(${rotate}deg)` } : undefined}
+      className={`rounded-3xl bg-card shadow-[0_10px_30px_rgba(0,0,0,.25)] ${className}`}
     >
-      <span className="absolute -top-[11px] left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-orange border-[3px] border-ink" />
       {children}
     </div>
   );
