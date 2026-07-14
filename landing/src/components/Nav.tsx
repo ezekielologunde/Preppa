@@ -7,7 +7,7 @@ const LINKS = [
   { href: "#how", label: "How it works" },
   { href: "#safety", label: "Trust & Safety" },
   { href: "#plans", label: "Meal Plans" },
-  { href: "#preppas", label: "For Cooks" },
+  { href: "#preppas-earn", label: "For Cooks" },
 ];
 
 function Mark() {
@@ -51,7 +51,8 @@ export function Nav() {
           </motion.a>
         </div>
         <button
-          aria-label="Open menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
           className="md:hidden w-10 h-10 flex items-center justify-center"
         >

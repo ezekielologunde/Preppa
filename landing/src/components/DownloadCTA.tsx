@@ -18,24 +18,26 @@ export function DownloadCTA() {
           >
             Open the web app
           </a>
-          <a
-            href="#"
-            className="border border-white/25 rounded-2xl px-5 h-14 flex items-center gap-2.5 text-sm"
+          <div
+            aria-disabled="true"
+            title="Coming soon"
+            className="border border-white/15 rounded-2xl px-5 h-14 flex items-center gap-2.5 text-sm opacity-50 cursor-default select-none"
           >
             <span className="text-left">
-              <small className="block text-white/50 text-[10px]">Download on the</small>
+              <small className="block text-white/50 text-[10px]">Coming soon to the</small>
               <b>App Store</b>
             </span>
-          </a>
-          <a
-            href="#"
-            className="border border-white/25 rounded-2xl px-5 h-14 flex items-center gap-2.5 text-sm"
+          </div>
+          <div
+            aria-disabled="true"
+            title="Coming soon"
+            className="border border-white/15 rounded-2xl px-5 h-14 flex items-center gap-2.5 text-sm opacity-50 cursor-default select-none"
           >
             <span className="text-left">
-              <small className="block text-white/50 text-[10px]">Get it on</small>
+              <small className="block text-white/50 text-[10px]">Coming soon on</small>
               <b>Google Play</b>
             </span>
-          </a>
+          </div>
         </div>
       </Reveal>
     </section>

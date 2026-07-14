@@ -13,7 +13,7 @@ export function WhyTrust() {
               </span>
             </div>
             <h4 className="font-extrabold flex items-center gap-1.5">
-              Amara O. <Icon name="shield" size={15} className="text-green" />
+              A local Preppa <Icon name="shield" size={15} className="text-green" />
             </h4>
             <p className="text-xs text-ink-soft mt-1">West African home cook</p>
             <div className="flex gap-2 mt-4">

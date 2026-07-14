@@ -34,7 +34,7 @@ export function Hero() {
               Find a cook near you
             </motion.a>
             <a
-              href="#preppas"
+              href="#preppas-earn"
               className="border border-line-2 font-bold px-6 h-13 rounded-full flex items-center"
             >
               Become a Preppa
@@ -78,7 +78,9 @@ export function Hero() {
               <span className="text-xs font-bold uppercase tracking-wide text-ink-soft">
                 Fresh drops near you
               </span>
-              <span className="text-xs font-bold text-orange">See all</span>
+              <a href="https://app.preppa.live" className="text-xs font-bold text-orange">
+                See all
+              </a>
             </div>
             <div className="rounded-2xl bg-gradient-to-br from-orange-soft to-purple-soft aspect-[4/3] relative">
               <span className="absolute left-3 bottom-3 inline-flex items-center gap-1.5 bg-white/90 rounded-full px-3 py-1.5 text-[11px] font-bold text-green">
@@ -90,7 +92,7 @@ export function Hero() {
                 <h4 className="font-extrabold">Lemon-herb roast chicken</h4>
                 <span className="font-extrabold">$11.50</span>
               </div>
-              <p className="text-sm text-ink-soft mt-1">by Amara&rsquo;s Kitchen</p>
+              <p className="text-sm text-ink-soft mt-1">by a local Preppa</p>
               <div className="flex items-center gap-4 text-xs text-ink-soft mt-3">
                 <span className="flex items-center gap-1">
                   <Icon name="clock" size={14} /> Ready 5:30
