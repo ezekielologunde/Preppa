@@ -51,3 +51,34 @@ body {
   background: var(--bg);
   color: var(--ink);
 }
+
+/* Typography for /help-site guide + legal articles — ported from the standalone
+   help app's globals.css when it merged into this one (see middleware.ts). */
+.prose h2 {
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.prose p {
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+.prose ol,
+.prose ul {
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+}
+.prose li {
+  margin-bottom: 0.5rem;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose ul {
+  list-style: disc;
+}

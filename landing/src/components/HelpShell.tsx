@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
-/** Matches the real Preppa app-icon mark (orange rounded square + flame) — see
- * screenshots/logo-check.png in the repo. Kept in sync with landing/Nav.tsx and Footer.tsx. */
 function Mark() {
   return (
     <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden>
@@ -37,7 +35,9 @@ const NAV = [
   },
 ];
 
-export function SiteShell({ children }: { children: ReactNode }) {
+/** help.preppa.live's shell — served from the same Next.js app/Vercel project as
+ * preppa.live via middleware.ts host-based rewrite, not a separate deployment. */
+export function HelpShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   return (
     <>
@@ -46,10 +46,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           <Link href="/" className="flex items-center gap-2.5 font-extrabold text-lg tracking-tight">
             <Mark /> Preppa Help
           </Link>
-          <a
-            href="https://preppa.live"
-            className="text-sm font-semibold text-ink-2 hover:text-ink"
-          >
+          <a href="https://preppa.live" className="text-sm font-semibold text-ink-2 hover:text-ink">
             ← Back to preppa.live
           </a>
         </div>
