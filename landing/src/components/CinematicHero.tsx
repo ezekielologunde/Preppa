@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
 import { FadeUp } from "./FadeUp";
 import { Icon } from "./Icon";
@@ -10,6 +9,7 @@ import { ServiceSelector } from "./ServiceSelector";
 import { PhoneMockup } from "./PhoneMockup";
 import { WaitlistForm } from "./WaitlistForm";
 import { LearnDrawer } from "./LearnDrawer";
+import { HeroVideo } from "./HeroVideo";
 
 const TRUST = [
   { icon: "shield" as const, label: "ID-verified cooks" },
@@ -55,26 +55,28 @@ export function CinematicHero() {
 
   return (
     <section id="top" className="relative min-h-[100dvh] overflow-hidden bg-bg flex flex-col">
-      <Image
-        src="/hero-kitchen.png"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover animate-[kenburns_22s_ease-in-out_infinite_alternate]"
-      />
+      <HeroVideo />
+      {/* Bright wash — text side solid for readability, video visible on the right.
+          Slightly less opaque than the still-photo version so the motion reads through. */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(100deg, rgba(255,253,247,.96) 0%, rgba(255,253,247,.82) 34%, rgba(255,253,247,.34) 64%, rgba(255,253,247,.08) 100%)",
+            "linear-gradient(100deg, rgba(255,253,247,.95) 0%, rgba(255,253,247,.78) 32%, rgba(255,253,247,.30) 62%, rgba(255,253,247,.06) 100%)",
         }}
       />
       <div
         aria-hidden="true"
         className="absolute inset-x-0 bottom-0 h-[160px]"
         style={{ background: "linear-gradient(to top, rgba(255,253,247,.94), transparent)" }}
+      />
+      {/* Mobile only: the angled desktop wash leaves the lower content over busy video
+          on a narrow viewport — this vertical veil keeps the sub-copy and form legible. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 md:hidden"
+        style={{ background: "linear-gradient(180deg, rgba(255,253,247,.55) 0%, rgba(255,253,247,.35) 40%, rgba(255,253,247,.72) 100%)" }}
       />
       <motion.div
         aria-hidden="true"
@@ -183,16 +185,6 @@ export function CinematicHero() {
       </motion.div>
 
       <LearnDrawer open={learnOpen} onClose={() => setLearnOpen(false)} />
-
-      <style>{`
-        @keyframes kenburns {
-          from { transform: scale(1); }
-          to { transform: scale(1.08); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          section#top img { animation: none !important; }
-        }
-      `}</style>
     </section>
   );
 }
