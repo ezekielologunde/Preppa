@@ -24,34 +24,6 @@
   --ease-out: cubic-bezier(.22,.61,.36,1);
 }
 
-/* The marketing homepage now shares the same bright, neutral :root tokens as
-   help.preppa.live (no more dark override) — per direct feedback that the warm-dark
-   direction read as "not bright." The one deliberately dark moment left is the
-   closing cinematic CTA, scoped to `.night` below, not the whole page. */
-.night {
-  --bg: #100D0B;
-  --panel: #1B1613;
-  --panel-2: #221C18;
-  --card: #221C18;
-  --card-2: #2B231D;
-  --ink: #FFFFFF;
-  --ink-2: rgba(255,255,255,.7);
-  --ink-soft: rgba(255,255,255,.48);
-  --line: rgba(255,255,255,.14);
-  --line-2: rgba(255,255,255,.2);
-
-  --orange: #F26B1D;
-  --orange-soft: rgba(255,255,255,.08);
-  --orange-press: #D8590F;
-  --lime: #D7F55C;
-  --lime-soft: #38400F;
-  --green: #6FCF97;
-  --green-soft: #1E3323;
-
-  background: var(--bg);
-  color: var(--ink);
-}
-
 @theme inline {
   --color-bg: var(--bg);
   --color-panel: var(--panel);
@@ -74,42 +46,6 @@
   --color-green-soft: var(--green-soft);
   --font-sans: var(--font-jakarta);
   --font-display: var(--font-baloo);
-}
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee 22s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
-}
-
-/* Glassmorphism button for the dark closing CTA — a thin gradient border that
- * fades out mid-side, via a masked ::before (no gradient-border browser API exists). */
-.glass-btn {
-  position: relative;
-  background: rgba(255,255,255,.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  overflow: hidden;
-}
-.glass-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,.5) 0%, rgba(255,255,255,.18) 25%,
-    rgba(255,255,255,0) 45%, rgba(255,255,255,0) 55%,
-    rgba(255,255,255,.18) 75%, rgba(255,255,255,.5) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
 }
 
 html {
