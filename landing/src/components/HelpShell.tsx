@@ -26,9 +26,18 @@ export function HelpShell({ children }: { children: ReactNode }) {
       <div className="flex-1">{children}</div>
 
       <footer className="border-t border-line">
-        <div className="max-w-[1280px] mx-auto px-6 py-6 flex flex-wrap items-center justify-between gap-3 text-xs text-ink-soft">
-          <p>© 2026 Preppa, Inc. · <a href="https://preppa.live" className="underline hover:text-ink">preppa.live</a></p>
-          <p>Preppers are independent food providers. Requirements vary by location.</p>
+        <div className="max-w-[1280px] mx-auto px-6 py-8 flex flex-col gap-5">
+          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[12.5px] font-semibold text-ink-2">
+            <a href="mailto:support@preppa.live" className="hover:text-ink transition-colors">support@preppa.live</a>
+            <a href="mailto:legal@preppa.live" className="hover:text-ink transition-colors">legal@preppa.live</a>
+            <a href="mailto:privacy@preppa.live" className="hover:text-ink transition-colors">privacy@preppa.live</a>
+            <a href="mailto:safety@preppa.live" className="hover:text-ink transition-colors">safety@preppa.live</a>
+            <a href="mailto:accessibility@preppa.live" className="hover:text-ink transition-colors">accessibility@preppa.live</a>
+          </nav>
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-ink-soft">
+            <p>© 2026 Preppa, Inc. · <a href="https://preppa.live" className="underline hover:text-ink">preppa.live</a></p>
+            <p>Preppers are independent food providers. Requirements vary by location.</p>
+          </div>
         </div>
       </footer>
     </div>
