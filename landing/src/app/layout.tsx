@@ -23,6 +23,15 @@ export const metadata: Metadata = {
   },
 };
 
+const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Preppa",
+  url: "https://preppa.live",
+  logo: "https://preppa.live/icon.svg",
+  sameAs: ["https://www.instagram.com/preppa.live", "https://www.tiktok.com/@preppa.live"],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,6 +40,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={jakarta.variable}>
       <body className="antialiased font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_JSON_LD) }}
+        />
         <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </body>
     </html>

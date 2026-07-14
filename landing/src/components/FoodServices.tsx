@@ -9,7 +9,7 @@ const SERVICES = [
 
 export function FoodServices() {
   return (
-    <section className="py-24 md:py-32">
+    <section id="services" className="py-24 md:py-32">
       <div className="max-w-[1200px] mx-auto px-6">
         <Reveal className="text-center max-w-2xl mx-auto mb-14">
           <span className="inline-flex items-center gap-2 text-[12.5px] font-bold uppercase tracking-wider text-ink-2 mb-4">
@@ -39,7 +39,7 @@ export function FoodServices() {
         </div>
         <Reveal className="text-center mt-10">
           <a
-            href="https://app.preppa.live"
+            href="https://app.preppa.live/service-request"
             className="inline-flex items-center gap-2 border border-line-2 font-bold px-6 h-13 rounded-full"
           >
             Get a quote <Icon name="chevRight" size={16} />

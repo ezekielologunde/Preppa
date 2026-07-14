@@ -28,7 +28,7 @@ export function Hero() {
           <div className="flex flex-wrap gap-3 mb-10">
             <motion.a
               whileTap={{ scale: 0.97 }}
-              href="https://app.preppa.live"
+              href="https://app.preppa.live/discover"
               className="bg-orange text-white font-bold px-6 h-13 rounded-full flex items-center gap-2 shadow-[0_10px_26px_rgba(242,107,29,.32)]"
             >
               Find a cook near you
@@ -78,7 +78,7 @@ export function Hero() {
               <span className="text-xs font-bold uppercase tracking-wide text-ink-soft">
                 Fresh drops near you
               </span>
-              <a href="https://app.preppa.live" className="text-xs font-bold text-orange">
+              <a href="https://app.preppa.live/discover" className="text-xs font-bold text-orange">
                 See all
               </a>
             </div>

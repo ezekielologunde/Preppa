@@ -41,7 +41,7 @@ export function MeetPreppas() {
           ))}
         </Reveal>
         <Reveal delay={0.2} className="flex flex-wrap justify-center gap-4 mt-10">
-          <a href="https://app.preppa.live" className="bg-ink text-white font-bold px-6 h-13 rounded-full flex items-center">
+          <a href="https://app.preppa.live/apply" className="bg-ink text-white font-bold px-6 h-13 rounded-full flex items-center">
             Become a Preppa
           </a>
           <a href="#preppas-earn" className="border border-line-2 font-bold px-6 h-13 rounded-full flex items-center">
