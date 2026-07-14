@@ -5,16 +5,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Icon } from "./Icon";
 
 const SERVICES = [
-  { key: "prep", label: "Weekly Meal Prep", icon: "clock" as const, description: "Ready-to-eat meals prepared for your week.", cta: "Explore weekly prep", href: "https://app.preppa.live/discover" },
-  { key: "plans", label: "Meal Plans", icon: "repeat" as const, description: "Subscribe to a cook's menu — skip, pause, or cancel anytime.", cta: "Browse meal plans", href: "https://app.preppa.live/plans" },
-  { key: "local", label: "Local Meals", icon: "chefhat" as const, description: "Fresh, homemade dishes from verified cooks nearby.", cta: "Find a cook near you", href: "https://app.preppa.live/discover" },
-  { key: "home", label: "Cook at Your Home", icon: "home" as const, description: "Book a local Prepper to cook in your kitchen.", cta: "Request a Prepper", href: "https://app.preppa.live/service-request" },
-  { key: "catering", label: "Catering", icon: "users" as const, description: "Food for your event or party, drop-off or fully staffed.", cta: "Get a catering quote", href: "https://app.preppa.live/service-request" },
-  { key: "experiences", label: "Experiences", icon: "spark" as const, description: "Cooking classes, private dining, and food-centered events.", cta: "Explore experiences", href: "https://app.preppa.live/discover" },
+  { key: "prep", label: "Weekly Meal Prep", icon: "clock" as const, description: "Ready-to-eat meals prepared for your week." },
+  { key: "plans", label: "Meal Plans", icon: "repeat" as const, description: "Subscribe to a cook's menu — skip, pause, or cancel anytime." },
+  { key: "local", label: "Local Meals", icon: "chefhat" as const, description: "Fresh, homemade dishes from verified cooks nearby." },
+  { key: "home", label: "Cook at Your Home", icon: "home" as const, description: "Book a local Prepper to cook in your kitchen." },
+  { key: "catering", label: "Catering", icon: "users" as const, description: "Food for your event or party, drop-off or fully staffed." },
+  { key: "experiences", label: "Experiences", icon: "spark" as const, description: "Cooking classes, private dining, and food-centered events." },
 ];
 
-/** The interactive proof that Preppa isn't a generic restaurant-delivery app — six
- * real product surfaces, one tap away, without leaving the single-screen hero. */
+/** Shows the breadth of what Preppa is — six real product surfaces — without linking
+ * anywhere (this is a pre-launch waitlist page; the primary action is the email
+ * capture, not the live app). Chips are informational: tap to read what each is. */
 export function ServiceSelector() {
   const [active, setActive] = useState(0);
   const svc = SERVICES[active];
@@ -41,22 +42,16 @@ export function ServiceSelector() {
       </div>
 
       <AnimatePresence mode="wait">
-        <motion.div
+        <motion.p
           key={svc.key}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2"
+          className="mt-3 text-ink-2 text-sm max-w-md"
         >
-          <p className="text-ink-2 text-sm max-w-md">{svc.description}</p>
-          <a
-            href={svc.href}
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-orange hover:text-orange-press transition-colors"
-          >
-            {svc.cta} <Icon name="chevRight" size={14} />
-          </a>
-        </motion.div>
+          {svc.description}
+        </motion.p>
       </AnimatePresence>
     </div>
   );
