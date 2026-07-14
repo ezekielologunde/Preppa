@@ -24,14 +24,20 @@ Help Center / Legal / Support) and the email + support plumbing around them. It 
   `/report-safety`.
 - Setup runbooks written: `docs/email/cloudflare-routing.md` (inbound),
   `docs/email/resend.md` (outbound).
+- Outbound email pipeline built and ready: a server-only send helper
+  (`src/lib/email.ts`, no-ops without a key), accessible HTML+text waitlist and
+  support confirmation templates, and `/api/subscribe` (server-side waitlist insert +
+  best-effort confirmation, basic rate limit). The waitlist form now posts to it
+  (insert verified end-to-end). Sending activates automatically once a valid
+  `RESEND_API_KEY` is set in Vercel — the DNS is already verified.
 
 ## Blocked — needs your accounts / counsel (cannot be completed here)
 
 | Gate | Why it is blocked | Owner |
 | --- | --- | --- |
 | Cloudflare inbound aliases forward to Gmail | No access to your Cloudflare account/DNS | You (runbook: `cloudflare-routing.md`) |
-| Resend domain verified; SPF/DKIM/DMARC pass | Needs `mail.preppa.live` DNS + Resend account | You (runbook: `resend.md`) |
-| Transactional + marketing email actually sends | Needs `RESEND_API_KEY` (server) + verified domain | You + build pass 2 |
+| Resend domain verified; SPF/DKIM/DMARC pass | DONE — preppa.live DKIM + send.preppa.live SPF verified, DMARC p=none published | — |
+| Outbound email actually sends | Blocked: the exported `RESEND_API_KEY` is invalid (~14 chars, Resend rejects it), and it must be set in Vercel env | You: fresh key + add to Vercel |
 | Bounce/complaint webhooks + suppression | Depends on Resend being live | Build pass 2 |
 | Legal documents published as final | Counsel must approve; docs are drafts today | Counsel |
 | Legal-entity name confirmed ("Preppa, Inc.") | Business/legal fact to confirm | You / counsel |
@@ -72,9 +78,11 @@ Email + legal (gated):
 - Legal pages are labeled drafts. Risk: a visitor treats them as final. Mitigation:
   each carries a visible "draft for legal review / not legal advice" note; do not
   remove it until counsel approves.
-- No outbound email yet. Risk: users submit the waitlist/support and get no
-  confirmation email. Mitigation: acknowledge on-screen with a reference code today;
-  wire Resend confirmation as the first pass-2 task.
+- Outbound email is built but not active. The send pipeline (`src/lib/email.ts` +
+  `/api/subscribe`) and the waitlist/support confirmation templates exist and are
+  wired; sending is best-effort and no-ops until a valid `RESEND_API_KEY` is set in
+  Vercel. Risk until then: users get the on-screen acknowledgement + reference code
+  but no email. Mitigation: provide a valid key (the exported one is invalid).
 - Merchant-of-record wording appears in the footer/legal. Risk: mismatch with the
   actual Stripe/tax setup. Mitigation: verify before relying on it (gate above).
 

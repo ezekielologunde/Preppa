@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { Icon } from "./Icon";
-import { supabase } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** The page's primary action — pre-launch email capture. Writes to the real
- * `waitlist` table; ZIP is optional. Never fakes success. Tone restyles it for the
- * light body, the drenched-orange hero, or a dark video background. */
+/** The page's primary action — pre-launch email capture. Posts to /api/subscribe,
+ * which inserts into the real `waitlist` table server-side and sends a best-effort
+ * confirmation email (once RESEND_API_KEY is set). ZIP is optional. Never fakes
+ * success. Tone restyles it for the light body, the orange hero, or a dark video. */
 export function WaitlistForm({
   tone = "light",
   cta = "Join the waitlist",
@@ -27,10 +27,17 @@ export function WaitlistForm({
       return;
     }
     setStatus("submitting");
-    const { error } = await supabase
-      .from("waitlist")
-      .insert({ email, zip: zip.trim() || null, source: "landing" });
-    setStatus(error ? "error" : "done");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), zip: zip.trim() }),
+      });
+      const json = await res.json().catch(() => ({ ok: false }));
+      setStatus(res.ok && json.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
   }
 
   const onOrange = tone === "onOrange";
