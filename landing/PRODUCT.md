@@ -22,7 +22,7 @@ Real food from real local cooks — the anti-chain, anti-ghost-kitchen. Homemade
 
 ## Conversion & proof
 
-- Primary CTA: Join the waitlist (email, with optional ZIP).
+- Primary CTA: Get early access — the waitlist email capture (with optional ZIP).
 - Secondary CTA: for prospective cooks — learn about cooking on Preppa (links to help.preppa.live, not the app).
 - The line a visitor remembers after 10 seconds: real homemade food from cooks on your block, coming soon.
 - Belief ladder: (1) this is genuinely homemade food, not restaurants or a ghost kitchen; (2) it comes from actual verified people near me; (3) it's worth getting in early for.

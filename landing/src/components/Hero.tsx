@@ -5,107 +5,132 @@ import { LogoMark } from "./LogoMark";
 import { HeroVideo } from "./HeroVideo";
 import { WaitlistForm } from "./WaitlistForm";
 
-const CUISINES = ["West African", "Soul food", "Oaxacan", "Halal & Desi", "Italian comfort", "Healthy & seafood"];
-const TRUST = ["ID-verified cooks", "Secure payments", "Real people, real kitchens"];
-
 const EASE = [0.22, 1, 0.36, 1] as const;
+const HELP = "https://help.preppa.live";
 
-/** Drenched-orange editorial hero. The brand owns the color (not accent-on-white),
- * the Bricolage headline is the lead actor, and the food video is framed as a real
- * object, not a washed-out background. Text is warm-near-black on orange (4.7:1, AA)
- * — bolder and more food-brand than the old cream-overlay treatment. */
+// Real verified cuisines — honest example dishes, not invented.
+const CUISINES = [
+  { emoji: "🍚", name: "West African", dishes: "Jollof · egusi · suya" },
+  { emoji: "🍗", name: "Soul food", dishes: "Fried chicken · mac" },
+  { emoji: "🫓", name: "Halal & Desi", dishes: "Biryani · kebabs" },
+];
+const TICKER = ["WEST AFRICAN", "SOUL FOOD", "OAXACAN", "HALAL & DESI", "ITALIAN COMFORT", "HEALTHY & SEAFOOD"];
+
+/** One full section, cinematic. A real chef-at-work video sits under a rich warm-dark
+ * premium overlay (espresso base + an orange glow + an acid-lime glow + vignette);
+ * bragging copy, waitlist, real cuisines, and a marquee live in the same section.
+ * Content is visible by default — entrance motion only enhances it. */
 export function Hero() {
   return (
-    <section id="top" className="relative bg-orange text-ink overflow-hidden">
-      <header className="relative z-10 max-w-[1240px] mx-auto px-6 md:px-10 h-24 flex items-center justify-between">
+    <section id="top" className="relative min-h-dvh overflow-hidden bg-[#180B05] text-cream flex flex-col">
+      <HeroVideo />
+
+      {/* Premium warm-dark overlay stack — cinematic, keeps text ≥ AA */}
+      <div aria-hidden="true" className="absolute inset-0" style={{ background: "linear-gradient(178deg, rgba(24,11,5,.72) 0%, rgba(42,15,7,.58) 40%, rgba(18,8,4,.9) 100%)" }} />
+      <div aria-hidden="true" className="absolute inset-0" style={{ background: "radial-gradient(72% 48% at 12% 10%, rgba(242,107,29,.34), transparent 60%), radial-gradient(60% 44% at 92% 88%, rgba(203,242,74,.12), transparent 65%)" }} />
+      <div aria-hidden="true" className="absolute inset-0 shadow-[inset_0_0_200px_70px_rgba(8,3,1,.6)]" />
+
+      {/* Header */}
+      <header className="relative z-10 max-w-[1180px] w-full mx-auto px-6 md:px-8 pt-6 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2.5 font-display font-extrabold text-xl tracking-tight">
-          <LogoMark size={38} bg="#201108" fg="#FFF3E4" /> preppa
+          <LogoMark size={38} /> preppa
         </a>
-        <a
-          href="https://help.preppa.live/guides/post-your-first-meal"
-          className="text-[14px] font-bold underline decoration-2 underline-offset-4 decoration-ink/30 hover:decoration-ink transition-colors"
-        >
-          Cook with us →
-        </a>
+        <span className="inline-flex items-center gap-2 text-[11.5px] font-bold uppercase tracking-[0.16em] text-cream bg-white/10 border border-white/15 rounded-full px-3.5 py-1.5 backdrop-blur-sm">
+          <span className="w-[7px] h-[7px] rounded-full bg-acid animate-pulse" />
+          Launching soon
+        </span>
       </header>
 
-      <div className="relative z-10 max-w-[1240px] mx-auto px-6 md:px-10 pb-10 pt-4 md:pt-8 grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-16 items-center">
-        <div className="min-w-0">
-          <motion.h1
-            initial={{ opacity: 0, y: 26 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE }}
-            className="font-display font-extrabold leading-[0.9] tracking-[-0.035em] text-balance text-[clamp(46px,8.4vw,92px)]"
-          >
-            Homemade.
-            <br />
-            By the cooks
-            <br />
-            on your block.
-          </motion.h1>
+      {/* Center content */}
+      <div className="relative z-10 flex-1 flex items-center">
+        <div className="max-w-[1180px] w-full mx-auto px-6 md:px-8 py-12 md:py-16 grid lg:grid-cols-[1.15fr_0.85fr] gap-10 lg:gap-16 items-center">
+          <div className="min-w-0">
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: EASE }}
+              className="font-display font-extrabold leading-[0.92] tracking-[-0.035em] text-balance text-[clamp(44px,7.6vw,86px)]"
+            >
+              Better than takeout.
+              <br />
+              Made <span className="text-acid">three doors down.</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.12 }}
-            className="mt-6 max-w-[30rem] text-[16px] md:text-[18px] leading-relaxed font-medium text-ink/90"
-          >
-            Weekly meal prep, meal plans, catering, and food experiences — from verified
-            local cooks who make the food they&rsquo;d serve their own family. No chains. No
-            ghost kitchens. Firing up your neighborhood soon.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.12 }}
+              className="mt-6 max-w-[34rem] text-[16px] md:text-[19px] leading-relaxed text-cream/90 font-medium"
+            >
+              Fresh, home-cooked meals from the most talented cooks in your neighborhood —
+              affordable, on demand, and honestly better than the spot you keep reordering
+              from. Drop your ZIP and get in before your block does.
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-            className="mt-8"
-          >
-            <WaitlistForm tone="onOrange" />
-          </motion.div>
-
-          <motion.ul
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, ease: EASE, delay: 0.4 }}
-            className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12.5px] font-bold text-ink/85"
-          >
-            {TRUST.map((t, i) => (
-              <li key={t} className="flex items-center gap-4">
-                {i > 0 ? <span className="w-1.5 h-1.5 rounded-full bg-herb" /> : null}
-                {t}
-              </li>
-            ))}
-          </motion.ul>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 28, rotate: -4 }}
-          animate={{ opacity: 1, y: 0, rotate: -2 }}
-          transition={{ duration: 0.9, ease: EASE, delay: 0.15 }}
-          className="justify-self-center w-full max-w-[400px]"
-        >
-          <div className="relative aspect-[4/5] rounded-[26px] overflow-hidden border-[5px] border-ink shadow-[10px_14px_0_0_var(--ember)]">
-            <HeroVideo />
-            <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-ink/80 to-transparent">
-              <span className="inline-flex items-center gap-2 text-cream font-bold text-[13px]">
-                <span className="w-2 h-2 rounded-full bg-herb" /> Cooked fresh, this week
-              </span>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
+              className="mt-8"
+            >
+              <WaitlistForm tone="onDark" cta="Get early access" />
+            </motion.div>
           </div>
-        </motion.div>
+
+          {/* Cuisine cards — warm-dark glass panels, real cuisines */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
+            className="min-w-0"
+          >
+            <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-cream/60 mb-3">
+              Home kitchens coming to <span className="text-acid">your block</span>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+              {CUISINES.map((c, i) => (
+                <motion.div
+                  key={c.name}
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, ease: EASE, delay: 0.4 + i * 0.08 }}
+                  className="flex items-center gap-4 rounded-2xl bg-white/[0.07] border border-white/12 backdrop-blur-md px-4 py-3.5"
+                >
+                  <span className="text-3xl leading-none">{c.emoji}</span>
+                  <div className="min-w-0">
+                    <p className="font-display font-extrabold text-[17px] tracking-tight truncate">{c.name}</p>
+                    <p className="text-[12.5px] text-cream/65 truncate">{c.dishes}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Cuisine strip — real verified cuisines as bold typographic texture, not stats */}
-      <div className="relative z-10 border-t-2 border-ink/15">
-        <ul className="max-w-[1240px] mx-auto px-6 md:px-10 py-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-display font-extrabold tracking-tight text-[clamp(15px,2vw,22px)]">
-          {CUISINES.map((c, i) => (
-            <li key={c} className="flex items-center gap-5">
-              {i > 0 ? <span className="w-2 h-2 rounded-full bg-ink/40" /> : null}
-              {c}
-            </li>
+      {/* Cuisine marquee */}
+      <div aria-hidden="true" className="relative z-10 overflow-hidden border-t border-white/10 py-3.5">
+        <div className="marquee-track flex w-max gap-8 whitespace-nowrap">
+          {[...TICKER, ...TICKER].map((t, i) => (
+            <span key={i} className="flex items-center gap-8 font-display font-extrabold tracking-tight text-[clamp(14px,1.8vw,20px)] text-cream/85">
+              {t} <span className="text-orange">🔥</span>
+            </span>
           ))}
-        </ul>
+        </div>
+      </div>
+
+      {/* Compliance / social strip — keeps this a single section */}
+      <div className="relative z-10 border-t border-white/10">
+        <div className="max-w-[1180px] w-full mx-auto px-6 md:px-8 py-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[12px] text-cream/55">
+          <p>© 2026 Preppa, Inc. · Payments by Stripe</p>
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-1 font-semibold">
+            <a href={HELP} className="hover:text-cream transition-colors">Help</a>
+            <a href={`${HELP}/legal/terms`} className="hover:text-cream transition-colors">Terms</a>
+            <a href={`${HELP}/legal/privacy`} className="hover:text-cream transition-colors">Privacy</a>
+            <a href="https://www.instagram.com/preppa.live" target="_blank" rel="noreferrer" className="hover:text-cream transition-colors">Instagram</a>
+            <a href="https://www.tiktok.com/@preppa.live" target="_blank" rel="noreferrer" className="hover:text-cream transition-colors">TikTok</a>
+          </nav>
+        </div>
       </div>
     </section>
   );

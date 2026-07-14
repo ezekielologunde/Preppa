@@ -1,41 +1,38 @@
 # Design
 
-Visual system for preppa.live. Modern food-brand (Graza / Omsom / Oatly energy) with editorial craft. Loud, warm, appetite-first, human — never corporate, never the SaaS/AI default kit (no glassmorphism, chip rows, phone mockups, or tiny uppercase eyebrows).
+Visual system for preppa.live. Modern food-brand energy (Graza / Omsom / Oatly) with premium, cinematic craft. One full-viewport section, a real chef-at-work video under a rich warm-dark overlay, bold bragging copy. Never the SaaS/AI default kit (no plain glass cards as decoration, chip rows, phone mockups, or tiny uppercase eyebrows as section grammar).
 
 ## Theme
 
-Warm and color-committed. Orange is not an accent on white — it is a major surface the brand owns. Pair a drenched-orange hero with a warm near-black and a crisp cream so the page has editorial pacing (distinct color worlds per section), not one flat wash. Light or dark is chosen per section for drama, not set globally.
+Single-section, cinematic, warm-dark. A licensed food video plays full-bleed under a layered premium overlay (espresso base + an orange glow + an acid-lime glow + a vignette) so the footage reads while text stays ≥ AA. The mood is a moody, appetizing kitchen at night — confident and premium, not corporate.
 
 ## Color
 
-Committed strategy — the brand orange carries the page.
+Committed + a touch of full-palette. Warm-dark ground, cream text, with two owned pops:
 
-- `--orange` #F26B1D — the brand (the flame). Used as a full surface, not just for buttons.
-- `--orange-deep` #D0530F — pressed states, shadows, borders on orange.
-- `--ember` #A62E08 — deepest warm tone; hero-on-orange shadows, dark detail.
-- `--ink` #201108 — warm near-black. Text on light; background of the dark section.
-- `--cream` #FFF3E4 — warm cream. Text/marks on orange and on ink; NOT the body background (that would be the AI-cream default).
-- `--paper` #FBEFE0 — the light section ground (a hair warmer than white, low chroma toward orange).
-- `--herb` #3FA34D — the one surprise: a fresh cooked-greens green. Tiny doses only (a mark, an underline, "in" states) for modern-food-brand pop and a "fresh" read.
+- `--orange` #F26B1D — the brand (the flame, the primary CTA, the glow).
+- `--acid` #CBF24A — bright lime-green, the surprise pop: the accent word in the headline, the "launching soon" dot, the "your block" highlight. Small doses, high impact.
+- `--cream` #FFF3E4 — body and headline text on the dark video.
+- `--ember` #A62E08 / `#180B05` espresso — the dark ground and shadow depth.
+- Warm-white `--paper` and `--ink` remain for the light help.preppa.live surfaces.
 
-Contrast: cream (#FFF3E4) on orange (#F26B1D) and on ink clears AA for large display type; body copy uses ink on paper / cream on ink at ≥4.5:1. Never muted-gray body text.
+Text on the video overlay clears AA (cream on the darkened warm base). Never muted-gray body text.
 
 ## Typography
 
-One characterful family, committed weight and size contrast — deliberately NOT the reflex faces (Plus Jakarta, Inter, DM, Instrument, Fraunces, Playfair are all banned here).
+One characterful family, committed weight and size contrast — deliberately NOT the reflex faces (Inter, Plus Jakarta, DM, Instrument, Fraunces, Playfair are banned).
 
-- Display + body: **Bricolage Grotesque** (Google Fonts). Its mixed contrast and slightly quirky terminals read hand-made and modern, not corporate. Headlines at 800 weight, huge; body at 400–500.
-- Scale: fluid `clamp()`, ≥1.25 ratio. Hero display clamp max ~clamp(48px, 9vw, 92px); letter-spacing ≥ -0.03em, `text-wrap: balance` on headings.
-- Voice in type: the headline is a lead actor — big, confident, a little loud. No tracked uppercase eyebrow above sections.
+- Display + body: Bricolage Grotesque (Google Fonts). Headlines at 800, huge; body 400–500.
+- Scale: fluid `clamp()`, hero display ~clamp(44px, 7.6vw, 86px), letter-spacing ≥ -0.035em, `text-wrap: balance` on the headline. The headline is a lead actor and carries a bragging claim.
 
 ## Imagery
 
-Food-led brief → real food imagery is required, never colored blocks. Use the licensed food footage already in the repo (`/hero-cook.mp4` + `/hero-cook-poster.jpg`, "Video by Ardina Setiorini from Pexels") treated editorially — full-bleed, integrated into the color composition. Real verified-cuisine names (West African, Soul food, Oaxacan, Halal & Desi, Italian comfort, Healthy & seafood) as typographic content, not invented stats.
+Food-led → real food imagery is required. Full-bleed licensed food video (`/hero-chef.mp4` + `/hero-chef-poster.jpg`, "Video by cottonbro studio from Pexels") with a poster fallback for reduced-motion and slow loads. Real verified cuisines (West African, Soul food, Oaxacan, Halal & Desi, Italian comfort, Healthy & seafood) as content and marquee texture — with honest example dishes, never invented stats.
 
 ## Layout
 
-Editorial and asymmetric. A dominant, drenched-orange hero that holds the headline + the waitlist form + food, then one warm contrasting band (what Preppa is / the cuisines), then a compact footer (help + compliance). Fluid `clamp()` spacing that breathes on desktop. Break the grid for emphasis; let the food go full-bleed.
+One cohesive full-viewport section: header (logo + "Launching soon" status), a two-column hero (bragging headline + subcopy + waitlist | cuisine cards), a cuisine marquee, and a compact compliance/social strip folded into the same section (no separate footer). Fluid `clamp()` spacing; stacks cleanly to a single column on mobile.
 
 ## Motion
 
-One orchestrated page-load (headline settles in, food/orange reveal), restrained after that — no fade-on-scroll on every element. Honor `prefers-reduced-motion`: static poster instead of video, instant instead of animated. Ease-out curves only.
+One orchestrated page-load — headline, subcopy, form, and cards reveal with a short stagger (visible by default, motion only enhances). A slow cuisine marquee. Honor `prefers-reduced-motion`: static poster instead of video, marquee paused, entrance transitions collapsed. Ease-out curves only.

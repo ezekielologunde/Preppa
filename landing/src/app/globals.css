@@ -25,6 +25,7 @@
   --orange-press: #D0530F;
 
   --herb: #3FA34D;
+  --acid: #CBF24A;
   --lime: #3FA34D;
   --lime-soft: #E4F1E2;
   --green: #2F7D3A;
@@ -82,6 +83,7 @@
   --color-cream: var(--cream);
   --color-paper: var(--paper);
   --color-herb: var(--herb);
+  --color-acid: var(--acid);
   --color-lime: var(--lime);
   --color-lime-soft: var(--lime-soft);
   --color-green: var(--green);
@@ -97,6 +99,18 @@ html {
 body {
   background: var(--bg);
   color: var(--ink);
+}
+
+/* Cuisine ticker marquee (hero). Track is duplicated in markup; -50% loops seamlessly. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 32s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
 }
 
 /* Typography for /help-site guide + legal articles — ported from the standalone
