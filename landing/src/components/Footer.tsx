@@ -63,6 +63,7 @@ export function Footer() {
             <a href="#plans">Meal plans</a>
             <a href="#services">Book a cook</a>
             <a href="https://app.preppa.live/discover">Browse cooks</a>
+            <a href="#waitlist">Not in Atlanta? Join waitlist</a>
           </div>
         </div>
         <div>

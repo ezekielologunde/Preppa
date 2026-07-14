@@ -30,7 +30,7 @@ export function MealPlans() {
           </ul>
           <a
             href="https://app.preppa.live/plans"
-            className="inline-flex items-center gap-2 bg-ink text-white font-bold px-6 h-13 rounded-full"
+            className="inline-flex items-center gap-2 bg-ink text-white font-bold px-6 h-13 rounded-full transition-transform hover:-translate-y-0.5"
           >
             Browse meal plans <Icon name="chevRight" size={16} />
           </a>
