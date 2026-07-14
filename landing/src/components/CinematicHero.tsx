@@ -33,9 +33,20 @@ export function CinematicHero() {
             Live now in Atlanta, GA
           </FadeUp>
 
-          <h1 className="flex flex-wrap gap-x-3 gap-y-1 text-[clamp(32px,7vw,84px)] font-extrabold leading-[1.02] tracking-tight uppercase text-white m-0">
+          <h1
+            aria-label="Real food. Cooked by real locals. Not a restaurant."
+            className="flex flex-wrap gap-x-3 gap-y-1 text-[clamp(32px,7vw,84px)] font-extrabold leading-[1.02] tracking-tight uppercase text-white m-0"
+          >
             {WORDS.map((w, i) => (
-              <FadeUp key={i} as="span" delay={0.15 + i * 0.08} y={32} duration={0.7} className="inline-block">
+              <FadeUp
+                key={i}
+                as="span"
+                aria-hidden="true"
+                delay={0.15 + i * 0.08}
+                y={32}
+                duration={0.7}
+                className="inline-block"
+              >
                 {w}
               </FadeUp>
             ))}

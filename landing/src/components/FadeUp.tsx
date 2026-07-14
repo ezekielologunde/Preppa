@@ -12,6 +12,7 @@ type FadeUpProps = {
   style?: CSSProperties;
   as?: "div" | "section" | "span" | "h1" | "h2" | "h3" | "p" | "nav";
   once?: boolean;
+  "aria-hidden"?: boolean | "true" | "false";
 };
 
 const TAGS = {
@@ -37,12 +38,14 @@ export function FadeUp({
   style,
   as = "div",
   once = true,
+  "aria-hidden": ariaHidden,
 }: FadeUpProps) {
   const Tag = TAGS[as];
   return (
     <Tag
       className={className}
       style={style}
+      aria-hidden={ariaHidden}
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once, amount: 0.2 }}
