@@ -3,18 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-
-function Mark() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden>
-      <rect width="32" height="32" rx="9" fill="#F26B1D" />
-      <path
-        d="M16 6.5c-.4 2.9-2.1 4.6-3.6 6.2-1.7 1.9-2.9 3.6-2.9 5.9 0 3.9 3 7 6.9 7h.2c3.7-.1 6.6-3.1 6.6-6.8 0-2.1-.9-3.9-2.3-5.2.1.4.1.7.1 1.1 0 1.5-1 2.2-1.8 3-.6.6-1.1 1.2-1.1 2 0 1.1.9 1.9 1.9 2.1-1.1.6-2.4.9-3.7.6-2.2-.5-3.8-2.4-3.8-4.7 0-1.7.9-2.9 1.9-4.1C15.3 12.1 16.4 10.1 16 6.5z"
-        fill="#fff"
-      />
-    </svg>
-  );
-}
+import { LogoMark } from "./LogoMark";
 
 const NAV = [
   {
@@ -44,7 +33,7 @@ export function HelpShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-50 bg-bg/90 backdrop-blur-md border-b border-line">
         <div className="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 font-extrabold text-lg tracking-tight">
-            <Mark /> Preppa Help
+            <LogoMark size={28} /> Preppa Help
           </Link>
           <a href="https://preppa.live" className="text-sm font-semibold text-ink-2 hover:text-ink">
             ← Back to preppa.live

@@ -2,24 +2,11 @@
 
 import { useState } from "react";
 import { Icon } from "./Icon";
+import { LogoMark } from "./LogoMark";
 import { supabase } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const HELP = "https://help.preppa.live";
-
-/** Matches the real Preppa app-icon mark (orange rounded square + flame) — see
- * screenshots/logo-check.png in the repo. Kept in sync with Nav.tsx and help/SiteShell.tsx. */
-function Mark() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden>
-      <rect width="32" height="32" rx="9" fill="#F26B1D" />
-      <path
-        d="M16 6.5c-.4 2.9-2.1 4.6-3.6 6.2-1.7 1.9-2.9 3.6-2.9 5.9 0 3.9 3 7 6.9 7h.2c3.7-.1 6.6-3.1 6.6-6.8 0-2.1-.9-3.9-2.3-5.2.1.4.1.7.1 1.1 0 1.5-1 2.2-1.8 3-.6.6-1.1 1.2-1.1 2 0 1.1.9 1.9 1.9 2.1-1.1.6-2.4.9-3.7.6-2.2-.5-3.8-2.4-3.8-4.7 0-1.7.9-2.9 1.9-4.1C15.3 12.1 16.4 10.1 16 6.5z"
-        fill="#fff"
-      />
-    </svg>
-  );
-}
 
 function WaitlistForm() {
   const [email, setEmail] = useState("");
@@ -81,7 +68,7 @@ export function Footer() {
       <div className="max-w-[1200px] mx-auto px-6 py-14 grid md:grid-cols-2 gap-10 items-start">
         <div>
           <div className="flex items-center gap-2 font-extrabold text-lg mb-3">
-            <Mark /> Preppa
+            <LogoMark size={30} /> Preppa
           </div>
           <p className="text-sm text-ink-soft leading-relaxed mb-4 max-w-xs">
             The marketplace for homemade food. Fresh meals from ID-verified local cooks.
