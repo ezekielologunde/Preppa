@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Baloo_2 } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+// One characterful family, committed weight contrast — deliberately NOT the
+// reflex-default faces (Inter / Plus Jakarta / DM / Instrument / Fraunces).
+// Bricolage Grotesque's mixed contrast and quirky terminals read hand-made and
+// modern-food-brand, not corporate. See DESIGN.md.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
-
-const baloo = Baloo_2({
-  variable: "--font-baloo",
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const TITLE = "Preppa | Meal Prep, Local Cooks and Food Experiences";
@@ -60,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${baloo.variable}`}>
+    <html lang="en" className={bricolage.variable}>
       <body className="antialiased font-sans">
         <script
           type="application/ld+json"
