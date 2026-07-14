@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Anton } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
 
@@ -9,9 +9,15 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const TITLE = "Preppa | Meal Prep, Local Cooks and Food Experiences";
+const anton = Anton({
+  variable: "--font-anton",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const TITLE = "Preppa | Homemade Food From Real Local Cooks";
 const DESCRIPTION =
-  "Discover weekly meal prep, meal plans, local food services and food experiences from trusted Preppers near you.";
+  "Skip the chains. Order fresh meals, weekly plans, and local food experiences from real cooks near you.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -54,7 +60,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={jakarta.variable}>
+    <html lang="en" className={`${jakarta.variable} ${anton.variable}`}>
       <body className="antialiased font-sans">
         <script
           type="application/ld+json"

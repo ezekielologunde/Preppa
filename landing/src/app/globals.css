@@ -1,31 +1,34 @@
 @import "tailwindcss";
 
-/* Ported from design/styles.css — same brand system as the app + the original mockup. */
+/* Market-board redesign: a bright, saturated poster palette (not the neutral cream
+   system this replaces) — see landing/DESIGN.md-equivalent note in Hero.tsx. */
 :root {
-  --bg: #FFFDFB;
-  --bg-warm: #FBF7F1;
-  --surface: #F4F1EC;
-  --surface-2: #EDE8E0;
-  --ink: #17150F;
-  --ink-2: #45413A;
-  --ink-soft: #8A857C;
-  --line: #ECE7DF;
-  --line-2: #E2DCD2;
+  --bg: #FFFDF7;
+  --sun: #FFC53D;
+  --sun-soft: #FFF3D2;
+  --surface: #FFF6E4;
+  --surface-2: #FCECC9;
+  --ink: #1C1206;
+  --ink-2: #4A3B24;
+  --ink-soft: #8A7A5C;
+  --line: #EFE2C0;
+  --line-2: #E6D5A8;
 
-  --orange: #F26B1D;
-  --orange-soft: #FCE9DC;
-  --orange-press: #D8590F;
-  --purple: #7C3AED;
-  --purple-soft: #EEE7FD;
-  --green: #1E8A5B;
-  --green-soft: #E2F2EA;
+  --orange: #E8491D;
+  --orange-soft: #FBE0D3;
+  --orange-press: #C23611;
+  --purple: #7A2048;
+  --purple-soft: #F3E0E8;
+  --green: #2F6A3D;
+  --green-soft: #E1EEE2;
 
   --ease-out: cubic-bezier(.22,.61,.36,1);
 }
 
 @theme inline {
   --color-bg: var(--bg);
-  --color-bg-warm: var(--bg-warm);
+  --color-sun: var(--sun);
+  --color-sun-soft: var(--sun-soft);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-ink: var(--ink);
@@ -41,6 +44,7 @@
   --color-green: var(--green);
   --color-green-soft: var(--green-soft);
   --font-sans: var(--font-jakarta);
+  --font-display: var(--font-anton);
 }
 
 html {
