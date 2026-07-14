@@ -1,9 +1,9 @@
-const WORDS = ["NIGERIAN", "JAMAICAN", "HALAL", "MEXICAN", "SOUL FOOD", "CARIBBEAN", "DESI", "VEGAN"];
+// The actual cuisines of Preppa's 8 verified kitchens today — not a generic list.
+const WORDS = ["WEST AFRICAN", "SOUL FOOD", "OAXACAN", "HALAL & DESI", "ITALIAN COMFORT", "HEALTHY & SEAFOOD"];
 
-/** Scrolling marquee of real cuisine categories — an authentic texture from the
- * original pre-launch page, not a fabricated stat. Duplicated once so the
- * translateX(-50%) loop is seamless; paused under prefers-reduced-motion (see
- * .marquee-track in globals.css). */
+/** Scrolling marquee of real cuisine categories, not a fabricated stat. Duplicated
+ * once so the translateX(-50%) loop is seamless; paused under prefers-reduced-motion
+ * (see .marquee-track in globals.css). */
 export function CuisineTicker() {
   const items = [...WORDS, ...WORDS];
   return (

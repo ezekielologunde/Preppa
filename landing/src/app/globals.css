@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
-/* Default (light, neutral) tokens — used by help.preppa.live, which stays a plain
-   readable content site and must NOT inherit the marketing page's dark palette below.
-   The marketing homepage opts into the warm-dark look via the `.market` class instead
-   of changing these shared :root values, since Tailwind utilities like `bg-surface`
-   are generated once from `@theme inline` but resolve per-DOM-node at paint time. */
+/* Shared bright, neutral tokens — used by both preppa.live and help.preppa.live. */
 :root {
   --bg: #FFFDFB;
   --panel: #FBF7F1;
@@ -28,25 +24,25 @@
   --ease-out: cubic-bezier(.22,.61,.36,1);
 }
 
-/* Warm-dark redesign for the preppa.live marketing homepage: the deep maroon/orange
-   gradient + rounded friendly type + lime accent from the original pre-launch page,
-   applied across the fuller multi-section site built this session (real content
-   stays — meal plans, food services, help links — only the visual language changes). */
-.market {
-  --bg: #1C0D08;
-  --panel: #2B140C;
-  --panel-2: #3A1A10;
-  --card: #3A1A10;
-  --card-2: #4A2415;
-  --ink: #FFFBF6;
-  --ink-2: rgba(255,251,246,.72);
-  --ink-soft: rgba(255,251,246,.52);
-  --line: rgba(255,251,246,.12);
-  --line-2: rgba(255,251,246,.18);
+/* The marketing homepage now shares the same bright, neutral :root tokens as
+   help.preppa.live (no more dark override) — per direct feedback that the warm-dark
+   direction read as "not bright." The one deliberately dark moment left is the
+   closing cinematic CTA, scoped to `.night` below, not the whole page. */
+.night {
+  --bg: #100D0B;
+  --panel: #1B1613;
+  --panel-2: #221C18;
+  --card: #221C18;
+  --card-2: #2B231D;
+  --ink: #FFFFFF;
+  --ink-2: rgba(255,255,255,.7);
+  --ink-soft: rgba(255,255,255,.48);
+  --line: rgba(255,255,255,.14);
+  --line-2: rgba(255,255,255,.2);
 
   --orange: #F26B1D;
-  --orange-soft: #4A2415;
-  --orange-press: #D85A12;
+  --orange-soft: rgba(255,255,255,.08);
+  --orange-press: #D8590F;
   --lime: #D7F55C;
   --lime-soft: #38400F;
   --green: #6FCF97;
@@ -89,6 +85,31 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
+}
+
+/* Glassmorphism button for the dark closing CTA — a thin gradient border that
+ * fades out mid-side, via a masked ::before (no gradient-border browser API exists). */
+.glass-btn {
+  position: relative;
+  background: rgba(255,255,255,.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+.glass-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(180deg,
+    rgba(255,255,255,.5) 0%, rgba(255,255,255,.18) 25%,
+    rgba(255,255,255,0) 45%, rgba(255,255,255,0) 55%,
+    rgba(255,255,255,.18) 75%, rgba(255,255,255,.5) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 html {
