@@ -9,7 +9,7 @@ const WORDS = ["REAL", "FOOD.", "COOKED", "BY", "REAL", "LOCALS.", "NOT", "A", "
 const TRUST = [
   { icon: "shield" as const, label: "ID-verified cooks" },
   { icon: "card" as const, label: "Stripe-secured payments" },
-  { icon: "pin" as const, label: "Live in Atlanta, GA" },
+  { icon: "chat" as const, label: "Message your cook directly" },
 ];
 
 /** The whole homepage, on purpose — a single full-viewport screen instead of a long
@@ -40,7 +40,7 @@ export function CinematicHero() {
             className="inline-flex items-center gap-2 text-[12.5px] font-bold uppercase tracking-[0.2em] text-white/60 mb-6"
           >
             <span className="w-[7px] h-[7px] rounded-full bg-orange" />
-            Live now in Atlanta, GA
+            Live now, taking orders
           </FadeUp>
 
           <h1

@@ -117,7 +117,7 @@ export function Footer() {
 
         <div>
           <span className="block text-xs font-bold uppercase tracking-wide text-ink-soft mb-3">
-            Not in Atlanta yet?
+            Not in your city yet?
           </span>
           <WaitlistForm />
         </div>

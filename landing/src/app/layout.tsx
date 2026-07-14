@@ -16,8 +16,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://preppa.live"),
   openGraph: {
     title: "Preppa — Homemade food, cooked by a local you trust",
-    description:
-      "Order fresh meals from ID-verified local cooks near you. Live now in Atlanta, GA.",
+    description: "Order fresh meals from ID-verified local cooks near you. Live now, taking orders.",
     url: "https://preppa.live",
     siteName: "Preppa",
   },
