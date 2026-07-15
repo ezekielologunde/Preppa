@@ -147,6 +147,28 @@ body {
   .marquee-track { animation: none; }
 }
 
+/* ---- Landing hero: committed warm-dark, photography-led (redesign) ----
+   Replaces the video/theme-toggle hero with a bold warm-dark composition.
+   Reuses the brand --orange token so the accent stays exactly on-brand. */
+.lhero { background: #180B05; color: #FFF3E4; }
+.lhero::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(82% 60% at 84% -8%, rgba(242,107,29,.20), transparent 60%),
+    radial-gradient(60% 50% at -6% 8%, rgba(242,107,29,.10), transparent 55%);
+}
+.lh-title { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -.032em; line-height: .97; text-wrap: balance; color: #FFF3E4; }
+.lh-accent { color: var(--orange); }
+.lh-sub { color: rgba(255,243,228,.74); }
+.lh-chip { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .85rem; border-radius: 999px; font-size: .82rem; font-weight: 600; white-space: nowrap; color: rgba(255,243,228,.9); background: rgba(255,243,228,.07); border: 1px solid rgba(255,243,228,.12); }
+.lh-photo { position: relative; overflow: hidden; border-radius: 1.75rem; box-shadow: 0 40px 90px rgba(0,0,0,.5); }
+.lh-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.lh-live { display: inline-flex; align-items: center; gap: .45rem; padding: .38rem .7rem; border-radius: 999px; background: var(--orange); color: #180B05; font-size: .72rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+.lh-live::before { content: ""; width: .5rem; height: .5rem; border-radius: 999px; background: #180B05; animation: lhPulse 1.8s ease-in-out infinite; }
+@keyframes lhPulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .lh-live::before { animation: none; } }
+.lh-preppa { display: flex; align-items: center; gap: .75rem; padding: .55rem .8rem .55rem .55rem; border-radius: 999px; background: rgba(24,11,5,.62); border: 1px solid rgba(255,243,228,.16); backdrop-filter: blur(14px); color: #FFF3E4; width: fit-content; }
+
 /* Typography for /help-site guide + legal articles — ported from the standalone
    help app's globals.css when it merged into this one (see middleware.ts). */
 .prose h2 {
