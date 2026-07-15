@@ -191,6 +191,10 @@ body {
   .lh-float, .lh-float-2, .lh-kenburns { animation: none; }
   .lh-float-2 { transform: rotate(5deg); }
 }
+/* Micro-interactions */
+.lh-chip { transition: transform .2s var(--ease-out), background .2s ease, border-color .2s ease; }
+.lh-chip:hover { transform: translateY(-2px); background: rgba(30,18,8,.08); border-color: rgba(30,18,8,.16); }
+.marquee-track:hover { animation-play-state: paused; }
 
 /* Typography for /help-site guide + legal articles — ported from the standalone
    help app's globals.css when it merged into this one (see middleware.ts). */

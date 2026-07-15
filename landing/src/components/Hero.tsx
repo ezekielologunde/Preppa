@@ -1,6 +1,7 @@
 import { LogoMark } from "./LogoMark";
 import { WaitlistForm } from "./WaitlistForm";
 import { HeroPhotos } from "./HeroPhotos";
+import { HeroGlow } from "./HeroGlow";
 import { Icon } from "./Icon";
 
 const HELP = "https://help.preppa.live";
@@ -19,6 +20,7 @@ const TRUST = [
 export function Hero() {
   return (
     <section id="top" className="lhero relative min-h-dvh overflow-hidden flex flex-col">
+      <HeroGlow />
       {/* Header */}
       <header className="relative z-10 max-w-[1180px] w-full mx-auto px-6 md:px-8 pt-6 flex items-center justify-between gap-3">
         <a href="#top" className="flex items-center gap-2.5 font-display font-extrabold text-xl tracking-tight text-ink">
