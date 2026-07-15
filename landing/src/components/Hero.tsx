@@ -20,15 +20,15 @@ export function Hero() {
     <section id="top" className="lhero relative min-h-dvh overflow-hidden flex flex-col">
       {/* Header */}
       <header className="relative z-10 max-w-[1180px] w-full mx-auto px-6 md:px-8 pt-6 flex items-center justify-between gap-3">
-        <a href="#top" className="flex items-center gap-2.5 font-display font-extrabold text-xl tracking-tight text-[#FFF3E4]">
+        <a href="#top" className="flex items-center gap-2.5 font-display font-extrabold text-xl tracking-tight text-ink">
           <LogoMark size={38} /> preppa
         </a>
         <div className="flex items-center gap-3">
-          <a href={HELP} className="hidden sm:inline-flex h-10 px-4 items-center rounded-full text-[13px] font-bold text-[#FFF3E4] transition-opacity hover:opacity-80">
+          <a href={HELP} className="hidden sm:inline-flex h-10 px-4 items-center rounded-full text-[13px] font-bold text-ink transition-opacity hover:opacity-80">
             Learn
           </a>
           <span className="lh-chip">
-            <span className="w-[7px] h-[7px] rounded-full animate-pulse" style={{ background: "var(--orange)" }} />
+            <span className="w-[7px] h-[7px] rounded-full animate-pulse" style={{ background: "var(--pink)" }} />
             <span className="uppercase tracking-[0.14em] text-[11px] font-bold">Launching soon</span>
           </span>
         </div>
@@ -52,7 +52,7 @@ export function Hero() {
             </p>
 
             <div className="lh-rise mt-8" style={{ animationDelay: "0.12s" }}>
-              <WaitlistForm tone="onDark" cta="Get early access" />
+              <WaitlistForm tone="light" cta="Get early access" />
             </div>
 
             <div className="lh-rise mt-8 flex flex-col items-start gap-2.5 sm:flex-row sm:flex-wrap" style={{ animationDelay: "0.18s" }}>
@@ -101,23 +101,23 @@ export function Hero() {
       </div>
 
       {/* Cuisine marquee — dot separators (no emoji) */}
-      <div aria-hidden="true" className="relative z-10 overflow-hidden border-t py-3.5" style={{ borderColor: "rgba(255,243,228,.1)" }}>
+      <div aria-hidden="true" className="relative z-10 overflow-hidden border-t py-3.5" style={{ borderColor: "var(--line)" }}>
         <div className="marquee-track flex w-max gap-8 whitespace-nowrap">
           {[...TICKER, ...TICKER].map((t, i) => (
             <span
               key={i}
               className="flex items-center gap-8 font-display font-extrabold tracking-tight text-[clamp(14px,1.8vw,20px)]"
-              style={{ color: "rgba(255,243,228,.9)" }}
+              style={{ color: "rgba(30,18,8,.82)" }}
             >
-              {t} <span className="w-2 h-2 rounded-full" style={{ background: "var(--orange)" }} />
+              {t} <span className="w-2 h-2 rounded-full" style={{ background: "var(--pink)" }} />
             </span>
           ))}
         </div>
       </div>
 
       {/* Compliance / social strip */}
-      <div className="relative z-10 border-t" style={{ borderColor: "rgba(255,243,228,.1)" }}>
-        <div className="max-w-[1180px] w-full mx-auto px-6 md:px-8 py-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[12px]" style={{ color: "rgba(255,243,228,.6)" }}>
+      <div className="relative z-10 border-t" style={{ borderColor: "var(--line)" }}>
+        <div className="max-w-[1180px] w-full mx-auto px-6 md:px-8 py-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[12px]" style={{ color: "var(--ink-soft)" }}>
           <p>© 2026 Preppa, Inc. · Payments by Stripe</p>
           <nav className="flex flex-wrap items-center gap-x-5 gap-y-1 font-semibold">
             <a href={HELP} className="transition-opacity hover:opacity-70">Help</a>

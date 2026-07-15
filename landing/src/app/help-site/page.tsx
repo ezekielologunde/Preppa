@@ -86,7 +86,7 @@ export default function HelpHome() {
           <nav className="flex flex-col gap-0.5">
             {SIDEBAR.map((s) =>
               s.anchor ? (
-                <a key={s.label} href={s.anchor} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-semibold text-ink-2 hover:bg-white/5 hover:text-ink transition-colors">
+                <a key={s.label} href={s.anchor} className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-semibold text-ink-2 hover:bg-ink/5 hover:text-ink transition-colors">
                   <Icon name={s.icon} size={16} /> {s.label}
                 </a>
               ) : (
@@ -95,7 +95,7 @@ export default function HelpHome() {
                   type="button"
                   onClick={() => setCat(s.cat!)}
                   className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13.5px] font-semibold text-left transition-colors ${
-                    cat === s.cat ? "bg-orange-soft text-orange" : "text-ink-2 hover:bg-white/5 hover:text-ink"
+                    cat === s.cat ? "bg-orange-soft text-orange" : "text-ink-2 hover:bg-ink/5 hover:text-ink"
                   }`}
                 >
                   <Icon name={s.icon} size={16} /> {s.label}
@@ -227,7 +227,7 @@ export default function HelpHome() {
             <Link href="/support" className="mt-4 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-orange text-white font-bold text-sm hover:-translate-y-0.5 transition-transform">
               <Icon name="chat" size={15} /> Contact Support
             </Link>
-            <Link href="/report-safety" className="mt-2 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-line text-ink font-bold text-sm hover:bg-white/5 transition-colors">
+            <Link href="/report-safety" className="mt-2 w-full inline-flex items-center justify-center gap-2 h-11 rounded-xl border border-line text-ink font-bold text-sm hover:bg-ink/5 transition-colors">
               <Icon name="shield" size={15} /> Report a safety issue
             </Link>
           </div>
@@ -251,8 +251,8 @@ export default function HelpHome() {
             <p className="font-bold text-ink">Love Preppa?</p>
             <p className="text-[13px] text-ink-soft mt-1">Follow along and help our community grow.</p>
             <div className="mt-3 flex gap-2">
-              <a href="https://www.tiktok.com/@preppa.live" target="_blank" rel="noreferrer" className="flex-1 h-10 rounded-lg border border-line flex items-center justify-center text-[13px] font-bold text-ink hover:bg-white/5 transition-colors">TikTok</a>
-              <a href="https://www.instagram.com/preppa.live" target="_blank" rel="noreferrer" className="flex-1 h-10 rounded-lg border border-line flex items-center justify-center text-[13px] font-bold text-ink hover:bg-white/5 transition-colors">Instagram</a>
+              <a href="https://www.tiktok.com/@preppa.live" target="_blank" rel="noreferrer" className="flex-1 h-10 rounded-lg border border-line flex items-center justify-center text-[13px] font-bold text-ink hover:bg-ink/5 transition-colors">TikTok</a>
+              <a href="https://www.instagram.com/preppa.live" target="_blank" rel="noreferrer" className="flex-1 h-10 rounded-lg border border-line flex items-center justify-center text-[13px] font-bold text-ink hover:bg-ink/5 transition-colors">Instagram</a>
             </div>
           </div>
         </div>

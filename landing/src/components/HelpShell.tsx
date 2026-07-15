@@ -16,9 +16,9 @@ export function HelpShell({ children }: { children: ReactNode }) {
             <LogoMark size={30} /> Preppa
           </Link>
           <nav className="flex items-center gap-1 text-[13px] font-semibold text-ink-2">
-            <Link href="/" className="px-3 py-2 rounded-full hover:bg-white/5 hover:text-ink transition-colors">Help Center</Link>
-            <a href="/legal/terms" className="hidden sm:block px-3 py-2 rounded-full hover:bg-white/5 hover:text-ink transition-colors">Legal</a>
-            <a href="https://preppa.live" className="px-3 py-2 rounded-full hover:bg-white/5 hover:text-ink transition-colors">preppa.live&nbsp;→</a>
+            <Link href="/" className="px-3 py-2 rounded-full hover:bg-ink/5 hover:text-ink transition-colors">Help Center</Link>
+            <a href="/legal/terms" className="hidden sm:block px-3 py-2 rounded-full hover:bg-ink/5 hover:text-ink transition-colors">Legal</a>
+            <a href="https://preppa.live" className="px-3 py-2 rounded-full hover:bg-ink/5 hover:text-ink transition-colors">preppa.live&nbsp;→</a>
           </nav>
         </div>
       </header>

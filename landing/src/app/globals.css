@@ -5,24 +5,32 @@
    (NOT the AI-cream default); cream + ink + ember carry the color worlds. Shared with
    help.preppa.live, which re-scopes bg/ink to warm-dark via `.help` below. */
 :root {
-  --bg: #FFFBF7;
-  --paper: #FFFBF7;
-  --cream: #FFF3E4;
-  --panel: #FFF3E4;
-  --panel-2: #FBEFE0;
-  --card: #FFF3E4;
-  --card-2: #FBEFE0;
-  --ink: #201108;
-  --ink-2: #4A3324;
-  --ink-soft: #7A6250;
-  --line: #ECDAC6;
-  --line-2: #E0CBB2;
+  /* Warm-bright "Orange + Pink" — blush canvas, coral primary, pink spark.
+     Bright orange (#FF5A24) is for FILLS; text-on-light accents use the deeper
+     --orange-deep/--ember for contrast. Pink fills use --pink-deep so white text
+     still clears AA. */
+  --bg: #FFF6F0;
+  --paper: #FFF6F0;
+  --cream: #FFEDE4;
+  --panel: #FFEDE4;
+  --panel-2: #FFE4D8;
+  --card: #FFFFFF;
+  --card-2: #FFF6F0;
+  --ink: #1E1208;
+  --ink-2: #4A3524;
+  --ink-soft: #6E5847;
+  --line: #F3E1D6;
+  --line-2: #EAD0C2;
 
-  --orange: #F26B1D;
-  --orange-deep: #D0530F;
-  --ember: #A62E08;
-  --orange-soft: #FCE7D5;
-  --orange-press: #D0530F;
+  --orange: #FF5A24;
+  --orange-deep: #E0490F;
+  --ember: #B8380E;
+  --orange-soft: #FFE3D6;
+  --orange-press: #E0490F;
+
+  --pink: #FF3D7F;
+  --pink-deep: #E82E6E;
+  --pink-soft: #FFE1EC;
 
   --herb: #3FA34D;
   --acid: #CBF24A;
@@ -38,26 +46,13 @@
    help shell wrapper so it never touches the bright preppa.live landing that shares
    this stylesheet. The .prose article styles below resolve through these tokens, so
    long-form guide/legal text reads light-on-dark automatically. */
+/* help.preppa.live now shares the bright "Orange + Pink" palette with the landing
+   (was a warm-dark override). Uses a faintly warmer canvas so the shared shell reads
+   as its own surface without leaving the bright family. */
 .help {
-  --bg: #14100C;
-  --panel: #1C1712;
-  --panel-2: #241E17;
-  --card: #1C1712;
-  --card-2: #241E17;
-  --ink: #FBF6EF;
-  --ink-2: rgba(251,246,239,.74);
-  --ink-soft: rgba(251,246,239,.5);
-  --line: rgba(251,246,239,.1);
-  --line-2: rgba(251,246,239,.17);
-
-  --orange: #FB8B3E;
-  --orange-soft: rgba(242,107,29,.16);
-  --orange-press: #F26B1D;
-  --lime: #7ED9A0;
-  --lime-soft: rgba(126,217,160,.14);
-  --green: #7ED9A0;
-  --green-soft: rgba(126,217,160,.14);
-
+  --bg: #FFF1E8;
+  --card: #FFFFFF;
+  --card-2: #FFF6F0;
   background: var(--bg);
   color: var(--ink);
 }
@@ -80,6 +75,9 @@
   --color-orange-press: var(--orange-press);
   --color-orange-deep: var(--orange-deep);
   --color-ember: var(--ember);
+  --color-pink: var(--pink);
+  --color-pink-deep: var(--pink-deep);
+  --color-pink-soft: var(--pink-soft);
   --color-cream: var(--cream);
   --color-paper: var(--paper);
   --color-herb: var(--herb);
@@ -150,21 +148,21 @@ body {
 /* ---- Landing hero: committed warm-dark, photography-led (redesign) ----
    Replaces the video/theme-toggle hero with a bold warm-dark composition.
    Reuses the brand --orange token so the accent stays exactly on-brand. */
-.lhero { background: #180B05; color: #FFF3E4; }
+.lhero { background: var(--bg); color: var(--ink); }
 .lhero::before {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background:
-    radial-gradient(82% 60% at 84% -8%, rgba(242,107,29,.20), transparent 60%),
-    radial-gradient(60% 50% at -6% 8%, rgba(242,107,29,.10), transparent 55%);
+    radial-gradient(82% 60% at 84% -8%, rgba(255,90,36,.16), transparent 60%),
+    radial-gradient(58% 55% at -6% 4%, rgba(255,61,127,.13), transparent 55%);
 }
-.lh-title { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -.032em; line-height: .97; text-wrap: balance; color: #FFF3E4; }
-.lh-accent { color: var(--orange); }
-.lh-sub { color: rgba(255,243,228,.74); }
-.lh-chip { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .85rem; border-radius: 999px; font-size: .82rem; font-weight: 600; white-space: nowrap; color: rgba(255,243,228,.9); background: rgba(255,243,228,.07); border: 1px solid rgba(255,243,228,.12); }
-.lh-photo { position: relative; overflow: hidden; border-radius: 1.75rem; box-shadow: 0 40px 90px rgba(0,0,0,.5); }
+.lh-title { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -.032em; line-height: .97; text-wrap: balance; color: var(--ink); }
+.lh-accent { color: var(--orange-deep); }
+.lh-sub { color: rgba(30,18,8,.72); }
+.lh-chip { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .85rem; border-radius: 999px; font-size: .82rem; font-weight: 600; white-space: nowrap; color: var(--ink); background: rgba(30,18,8,.05); border: 1px solid rgba(30,18,8,.10); }
+.lh-photo { position: relative; overflow: hidden; border-radius: 1.75rem; box-shadow: 0 30px 70px rgba(150,60,20,.20); }
 .lh-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.lh-live { display: inline-flex; align-items: center; gap: .45rem; padding: .38rem .7rem; border-radius: 999px; background: var(--orange); color: #180B05; font-size: .72rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
-.lh-live::before { content: ""; width: .5rem; height: .5rem; border-radius: 999px; background: #180B05; animation: lhPulse 1.8s ease-in-out infinite; }
+.lh-live { display: inline-flex; align-items: center; gap: .45rem; padding: .38rem .7rem; border-radius: 999px; background: var(--pink-deep); color: #fff; font-size: .72rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
+.lh-live::before { content: ""; width: .5rem; height: .5rem; border-radius: 999px; background: #fff; animation: lhPulse 1.8s ease-in-out infinite; }
 @keyframes lhPulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @media (prefers-reduced-motion: reduce) { .lh-live::before { animation: none; } }
 .lh-preppa { display: flex; align-items: center; gap: .75rem; padding: .55rem .8rem .55rem .55rem; border-radius: 999px; background: rgba(24,11,5,.62); border: 1px solid rgba(255,243,228,.16); backdrop-filter: blur(14px); color: #FFF3E4; width: fit-content; }
