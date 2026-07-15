@@ -99,6 +99,15 @@ body {
   color: var(--ink);
 }
 
+/* Keyboard focus — visible brand ring for a11y, only on keyboard focus (not click). */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
 /* Landing hero theme. DEFAULT is warm orange (light); `[data-theme="dark"]` on <html>
    switches to burnt-orange dark mode via the header toggle. Only the hero reads these
    `--hero-*` tokens, so the toggle re-skins the landing without touching help.preppa.live. */

@@ -51,7 +51,7 @@ export function HeroPhotos() {
         style={{ x: mainX, y: mainY, rotateX: mainRotX, rotateY: mainRotY, transformStyle: "preserve-3d" }}
       >
         <div className="lh-photo lh-float aspect-[4/5]">
-          <img className="lh-kenburns" src="/hero-meal.jpg" alt="Fresh meal-prep boxes — kale, egg, avocado and roasted vegetables packed by a local Preppa" />
+          <img className="lh-kenburns" src="/hero-meal.jpg" width={880} height={1100} fetchPriority="high" decoding="async" alt="Fresh meal-prep boxes — kale, egg, avocado and roasted vegetables packed by a local Preppa" />
           <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(to top, #180B05, rgba(24,11,5,.08) 55%, transparent)" }} />
           <div className="absolute left-4 top-4"><span className="lh-live">Meal drop live</span></div>
           <div className="absolute inset-x-4 bottom-4">
