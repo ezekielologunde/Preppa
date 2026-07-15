@@ -59,15 +59,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={bricolage.variable}>
-      <head>
-        {/* No-flash theme: default is warm-orange (light); apply the saved dark choice
-            before paint so the hero never flickers. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('preppa-theme')==='dark'){document.documentElement.setAttribute('data-theme','dark')}}catch(e){}`,
-          }}
-        />
-      </head>
       <body className="antialiased font-sans">
         <script
           type="application/ld+json"
