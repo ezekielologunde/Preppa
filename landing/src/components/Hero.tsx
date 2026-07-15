@@ -1,11 +1,7 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { LogoMark } from "./LogoMark";
 import { WaitlistForm } from "./WaitlistForm";
 import { Icon } from "./Icon";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
 const HELP = "https://help.preppa.live";
 const TICKER = ["WEST AFRICAN", "SOUL FOOD", "OAXACAN", "HALAL & DESI", "ITALIAN COMFORT", "HEALTHY & SEAFOOD"];
 
@@ -16,8 +12,9 @@ const TRUST = [
 ] as const;
 
 /** Committed warm-dark, photography-led hero. Real food photography carries the
- * section (replacing the video); one bright-orange accent, Bricolage display, and a
- * real verified-cook trust chip. Content is visible by default — motion only enhances. */
+ * section; one bright-orange accent, Bricolage display, and a real verified-cook
+ * trust chip. Content is fully visible by default — the `lh-rise` entrance is a
+ * transform-only enhancement (see globals.css), so it never ships blank. */
 export function Hero() {
   return (
     <section id="top" className="lhero relative min-h-dvh overflow-hidden flex flex-col">
@@ -42,59 +39,34 @@ export function Hero() {
         <div className="max-w-[1180px] w-full mx-auto px-6 md:px-8 py-12 md:py-16 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16 items-center">
           {/* Left — copy + waitlist + trust */}
           <div className="min-w-0">
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: EASE }}
-              className="lh-title text-[clamp(44px,7.4vw,84px)]"
-            >
+            <h1 className="lh-title lh-rise text-[clamp(44px,7.4vw,84px)]">
               Better than takeout.
               <br />
               Made <span className="lh-accent">three doors down.</span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: EASE, delay: 0.12 }}
-              className="lh-sub mt-6 max-w-[34rem] text-[16px] md:text-[19px] leading-relaxed font-medium"
-            >
+            <p className="lh-sub lh-rise mt-6 max-w-[34rem] text-[16px] md:text-[19px] leading-relaxed font-medium" style={{ animationDelay: "0.06s" }}>
               Fresh, home-cooked meals from the most talented cooks in your neighborhood —
               affordable, on demand, and honestly better than the spot you keep reordering
               from. Drop your ZIP and get in before your block does.
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: EASE, delay: 0.22 }}
-              className="mt-8"
-            >
+            <div className="lh-rise mt-8" style={{ animationDelay: "0.12s" }}>
               <WaitlistForm tone="onDark" cta="Get early access" />
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.34 }}
-              className="mt-8 flex flex-col items-start gap-2.5 sm:flex-row sm:flex-wrap"
-            >
+            <div className="lh-rise mt-8 flex flex-col items-start gap-2.5 sm:flex-row sm:flex-wrap" style={{ animationDelay: "0.18s" }}>
               {TRUST.map((t) => (
                 <span key={t.label} className="lh-chip">
                   <span className="lh-accent inline-flex"><Icon name={t.icon} size={16} /></span>
                   {t.label}
                 </span>
               ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Right — photographic composition */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
-            className="relative mx-auto w-full max-w-[460px] lg:mx-0 lg:max-w-none"
-          >
+          <div className="lh-rise relative mx-auto w-full max-w-[460px] lg:mx-0 lg:max-w-none" style={{ animationDelay: "0.1s" }}>
             <div className="lh-photo aspect-[4/5]">
               <img src="/hero-meal.jpg" alt="Fresh meal-prep boxes — kale, egg, avocado and roasted vegetables packed by a local Preppa" />
               <div className="pointer-events-none absolute inset-0" style={{ background: "linear-gradient(to top, #180B05, rgba(24,11,5,.08) 55%, transparent)" }} />
@@ -124,7 +96,7 @@ export function Hero() {
                 <img src="/hero-curry.jpg" alt="Chickpea curry with rice and avocado, packed in a meal-prep box" />
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 

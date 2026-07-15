@@ -168,6 +168,14 @@ body {
 @keyframes lhPulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
 @media (prefers-reduced-motion: reduce) { .lh-live::before { animation: none; } }
 .lh-preppa { display: flex; align-items: center; gap: .75rem; padding: .55rem .8rem .55rem .55rem; border-radius: 999px; background: rgba(24,11,5,.62); border: 1px solid rgba(255,243,228,.16); backdrop-filter: blur(14px); color: #FFF3E4; width: fit-content; }
+/* Entrance: content is FULLY VISIBLE by default (SSR / no-JS / headless safe).
+   Motion is a transform-only enhancement — it never gates opacity, so the hero
+   can never ship blank. Skipped entirely for reduced-motion users. */
+.lh-rise { opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .lh-rise { animation: lhRise .72s cubic-bezier(.22,.61,.36,1) both; }
+}
+@keyframes lhRise { from { transform: translateY(16px); } to { transform: none; } }
 
 /* Typography for /help-site guide + legal articles — ported from the standalone
    help app's globals.css when it merged into this one (see middleware.ts). */
