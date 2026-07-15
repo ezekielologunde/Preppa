@@ -177,12 +177,12 @@ body {
 
 /* Motion layer — continuous float, cinematic Ken Burns, drifting glow. All
    transform-based (GPU), enhancing already-visible content, off for reduced-motion. */
-.lh-float { animation: lhFloat 7s ease-in-out infinite; }
-@keyframes lhFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-.lh-float-2 { animation: lhFloat2 6.5s ease-in-out infinite; animation-delay: -2.2s; }
-@keyframes lhFloat2 { 0%, 100% { transform: rotate(5deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-9px); } }
-.lh-kenburns { animation: lhKen 20s ease-in-out infinite alternate; transform-origin: 62% 38%; will-change: transform; }
-@keyframes lhKen { from { transform: scale(1.06); } to { transform: scale(1.15) translate(-2%, 1.5%); } }
+.lh-float { animation: lhFloat 6.5s ease-in-out infinite; }
+@keyframes lhFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.lh-float-2 { animation: lhFloat2 6s ease-in-out infinite; animation-delay: -2.2s; }
+@keyframes lhFloat2 { 0%, 100% { transform: rotate(5deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-13px); } }
+.lh-kenburns { animation: lhKen 17s ease-in-out infinite alternate; transform-origin: 62% 38%; will-change: transform; }
+@keyframes lhKen { from { transform: scale(1.05); } to { transform: scale(1.17) translate(-2.5%, 1.8%); } }
 @media (prefers-reduced-motion: no-preference) {
   .lhero::before { animation: lhGlow 18s ease-in-out infinite alternate; }
 }
@@ -195,6 +195,11 @@ body {
 .lh-chip { transition: transform .2s var(--ease-out), background .2s ease, border-color .2s ease; }
 .lh-chip:hover { transform: translateY(-2px); background: rgba(30,18,8,.08); border-color: rgba(30,18,8,.16); }
 .marquee-track:hover { animation-play-state: paused; }
+/* "live" ping on the meal-drop badge */
+@media (prefers-reduced-motion: no-preference) {
+  .lh-live { animation: lhLive 2.4s ease-in-out infinite; }
+}
+@keyframes lhLive { 0%, 100% { box-shadow: 0 0 0 0 rgba(232,46,110,0); } 50% { box-shadow: 0 0 0 7px rgba(232,46,110,.16); } }
 
 /* Typography for /help-site guide + legal articles — ported from the standalone
    help app's globals.css when it merged into this one (see middleware.ts). */

@@ -17,12 +17,12 @@ export function HeroPhotos() {
   const sx = useSpring(mx, cfg);
   const sy = useSpring(my, cfg);
 
-  const mainX = useTransform(sx, [-0.5, 0.5], [-12, 12]);
-  const mainY = useTransform(sy, [-0.5, 0.5], [-9, 9]);
-  const mainRotX = useTransform(sy, [-0.5, 0.5], [4, -4]);
-  const mainRotY = useTransform(sx, [-0.5, 0.5], [-5, 5]);
-  const tileX = useTransform(sx, [-0.5, 0.5], [-26, 26]);
-  const tileY = useTransform(sy, [-0.5, 0.5], [-18, 18]);
+  const mainX = useTransform(sx, [-0.5, 0.5], [-18, 18]);
+  const mainY = useTransform(sy, [-0.5, 0.5], [-13, 13]);
+  const mainRotX = useTransform(sy, [-0.5, 0.5], [6.5, -6.5]);
+  const mainRotY = useTransform(sx, [-0.5, 0.5], [-7.5, 7.5]);
+  const tileX = useTransform(sx, [-0.5, 0.5], [-36, 36]);
+  const tileY = useTransform(sy, [-0.5, 0.5], [-26, 26]);
 
   function reduced() {
     return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

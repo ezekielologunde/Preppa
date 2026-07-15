@@ -11,9 +11,9 @@ export function HeroGlow() {
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 60, damping: 20, mass: 0.6 });
-  const sy = useSpring(y, { stiffness: 60, damping: 20, mass: 0.6 });
-  const bg = useMotionTemplate`radial-gradient(340px circle at ${sx}px ${sy}px, rgba(255,90,36,.18), rgba(255,61,127,.09) 42%, transparent 72%)`;
+  const sx = useSpring(x, { stiffness: 90, damping: 18, mass: 0.5 });
+  const sy = useSpring(y, { stiffness: 90, damping: 18, mass: 0.5 });
+  const bg = useMotionTemplate`radial-gradient(440px circle at ${sx}px ${sy}px, rgba(255,90,36,.22), rgba(255,61,127,.12) 42%, transparent 72%)`;
 
   useEffect(() => {
     const section = ref.current?.parentElement;
