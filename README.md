@@ -1,5 +1,28 @@
 # Preppa
 
+> [!WARNING]
+> ## Legacy Preppa application foundation
+>
+> This repository is **not** the canonical source for the current Preppa application
+> or backend.
+>
+> Current production app + Supabase backend: `ezekielologunde/preppa-app` (branch `main`),
+> live at https://app.preppa.live.
+>
+> This repository contains an earlier Preppa application architecture (July, the "trust
+> foundation" slice below) plus a `landing/` Next.js app that, per its own middleware,
+> serves `preppa.live`/`help.preppa.live` by hostname. A separate repository,
+> `ezekielologunde/preppa-landing`, was pushed more recently and claims the same two
+> domains. **As of 2026-09-07 it has not been confirmed which of the two actually serves
+> live traffic** — do not archive, delete, or stop deploying from this repository's
+> `landing/` app without first checking the Vercel dashboard/DNS records for
+> `preppa.live` and `help.preppa.live`.
+>
+> This repo's own CI (`.github/workflows/ci.yml`) triggers on pushes to `main`, but this
+> repo's default branch is `master` — ordinary pushes here don't run CI. That's a sign
+> this repo has drifted out of active app/backend development, consistent with treating
+> it as legacy.
+
 A two-sided marketplace for **homemade food** — customers order fresh meals from
 vetted local home cooks ("Preppers"). Trust & safety is the whole thesis:
 ID-verified cooks, Preppa as merchant of record, and a cash-on-delivery handoff
