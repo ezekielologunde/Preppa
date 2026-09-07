@@ -10,13 +10,12 @@
 > live at https://app.preppa.live.
 >
 > This repository contains an earlier Preppa application architecture (July, the "trust
-> foundation" slice below) plus a `landing/` Next.js app that, per its own middleware,
-> serves `preppa.live`/`help.preppa.live` by hostname. A separate repository,
-> `ezekielologunde/preppa-landing`, was pushed more recently and claims the same two
-> domains. **As of 2026-09-07 it has not been confirmed which of the two actually serves
-> live traffic** — do not archive, delete, or stop deploying from this repository's
-> `landing/` app without first checking the Vercel dashboard/DNS records for
-> `preppa.live` and `help.preppa.live`.
+> foundation" slice below) plus a `landing/` Next.js app. **Confirmed live via the
+> Vercel API (2026-09-07): this repo's `landing/` app, deployed from `master`, is the
+> production deployment behind both `preppa.live` and `help.preppa.live`** — do not
+> archive, delete, or stop deploying this repository. A separate repository,
+> `ezekielologunde/preppa-landing`, claims the same two domains in its README but has
+> **no corresponding Vercel project** — that claim is stale, not a live competitor.
 >
 > This repo's own CI (`.github/workflows/ci.yml`) triggers on pushes to `main`, but this
 > repo's default branch is `master` — ordinary pushes here don't run CI. That's a sign
