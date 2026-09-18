@@ -12,7 +12,9 @@ const GUIDES: {
   body: string;
   icon: Parameters<typeof Icon>[0]["name"];
   cats: Cat[];
+  cta?: string;
 }[] = [
+  { href: "/training", title: "Video training: how Preppa works", body: "A 68-second walkthrough for customers and Preppers.", icon: "video", cats: ["customers", "preppers"], cta: "Watch video" },
   { href: "/guides/post-your-first-meal", title: "How to post your first meal", body: "List your meal, set your price, and reach local customers.", icon: "chefhat", cats: ["preppers"] },
   { href: "/guides/create-a-meal-plan", title: "How to create a meal plan", body: "Build weekly meal plans that save time and keep your customers fed.", icon: "repeat", cats: ["preppers"] },
   { href: "/guides/how-subscriptions-work", title: "How subscriptions work", body: "Recurring orders, per-cycle billing, and how to skip, pause, or cancel.", icon: "repeat", cats: ["customers", "payments"] },
@@ -45,6 +47,7 @@ const SIDEBAR: { label: string; icon: Parameters<typeof Icon>[0]["name"]; cat?: 
 ];
 
 const POPULAR = [
+  { href: "/training", label: "Watch: how Preppa works (1:08)" },
   { href: "/guides/post-your-first-meal", label: "How to become a Prepper" },
   { href: "/guides/set-up-payout", label: "Payout processing times" },
   { href: "/guides/order-and-track", label: "Delivery & pickup policies" },
@@ -63,14 +66,18 @@ export default function HelpHome() {
   const [cat, setCat] = useState<Cat>("all");
   const [q, setQ] = useState("");
 
+  // The featured video card stands in for the video guide card, so hide that one while it shows.
+  const showFeatured = q.trim() === "" && (cat === "all" || cat === "customers" || cat === "preppers");
+
   const guides = useMemo(() => {
     const query = q.trim().toLowerCase();
     return GUIDES.filter(
       (g) =>
+        !(showFeatured && g.href === "/training") &&
         (cat === "all" || g.cats.includes(cat)) &&
         (query === "" || (g.title + " " + g.body).toLowerCase().includes(query)),
     );
-  }, [cat, q]);
+  }, [cat, q, showFeatured]);
 
   const legal = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -150,6 +157,47 @@ export default function HelpHome() {
           ))}
         </div>
 
+        {/* Featured: video training */}
+        {showFeatured ? (
+          <Link
+            href="/training"
+            className="group mt-6 grid overflow-hidden rounded-2xl border border-line bg-card hover:border-orange transition-colors sm:grid-cols-[minmax(0,300px)_1fr]"
+          >
+            {/* The poster keeps its full 16:9 frame (never cropped) on the video's own cream. */}
+            <span className="flex items-center bg-[#FFFAF6]">
+              <span className="relative block w-full aspect-video">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/media/how-preppa-works-poster.jpg"
+                  alt=""
+                  width={1600}
+                  height={900}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-orange text-white shadow-lg transition-transform group-hover:scale-105">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 001.5.86l11-6.5a1 1 0 000-1.72l-11-6.5A1 1 0 008 5.5z" /></svg>
+                  </span>
+                </span>
+              </span>
+            </span>
+            <span className="flex flex-col justify-center p-5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-orange-deep">New · Video training</span>
+              <span className="mt-1.5 font-display font-extrabold text-[clamp(20px,2.4vw,26px)] leading-tight tracking-tight text-ink">
+                How Preppa works, in about a minute
+              </span>
+              <span className="mt-2 text-[13.5px] leading-relaxed text-ink-soft">
+                Find a cook, read the allergens, pay and tip, track your order &mdash; then apply, get paid, post a meal, and take orders as a Prepper.
+              </span>
+              <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-bold text-orange-deep group-hover:gap-2 transition-all">
+                Watch the video (1:08) <Icon name="chevRight" size={13} />
+              </span>
+            </span>
+          </Link>
+        ) : null}
+
         {/* Guide cards */}
         <div className="mt-6 grid sm:grid-cols-2 gap-4">
           {guides.map((g) => (
@@ -160,7 +208,7 @@ export default function HelpHome() {
               <h3 className="font-bold text-ink leading-snug">{g.title}</h3>
               <p className="text-[13px] text-ink-soft leading-relaxed mt-1.5">{g.body}</p>
               <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-bold text-orange group-hover:gap-2 transition-all">
-                Read guide <Icon name="chevRight" size={13} />
+                {g.cta ?? "Read guide"} <Icon name="chevRight" size={13} />
               </span>
             </Link>
           ))}
