@@ -5,6 +5,7 @@ import { HeroGlow } from "./HeroGlow";
 import { Icon } from "./Icon";
 
 const HELP = "https://help.preppa.live";
+const APP = "https://app.preppa.live";
 const TICKER = ["WEST AFRICAN", "SOUL FOOD", "OAXACAN", "HALAL & DESI", "ITALIAN COMFORT", "HEALTHY & SEAFOOD"];
 
 const TRUST = [
@@ -30,7 +31,10 @@ export function Hero() {
           <a href={HELP} className="hidden sm:inline-flex h-10 px-4 items-center rounded-full text-[13px] font-bold text-ink transition-opacity hover:opacity-80">
             Learn
           </a>
-          <span className="lh-chip">
+          <a href={APP} className="inline-flex h-10 px-5 items-center rounded-full bg-orange text-white text-[13px] font-bold shadow-[0_8px_22px_rgba(242,107,29,.32)] transition-all hover:-translate-y-0.5 hover:bg-orange-deep">
+            Launch app
+          </a>
+          <span className="lh-chip hidden sm:inline-flex">
             <span className="w-[7px] h-[7px] rounded-full animate-pulse" style={{ background: "var(--pink)" }} />
             <span className="uppercase tracking-[0.14em] text-[11px] font-bold">Launching soon</span>
           </span>
